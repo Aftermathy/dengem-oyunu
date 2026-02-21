@@ -132,9 +132,16 @@ export function useGame(lang: Language) {
       newPower[e.power] = Math.max(0, Math.min(100, newPower[e.power] + e.amount));
     });
 
-    const newMoney = money + moneyEffect;
+    // Calculate income from maxed factions (100)
+    let maxIncome = 0;
+    for (const key of Object.keys(newPower) as PowerType[]) {
+      if (newPower[key] >= 100) maxIncome += 2;
+    }
+
+    const newMoney = money + moneyEffect + maxIncome;
     setMoney(newMoney);
-    if (moneyEffect !== 0) setLastMoneyChange(moneyEffect);
+    const totalMoneyChange = moneyEffect + maxIncome;
+    if (totalMoneyChange !== 0) setLastMoneyChange(totalMoneyChange);
 
     setPower(newPower);
     const newTurn = turn + 1;
