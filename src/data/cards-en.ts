@@ -1043,4 +1043,38 @@ export const eventCardsEn: EventCard[] = [
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'ordu', amount: -5 }, { power: 'tarikat', amount: -5 }],
     leftMoney: 5, rightMoney: -3,
   },
+
+  // === CURRENT EVENTS (ID 130-133) ===
+  {
+    id: 130, character: 'Deputy Speaker', characterEmoji: '🏛️', category: 'Political Intrigue',
+    description: 'New minister appointment turned into a fistfight in parliament.',
+    leftChoice: 'Punish the brawlers', rightChoice: 'Ignore it, change the agenda',
+    leftEffects: [{ power: 'halk', amount: 10 }, { power: 'ordu', amount: 5 }],
+    rightEffects: [{ power: 'halk', amount: -10 }, { power: 'mafya', amount: 5 }],
+    leftMoney: 0, rightMoney: 0,
+  },
+  {
+    id: 131, character: 'Gold Analyst', characterEmoji: '🥇', category: 'Economy',
+    description: 'Gold surpassed 7,000 per gram. Citizens rushing to buy, lines at jewelers.',
+    leftChoice: 'Tax gold imports', rightChoice: 'Central Bank sells gold',
+    leftEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 5 }],
+    rightEffects: [{ power: 'yatirimcilar', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: 8, rightMoney: 15,
+  },
+  {
+    id: 132, character: 'White House Advisor', characterEmoji: '🦅', category: 'Foreign Policy',
+    description: 'The great ally\'s new president wants a meeting. F-35 and S-400 on the table.',
+    leftChoice: 'Give up S-400, get F-35', rightChoice: '"I want both" say',
+    leftEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: -5 }],
+    rightEffects: [{ power: 'ordu', amount: 10 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: -15 }],
+    leftMoney: 10, rightMoney: -10,
+  },
+  {
+    id: 133, character: 'Palace Legal Advisor', characterEmoji: '⚖️', category: 'Political Intrigue',
+    description: 'Opposition candidate is gaining strength. We must do something, sir.',
+    leftChoice: 'Revoke his diploma', rightChoice: 'Revoke his birth certificate',
+    leftEffects: [{ power: 'halk', amount: -10 }, { power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }],
+    rightEffects: [{ power: 'halk', amount: -50 }, { power: 'ordu', amount: -10 }, { power: 'mafya', amount: 10 }],
+    leftMoney: -10, rightMoney: -50,
+  },
 ];

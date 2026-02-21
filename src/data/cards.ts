@@ -1056,4 +1056,38 @@ export const eventCards: EventCard[] = [
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'ordu', amount: -5 }, { power: 'tarikat', amount: -5 }],
     leftMoney: 5, rightMoney: -3,
   },
+
+  // === GÜNCEL KARTLAR (ID 130-133) ===
+  {
+    id: 130, character: 'Meclis Başkan Vekili', characterEmoji: '🏛️', category: 'Siyasi Entrika',
+    description: 'Kabine değişikliğinde yeni bakan ataması mecliste yumruklu kavgaya döndü.',
+    leftChoice: 'Kavgacıları cezalandır', rightChoice: 'Görmezden gel, gündem değiştir',
+    leftEffects: [{ power: 'halk', amount: 10 }, { power: 'ordu', amount: 5 }],
+    rightEffects: [{ power: 'halk', amount: -10 }, { power: 'mafya', amount: 5 }],
+    leftMoney: 0, rightMoney: 0,
+  },
+  {
+    id: 131, character: 'Altın Analisti', characterEmoji: '🥇', category: 'Ekonomi',
+    description: 'Gram altın 7.000\'i aştı. Vatandaş altına hücum ediyor, kuyumcular kuyruğunda.',
+    leftChoice: 'Altın ithalatına vergi koy', rightChoice: 'Merkez Bankası altın satsın',
+    leftEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 5 }],
+    rightEffects: [{ power: 'yatirimcilar', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: 8, rightMoney: 15,
+  },
+  {
+    id: 132, character: 'Beyaz Saray Danışmanı', characterEmoji: '🦅', category: 'Dış Politika',
+    description: 'Büyük müttefiğin yeni başkanı görüşme istiyor. F-35 ve S-400 masada.',
+    leftChoice: 'S-400\'den vazgeç, F-35 al', rightChoice: '"İkisini de isterim" de',
+    leftEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: -5 }],
+    rightEffects: [{ power: 'ordu', amount: 10 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: -15 }],
+    leftMoney: 10, rightMoney: -10,
+  },
+  {
+    id: 133, character: 'Saray Hukuk Danışmanı', characterEmoji: '⚖️', category: 'Siyasi Entrika',
+    description: 'Muhalefet adayı güçleniyor. Bir şeyler yapmalıyız efendim.',
+    leftChoice: 'Diplomasını iptal ettir', rightChoice: 'Doğum belgesini iptal ettir',
+    leftEffects: [{ power: 'halk', amount: -10 }, { power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }],
+    rightEffects: [{ power: 'halk', amount: -50 }, { power: 'ordu', amount: -10 }, { power: 'mafya', amount: 10 }],
+    leftMoney: -10, rightMoney: -50,
+  },
 ];
