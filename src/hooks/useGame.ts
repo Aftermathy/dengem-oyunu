@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { PowerState, PowerType, EventCard, BRIBE_COSTS, BRIBE_REP_GAIN } from '@/types/game';
+import { showInterstitialAd, isAdFree } from '@/hooks/useAds';
 import { eventCards } from '@/data/cards';
 import { eventCardsEn } from '@/data/cards-en';
 import { gameOverScenarios } from '@/data/gameOverScenarios';
@@ -63,6 +64,11 @@ export function useGame(lang: Language) {
   const currentCard = deck[cardIndex] || null;
 
   const startGame = useCallback(() => {
+    // Show interstitial ad before starting (unless ad-free)
+    if (!isAdFree()) {
+      showInterstitialAd(1); // Show every game (change number to skip some)
+    }
+
     setPower(INITIAL_POWER);
     setMoney(INITIAL_MONEY);
     setBribeCounts({ halk: 0, yatirimcilar: 0, mafya: 0, tarikat: 0, ordu: 0 });
