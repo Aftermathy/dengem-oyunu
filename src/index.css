@@ -147,3 +147,21 @@ All colors MUST be HSL.
 .shimmer-btn {
   animation: shimmer-glow 10s ease-in-out infinite;
 }
+
+/* Rep change indicator animation */
+@keyframes rep-change-fade {
+  0% { opacity: 0; transform: translateY(4px); }
+  15% { opacity: 1; transform: translateY(0); }
+  60% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+.rep-change-indicator {
+  animation: rep-change-fade 1.8s ease-out forwards;
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

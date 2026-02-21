@@ -221,8 +221,8 @@ export function useGame(lang: Language) {
     setGameOverInfo(null);
   }, []);
 
-  const LAUNDER_COST = 5;
-  const LAUNDER_AMOUNT = 10;
+  const LAUNDER_COST = 50;
+  const LAUNDER_AMOUNT = 25;
 
   const canLaunder = money >= LAUNDER_COST && phase === 'playing';
 
@@ -234,19 +234,30 @@ export function useGame(lang: Language) {
     
     const otherFactions: PowerType[] = ['yatirimcilar', 'mafya', 'tarikat', 'ordu'].filter(f => f !== faction) as PowerType[];
     
-    setPower(prev => {
-      const next = { ...prev };
-      // Halk -10
-      next.halk = Math.max(0, next.halk - 10);
-      // Selected faction +5
-      next[faction] = Math.min(100, next[faction] + 5);
-      // Other 3 factions -5
-      otherFactions.forEach(f => {
-        next[f] = Math.max(0, next[f] - 5);
-      });
-      return next;
+    const newPower = { ...power };
+    // Halk -10
+    newPower.halk = Math.max(0, newPower.halk - 10);
+    // Selected faction +5
+    newPower[faction] = Math.min(100, newPower[faction] + 5);
+    // Other 3 factions -5
+    otherFactions.forEach(f => {
+      newPower[f] = Math.max(0, newPower[f] - 5);
     });
-  }, [money]);
+    
+    setPower(newPower);
+
+    // Check game over after launder
+    const over = checkGameOver(newPower);
+    if (over) {
+      setGameOverInfo(over);
+      const currentTurn = turn;
+      if (currentTurn > highScore) {
+        setHighScore(currentTurn);
+        localStorage.setItem('taht_highscore', String(currentTurn));
+      }
+      setPhase('gameover');
+    }
+  }, [money, power, checkGameOver, turn, highScore]);
 
   return {
     phase,

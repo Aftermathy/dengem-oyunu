@@ -2,7 +2,7 @@ import { PowerState, PowerType } from '@/types/game';
 import { PowerEffect, BRIBE_COSTS } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { playBribeSound } from '@/hooks/useSound';
 
 import factionHalk from '@/assets/faction-halk.png';
@@ -33,6 +33,31 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
   const { t, lang } = useLanguage();
   const powers: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
   const [showBribe, setShowBribe] = useState<PowerType | null>(null);
+  const [repChanges, setRepChanges] = useState<Record<PowerType, number | null>>({ halk: null, yatirimcilar: null, mafya: null, tarikat: null, ordu: null });
+  const prevPowerRef = useRef<PowerState>(power);
+  const changeKeyRef = useRef(0);
+  const [changeKey, setChangeKey] = useState(0);
+
+  useEffect(() => {
+    const prev = prevPowerRef.current;
+    const changes: Record<PowerType, number | null> = { halk: null, yatirimcilar: null, mafya: null, tarikat: null, ordu: null };
+    let hasChange = false;
+    for (const key of powers) {
+      const diff = power[key] - prev[key];
+      if (diff !== 0) {
+        changes[key] = diff;
+        hasChange = true;
+      }
+    }
+    prevPowerRef.current = power;
+    if (hasChange) {
+      changeKeyRef.current += 1;
+      setChangeKey(changeKeyRef.current);
+      setRepChanges(changes);
+      const timer = setTimeout(() => setRepChanges({ halk: null, yatirimcilar: null, mafya: null, tarikat: null, ordu: null }), 1800);
+      return () => clearTimeout(timer);
+    }
+  }, [power]);
 
   const getBarGradient = (value: number) => {
     if (value <= 15) return 'linear-gradient(to top, #ef4444, #f97316)';
@@ -115,6 +140,19 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                     "absolute inset-0 rounded-full animate-pulse",
                     dir === 'up' ? 'bg-emerald-400/30' : 'bg-red-400/30'
                   )} />
+                )}
+                {repChanges[p] !== null && (
+                  <div
+                    key={changeKey}
+                    className="rep-change-indicator"
+                  >
+                    <span className={cn(
+                      "text-xs sm:text-sm font-light italic drop-shadow-md",
+                      repChanges[p]! > 0 ? 'text-emerald-300' : 'text-red-300'
+                    )}>
+                      {repChanges[p]! > 0 ? '+' : ''}{repChanges[p]}
+                    </span>
+                  </div>
                 )}
               </div>
 

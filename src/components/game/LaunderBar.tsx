@@ -52,7 +52,7 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
               : "bg-muted text-muted-foreground cursor-not-allowed"
           )}
         >
-          🧼 {lang === 'tr' ? 'Akla' : 'Launder'} (-5B)
+          🧼 {lang === 'tr' ? 'Akla' : 'Launder'} (-50B)
         </button>
 
         <div className="flex-1 h-4 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
@@ -76,8 +76,8 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
             </h3>
             <p className="text-xs text-muted-foreground mb-4">
               {lang === 'tr'
-                ? 'Seçtiğin +5 rep alır, diğer 3 grup -5 rep yer. Halk -10 rep.'
-                : 'Selected gets +5 rep, other 3 get -5 rep. Public -10 rep.'}
+                ? '25B aklanır, 25B seçtiğin zümreye verilir. Seçtiğin +5 rep, diğer 3 grup -5 rep, Halk -10 rep.'
+                : '25B laundered, 25B given to selected. Selected +5 rep, other 3 get -5 rep, Public -10 rep.'}
             </p>
 
             <div className="grid grid-cols-2 gap-3">
@@ -91,7 +91,7 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
                     <img src={FACTION_IMAGES[faction]} alt={t(`power.${faction}`)} className="w-full h-full object-cover" />
                   </div>
                   <span className="text-xs font-bold text-foreground">{t(`power.${faction}`)}</span>
-                  <span className="text-[10px] text-emerald-500">+5 rep</span>
+                  <span className="text-[10px] text-emerald-500">+5 rep, +25B</span>
                 </button>
               ))}
             </div>
