@@ -125,3 +125,14 @@ All colors MUST be HSL.
 .animate-fade-in {
   animation: fade-in 0.5s ease-out;
 }
+
+/* Shimmer button — glows briefly every 10s */
+@keyframes shimmer-glow {
+  0%, 90% { opacity: 0.8; text-shadow: none; border-color: hsl(15 80% 50% / 0.2); }
+  95% { opacity: 1; text-shadow: 0 0 12px hsl(15 80% 50% / 0.5); border-color: hsl(15 80% 50% / 0.5); }
+  100% { opacity: 0.8; text-shadow: none; border-color: hsl(15 80% 50% / 0.2); }
+}
+
+.shimmer-btn {
+  animation: shimmer-glow 10s ease-in-out infinite;
+}

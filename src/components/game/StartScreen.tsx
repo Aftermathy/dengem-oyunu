@@ -67,7 +67,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         href="https://apps.apple.com/app/i-must-stay"
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-2 px-6 py-2 rounded-lg text-xs font-semibold tracking-wide text-primary/80 border border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 animate-pulse"
+        className="mt-2 px-6 py-2 rounded-lg text-xs font-semibold tracking-wide text-primary/80 border border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn"
         style={{ textShadow: '0 0 8px hsl(15 80% 50% / 0.3)' }}
       >
         ✨ {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} ✨
