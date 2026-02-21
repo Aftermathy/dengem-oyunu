@@ -48,9 +48,14 @@ const Index = () => {
             />
           </div>
 
-          <div className="text-center text-xs text-muted-foreground py-1">
-            <span className="font-bold text-foreground">{2002 + Math.floor(turn / 4)} Q{(turn % 4) + 1}</span>
-            <span className="text-muted-foreground/60 ml-1">({turn})</span>
+          <div className="text-center py-2 animate-fade-in" key={`turn-${turn}`}>
+            <span className="text-lg font-black tracking-wider text-foreground" style={{ fontFamily: "'Georgia', serif" }}>
+              {2002 + Math.floor(turn / 4)}
+            </span>
+            <span className="text-base font-bold text-primary ml-1.5 tracking-widest" style={{ fontFamily: "'Georgia', serif" }}>
+              Q{(turn % 4) + 1}
+            </span>
+            <span className="text-xs text-muted-foreground/40 ml-1.5 font-mono">({turn})</span>
           </div>
 
           <div className="flex-1 flex flex-col items-center justify-center px-4 pb-2">
