@@ -24,12 +24,13 @@ interface PowerBarsProps {
   activeEffects?: PowerEffect[];
   money?: number;
   lastMoneyChange?: number | null;
+  projectedMoney?: number | null;
   onBribe?: (faction: PowerType) => void;
   canBribe?: (faction: PowerType) => boolean;
   getBribeCost?: (faction: PowerType) => number;
 }
 
-export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChange, onBribe, canBribe, getBribeCost }: PowerBarsProps) {
+export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChange, projectedMoney, onBribe, canBribe, getBribeCost }: PowerBarsProps) {
   const { t, lang } = useLanguage();
   const powers: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
   const [showBribe, setShowBribe] = useState<PowerType | null>(null);
@@ -163,8 +164,23 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
       {/* Money display */}
       <div className="flex items-center justify-center gap-2 mb-2">
         <span className="text-2xl">💰</span>
-        <span className="text-xl font-black text-foreground">{money}B</span>
-        {lastMoneyChange !== null && lastMoneyChange !== undefined && (
+        <span className={cn(
+          "text-xl font-black transition-colors duration-300",
+          projectedMoney != null
+            ? (money + projectedMoney <= 0 ? 'text-red-500' : 'text-foreground')
+            : 'text-foreground'
+        )}>
+          {money}B
+        </span>
+        {projectedMoney != null && (
+          <span className={cn(
+            "text-sm font-bold italic transition-opacity",
+            projectedMoney > 0 ? 'text-emerald-400' : 'text-red-400'
+          )}>
+            → {money + projectedMoney}B ({projectedMoney > 0 ? '+' : ''}{projectedMoney})
+          </span>
+        )}
+        {projectedMoney == null && lastMoneyChange !== null && lastMoneyChange !== undefined && (
           <span className={cn(
             "text-sm font-bold animate-bounce",
             lastMoneyChange > 0 ? 'text-emerald-500' : 'text-red-500'

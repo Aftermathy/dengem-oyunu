@@ -8,9 +8,10 @@ interface SwipeCardProps {
   card: EventCard;
   onSwipe: (direction: 'left' | 'right') => void;
   onHoverEffects: (effects: PowerEffect[]) => void;
+  onHoverMoney: (amount: number | null) => void;
 }
 
-export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
+export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: SwipeCardProps) {
   const { t } = useLanguage();
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -24,12 +25,15 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
   useEffect(() => {
     if (direction === 'right') {
       onHoverEffects(card.rightEffects);
+      onHoverMoney(card.rightMoney || null);
     } else if (direction === 'left') {
       onHoverEffects(card.leftEffects);
+      onHoverMoney(card.leftMoney || null);
     } else {
       onHoverEffects([]);
+      onHoverMoney(null);
     }
-  }, [direction, card, onHoverEffects]);
+  }, [direction, card, onHoverEffects, onHoverMoney]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDragging(true);
@@ -59,6 +63,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
       setDragX(0);
     }
     onHoverEffects([]);
+    onHoverMoney(null);
   };
 
   const rotation = dragX * 0.1;
@@ -105,8 +110,8 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
       >
         ← {t('game.reject')}
         {getMoneyPreview('left') !== null && (
-          <span className="ml-1 text-xs">
-            ({getMoneyPreview('left')! > 0 ? '+' : ''}{getMoneyPreview('left')}M)
+        <span className="ml-1 text-xs">
+            ({getMoneyPreview('left')! > 0 ? '+' : ''}{getMoneyPreview('left')}B)
           </span>
         )}
       </div>
@@ -117,7 +122,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
         {t('game.accept')} →
         {getMoneyPreview('right') !== null && (
           <span className="ml-1 text-xs">
-            ({getMoneyPreview('right')! > 0 ? '+' : ''}{getMoneyPreview('right')}M)
+            ({getMoneyPreview('right')! > 0 ? '+' : ''}{getMoneyPreview('right')}B)
           </span>
         )}
       </div>
@@ -158,7 +163,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
           ← {card.leftChoice}
           {leftMoney !== 0 && (
             <div className={cn("text-xs font-bold mt-0.5", leftMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
-              {leftMoney > 0 ? '+' : ''}{leftMoney}M 💰
+              {leftMoney > 0 ? '+' : ''}{leftMoney}B 💰
             </div>
           )}
         </div>
@@ -169,7 +174,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
           {card.rightChoice} →
           {rightMoney !== 0 && (
             <div className={cn("text-xs font-bold mt-0.5", rightMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
-              {rightMoney > 0 ? '+' : ''}{rightMoney}M 💰
+              {rightMoney > 0 ? '+' : ''}{rightMoney}B 💰
             </div>
           )}
         </div>

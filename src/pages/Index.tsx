@@ -25,9 +25,14 @@ const Index = () => {
     alliance, canAlliance, getAllianceCost,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
+  const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
 
   const handleHoverEffects = useCallback((effects: PowerEffect[]) => {
     setActiveEffects(effects);
+  }, []);
+
+  const handleHoverMoney = useCallback((amount: number | null) => {
+    setProjectedMoney(amount);
   }, []);
 
   return (
@@ -48,6 +53,7 @@ const Index = () => {
               activeEffects={activeEffects}
               money={money}
               lastMoneyChange={lastMoneyChange}
+              projectedMoney={projectedMoney}
               onBribe={bribe}
               canBribe={canBribe}
               getBribeCost={getBribeCost}
@@ -91,6 +97,7 @@ const Index = () => {
               card={currentCard}
               onSwipe={swipe}
               onHoverEffects={handleHoverEffects}
+              onHoverMoney={handleHoverMoney}
             />
           </div>
         </>
