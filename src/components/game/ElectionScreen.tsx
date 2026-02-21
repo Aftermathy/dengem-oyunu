@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { ElectionConfig, ElectionResult, ElectionCard, ElectionSpecialPower, CardRarity } from '@/types/election';
 import { Language } from '@/contexts/LanguageContext';
 import defeatElectionImg from '@/assets/defeat-election.jpg';
+import victoryBalconyImg from '@/assets/victory-balcony.jpg';
 import { playClickSound } from '@/hooks/useSound';
 
 interface ElectionScreenProps {
@@ -187,7 +188,7 @@ function AnimatedVote({ value, color, label }: { value: number; color: string; l
 export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang, onComplete, onRestart, onMainMenu }: ElectionScreenProps) => {
   const [playerVote, setPlayerVote] = useState(() => config.startingPlayerVote);
   const [round, setRound] = useState(1);
-  const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result'>('intro');
+  const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result' | 'victory'>('intro');
   const [budget, setBudget] = useState(money);
   const [laundered, setLaundered] = useState(launderedMoney);
   const [cards, setCards] = useState<DrawnCard[]>([]);
@@ -209,15 +210,21 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
     oppMoving: 'Opposition is making a move...', budget: 'Budget', laundered: 'Laundered',
     specialPowers: '🔮 Special Powers (Laundered)', round: 'Round',
     electionWon: 'ELECTION WON!', electionLost: 'ELECTION LOST!',
-    continue: 'Continue', skip: 'Skip (+1%)', vote: 'vote',
-    reroll: 'Reroll', rerollCost: `${REROLL_COST}B`,
+    continue: '4 More Years!', skip: 'Skip (+1%)', vote: 'vote',
+    reroll: '🎲 Reroll', rerollCost: `${REROLL_COST}B`,
+    balconyTitle: 'CONGRATULATIONS!',
+    balconySubtitle: 'The people have chosen you... again!',
+    balconyContinue: '4 More Years! 🎉',
   } : {
     opposition: 'Muhalefet', you: 'Sen', pickMove: 'Hamle seç:',
     oppMoving: 'Muhalefet hamle yapıyor...', budget: 'Bütçe', laundered: 'Aklanmış',
     specialPowers: '🔮 Özel Güçler (Aklanmış Para)', round: 'Tur',
     electionWon: 'SEÇİM KAZANILDI!', electionLost: 'SEÇİM KAYBEDİLDİ!',
-    continue: 'Devam Et', skip: 'Pas (+1%)', vote: 'oy',
-    reroll: 'Yenile', rerollCost: `${REROLL_COST}B`,
+    continue: '4 Sene Daha!', skip: 'Pas (+1%)', vote: 'oy',
+    reroll: '🎲 Yenile', rerollCost: `${REROLL_COST}B`,
+    balconyTitle: 'TEBRİKLER!',
+    balconySubtitle: 'Millet yine seni seçti... yine de!',
+    balconyContinue: '4 Sene Daha Devam! 🎉',
   }, [lang]);
 
   // Intro timer
@@ -298,6 +305,13 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
     return () => { clearTimeout(timer); clearTimeout(flashTimer); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, round]);
+
+  // Auto-transition from result to victory balcony if won
+  useEffect(() => {
+    if (phase !== 'result' || !won) return;
+    const timer = setTimeout(() => setPhase('victory'), 3000);
+    return () => clearTimeout(timer);
+  }, [phase, won]);
 
   const handleFinish = () => {
     onComplete({
@@ -422,14 +436,15 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
             {phase === 'player' && (
               <>
                 <div className="flex justify-between items-center mb-2 px-1">
-                  <p className="text-orange-200 text-sm font-bold">{labels.pickMove}</p>
-                  {/* Reroll button */}
+                  <p className="text-orange-200 text-base font-bold">{labels.pickMove}</p>
+                  {/* Reroll button - BIGGER */}
                   <button
                     disabled={rerollsLeft <= 0 || budget < REROLL_COST}
                     onClick={handleReroll}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all active:scale-95 disabled:opacity-30 border border-yellow-600/40 bg-yellow-900/60 text-yellow-300 hover:bg-yellow-800/70"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-black transition-all active:scale-95 disabled:opacity-30 border-2 border-yellow-500/60 bg-yellow-900/70 text-yellow-200 hover:bg-yellow-800/80 hover:border-yellow-400/80"
+                    style={{ boxShadow: '0 0 12px rgba(234,179,8,0.2)' }}
                   >
-                    🎲 {labels.reroll} ({rerollsLeft}) <span className="text-yellow-500">-{labels.rerollCost}</span>
+                    {labels.reroll} ({rerollsLeft}) <span className="text-yellow-400 font-black">-{labels.rerollCost}</span>
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -442,21 +457,21 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                         key={card.id}
                         disabled={budget < card.cost || selectedCardId !== null}
                         onClick={() => playCard(card)}
-                        className={`relative border-2 rounded-xl p-3 text-left disabled:opacity-30 hover:brightness-110 active:scale-95 transition-all election-card-enter overflow-hidden ${style.border} ${style.bg} ${style.glow} ${
+                        className={`relative border-2 rounded-xl p-3.5 text-left disabled:opacity-30 hover:brightness-110 active:scale-95 transition-all election-card-enter overflow-hidden ${style.border} ${style.bg} ${style.glow} ${
                           selectedCardId === card.id ? 'election-card-select' : ''
                         } ${isLegendary ? 'legendary-card-flame' : ''}`}
                         style={{ animationDelay: `${i * 0.1}s` }}
                       >
                         {/* Rarity stars */}
-                        <div className="flex justify-between items-center mb-1">
-                          <span className={`text-[10px] font-black ${style.labelColor}`}>{style.label}</span>
-                          <span className="text-yellow-400 text-sm font-black">{card.cost}B</span>
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className={`text-xs font-black ${style.labelColor}`}>{style.label}</span>
+                          <span className="text-yellow-400 text-base font-black">{card.cost}B</span>
                         </div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-2xl">{card.emoji}</span>
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-3xl">{card.emoji}</span>
                           <p className="text-white text-sm font-bold leading-tight flex-1">{card.text}</p>
                         </div>
-                        <p className="text-green-400 text-sm font-black">+{card.adjustedEffect}%</p>
+                        <p className="text-green-400 text-base font-black">+{card.adjustedEffect}%</p>
                       </button>
                     );
                   })}
@@ -464,18 +479,18 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                   <button
                     onClick={skipTurn}
                     disabled={selectedCardId !== null}
-                    className="relative border-2 border-gray-600/40 bg-gray-900/60 rounded-xl p-3 text-left hover:bg-gray-800/70 active:scale-95 transition-all election-card-enter disabled:opacity-30"
+                    className="relative border-2 border-gray-600/40 bg-gray-900/60 rounded-xl p-3.5 text-left hover:bg-gray-800/70 active:scale-95 transition-all election-card-enter disabled:opacity-30"
                     style={{ animationDelay: '0.3s' }}
                   >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-[10px] font-black text-gray-500">⏭️</span>
-                      <span className="text-gray-400 text-sm font-black">{lang === 'en' ? 'FREE' : 'ÜCRETSİZ'}</span>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-xs font-black text-gray-500">⏭️</span>
+                      <span className="text-gray-400 text-base font-black">{lang === 'en' ? 'FREE' : 'ÜCRETSİZ'}</span>
                     </div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-2xl">⏭️</span>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-3xl">⏭️</span>
                       <p className="text-gray-300 text-sm font-bold leading-tight flex-1">{labels.skip}</p>
                     </div>
-                    <p className="text-green-400/70 text-sm font-black">+1%</p>
+                    <p className="text-green-400/70 text-base font-black">+1%</p>
                   </button>
                 </div>
               </>
@@ -504,7 +519,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           {/* Special powers */}
           {phase === 'player' && config.specialPowers.length > 0 && (
             <div className="px-3 pb-3 relative z-10">
-              <p className="text-purple-300 text-[10px] mb-1.5 text-center font-bold uppercase tracking-wider">
+              <p className="text-purple-300 text-xs mb-1.5 text-center font-bold uppercase tracking-wider">
                 {labels.specialPowers}
               </p>
               <div className="flex gap-1.5 overflow-x-auto pb-1">
@@ -516,18 +531,18 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                       key={power.id}
                       disabled={cantAfford || used}
                       onClick={() => useSpecialPower(power)}
-                      className={`flex-shrink-0 border rounded-lg p-2 text-left transition-all active:scale-95 min-w-[115px] ${
+                      className={`flex-shrink-0 border rounded-lg p-2.5 text-left transition-all active:scale-95 min-w-[120px] ${
                         used
                           ? 'bg-gray-900/80 border-gray-700/30 opacity-40'
                           : 'bg-purple-950/80 border-purple-600/40 hover:bg-purple-900/80 disabled:opacity-30'
                       }`}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-sm">{power.emoji}</span>
-                        <span className="text-purple-300 text-[10px] font-bold">{power.launderedCost}B</span>
+                        <span className="text-base">{power.emoji}</span>
+                        <span className="text-purple-300 text-xs font-bold">{power.launderedCost}B</span>
                       </div>
-                      <p className="text-purple-100 text-[10px] mt-0.5 leading-tight font-bold">{power.name}</p>
-                      <p className="text-green-400 text-[10px] font-bold">+{power.voterEffect}%</p>
+                      <p className="text-purple-100 text-xs mt-0.5 leading-tight font-bold">{power.name}</p>
+                      <p className="text-green-400 text-xs font-black">+{power.voterEffect}%</p>
                       {used && (
                         <p className="text-gray-400 text-[9px]">{lang === 'en' ? 'Used' : 'Kullanıldı'}</p>
                       )}
@@ -540,7 +555,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
         </>
       )}
 
-      {/* RESULT */}
+      {/* RESULT (brief before victory transition) */}
       {phase === 'result' && (
         <div className={`flex-1 flex flex-col items-center justify-center px-6 animate-scale-in relative z-10 ${!won ? 'election-shake' : ''}`}>
           {won && <ConfettiOverlay />}
@@ -555,18 +570,6 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                 <AnimatedVote value={playerVote} color="#4ade80" label={labels.you} />
                 <AnimatedVote value={100 - playerVote} color="#f87171" label={labels.opposition} />
               </div>
-              <button
-                onClick={handleFinish}
-                className="mt-4 px-10 py-3.5 font-black rounded-xl text-lg active:scale-95 transition-all border-2"
-                style={{
-                  background: 'linear-gradient(135deg, #15803d, #22c55e)',
-                  borderColor: '#4ade80',
-                  color: 'white',
-                  boxShadow: '0 4px 25px rgba(0,0,0,0.5)',
-                }}
-              >
-                {labels.continue}
-              </button>
             </>
           ) : (
             <>
@@ -611,6 +614,56 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* VICTORY BALCONY SCREEN */}
+      {phase === 'victory' && (
+        <div className="flex-1 flex flex-col items-center justify-end relative z-10 animate-fade-in">
+          <ConfettiOverlay />
+          
+          {/* Balcony background image */}
+          <div className="absolute inset-0 z-0">
+            <img src={victoryBalconyImg} alt="Victory balcony" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+          </div>
+
+          <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto">
+            <span className="text-7xl animate-bounce">🏆</span>
+            
+            <h2 className="text-4xl font-black text-yellow-400 drop-shadow-lg"
+              style={{ textShadow: '0 0 30px rgba(234,179,8,0.5)' }}>
+              {labels.balconyTitle}
+            </h2>
+            
+            <p className="text-white/90 text-lg italic leading-relaxed drop-shadow-md">
+              "{labels.balconySubtitle}"
+            </p>
+
+            <div className="flex gap-8 my-4">
+              <div className="text-center">
+                <div className="text-3xl font-black text-green-400">{displayPlayerVote}%</div>
+                <div className="text-xs text-white/60">{labels.you}</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-black text-red-400">{displayOpponentVote}%</div>
+                <div className="text-xs text-white/60">{labels.opposition}</div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => { playClickSound(); handleFinish(); }}
+              className="w-full py-4 font-black rounded-2xl text-xl active:scale-95 transition-all border-2 animate-pulse"
+              style={{
+                background: 'linear-gradient(135deg, #15803d, #22c55e, #4ade80)',
+                borderColor: '#86efac',
+                color: 'white',
+                boxShadow: '0 0 30px rgba(34,197,94,0.4), 0 4px 25px rgba(0,0,0,0.5)',
+              }}
+            >
+              {labels.balconyContinue}
+            </button>
+          </div>
         </div>
       )}
     </div>
