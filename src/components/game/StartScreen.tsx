@@ -15,25 +15,25 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       </div>
 
       <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-foreground">
-        TAHT
+        I MUST STAY  
       </h1>
       <p className="text-muted-foreground text-sm sm:text-base max-w-xs leading-relaxed">
         Gücü dengede tut, tahtını koru.<br />
         <span className="text-xs opacity-70">Bir karar seni zirveye taşır, bir karar uçuruma sürükler.</span>
       </p>
 
-      {highScore > 0 && (
-        <div className="bg-muted/50 border border-border rounded-xl px-4 py-2">
+      {highScore > 0 &&
+      <div className="bg-muted/50 border border-border rounded-xl px-4 py-2">
           <span className="text-xs text-muted-foreground">En Yüksek Skor: </span>
           <span className="font-bold text-primary text-lg">{highScore} tur</span>
         </div>
-      )}
+      }
 
       <Button
         size="lg"
         onClick={onStart}
-        className="text-lg px-10 py-6 font-bold mt-2 shadow-lg hover:shadow-xl transition-shadow"
-      >
+        className="text-lg px-10 py-6 font-bold mt-2 shadow-lg hover:shadow-xl transition-shadow">
+
         ⚔️ Oyuna Başla
       </Button>
 
@@ -44,6 +44,6 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         <span title="Tarikat">📿</span>
         <span title="Ordu">⚔️</span>
       </div>
-    </div>
-  );
+    </div>);
+
 }
