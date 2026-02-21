@@ -3,6 +3,7 @@ import { useGame } from '@/hooks/useGame';
 import { PowerBars } from '@/components/game/PowerBars';
 import { SwipeCard } from '@/components/game/SwipeCard';
 import { LaunderBar } from '@/components/game/LaunderBar';
+import { LaunderShop } from '@/components/game/LaunderShop';
 import { GameOverScreen } from '@/components/game/GameOverScreen';
 import { StartScreen } from '@/components/game/StartScreen';
 import { BribeTutorial } from '@/components/game/BribeTutorial';
@@ -18,7 +19,10 @@ const Index = () => {
     gameOverInfo, lastMoneyChange, startGame, swipe,
     bribe, canBribe, getBribeCost, tutorialFaction,
     completeTutorialBribe, skipTutorial, goToMenu,
-    totalLaundered, canLaunder, launder,
+    totalLaundered, canLaunder, launder, lastShopResult,
+    propaganda, canPropaganda, getPropagandaCost,
+    invest, canInvest, getInvestmentCost,
+    alliance, canAlliance, getAllianceCost,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
 
@@ -65,6 +69,20 @@ const Index = () => {
             money={money}
             onLaunder={launder}
             canLaunder={canLaunder}
+          />
+
+          <LaunderShop
+            totalLaundered={totalLaundered}
+            lastShopResult={lastShopResult}
+            onPropaganda={propaganda}
+            canPropaganda={canPropaganda}
+            propagandaCost={getPropagandaCost()}
+            onInvest={invest}
+            canInvest={canInvest}
+            investCost={getInvestmentCost()}
+            onAlliance={alliance}
+            canAlliance={canAlliance}
+            allianceCost={getAllianceCost()}
           />
 
           <div className="flex-1 flex items-center justify-center px-4 pb-2">

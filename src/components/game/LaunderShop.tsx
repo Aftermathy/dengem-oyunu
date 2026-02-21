@@ -1,0 +1,186 @@
+import { useState } from 'react';
+import { PowerType } from '@/types/game';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/lib/utils';
+
+import factionHalk from '@/assets/faction-halk.png';
+import factionYatirimcilar from '@/assets/faction-yatirimcilar.png';
+import factionMafya from '@/assets/faction-mafya.png';
+import factionTarikat from '@/assets/faction-tarikat.png';
+import factionOrdu from '@/assets/faction-ordu.png';
+
+const FACTION_IMAGES: Record<PowerType, string> = {
+  halk: factionHalk,
+  yatirimcilar: factionYatirimcilar,
+  mafya: factionMafya,
+  tarikat: factionTarikat,
+  ordu: factionOrdu,
+};
+
+const ALL_FACTIONS: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
+
+interface LaunderShopProps {
+  totalLaundered: number;
+  lastShopResult: string | null;
+  onPropaganda: () => void;
+  canPropaganda: boolean;
+  propagandaCost: number;
+  onInvest: () => void;
+  canInvest: boolean;
+  investCost: number;
+  onAlliance: (f1: PowerType, f2: PowerType) => void;
+  canAlliance: boolean;
+  allianceCost: number;
+}
+
+export function LaunderShop({
+  totalLaundered,
+  lastShopResult,
+  onPropaganda, canPropaganda, propagandaCost,
+  onInvest, canInvest, investCost,
+  onAlliance, canAlliance, allianceCost,
+}: LaunderShopProps) {
+  const { t, lang } = useLanguage();
+  const [showAlliance, setShowAlliance] = useState(false);
+  const [alliancePick, setAlliancePick] = useState<PowerType[]>([]);
+
+  if (totalLaundered <= 0) return null;
+
+  const handleAlliancePick = (f: PowerType) => {
+    if (alliancePick.includes(f)) {
+      setAlliancePick(alliancePick.filter(x => x !== f));
+    } else if (alliancePick.length < 2) {
+      const next = [...alliancePick, f];
+      if (next.length === 2) {
+        onAlliance(next[0], next[1]);
+        setAlliancePick([]);
+        setShowAlliance(false);
+      } else {
+        setAlliancePick(next);
+      }
+    }
+  };
+
+  return (
+    <div className="w-full max-w-md mx-auto px-4 mt-1">
+      <div className="text-[10px] text-muted-foreground text-center mb-1.5">
+        💸 {lang === 'tr' ? 'Aklanmış para' : 'Laundered funds'}: <span className="font-bold text-emerald-400">{totalLaundered}B</span>
+      </div>
+
+      <div className="flex gap-1.5">
+        {/* Propaganda */}
+        <button
+          onClick={onPropaganda}
+          disabled={!canPropaganda}
+          className={cn(
+            "flex-1 rounded-lg border px-2 py-1.5 text-center transition-all",
+            canPropaganda
+              ? "border-emerald-500/30 bg-emerald-950/30 hover:bg-emerald-900/40 cursor-pointer"
+              : "border-border/30 bg-muted/20 cursor-not-allowed opacity-50"
+          )}
+        >
+          <div className="text-sm">📢</div>
+          <div className="text-[9px] font-bold text-foreground">
+            {lang === 'tr' ? 'Propaganda' : 'Propaganda'}
+          </div>
+          <div className="text-[8px] text-muted-foreground">
+            {lang === 'tr' ? 'Halk +10 rep' : 'Public +10 rep'}
+          </div>
+          <div className="text-[9px] font-bold text-emerald-400 mt-0.5">-{propagandaCost}B</div>
+        </button>
+
+        {/* Kara Para Yatırımı */}
+        <button
+          onClick={onInvest}
+          disabled={!canInvest}
+          className={cn(
+            "flex-1 rounded-lg border px-2 py-1.5 text-center transition-all",
+            canInvest
+              ? "border-amber-500/30 bg-amber-950/30 hover:bg-amber-900/40 cursor-pointer"
+              : "border-border/30 bg-muted/20 cursor-not-allowed opacity-50"
+          )}
+        >
+          <div className="text-sm">🎰</div>
+          <div className="text-[9px] font-bold text-foreground">
+            {lang === 'tr' ? 'Yatırım' : 'Invest'}
+          </div>
+          <div className="text-[8px] text-muted-foreground">
+            {lang === 'tr' ? '%50 → 2x veya 0' : '50% → 2x or 0'}
+          </div>
+          <div className="text-[9px] font-bold text-amber-400 mt-0.5">-{investCost}B</div>
+          {lastShopResult === 'win' && (
+            <div className="text-[9px] font-bold text-emerald-400 animate-bounce">+{investCost * 2}B! 🎉</div>
+          )}
+          {lastShopResult === 'lose' && (
+            <div className="text-[9px] font-bold text-red-400 animate-bounce">💀</div>
+          )}
+        </button>
+
+        {/* Gizli İttifak */}
+        <button
+          onClick={() => setShowAlliance(true)}
+          disabled={!canAlliance}
+          className={cn(
+            "flex-1 rounded-lg border px-2 py-1.5 text-center transition-all",
+            canAlliance
+              ? "border-blue-500/30 bg-blue-950/30 hover:bg-blue-900/40 cursor-pointer"
+              : "border-border/30 bg-muted/20 cursor-not-allowed opacity-50"
+          )}
+        >
+          <div className="text-sm">🤝</div>
+          <div className="text-[9px] font-bold text-foreground">
+            {lang === 'tr' ? 'İttifak' : 'Alliance'}
+          </div>
+          <div className="text-[8px] text-muted-foreground">
+            {lang === 'tr' ? '2 zümre +8 rep' : '2 factions +8 rep'}
+          </div>
+          <div className="text-[9px] font-bold text-blue-400 mt-0.5">-{allianceCost}B</div>
+        </button>
+      </div>
+
+      {/* Alliance picker modal */}
+      {showAlliance && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-in fade-in duration-200">
+          <div className="bg-card border border-border rounded-2xl p-5 mx-4 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200 text-center">
+            <div className="text-2xl mb-2">🤝</div>
+            <h3 className="text-lg font-bold text-foreground mb-1">
+              {lang === 'tr' ? '2 zümre seç' : 'Pick 2 factions'}
+            </h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              {lang === 'tr'
+                ? `Her biri +8 rep alır. (${alliancePick.length}/2 seçildi)`
+                : `Each gets +8 rep. (${alliancePick.length}/2 selected)`}
+            </p>
+
+            <div className="grid grid-cols-3 gap-3">
+              {ALL_FACTIONS.map((faction) => (
+                <button
+                  key={faction}
+                  onClick={() => handleAlliancePick(faction)}
+                  className={cn(
+                    "flex flex-col items-center gap-1 p-2 rounded-xl border transition-all cursor-pointer",
+                    alliancePick.includes(faction)
+                      ? "border-blue-500 bg-blue-500/20 ring-2 ring-blue-500"
+                      : "border-border/50 bg-background hover:bg-primary/10 hover:border-primary"
+                  )}
+                >
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-border/50">
+                    <img src={FACTION_IMAGES[faction]} alt={t(`power.${faction}`)} className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-[9px] font-bold text-foreground">{t(`power.${faction}`)}</span>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => { setShowAlliance(false); setAlliancePick([]); }}
+              className="mt-4 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {lang === 'tr' ? 'Vazgeç' : 'Cancel'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
