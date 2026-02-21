@@ -70,7 +70,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
   if (exiting) {
     return (
       <div
-        className="relative w-72 sm:w-80 transition-all duration-300 ease-out"
+        className="relative w-72 sm:w-80 md:w-96 transition-all duration-300 ease-out"
         style={{
           transform: `translateX(${exiting === 'left' ? -500 : 500}px) rotate(${exiting === 'left' ? -30 : 30}deg)`,
           opacity: 0,

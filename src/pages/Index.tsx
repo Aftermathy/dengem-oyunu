@@ -48,7 +48,7 @@ const Index = () => {
             />
           </div>
 
-          <div className="text-center py-2 animate-fade-in" key={`turn-${turn}`}>
+          <div className="flex items-center justify-center py-2 animate-fade-in" key={`turn-${turn}`}>
             <span className="text-lg font-black tracking-wider text-foreground" style={{ fontFamily: "'Georgia', serif" }}>
               {2002 + Math.floor(turn / 4)}
             </span>
@@ -58,7 +58,7 @@ const Index = () => {
             <span className="text-xs text-muted-foreground/40 ml-1.5 font-mono">({turn})</span>
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-2">
+          <div className="flex-1 flex items-center justify-center px-4 pb-2">
             <SwipeCard
               key={currentCard.id + '-' + turn}
               card={currentCard}
