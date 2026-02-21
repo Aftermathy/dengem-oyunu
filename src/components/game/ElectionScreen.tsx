@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { ElectionConfig, ElectionResult, ElectionCard, ElectionSpecialPower } from '@/types/election';
 import { Language } from '@/contexts/LanguageContext';
 import defeatElectionImg from '@/assets/defeat-election.jpg';
+import { playClickSound } from '@/hooks/useSound';
 
 interface ElectionScreenProps {
   config: ElectionConfig;
@@ -488,17 +489,17 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                 <AnimatedVote value={100 - playerVote} color="#f87171" label={labels.opposition} />
               </div>
 
-              <div className="flex gap-3 mt-4 w-full max-w-xs">
+              <div className="flex gap-3 mt-4 w-full max-w-xs relative z-50">
                 <button
-                  onClick={onRestart}
-                  className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white"
+                  onClick={() => { playClickSound(); onRestart(); }}
+                  className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white cursor-pointer"
                   style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}
                 >
                   {lang === 'en' ? '🔄 Play Again' : '🔄 Yeniden Oyna'}
                 </button>
                 <button
-                  onClick={onMainMenu}
-                  className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white/80"
+                  onClick={() => { playClickSound(); onMainMenu(); }}
+                  className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white/80 cursor-pointer"
                   style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)' }}
                 >
                   {lang === 'en' ? '🏠 Main Menu' : '🏠 Ana Menü'}
