@@ -236,7 +236,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
 
               {/* Power bar */}
               <div
-                className="w-full h-16 sm:h-20 bg-muted/50 rounded-full relative overflow-hidden border border-border/50 select-none"
+                className="w-full h-16 sm:h-20 bg-muted/50 rounded-full relative overflow-hidden border-2 border-black select-none"
                 onMouseEnter={() => setShowPercent(p)}
                 onMouseLeave={() => setShowPercent(null)}
                 onTouchStart={() => {
