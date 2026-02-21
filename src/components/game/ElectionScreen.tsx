@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { ElectionConfig, ElectionResult, ElectionCard, ElectionSpecialPower } from '@/types/election';
 import { Language } from '@/contexts/LanguageContext';
+import defeatElectionImg from '@/assets/defeat-election.jpg';
 
 interface ElectionScreenProps {
   config: ElectionConfig;
@@ -9,6 +10,8 @@ interface ElectionScreenProps {
   halkPower: number;
   lang: Language;
   onComplete: (result: ElectionResult) => void;
+  onRestart: () => void;
+  onMainMenu: () => void;
 }
 
 function shuffleAndDraw(cards: ElectionCard[], count: number, exclude: number[] = []): ElectionCard[] {
@@ -112,7 +115,7 @@ function AnimatedVote({ value, color, label }: { value: number; color: string; l
   );
 }
 
-export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang, onComplete }: ElectionScreenProps) => {
+export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang, onComplete, onRestart, onMainMenu }: ElectionScreenProps) => {
   const [playerVote, setPlayerVote] = useState(() => Math.min(60, 35 + Math.floor(halkPower * 0.25)));
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result'>('intro');
@@ -432,36 +435,75 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
       {/* RESULT */}
       {phase === 'result' && (
-        <div className="flex-1 flex flex-col items-center justify-center px-6 animate-scale-in relative z-10">
+        <div className={`flex-1 flex flex-col items-center justify-center px-6 animate-scale-in relative z-10 ${!won ? 'election-shake' : ''}`}>
           {won && <ConfettiOverlay />}
 
-          <span className="text-8xl mb-6">{won ? '🎉' : '💀'}</span>
-          <h2
-            className={`text-3xl font-black mb-3 text-center ${won ? 'title-glow-pulse' : 'election-glitch'}`}
-            style={{
-              color: won ? '#4ade80' : '#f87171',
-            }}
-          >
-            {won ? labels.electionWon : labels.electionLost}
-          </h2>
-          <div className="flex gap-10 my-6">
-            <AnimatedVote value={playerVote} color="#4ade80" label={labels.you} />
-            <AnimatedVote value={100 - playerVote} color="#f87171" label={labels.opposition} />
-          </div>
-          <button
-            onClick={handleFinish}
-            className="mt-4 px-10 py-3.5 font-black rounded-xl text-lg active:scale-95 transition-all border-2"
-            style={{
-              background: won
-                ? 'linear-gradient(135deg, #15803d, #22c55e)'
-                : 'linear-gradient(135deg, #991b1b, #dc2626)',
-              borderColor: won ? '#4ade80' : '#f87171',
-              color: 'white',
-              boxShadow: '0 4px 25px rgba(0,0,0,0.5)',
-            }}
-          >
-            {won ? labels.continue : labels.electionLost}
-          </button>
+          {won ? (
+            <>
+              <span className="text-8xl mb-6">🎉</span>
+              <h2 className="text-3xl font-black mb-3 text-center title-glow-pulse" style={{ color: '#4ade80' }}>
+                {labels.electionWon}
+              </h2>
+              <div className="flex gap-10 my-6">
+                <AnimatedVote value={playerVote} color="#4ade80" label={labels.you} />
+                <AnimatedVote value={100 - playerVote} color="#f87171" label={labels.opposition} />
+              </div>
+              <button
+                onClick={handleFinish}
+                className="mt-4 px-10 py-3.5 font-black rounded-xl text-lg active:scale-95 transition-all border-2"
+                style={{
+                  background: 'linear-gradient(135deg, #15803d, #22c55e)',
+                  borderColor: '#4ade80',
+                  color: 'white',
+                  boxShadow: '0 4px 25px rgba(0,0,0,0.5)',
+                }}
+              >
+                {labels.continue}
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="w-full max-w-xs rounded-xl overflow-hidden border-2 border-red-800/60 shadow-2xl mb-4">
+                <img src={defeatElectionImg} alt="Election defeat" className="w-full h-48 object-cover" />
+              </div>
+
+              <h2 className="text-2xl font-black mb-2 text-center election-glitch" style={{ color: '#f87171' }}>
+                {labels.electionLost}
+              </h2>
+
+              <p className="text-orange-200/90 text-center text-sm px-4 mb-2 italic leading-relaxed max-w-xs"
+                style={{ textShadow: '0 0 10px rgba(255,100,0,0.3)' }}>
+                {lang === 'en'
+                  ? '"He who came with the ballot box, left with the ballot box. Democracy is a beautiful thing... when it works against you."'
+                  : '"Sandıkla gelen, sandıkla gitti. Demokrasi ne güzel şey... sana karşı işleyince."'}
+              </p>
+              <p className="text-red-400/70 text-xs mb-4">
+                {lang === 'en' ? '— The People have spoken.' : '— Millet iradesini gösterdi.'}
+              </p>
+
+              <div className="flex gap-10 my-3">
+                <AnimatedVote value={playerVote} color="#4ade80" label={labels.you} />
+                <AnimatedVote value={100 - playerVote} color="#f87171" label={labels.opposition} />
+              </div>
+
+              <div className="flex gap-3 mt-4 w-full max-w-xs">
+                <button
+                  onClick={onRestart}
+                  className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white"
+                  style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}
+                >
+                  {lang === 'en' ? '🔄 Play Again' : '🔄 Yeniden Oyna'}
+                </button>
+                <button
+                  onClick={onMainMenu}
+                  className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white/80"
+                  style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)' }}
+                >
+                  {lang === 'en' ? '🏠 Main Menu' : '🏠 Ana Menü'}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
