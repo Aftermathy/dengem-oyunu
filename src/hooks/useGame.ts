@@ -6,6 +6,8 @@ import { eventCardsEn } from '@/data/cards-en';
 import { gameOverScenarios } from '@/data/gameOverScenarios';
 import { gameOverScenariosEn } from '@/data/gameOverScenarios-en';
 import { Language } from '@/contexts/LanguageContext';
+import { ELECTION_TRIGGER_MAP } from '@/data/electionData';
+import { ElectionResult } from '@/types/election';
 
 const INITIAL_POWER: PowerState = {
   halk: 50,
@@ -26,7 +28,7 @@ function shuffleArray<T>(arr: T[]): T[] {
   return a;
 }
 
-export type GamePhase = 'start' | 'playing' | 'gameover';
+export type GamePhase = 'start' | 'playing' | 'gameover' | 'election';
 
 function getCards(lang: Language) {
   return lang === 'en' ? eventCardsEn : eventCards;
@@ -65,6 +67,8 @@ export function useGame(lang: Language) {
   const [investmentCount, setInvestmentCount] = useState(0);
   const [allianceCount, setAllianceCount] = useState(0);
   const [lastShopResult, setLastShopResult] = useState<string | null>(null);
+  const [completedElections, setCompletedElections] = useState<number[]>([]);
+  const [currentElectionIndex, setCurrentElectionIndex] = useState<number | null>(null);
 
   const currentCard = deck[cardIndex] || null;
 
@@ -90,6 +94,8 @@ export function useGame(lang: Language) {
     setInvestmentCount(0);
     setAllianceCount(0);
     setLastShopResult(null);
+    setCompletedElections([]);
+    setCurrentElectionIndex(null);
     setPhase('playing');
   }, [lang]);
 
@@ -196,6 +202,15 @@ export function useGame(lang: Language) {
       nextIndex = 0;
     }
 
+    // Check election trigger
+    const electionIndex = ELECTION_TRIGGER_MAP[newTurn];
+    if (electionIndex !== undefined && !completedElections.includes(electionIndex)) {
+      setCurrentElectionIndex(electionIndex);
+      setPendingAdvance({ newMoney, nextIndex });
+      setPhase('election');
+      return;
+    }
+
     // Check tutorial trigger
     if (!tutorialShown) {
       for (const key of Object.keys(newPower) as PowerType[]) {
@@ -208,7 +223,7 @@ export function useGame(lang: Language) {
     }
 
     setCardIndex(nextIndex);
-  }, [currentCard, phase, power, money, turn, cardIndex, deck, highScore, checkGameOver, lang, tutorialShown]);
+  }, [currentCard, phase, power, money, turn, cardIndex, deck, highScore, checkGameOver, lang, tutorialShown, completedElections]);
 
   const completeTutorialBribe = useCallback(() => {
     if (!tutorialFaction || !pendingAdvance) return;
@@ -236,6 +251,32 @@ export function useGame(lang: Language) {
     setPhase('start');
     setGameOverInfo(null);
   }, []);
+
+  const handleElectionComplete = useCallback((result: ElectionResult) => {
+    if (!result.won) {
+      const lostScenario = lang === 'en'
+        ? { title: 'Election Lost!', description: 'The ballot box has spoken. Your reign of corruption ends here. The people chose hope over fear. Pack your bags — the new government is already changing the locks.', emoji: '🗳️', image: 'defeat-halk' }
+        : { title: 'Seçim Kaybedildi!', description: 'Sandık konuştu. Yolsuzluk saltanatın burada sona erdi. Halk korku yerine umudu seçti. Bavullarını topla — yeni hükümet kilitleri değiştirmeye başladı bile.', emoji: '🗳️', image: 'defeat-halk' };
+      setGameOverInfo(lostScenario);
+      if (turn > highScore) {
+        setHighScore(turn);
+        localStorage.setItem('taht_highscore', String(turn));
+      }
+      setPhase('gameover');
+      return;
+    }
+    setMoney(result.remainingBudget);
+    setTotalLaundered(result.remainingLaundered);
+    if (currentElectionIndex !== null) {
+      setCompletedElections(prev => [...prev, currentElectionIndex]);
+    }
+    setCurrentElectionIndex(null);
+    if (pendingAdvance) {
+      setCardIndex(pendingAdvance.nextIndex);
+      setPendingAdvance(null);
+    }
+    setPhase('playing');
+  }, [lang, turn, highScore, currentElectionIndex, pendingAdvance]);
 
   const LAUNDER_COST = 50;
   const LAUNDER_AMOUNT = 25;
@@ -352,5 +393,6 @@ export function useGame(lang: Language) {
     propaganda, canPropaganda, getPropagandaCost,
     invest, canInvest, getInvestmentCost,
     alliance, canAlliance, getAllianceCost,
+    currentElectionIndex, completedElections, handleElectionComplete,
   };
 }
