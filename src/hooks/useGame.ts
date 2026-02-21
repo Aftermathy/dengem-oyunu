@@ -60,6 +60,7 @@ export function useGame(lang: Language) {
   const [tutorialShown, setTutorialShown] = useState(false);
   const [tutorialFaction, setTutorialFaction] = useState<PowerType | null>(null);
   const [pendingAdvance, setPendingAdvance] = useState<{ newMoney: number; nextIndex: number } | null>(null);
+  const [totalLaundered, setTotalLaundered] = useState(0);
 
   const currentCard = deck[cardIndex] || null;
 
@@ -80,6 +81,7 @@ export function useGame(lang: Language) {
     setTutorialShown(false);
     setTutorialFaction(null);
     setPendingAdvance(null);
+    setTotalLaundered(0);
     setPhase('playing');
   }, [lang]);
 
@@ -219,6 +221,33 @@ export function useGame(lang: Language) {
     setGameOverInfo(null);
   }, []);
 
+  const LAUNDER_COST = 5;
+  const LAUNDER_AMOUNT = 10;
+
+  const canLaunder = money >= LAUNDER_COST && phase === 'playing';
+
+  const launder = useCallback((faction: PowerType) => {
+    if (money < LAUNDER_COST) return;
+    setMoney(m => m - LAUNDER_COST);
+    setTotalLaundered(prev => prev + LAUNDER_AMOUNT);
+    setLastMoneyChange(-LAUNDER_COST);
+    
+    const otherFactions: PowerType[] = ['yatirimcilar', 'mafya', 'tarikat', 'ordu'].filter(f => f !== faction) as PowerType[];
+    
+    setPower(prev => {
+      const next = { ...prev };
+      // Halk -10
+      next.halk = Math.max(0, next.halk - 10);
+      // Selected faction +5
+      next[faction] = Math.min(100, next[faction] + 5);
+      // Other 3 factions -5
+      otherFactions.forEach(f => {
+        next[f] = Math.max(0, next[f] - 5);
+      });
+      return next;
+    });
+  }, [money]);
+
   return {
     phase,
     power,
@@ -230,6 +259,8 @@ export function useGame(lang: Language) {
     lastMoneyChange,
     bribeCounts,
     tutorialFaction,
+    totalLaundered,
+    canLaunder,
     startGame,
     swipe,
     bribe,
@@ -238,5 +269,6 @@ export function useGame(lang: Language) {
     completeTutorialBribe,
     skipTutorial,
     goToMenu,
+    launder,
   };
 }

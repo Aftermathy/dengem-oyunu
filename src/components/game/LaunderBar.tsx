@@ -1,0 +1,110 @@
+import { useState } from 'react';
+import { PowerType } from '@/types/game';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/lib/utils';
+
+import factionYatirimcilar from '@/assets/faction-yatirimcilar.png';
+import factionMafya from '@/assets/faction-mafya.png';
+import factionTarikat from '@/assets/faction-tarikat.png';
+import factionOrdu from '@/assets/faction-ordu.png';
+
+const LAUNDER_FACTIONS: PowerType[] = ['yatirimcilar', 'mafya', 'tarikat', 'ordu'];
+
+const FACTION_IMAGES: Record<PowerType, string> = {
+  yatirimcilar: factionYatirimcilar,
+  mafya: factionMafya,
+  tarikat: factionTarikat,
+  ordu: factionOrdu,
+  halk: '',
+};
+
+interface LaunderBarProps {
+  totalLaundered: number;
+  money: number;
+  onLaunder: (faction: PowerType) => void;
+  canLaunder: boolean;
+}
+
+export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: LaunderBarProps) {
+  const { t, lang } = useLanguage();
+  const [showPicker, setShowPicker] = useState(false);
+
+  const handleClick = () => {
+    if (!canLaunder) return;
+    setShowPicker(true);
+  };
+
+  const handleSelect = (faction: PowerType) => {
+    onLaunder(faction);
+    setShowPicker(false);
+  };
+
+  return (
+    <div className="w-full max-w-md mx-auto px-4 relative">
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleClick}
+          disabled={!canLaunder}
+          className={cn(
+            "text-xs font-bold px-3 py-1.5 rounded-lg transition-all whitespace-nowrap",
+            canLaunder
+              ? "bg-emerald-600/80 text-white hover:bg-emerald-500 cursor-pointer"
+              : "bg-muted text-muted-foreground cursor-not-allowed"
+          )}
+        >
+          🧼 {lang === 'tr' ? 'Akla' : 'Launder'} (-5B)
+        </button>
+
+        <div className="flex-1 h-4 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
+          <div
+            className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500"
+            style={{ width: `${Math.min(totalLaundered, 100)}%` }}
+          />
+          <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-foreground">
+            💸 {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
+          </span>
+        </div>
+      </div>
+
+      {/* Faction picker modal */}
+      {showPicker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-in fade-in duration-200">
+          <div className="bg-card border border-border rounded-2xl p-5 mx-4 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200 text-center">
+            <div className="text-2xl mb-2">🧼</div>
+            <h3 className="text-lg font-bold text-foreground mb-1">
+              {lang === 'tr' ? 'Kimin üzerinden aklayalım?' : 'Launder through whom?'}
+            </h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              {lang === 'tr'
+                ? 'Seçtiğin +5 rep alır, diğer 3 grup -5 rep yer. Halk -10 rep.'
+                : 'Selected gets +5 rep, other 3 get -5 rep. Public -10 rep.'}
+            </p>
+
+            <div className="grid grid-cols-2 gap-3">
+              {LAUNDER_FACTIONS.map((faction) => (
+                <button
+                  key={faction}
+                  onClick={() => handleSelect(faction)}
+                  className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-border/50 bg-background hover:bg-primary/10 hover:border-primary transition-all cursor-pointer"
+                >
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-border/50">
+                    <img src={FACTION_IMAGES[faction]} alt={t(`power.${faction}`)} className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-xs font-bold text-foreground">{t(`power.${faction}`)}</span>
+                  <span className="text-[10px] text-emerald-500">+5 rep</span>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setShowPicker(false)}
+              className="mt-4 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {lang === 'tr' ? 'Vazgeç' : 'Cancel'}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

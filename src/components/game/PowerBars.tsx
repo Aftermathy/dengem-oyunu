@@ -63,13 +63,13 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
       {/* Money display */}
       <div className="flex items-center justify-center gap-2 mb-2">
         <span className="text-2xl">💰</span>
-        <span className="text-xl font-black text-foreground">{money}M</span>
+        <span className="text-xl font-black text-foreground">{money}B</span>
         {lastMoneyChange !== null && lastMoneyChange !== undefined && (
           <span className={cn(
             "text-sm font-bold animate-bounce",
             lastMoneyChange > 0 ? 'text-emerald-500' : 'text-red-500'
           )}>
-            {lastMoneyChange > 0 ? '+' : ''}{lastMoneyChange}M
+            {lastMoneyChange > 0 ? '+' : ''}{lastMoneyChange}B
           </span>
         )}
       </div>
@@ -123,7 +123,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               </span>
               {val >= 100 && (
                 <span className="text-[8px] sm:text-[10px] font-bold text-cyan-400 animate-pulse">
-                  +2M/tur
+                  +2B/tur
                 </span>
               )}
 
@@ -150,7 +150,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                         : "bg-muted text-muted-foreground cursor-not-allowed"
                     )}
                   >
-                    {cost}M → +{10} rep
+                    {cost}B → +{10} rep
                   </button>
                   {!canDo && (
                     <p className="text-[9px] text-destructive mt-1">
