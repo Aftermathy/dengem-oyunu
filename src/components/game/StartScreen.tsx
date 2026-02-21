@@ -15,7 +15,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       </div>
 
       <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-foreground">
-        I MUST STAY  
+        I MUST STAY
       </h1>
       <p className="text-muted-foreground text-sm sm:text-base max-w-xs leading-relaxed">
         Gücü dengede tut, tahtını koru.<br />
