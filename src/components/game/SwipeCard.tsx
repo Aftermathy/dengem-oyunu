@@ -85,7 +85,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
     <div
       ref={cardRef}
       className={cn(
-        "relative w-72 sm:w-80 cursor-grab select-none touch-none",
+        "relative w-72 sm:w-80 md:w-96 cursor-grab select-none touch-none",
         isDragging && "cursor-grabbing"
       )}
       style={{
@@ -132,17 +132,17 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
   return (
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden">
       {/* Character header */}
-      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-4 sm:p-6 text-center">
-        <div className="text-5xl sm:text-6xl mb-2">{card.characterEmoji}</div>
-        <h3 className="font-bold text-foreground text-sm sm:text-base">{card.character}</h3>
-        <span className="text-[10px] sm:text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-5 sm:p-7 text-center">
+        <div className="text-6xl sm:text-7xl mb-3">{card.characterEmoji}</div>
+        <h3 className="font-bold text-foreground text-base sm:text-lg">{card.character}</h3>
+        <span className="text-xs sm:text-sm bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
           {card.category}
         </span>
       </div>
 
       {/* Description */}
-      <div className="p-4 sm:p-5">
-        <p className="text-sm sm:text-base text-foreground leading-relaxed italic">
+      <div className="p-5 sm:p-6">
+        <p className="text-base sm:text-lg text-foreground leading-relaxed italic">
           "{card.description}"
         </p>
       </div>
@@ -150,23 +150,23 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
       {/* Choices */}
       <div className="grid grid-cols-2 border-t border-border">
         <div className={cn(
-          "p-3 text-center text-xs sm:text-sm transition-colors border-r border-border",
+          "p-3 sm:p-4 text-center text-sm sm:text-base transition-colors border-r border-border",
           direction === 'left' ? 'bg-red-500/20 text-red-700 font-bold' : 'text-muted-foreground'
         )}>
           ← {card.leftChoice}
           {leftMoney !== 0 && (
-            <div className={cn("text-[10px] font-bold mt-0.5", leftMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
+            <div className={cn("text-xs font-bold mt-0.5", leftMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
               {leftMoney > 0 ? '+' : ''}{leftMoney}M 💰
             </div>
           )}
         </div>
         <div className={cn(
-          "p-3 text-center text-xs sm:text-sm transition-colors",
+          "p-3 sm:p-4 text-center text-sm sm:text-base transition-colors",
           direction === 'right' ? 'bg-emerald-500/20 text-emerald-700 font-bold' : 'text-muted-foreground'
         )}>
           {card.rightChoice} →
           {rightMoney !== 0 && (
-            <div className={cn("text-[10px] font-bold mt-0.5", rightMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
+            <div className={cn("text-xs font-bold mt-0.5", rightMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
               {rightMoney > 0 ? '+' : ''}{rightMoney}M 💰
             </div>
           )}

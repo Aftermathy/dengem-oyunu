@@ -32,7 +32,7 @@ const Index = () => {
 
       {phase === 'playing' && currentCard && (
         <>
-          <div className="pt-4 pb-2">
+          <div className="pt-2 pb-0">
             <PowerBars
               power={power}
               activeEffects={activeEffects}
@@ -42,18 +42,18 @@ const Index = () => {
               canBribe={canBribe}
               getBribeCost={getBribeCost}
             />
-            <div className="text-center text-xs text-muted-foreground mt-1">
-              {t('game.turn')}: <span className="font-bold text-foreground">{turn}</span>
-            </div>
           </div>
 
-          <div className="flex-1 flex items-center justify-center px-4 pb-8">
+          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-2">
             <SwipeCard
               key={currentCard.id + '-' + turn}
               card={currentCard}
               onSwipe={swipe}
               onHoverEffects={handleHoverEffects}
             />
+            <div className="text-center text-xs text-muted-foreground mt-2">
+              {t('game.turn')}: <span className="font-bold text-foreground">{turn}</span>
+            </div>
           </div>
         </>
       )}
