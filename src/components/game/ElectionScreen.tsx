@@ -17,29 +17,6 @@ interface ElectionScreenProps {
 }
 
 /* ── Rarity system ── */
-const RARITY_WEIGHTS: { rarity: CardRarity; weight: number }[] = [
-  { rarity: 'common', weight: 50 },
-  { rarity: 'uncommon', weight: 30 },
-  { rarity: 'epic', weight: 15 },
-  { rarity: 'legendary', weight: 5 },
-];
-
-function rollRarity(): CardRarity {
-  const total = RARITY_WEIGHTS.reduce((s, r) => s + r.weight, 0);
-  let roll = Math.random() * total;
-  for (const r of RARITY_WEIGHTS) {
-    roll -= r.weight;
-    if (roll <= 0) return r.rarity;
-  }
-  return 'common';
-}
-
-const RARITY_MULTIPLIER: Record<CardRarity, number> = {
-  common: 1,
-  uncommon: 1.3,
-  epic: 1.6,
-  legendary: 2.2,
-};
 
 const RARITY_STYLES: Record<CardRarity, { border: string; bg: string; glow: string; label: string; labelColor: string }> = {
   common: {
@@ -72,19 +49,34 @@ const RARITY_STYLES: Record<CardRarity, { border: string; bg: string; glow: stri
   },
 };
 
-interface DrawnCard extends ElectionCard {
-  rarity: CardRarity;
-  adjustedEffect: number;
-}
-
-function drawCardsWithRarity(cards: ElectionCard[], count: number, exclude: number[] = []): DrawnCard[] {
+function drawCards(cards: ElectionCard[], count: number, exclude: number[] = []): ElectionCard[] {
   const pool = cards.filter(c => !exclude.includes(c.id));
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(count, shuffled.length)).map(card => {
-    const rarity = card.rarity || rollRarity();
-    const adjustedEffect = Math.round(card.voterEffect * RARITY_MULTIPLIER[rarity]);
-    return { ...card, rarity, adjustedEffect };
-  });
+  return shuffled.slice(0, Math.min(count, shuffled.length));
+}
+
+/* ── AI card selection based on vote gap ── */
+function selectAiCard(cards: ElectionCard[], gap: number): ElectionCard {
+  // gap = playerVote - opponentVote (positive = player leads)
+  if (gap > 10) {
+    const legendary = cards.filter(c => c.rarity === 'legendary');
+    if (legendary.length > 0) return legendary[Math.floor(Math.random() * legendary.length)];
+    const epic = cards.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
+    if (epic.length > 0) return epic[Math.floor(Math.random() * epic.length)];
+  }
+  if (gap > 6) {
+    if (Math.random() < 0.6) {
+      const good = cards.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
+      if (good.length > 0) return good[Math.floor(Math.random() * good.length)];
+    }
+  }
+  if (gap > 3) {
+    if (Math.random() < 0.4) {
+      const good = cards.filter(c => c.rarity !== 'common');
+      if (good.length > 0) return good[Math.floor(Math.random() * good.length)];
+    }
+  }
+  return cards[Math.floor(Math.random() * cards.length)];
 }
 
 const REROLL_COST = 3;
@@ -191,7 +183,8 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result' | 'victory'>('intro');
   const [budget, setBudget] = useState(money);
   const [laundered, setLaundered] = useState(launderedMoney);
-  const [cards, setCards] = useState<DrawnCard[]>([]);
+  const [cards, setCards] = useState<ElectionCard[]>([]);
+  const [aiLegendaryShake, setAiLegendaryShake] = useState(false);
   const [usedPowers, setUsedPowers] = useState<string[]>([]);
   const [aiCardPlayed, setAiCardPlayed] = useState<ElectionCard | null>(null);
   const [usedCardIds, setUsedCardIds] = useState<number[]>([]);
@@ -231,18 +224,18 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   useEffect(() => {
     if (phase !== 'intro') return;
     const timer = setTimeout(() => {
-      setCards(drawCardsWithRarity(config.playerCards, 3));
+      setCards(drawCards(config.playerCards, 3));
       setPhase('player');
     }, 2500);
     return () => clearTimeout(timer);
   }, [phase, config.playerCards]);
 
-  const playCard = useCallback((card: DrawnCard) => {
+  const playCard = useCallback((card: ElectionCard) => {
     if (budget < card.cost) return;
     setSelectedCardId(card.id);
     setTimeout(() => {
       setBudget(b => b - card.cost);
-      setPlayerVote(v => Math.max(0, Math.min(100, v + card.adjustedEffect)));
+      setPlayerVote(v => Math.max(0, Math.min(100, v + card.voterEffect)));
       setBarGlowKey(k => k + 1);
       setUsedCardIds(prev => [...prev, card.id]);
       setSelectedCardId(null);
@@ -260,7 +253,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
     if (rerollsLeft <= 0 || budget < REROLL_COST) return;
     setBudget(b => b - REROLL_COST);
     setRerollsLeft(r => r - 1);
-    setCards(drawCardsWithRarity(config.playerCards, 3, usedCardIds));
+    setCards(drawCards(config.playerCards, 3, usedCardIds));
   }, [rerollsLeft, budget, config.playerCards, usedCardIds]);
 
   const useSpecialPower = useCallback((power: ElectionSpecialPower) => {
@@ -281,11 +274,15 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
       const currentPlayerVote = playerVote;
       const currentOpponentVote = 100 - currentPlayerVote;
       const gap = currentPlayerVote - currentOpponentVote;
-      let bonus = config.aiDifficultyBonus;
-      if (gap > config.catchUpThreshold) bonus += config.catchUpBonus;
 
-      const aiCard = config.aiCards[Math.floor(Math.random() * config.aiCards.length)];
-      const effect = aiCard.voterEffect + bonus;
+      const aiCard = selectAiCard(config.playerCards, gap);
+      const effect = aiCard.voterEffect;
+
+      // Legendary shake effect
+      if (aiCard.rarity === 'legendary') {
+        setAiLegendaryShake(true);
+        setTimeout(() => setAiLegendaryShake(false), 1500);
+      }
 
       setPlayerVote(v => Math.max(0, Math.min(100, v - effect)));
       setBarGlowKey(k => k + 1);
@@ -296,7 +293,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           setPhase('result');
         } else {
           setRound(r => r + 1);
-          setCards(drawCardsWithRarity(config.playerCards, 3, usedCardIds));
+          setCards(drawCards(config.playerCards, 3, usedCardIds));
           setAiCardPlayed(null);
           setPhase('player');
         }
@@ -471,7 +468,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                           <span className="text-3xl">{card.emoji}</span>
                           <p className="text-white text-sm font-bold leading-tight flex-1">{card.text}</p>
                         </div>
-                        <p className="text-green-400 text-base font-black">+{card.adjustedEffect}%</p>
+                        <p className="text-green-400 text-base font-black">+{card.voterEffect}%</p>
                       </button>
                     );
                   })}
@@ -497,16 +494,24 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
             )}
 
             {phase === 'ai' && (
-              <div className="text-center">
-                {aiCardPlayed ? (
-                  <div className="bg-red-950/80 border border-red-600/50 rounded-lg p-5 mx-auto max-w-xs ai-card-bounce">
-                    <span className="text-4xl">{aiCardPlayed.emoji}</span>
-                    <p className="text-red-100 text-base mt-3 font-bold">{aiCardPlayed.text}</p>
-                    <p className="text-red-400 text-sm mt-2 font-bold">
-                      {labels.opposition} +{aiCardPlayed.voterEffect}%
-                    </p>
-                  </div>
-                ) : (
+              <div className={`text-center ${aiLegendaryShake ? 'ai-legendary-shake' : ''}`}>
+                {aiCardPlayed ? (() => {
+                  const aiStyle = RARITY_STYLES[aiCardPlayed.rarity];
+                  const isLegendary = aiCardPlayed.rarity === 'legendary';
+                  return (
+                    <div className={`border-2 rounded-xl p-4 mx-auto max-w-xs ai-card-bounce ${aiStyle.border} ${aiStyle.bg} ${aiStyle.glow} ${isLegendary ? 'legendary-card-flame' : ''}`}>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className={`text-xs font-black ${aiStyle.labelColor}`}>{aiStyle.label}</span>
+                        <span className="text-red-300 text-xs font-bold uppercase tracking-wider">{labels.opposition}</span>
+                      </div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-4xl">{aiCardPlayed.emoji}</span>
+                        <p className="text-white text-sm font-bold leading-tight flex-1">{aiCardPlayed.text}</p>
+                      </div>
+                      <p className="text-red-400 text-base font-black">-{aiCardPlayed.voterEffect}%</p>
+                    </div>
+                  );
+                })() : (
                   <div className="animate-pulse">
                     <span className="text-5xl">🎭</span>
                     <p className="text-red-300 text-lg font-bold mt-3">{labels.oppMoving}</p>

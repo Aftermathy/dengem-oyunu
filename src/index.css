@@ -286,6 +286,24 @@ All colors MUST be HSL.
   animation: election-shake 0.6s ease-out;
 }
 
+/* AI legendary shake */
+@keyframes ai-legendary-shake {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  5% { transform: translate(-6px, -3px) scale(1.01); }
+  10% { transform: translate(6px, 2px) scale(1.02); }
+  15% { transform: translate(-5px, 4px) scale(1.01); }
+  20% { transform: translate(4px, -3px) scale(1.02); }
+  25% { transform: translate(-3px, 2px) scale(1.01); }
+  30% { transform: translate(3px, -2px) scale(1); }
+  40% { transform: translate(-2px, 1px); }
+  50% { transform: translate(1px, -1px); }
+  60% { transform: translate(0, 0); }
+}
+
+.ai-legendary-shake {
+  animation: ai-legendary-shake 1.2s ease-out;
+}
+
 /* Glitch text */
 @keyframes election-glitch {
   0%, 100% { clip-path: inset(0 0 0 0); transform: translate(0); }
