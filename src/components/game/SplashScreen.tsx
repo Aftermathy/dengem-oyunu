@@ -45,7 +45,7 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       <div className="flex-1" />
 
       {/* Center content */}
-      <div className="relative z-10 flex flex-col items-center gap-6 px-6">
+      <div className="relative z-10 flex flex-col items-center gap-6 px-6 -mt-16">
         <h1
           className="text-4xl sm:text-5xl font-black tracking-tight text-center"
           style={{
