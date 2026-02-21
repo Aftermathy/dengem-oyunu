@@ -1,13 +1,13 @@
 import { EventCard } from '@/types/game';
 
 export const eventCardsEn: EventCard[] = [
-  // === ECONOMY (10 cards) ===
   {
     id: 1, character: 'Central Bank Governor', characterEmoji: '🏦', category: 'Economy',
     description: 'Sir, exchange rates are skyrocketing. We need to raise interest rates or inflation will explode.',
     leftChoice: 'Cut rates, growth matters!', rightChoice: 'Raise rates, calm the markets',
     leftEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -15 }],
     rightEffects: [{ power: 'halk', amount: -5 }, { power: 'yatirimcilar', amount: 15 }],
+    leftMoney: -8, rightMoney: 5,
   },
   {
     id: 2, character: 'Chief Contractor', characterEmoji: '🏗️', category: 'Economy',
@@ -15,6 +15,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Build them all!', rightChoice: 'Budget won\'t allow it, wait',
     leftEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'halk', amount: -10 }, { power: 'mafya', amount: 10 }],
     rightEffects: [{ power: 'yatirimcilar', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: -25, rightMoney: 3,
   },
   {
     id: 3, character: 'Finance Minister', characterEmoji: '💼', category: 'Economy',
@@ -22,6 +23,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Raise taxes', rightChoice: 'Talk to IMF',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'halk', amount: -5 }, { power: 'ordu', amount: -5 }],
+    leftMoney: 15, rightMoney: 20,
   },
   {
     id: 4, character: 'Your Son-in-law', characterEmoji: '🤵', category: 'Economy',
@@ -29,6 +31,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Fine, you\'re minister', rightChoice: 'No, I\'ll appoint a professional',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: -20 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: 10 }],
+    leftMoney: -12, rightMoney: 0,
   },
   {
     id: 5, character: 'Tax Inspector', characterEmoji: '🧾', category: 'Economy',
@@ -36,6 +39,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Fine them all', rightChoice: 'Leave it alone',
     leftEffects: [{ power: 'yatirimcilar', amount: -15 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 5 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'halk', amount: -5 }],
+    leftMoney: 10, rightMoney: -3,
   },
   {
     id: 6, character: 'CPI Expert', characterEmoji: '📊', category: 'Economy',
@@ -43,6 +47,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Announce the real number', rightChoice: 'Report it lower',
     leftEffects: [{ power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'mafya', amount: 5 }],
+    leftMoney: -5, rightMoney: 8,
   },
   {
     id: 7, character: 'Energy Minister', characterEmoji: '⚡', category: 'Economy',
@@ -50,6 +55,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Pass it on', rightChoice: 'Government subsidizes',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: 10 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -10 }],
+    leftMoney: 12, rightMoney: -18,
   },
   {
     id: 8, character: 'Crypto Advisor', characterEmoji: '₿', category: 'Economy',
@@ -57,6 +63,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Shut it down, investigate', rightChoice: 'Ignore it',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -10 }, { power: 'mafya', amount: -5 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'mafya', amount: 10 }],
+    leftMoney: -5, rightMoney: 7,
   },
   {
     id: 9, character: 'Privatization Director', characterEmoji: '🏭', category: 'Economy',
@@ -64,6 +71,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Sell to cronies', rightChoice: 'Open international tender',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'halk', amount: -10 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'mafya', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: 15, rightMoney: 25,
   },
   {
     id: 10, character: 'Tourism Minister', characterEmoji: '🏖️', category: 'Economy',
@@ -71,15 +79,15 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Make the deal', rightChoice: 'Stay with NATO allies',
     leftEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'ordu', amount: -10 }],
     rightEffects: [{ power: 'ordu', amount: 10 }, { power: 'yatirimcilar', amount: -5 }],
+    leftMoney: 10, rightMoney: -3,
   },
-
-  // === POLITICAL INTRIGUE (10 cards) ===
   {
     id: 11, character: 'Intelligence Chief', characterEmoji: '🕵️', category: 'Political Intrigue',
     description: 'Sir, we have tapes of the opposition leader. Shall we release them?',
     leftChoice: 'Release them, finish him', rightChoice: 'Keep them as leverage',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'ordu', amount: -5 }, { power: 'mafya', amount: 5 }],
     rightEffects: [{ power: 'mafya', amount: 10 }, { power: 'ordu', amount: 5 }],
+    leftMoney: -3, rightMoney: 0,
   },
   {
     id: 12, character: 'Former Prime Minister', characterEmoji: '👔', category: 'Political Intrigue',
@@ -87,6 +95,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Unleash the media on him', rightChoice: 'Offer reconciliation',
     leftEffects: [{ power: 'halk', amount: -5 }, { power: 'mafya', amount: 5 }, { power: 'ordu', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: -5, rightMoney: -2,
   },
   {
     id: 13, character: 'Journalist', characterEmoji: '📰', category: 'Political Intrigue',
@@ -94,6 +103,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Arrest them', rightChoice: 'Let them publish',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'ordu', amount: 10 }, { power: 'mafya', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'yatirimcilar', amount: -10 }, { power: 'mafya', amount: -10 }],
+    leftMoney: 0, rightMoney: -8,
   },
   {
     id: 14, character: 'Constitutional Court Chief', characterEmoji: '⚖️', category: 'Political Intrigue',
@@ -101,6 +111,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Dismiss the court', rightChoice: 'Withdraw the proposal',
     leftEffects: [{ power: 'halk', amount: -10 }, { power: 'ordu', amount: -10 }, { power: 'tarikat', amount: 10 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'ordu', amount: 5 }],
+    leftMoney: 0, rightMoney: 0,
   },
   {
     id: 15, character: 'Mayor', characterEmoji: '🏙️', category: 'Political Intrigue',
@@ -108,6 +119,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Repeat the election', rightChoice: 'Accept it, be democratic',
     leftEffects: [{ power: 'halk', amount: -20 }, { power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: -10, rightMoney: 0,
   },
   {
     id: 16, character: 'Social Media Troll', characterEmoji: '🤖', category: 'Political Intrigue',
@@ -115,6 +127,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Activate the bots', rightChoice: 'No need, keep it organic',
     leftEffects: [{ power: 'halk', amount: 5 }, { power: 'mafya', amount: 5 }, { power: 'yatirimcilar', amount: -5 }],
     rightEffects: [{ power: 'halk', amount: -5 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: -4, rightMoney: 0,
   },
   {
     id: 17, character: 'Suspicious Witness', characterEmoji: '🤐', category: 'Political Intrigue',
@@ -122,6 +135,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Close the case', rightChoice: 'Deepen the investigation',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -10 }, { power: 'ordu', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'mafya', amount: -15 }, { power: 'ordu', amount: -5 }],
+    leftMoney: 0, rightMoney: -5,
   },
   {
     id: 18, character: 'Party Spokesperson', characterEmoji: '🎤', category: 'Political Intrigue',
@@ -129,6 +143,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: '"It was donations" say', rightChoice: 'Invoke right to silence',
     leftEffects: [{ power: 'halk', amount: -5 }, { power: 'mafya', amount: 5 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -5 }],
+    leftMoney: -3, rightMoney: 0,
   },
   {
     id: 19, character: 'Diplomat', characterEmoji: '🎩', category: 'Political Intrigue',
@@ -136,6 +151,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Cancel the meeting', rightChoice: 'Accept the meeting',
     leftEffects: [{ power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: 10 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: 0, rightMoney: 5,
   },
   {
     id: 20, character: 'Prosecutor', characterEmoji: '👨‍⚖️', category: 'Political Intrigue',
@@ -143,15 +159,15 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Mass arrests', rightChoice: 'Focus on top figures only',
     leftEffects: [{ power: 'tarikat', amount: -15 }, { power: 'halk', amount: -10 }, { power: 'ordu', amount: 10 }],
     rightEffects: [{ power: 'tarikat', amount: -5 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 5 }],
+    leftMoney: -8, rightMoney: -2,
   },
-
-  // === CULT / SECT (9 cards) ===
   {
     id: 21, character: 'Sect Imam', characterEmoji: '🧔', category: 'Cult',
     description: 'The Master sends greetings. Infiltration plan ready, awaiting approval.',
     leftChoice: 'Approve it, proceed', rightChoice: 'Stop, too risky',
     leftEffects: [{ power: 'tarikat', amount: 15 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -15 }, { power: 'ordu', amount: 5 }],
+    leftMoney: 5, rightMoney: 0,
   },
   {
     id: 22, character: 'Police Director', characterEmoji: '👮', category: 'Cult',
@@ -159,6 +175,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Purge them all', rightChoice: 'Turn a blind eye, might need them',
     leftEffects: [{ power: 'tarikat', amount: -15 }, { power: 'ordu', amount: 10 }, { power: 'halk', amount: 5 }],
     rightEffects: [{ power: 'tarikat', amount: 10 }, { power: 'ordu', amount: -10 }],
+    leftMoney: -5, rightMoney: 3,
   },
   {
     id: 23, character: 'Education Minister', characterEmoji: '📚', category: 'Cult',
@@ -166,6 +183,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Shut them all down', rightChoice: 'Don\'t touch them, we\'ll lose votes',
     leftEffects: [{ power: 'tarikat', amount: -20 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: 10 }, { power: 'halk', amount: -5 }],
+    leftMoney: 3, rightMoney: 0,
   },
   {
     id: 24, character: 'Sect Leader', characterEmoji: '👳', category: 'Cult',
@@ -173,6 +191,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Give the land', rightChoice: 'Can\'t, it\'s state property',
     leftEffects: [{ power: 'tarikat', amount: 15 }, { power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -15 }, { power: 'halk', amount: 5 }],
+    leftMoney: -8, rightMoney: 0,
   },
   {
     id: 25, character: 'Religious Affairs Head', characterEmoji: '🕌', category: 'Cult',
@@ -180,6 +199,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Increase the budget', rightChoice: 'Manage with current budget',
     leftEffects: [{ power: 'tarikat', amount: 10 }, { power: 'halk', amount: -5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: -15, rightMoney: 5,
   },
   {
     id: 26, character: 'Spiritual Guide', characterEmoji: '🔮', category: 'Cult',
@@ -187,6 +207,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Accept the condition', rightChoice: 'Dreams don\'t run politics',
     leftEffects: [{ power: 'tarikat', amount: 15 }, { power: 'ordu', amount: -5 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: -5, rightMoney: 0,
   },
   {
     id: 27, character: 'Seminary Teacher', characterEmoji: '📖', category: 'Cult',
@@ -194,6 +215,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Change the curriculum', rightChoice: 'Keep scientific curriculum',
     leftEffects: [{ power: 'tarikat', amount: 10 }, { power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'halk', amount: 10 }],
+    leftMoney: 0, rightMoney: 0,
   },
   {
     id: 28, character: 'Foundation Director', characterEmoji: '🏛️', category: 'Cult',
@@ -201,6 +223,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Continue supporting', rightChoice: 'Audit, demand transparency',
     leftEffects: [{ power: 'tarikat', amount: 10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'halk', amount: 10 }],
+    leftMoney: -8, rightMoney: 3,
   },
   {
     id: 29, character: 'FETÖ Informant', characterEmoji: '😰', category: 'Cult',
@@ -208,15 +231,15 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Arrest them all', rightChoice: 'Only arrest active members',
     leftEffects: [{ power: 'tarikat', amount: -20 }, { power: 'halk', amount: -15 }, { power: 'ordu', amount: 10 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 5 }],
+    leftMoney: -12, rightMoney: -3,
   },
-
-  // === FOREIGN POLICY (8 cards) ===
   {
     id: 30, character: 'Chief of Staff', characterEmoji: '🎖️', category: 'Foreign Policy',
     description: 'Time for cross-border operation. Give the order.',
     leftChoice: 'Launch the operation', rightChoice: 'Try diplomacy',
     leftEffects: [{ power: 'ordu', amount: 15 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'ordu', amount: -10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'halk', amount: -5 }],
+    leftMoney: -20, rightMoney: 3,
   },
   {
     id: 31, character: 'Refugee Coordinator', characterEmoji: '🏕️', category: 'Foreign Policy',
@@ -224,6 +247,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Open the borders', rightChoice: 'Integrate the refugees',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -15 }, { power: 'ordu', amount: -5 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'tarikat', amount: 5 }],
+    leftMoney: 0, rightMoney: -10,
   },
   {
     id: 32, character: 'NATO Representative', characterEmoji: '🌐', category: 'Foreign Policy',
@@ -231,6 +255,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Buy S-400', rightChoice: 'Buy Patriot',
     leftEffects: [{ power: 'ordu', amount: 10 }, { power: 'yatirimcilar', amount: -15 }, { power: 'halk', amount: 5 }],
     rightEffects: [{ power: 'ordu', amount: 5 }, { power: 'yatirimcilar', amount: 10 }],
+    leftMoney: -15, rightMoney: -20,
   },
   {
     id: 33, character: 'Foreign Minister', characterEmoji: '🌍', category: 'Foreign Policy',
@@ -238,6 +263,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Intervene', rightChoice: 'Stay neutral',
     leftEffects: [{ power: 'ordu', amount: 15 }, { power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'ordu', amount: -5 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: -18, rightMoney: 5,
   },
   {
     id: 34, character: 'Arms Dealer', characterEmoji: '🔧', category: 'Foreign Policy',
@@ -245,6 +271,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Sell to everyone', rightChoice: 'Only sell to allies',
     leftEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'ordu', amount: 10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 5 }, { power: 'ordu', amount: 5 }, { power: 'halk', amount: 5 }],
+    leftMoney: 20, rightMoney: 8,
   },
   {
     id: 35, character: 'EU Ambassador', characterEmoji: '🇪🇺', category: 'Foreign Policy',
@@ -252,6 +279,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Forget the EU, go solo', rightChoice: 'Accelerate reforms',
     leftEffects: [{ power: 'tarikat', amount: 10 }, { power: 'ordu', amount: 5 }, { power: 'yatirimcilar', amount: -15 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: 15 }, { power: 'tarikat', amount: -10 }],
+    leftMoney: 0, rightMoney: -5,
   },
   {
     id: 36, character: 'Energy Lobbyist', characterEmoji: '🛢️', category: 'Foreign Policy',
@@ -259,6 +287,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Accept the deal', rightChoice: 'Reject, find alternatives',
     leftEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: 5 }],
     rightEffects: [{ power: 'ordu', amount: 10 }, { power: 'yatirimcilar', amount: -5 }, { power: 'halk', amount: -5 }],
+    leftMoney: 12, rightMoney: -8,
   },
   {
     id: 37, character: 'UN Rapporteur', characterEmoji: '📋', category: 'Foreign Policy',
@@ -266,15 +295,15 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Reject report as "biased"', rightChoice: 'Promise improvements',
     leftEffects: [{ power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: 10 }, { power: 'ordu', amount: -5 }],
+    leftMoney: 0, rightMoney: -3,
   },
-
-  // === PUBLIC EVENTS (8 cards) ===
   {
     id: 38, character: 'Police Chief', characterEmoji: '🚔', category: 'Public',
     description: 'Park protests growing sir. Tear gas or dialogue?',
     leftChoice: 'Gas and disperse', rightChoice: 'Open dialogue',
     leftEffects: [{ power: 'halk', amount: -20 }, { power: 'ordu', amount: 10 }, { power: 'mafya', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'ordu', amount: -5 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: -3, rightMoney: -2,
   },
   {
     id: 39, character: 'Broadcasting Board', characterEmoji: '📺', category: 'Public',
@@ -282,6 +311,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Shut them down', rightChoice: 'Let them, press freedom',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: 0, rightMoney: 0,
   },
   {
     id: 40, character: 'Twitter Director', characterEmoji: '🐦', category: 'Public',
@@ -289,6 +319,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Block it', rightChoice: 'Leave it, send the trolls',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: -5 }, { power: 'mafya', amount: 5 }],
+    leftMoney: 0, rightMoney: -2,
   },
   {
     id: 41, character: 'Union Leader', characterEmoji: '✊', category: 'Public',
@@ -296,6 +327,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Raise minimum wage', rightChoice: 'Ban the strike',
     leftEffects: [{ power: 'halk', amount: 15 }, { power: 'yatirimcilar', amount: -15 }],
     rightEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: 10 }, { power: 'ordu', amount: 5 }],
+    leftMoney: -12, rightMoney: 5,
   },
   {
     id: 42, character: 'University Rector', characterEmoji: '🎓', category: 'Public',
@@ -303,6 +335,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Police intervention', rightChoice: 'Listen to demands',
     leftEffects: [{ power: 'halk', amount: -10 }, { power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: -2, rightMoney: 0,
   },
   {
     id: 43, character: 'Earthquake Expert', characterEmoji: '🏚️', category: 'Public',
@@ -310,6 +343,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Take responsibility', rightChoice: 'Say "It was fate"',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -10 }, { power: 'mafya', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: -20 }, { power: 'tarikat', amount: 10 }],
+    leftMoney: -20, rightMoney: 0,
   },
   {
     id: 44, character: 'Health Minister', characterEmoji: '🏥', category: 'Public',
@@ -317,6 +351,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Full lockdown', rightChoice: 'Partial, keep economy running',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -20 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: -15, rightMoney: 5,
   },
   {
     id: 45, character: 'Environmentalist', characterEmoji: '🌳', category: 'Public',
@@ -324,15 +359,15 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Open the mine', rightChoice: 'Cancel the project',
     leftEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'halk', amount: -15 }, { power: 'mafya', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'yatirimcilar', amount: -10 }],
+    leftMoney: 18, rightMoney: -5,
   },
-
-  // === MAFIA (8 cards) ===
   {
     id: 46, character: 'Mafia Boss', characterEmoji: '🦅', category: 'Mafia',
     description: 'Bro, we want to work with you. Give us a cut of contracts, we\'ll protect you.',
     leftChoice: 'Make the deal', rightChoice: 'Get lost, I\'ll arrest you',
     leftEffects: [{ power: 'mafya', amount: 15 }, { power: 'yatirimcilar', amount: 5 }, { power: 'halk', amount: -10 }],
     rightEffects: [{ power: 'mafya', amount: -20 }, { power: 'halk', amount: 10 }, { power: 'ordu', amount: 5 }],
+    leftMoney: 15, rightMoney: -5,
   },
   {
     id: 47, character: 'Drug Baron', characterEmoji: '💊', category: 'Mafia',
@@ -340,6 +375,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Turn a blind eye, take a cut', rightChoice: 'Launch an operation',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -10 }, { power: 'ordu', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -15 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 10 }],
+    leftMoney: 10, rightMoney: -8,
   },
   {
     id: 48, character: 'Money Launderer', characterEmoji: '🧹', category: 'Mafia',
@@ -347,6 +383,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Set up the system', rightChoice: 'Too risky',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'yatirimcilar', amount: 10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -5 }, { power: 'halk', amount: 5 }],
+    leftMoney: 20, rightMoney: 0,
   },
   {
     id: 49, character: 'Hitman', characterEmoji: '🎯', category: 'Mafia',
@@ -354,6 +391,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: '...Do it', rightChoice: 'No! Are you crazy?',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -15 }, { power: 'ordu', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: -5, rightMoney: 0,
   },
   {
     id: 50, character: 'Informant', characterEmoji: '😱', category: 'Mafia',
@@ -361,6 +399,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Shut down the channel', rightChoice: 'Launch an investigation',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -15 }],
     rightEffects: [{ power: 'mafya', amount: -15 }, { power: 'halk', amount: 15 }, { power: 'ordu', amount: -5 }],
+    leftMoney: 0, rightMoney: -5,
   },
   {
     id: 51, character: 'Gambling King', characterEmoji: '🎲', category: 'Mafia',
@@ -368,6 +407,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Give me my cut', rightChoice: 'Shut the sites down',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -10 }, { power: 'halk', amount: 10 }],
+    leftMoney: 12, rightMoney: -3,
   },
   {
     id: 52, character: 'Arms Smuggler', characterEmoji: '💣', category: 'Mafia',
@@ -375,6 +415,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Let them in, might be useful', rightChoice: 'Block them, too dangerous',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'ordu', amount: 10 }, { power: 'mafya', amount: -10 }],
+    leftMoney: 8, rightMoney: -3,
   },
   {
     id: 53, character: 'Security Director', characterEmoji: '🕶️', category: 'Mafia',
@@ -382,15 +423,15 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Ignore it, need the votes', rightChoice: 'Clean out the party',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -5 }, { power: 'tarikat', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -15 }, { power: 'halk', amount: 10 }],
+    leftMoney: 5, rightMoney: -5,
   },
-
-  // === BONUS CARDS ===
   {
     id: 54, character: 'Coup General', characterEmoji: '🪖', category: 'Political Intrigue',
     description: 'Sir... tanks are rolling out tonight. This is your last chance.',
     leftChoice: 'Call the people to the streets', rightChoice: 'Flee the country',
     leftEffects: [{ power: 'halk', amount: 15 }, { power: 'ordu', amount: -15 }, { power: 'tarikat', amount: 10 }],
     rightEffects: [{ power: 'halk', amount: -20 }, { power: 'ordu', amount: 20 }],
+    leftMoney: -10, rightMoney: -30,
   },
   {
     id: 55, character: 'Palace Chef', characterEmoji: '👨‍🍳', category: 'Public',
@@ -398,6 +439,7 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Build it grand!', rightChoice: 'Stay humble, cancel it',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: 10 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'mafya', amount: -5 }],
+    leftMoney: -30, rightMoney: 5,
   },
   {
     id: 56, character: 'Central Bank Director', characterEmoji: '🏛️', category: 'Economy',
@@ -405,5 +447,6 @@ export const eventCardsEn: EventCard[] = [
     leftChoice: 'Change them, I know best', rightChoice: 'Let them stay',
     leftEffects: [{ power: 'yatirimcilar', amount: -20 }, { power: 'halk', amount: -10 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'halk', amount: 5 }],
+    leftMoney: -10, rightMoney: 5,
   },
 ];

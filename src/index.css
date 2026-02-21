@@ -103,3 +103,25 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Faction talking mouth animation */
+@keyframes faction-talk {
+  0%, 100% { transform: scaleY(1); }
+  25% { transform: scaleY(1.03) translateY(-1px); }
+  50% { transform: scaleY(0.97) translateY(1px); }
+  75% { transform: scaleY(1.02) translateY(-0.5px); }
+}
+
+.faction-talking {
+  animation: faction-talk 0.4s ease-in-out infinite;
+}
+
+/* Fade in animation */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}

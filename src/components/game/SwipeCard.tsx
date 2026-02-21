@@ -61,6 +61,12 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
 
   const rotation = dragX * 0.1;
 
+  const getMoneyPreview = (dir: 'left' | 'right') => {
+    const m = dir === 'left' ? card.leftMoney : card.rightMoney;
+    if (!m) return null;
+    return m;
+  };
+
   if (exiting) {
     return (
       <div
@@ -96,12 +102,22 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
         style={{ opacity: dragX < -30 ? Math.min(1, Math.abs(dragX) / 100) : 0 }}
       >
         ← {t('game.reject')}
+        {getMoneyPreview('left') !== null && (
+          <span className="ml-1 text-xs">
+            ({getMoneyPreview('left')! > 0 ? '+' : ''}{getMoneyPreview('left')}M)
+          </span>
+        )}
       </div>
       <div
         className="absolute -right-2 top-8 bg-emerald-500 text-white px-3 py-1 rounded-lg text-sm font-bold z-10 transition-opacity"
         style={{ opacity: dragX > 30 ? Math.min(1, dragX / 100) : 0 }}
       >
         {t('game.accept')} →
+        {getMoneyPreview('right') !== null && (
+          <span className="ml-1 text-xs">
+            ({getMoneyPreview('right')! > 0 ? '+' : ''}{getMoneyPreview('right')}M)
+          </span>
+        )}
       </div>
 
       <CardContent card={card} direction={direction} t={t} />
@@ -110,6 +126,9 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
 }
 
 function CardContent({ card, direction, t }: { card: EventCard; direction: 'left' | 'right' | null; t: (key: string) => string }) {
+  const leftMoney = card.leftMoney || 0;
+  const rightMoney = card.rightMoney || 0;
+
   return (
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden">
       {/* Character header */}
@@ -135,12 +154,22 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
           direction === 'left' ? 'bg-red-500/20 text-red-700 font-bold' : 'text-muted-foreground'
         )}>
           ← {card.leftChoice}
+          {leftMoney !== 0 && (
+            <div className={cn("text-[10px] font-bold mt-0.5", leftMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
+              {leftMoney > 0 ? '+' : ''}{leftMoney}M 💰
+            </div>
+          )}
         </div>
         <div className={cn(
           "p-3 text-center text-xs sm:text-sm transition-colors",
           direction === 'right' ? 'bg-emerald-500/20 text-emerald-700 font-bold' : 'text-muted-foreground'
         )}>
           {card.rightChoice} →
+          {rightMoney !== 0 && (
+            <div className={cn("text-[10px] font-bold mt-0.5", rightMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
+              {rightMoney > 0 ? '+' : ''}{rightMoney}M 💰
+            </div>
+          )}
         </div>
       </div>
     </div>

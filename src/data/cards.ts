@@ -8,6 +8,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Faizi düşür, büyüme şart!', rightChoice: 'Faizi artır, piyasayı sakinleştir',
     leftEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -15 }],
     rightEffects: [{ power: 'halk', amount: -5 }, { power: 'yatirimcilar', amount: 15 }],
+    leftMoney: -8, rightMoney: 5,
   },
   {
     id: 2, character: 'Müteahhit Başı', characterEmoji: '🏗️', category: 'Ekonomi',
@@ -15,6 +16,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Hepsini birden yap!', rightChoice: 'Bütçe yetmez, bekleyelim',
     leftEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'halk', amount: -10 }, { power: 'mafya', amount: 10 }],
     rightEffects: [{ power: 'yatirimcilar', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: -25, rightMoney: 3,
   },
   {
     id: 3, character: 'Maliye Bakanı', characterEmoji: '💼', category: 'Ekonomi',
@@ -22,6 +24,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Vergileri artır', rightChoice: 'IMF ile görüş',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'halk', amount: -5 }, { power: 'ordu', amount: -5 }],
+    leftMoney: 15, rightMoney: 20,
   },
   {
     id: 4, character: 'Damadın', characterEmoji: '🤵', category: 'Ekonomi',
@@ -29,6 +32,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Tamam, sen bakan ol', rightChoice: 'Olmaz, profesyonel birini atayacağım',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: -20 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: 10 }],
+    leftMoney: -12, rightMoney: 0,
   },
   {
     id: 5, character: 'Vergi Müfettişi', characterEmoji: '🧾', category: 'Ekonomi',
@@ -36,6 +40,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Hepsine ceza kes', rightChoice: 'Bırak, uğraşma',
     leftEffects: [{ power: 'yatirimcilar', amount: -15 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 5 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'halk', amount: -5 }],
+    leftMoney: 10, rightMoney: -3,
   },
   {
     id: 6, character: 'TÜFE Uzmanı', characterEmoji: '📊', category: 'Ekonomi',
@@ -43,6 +48,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Gerçek rakamı açıkla', rightChoice: 'Düşük göster',
     leftEffects: [{ power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'mafya', amount: 5 }],
+    leftMoney: -5, rightMoney: 8,
   },
   {
     id: 7, character: 'Enerji Bakanı', characterEmoji: '⚡', category: 'Ekonomi',
@@ -50,6 +56,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Halka yansıt', rightChoice: 'Devlet sübvanse etsin',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: 10 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -10 }],
+    leftMoney: 12, rightMoney: -18,
   },
   {
     id: 8, character: 'Kripto Danışmanı', characterEmoji: '₿', category: 'Ekonomi',
@@ -57,6 +64,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Borsayı kapat, soruşturma aç', rightChoice: 'Görmezden gel',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -10 }, { power: 'mafya', amount: -5 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'mafya', amount: 10 }],
+    leftMoney: -5, rightMoney: 7,
   },
   {
     id: 9, character: 'Özelleştirme Müdürü', characterEmoji: '🏭', category: 'Ekonomi',
@@ -64,6 +72,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Yandaşlara sat', rightChoice: 'Uluslararası ihaleye çıkar',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'halk', amount: -10 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'mafya', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: 15, rightMoney: 25,
   },
   {
     id: 10, character: 'Turizm Bakanı', characterEmoji: '🏖️', category: 'Ekonomi',
@@ -71,6 +80,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Anlaşma yap', rightChoice: 'NATO müttefikleriyle kal',
     leftEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'ordu', amount: -10 }],
     rightEffects: [{ power: 'ordu', amount: 10 }, { power: 'yatirimcilar', amount: -5 }],
+    leftMoney: 10, rightMoney: -3,
   },
 
   // === SİYASİ ENTRİKA (10 kart) ===
@@ -80,6 +90,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Yayınla, bitir işini', rightChoice: 'Sakla, koz olarak tut',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'ordu', amount: -5 }, { power: 'mafya', amount: 5 }],
     rightEffects: [{ power: 'mafya', amount: 10 }, { power: 'ordu', amount: 5 }],
+    leftMoney: -3, rightMoney: 0,
   },
   {
     id: 12, character: 'Eski Başbakan', characterEmoji: '👔', category: 'Siyasi Entrika',
@@ -87,6 +98,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Medyayı üstüne sal', rightChoice: 'Uzlaşma teklif et',
     leftEffects: [{ power: 'halk', amount: -5 }, { power: 'mafya', amount: 5 }, { power: 'ordu', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: -5, rightMoney: -2,
   },
   {
     id: 13, character: 'Gazeteci', characterEmoji: '📰', category: 'Siyasi Entrika',
@@ -94,6 +106,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Tutukla', rightChoice: 'Bırak yayınlasın',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'ordu', amount: 10 }, { power: 'mafya', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'yatirimcilar', amount: -10 }, { power: 'mafya', amount: -10 }],
+    leftMoney: 0, rightMoney: -8,
   },
   {
     id: 14, character: 'Anayasa Mahkemesi Başkanı', characterEmoji: '⚖️', category: 'Siyasi Entrika',
@@ -101,6 +114,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Mahkemeyi görevden al', rightChoice: 'Teklifi geri çek',
     leftEffects: [{ power: 'halk', amount: -10 }, { power: 'ordu', amount: -10 }, { power: 'tarikat', amount: 10 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'ordu', amount: 5 }],
+    leftMoney: 0, rightMoney: 0,
   },
   {
     id: 15, character: 'Belediye Başkanı', characterEmoji: '🏙️', category: 'Siyasi Entrika',
@@ -108,6 +122,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Seçimi tekrarla', rightChoice: 'Kabul et, demokratik ol',
     leftEffects: [{ power: 'halk', amount: -20 }, { power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: -10, rightMoney: 0,
   },
   {
     id: 16, character: 'Sosyal Medya Trollü', characterEmoji: '🤖', category: 'Siyasi Entrika',
@@ -115,6 +130,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Çalıştır botları', rightChoice: 'Gerek yok, organik olsun',
     leftEffects: [{ power: 'halk', amount: 5 }, { power: 'mafya', amount: 5 }, { power: 'yatirimcilar', amount: -5 }],
     rightEffects: [{ power: 'halk', amount: -5 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: -4, rightMoney: 0,
   },
   {
     id: 17, character: 'Şüpheli Tanık', characterEmoji: '🤐', category: 'Siyasi Entrika',
@@ -122,6 +138,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Dosyayı kapat', rightChoice: 'Soruşturmayı derinleştir',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -10 }, { power: 'ordu', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'mafya', amount: -15 }, { power: 'ordu', amount: -5 }],
+    leftMoney: 0, rightMoney: -5,
   },
   {
     id: 18, character: 'Parti Sözcüsü', characterEmoji: '🎤', category: 'Siyasi Entrika',
@@ -129,6 +146,7 @@ export const eventCards: EventCard[] = [
     leftChoice: '"Halkımıza bağış" de', rightChoice: 'Susma hakkını kullan',
     leftEffects: [{ power: 'halk', amount: -5 }, { power: 'mafya', amount: 5 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -5 }],
+    leftMoney: -3, rightMoney: 0,
   },
   {
     id: 19, character: 'Diplomat', characterEmoji: '🎩', category: 'Siyasi Entrika',
@@ -136,6 +154,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Toplantıyı iptal et', rightChoice: 'Görüşmeyi kabul et',
     leftEffects: [{ power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: 10 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: 0, rightMoney: 5,
   },
   {
     id: 20, character: 'Savcı', characterEmoji: '👨‍⚖️', category: 'Siyasi Entrika',
@@ -143,6 +162,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Toplu tutuklama yap', rightChoice: 'Sadece üst düzey isimlere odaklan',
     leftEffects: [{ power: 'tarikat', amount: -15 }, { power: 'halk', amount: -10 }, { power: 'ordu', amount: 10 }],
     rightEffects: [{ power: 'tarikat', amount: -5 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 5 }],
+    leftMoney: -8, rightMoney: -2,
   },
 
   // === TARİKAT / CEMAAT (9 kart) ===
@@ -152,6 +172,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Onayla, devam etsinler', rightChoice: 'Dur, bu çok riskli',
     leftEffects: [{ power: 'tarikat', amount: 15 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -15 }, { power: 'ordu', amount: 5 }],
+    leftMoney: 5, rightMoney: 0,
   },
   {
     id: 22, character: 'Emniyet Müdürü', characterEmoji: '👮', category: 'Tarikat',
@@ -159,6 +180,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Hepsini tasfiye et', rightChoice: 'Göz yum, lazım olurlar',
     leftEffects: [{ power: 'tarikat', amount: -15 }, { power: 'ordu', amount: 10 }, { power: 'halk', amount: 5 }],
     rightEffects: [{ power: 'tarikat', amount: 10 }, { power: 'ordu', amount: -10 }],
+    leftMoney: -5, rightMoney: 3,
   },
   {
     id: 23, character: 'Eğitim Bakanı', characterEmoji: '📚', category: 'Tarikat',
@@ -166,6 +188,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Kapat hepsini', rightChoice: 'Dokunma, oy kaybederiz',
     leftEffects: [{ power: 'tarikat', amount: -20 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: 10 }, { power: 'halk', amount: -5 }],
+    leftMoney: 3, rightMoney: 0,
   },
   {
     id: 24, character: 'Tarikat Şeyhi', characterEmoji: '👳', category: 'Tarikat',
@@ -173,6 +196,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Araziyi ver', rightChoice: 'Veremem, devlet arazisi',
     leftEffects: [{ power: 'tarikat', amount: 15 }, { power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -15 }, { power: 'halk', amount: 5 }],
+    leftMoney: -8, rightMoney: 0,
   },
   {
     id: 25, character: 'Diyanet Başkanı', characterEmoji: '🕌', category: 'Tarikat',
@@ -180,6 +204,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Bütçeyi artır', rightChoice: 'Mevcut bütçeyle idare et',
     leftEffects: [{ power: 'tarikat', amount: 10 }, { power: 'halk', amount: -5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: -15, rightMoney: 5,
   },
   {
     id: 26, character: 'Mürşid', characterEmoji: '🔮', category: 'Tarikat',
@@ -187,6 +212,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Şartını kabul et', rightChoice: 'Rüyalarla iş olmaz',
     leftEffects: [{ power: 'tarikat', amount: 15 }, { power: 'ordu', amount: -5 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: -5, rightMoney: 0,
   },
   {
     id: 27, character: 'Medrese Hocası', characterEmoji: '📖', category: 'Tarikat',
@@ -194,6 +220,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Müfredatı değiştir', rightChoice: 'Bilimsel müfredat kalsın',
     leftEffects: [{ power: 'tarikat', amount: 10 }, { power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'halk', amount: 10 }],
+    leftMoney: 0, rightMoney: 0,
   },
   {
     id: 28, character: 'Vakıf Başkanı', characterEmoji: '🏛️', category: 'Tarikat',
@@ -201,6 +228,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Desteklemeye devam', rightChoice: 'Denetle, şeffaflık iste',
     leftEffects: [{ power: 'tarikat', amount: 10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'halk', amount: 10 }],
+    leftMoney: -8, rightMoney: 3,
   },
   {
     id: 29, character: 'FETÖ İtirafçısı', characterEmoji: '😰', category: 'Tarikat',
@@ -208,6 +236,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Hepsini içeri al', rightChoice: 'Sadece aktif olanları al',
     leftEffects: [{ power: 'tarikat', amount: -20 }, { power: 'halk', amount: -15 }, { power: 'ordu', amount: 10 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 5 }],
+    leftMoney: -12, rightMoney: -3,
   },
 
   // === DIŞ POLİTİKA (8 kart) ===
@@ -217,6 +246,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Operasyona başla', rightChoice: 'Diplomasi dene',
     leftEffects: [{ power: 'ordu', amount: 15 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'ordu', amount: -10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'halk', amount: -5 }],
+    leftMoney: -20, rightMoney: 3,
   },
   {
     id: 31, character: 'Mülteci Koordinatörü', characterEmoji: '🏕️', category: 'Dış Politika',
@@ -224,6 +254,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Kapıları aç', rightChoice: 'Mültecileri entegre et',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -15 }, { power: 'ordu', amount: -5 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'tarikat', amount: 5 }],
+    leftMoney: 0, rightMoney: -10,
   },
   {
     id: 32, character: 'NATO Temsilcisi', characterEmoji: '🌐', category: 'Dış Politika',
@@ -231,6 +262,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'S-400 al', rightChoice: 'Patriot al',
     leftEffects: [{ power: 'ordu', amount: 10 }, { power: 'yatirimcilar', amount: -15 }, { power: 'halk', amount: 5 }],
     rightEffects: [{ power: 'ordu', amount: 5 }, { power: 'yatirimcilar', amount: 10 }],
+    leftMoney: -15, rightMoney: -20,
   },
   {
     id: 33, character: 'Dışişleri Bakanı', characterEmoji: '🌍', category: 'Dış Politika',
@@ -238,6 +270,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Müdahale et', rightChoice: 'Tarafsız kal',
     leftEffects: [{ power: 'ordu', amount: 15 }, { power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'ordu', amount: -5 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: -18, rightMoney: 5,
   },
   {
     id: 34, character: 'Silah Tüccarı', characterEmoji: '🔧', category: 'Dış Politika',
@@ -245,6 +278,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Herkese sat', rightChoice: 'Sadece müttefiklere sat',
     leftEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'ordu', amount: 10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 5 }, { power: 'ordu', amount: 5 }, { power: 'halk', amount: 5 }],
+    leftMoney: 20, rightMoney: 8,
   },
   {
     id: 35, character: 'AB Elçisi', characterEmoji: '🇪🇺', category: 'Dış Politika',
@@ -252,6 +286,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'AB\'yi unut, kendi yoluna', rightChoice: 'Reformları hızlandır',
     leftEffects: [{ power: 'tarikat', amount: 10 }, { power: 'ordu', amount: 5 }, { power: 'yatirimcilar', amount: -15 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: 15 }, { power: 'tarikat', amount: -10 }],
+    leftMoney: 0, rightMoney: -5,
   },
   {
     id: 36, character: 'Enerji Lobicisi', characterEmoji: '🛢️', category: 'Dış Politika',
@@ -259,6 +294,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Anlaşmayı kabul et', rightChoice: 'Reddet, alternatif bul',
     leftEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: 5 }],
     rightEffects: [{ power: 'ordu', amount: 10 }, { power: 'yatirimcilar', amount: -5 }, { power: 'halk', amount: -5 }],
+    leftMoney: 12, rightMoney: -8,
   },
   {
     id: 37, character: 'BM Raportörü', characterEmoji: '📋', category: 'Dış Politika',
@@ -266,6 +302,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Raporu "yanlı" diye reddet', rightChoice: 'İyileştirme sözü ver',
     leftEffects: [{ power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: 10 }, { power: 'ordu', amount: -5 }],
+    leftMoney: 0, rightMoney: -3,
   },
 
   // === HALK OLAYLARI (8 kart) ===
@@ -275,6 +312,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Gazla dağıt', rightChoice: 'Diyalog kur',
     leftEffects: [{ power: 'halk', amount: -20 }, { power: 'ordu', amount: 10 }, { power: 'mafya', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'ordu', amount: -5 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: -3, rightMoney: -2,
   },
   {
     id: 39, character: 'RTÜK Başkanı', characterEmoji: '📺', category: 'Halk',
@@ -282,6 +320,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Kapat', rightChoice: 'Bırak, basın özgürlüğü',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: 0, rightMoney: 0,
   },
   {
     id: 40, character: 'Twitter Müdürü', characterEmoji: '🐦', category: 'Halk',
@@ -289,6 +328,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Engelle', rightChoice: 'Bırak, trolleri gönder',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: -5 }, { power: 'mafya', amount: 5 }],
+    leftMoney: 0, rightMoney: -2,
   },
   {
     id: 41, character: 'Sendika Başkanı', characterEmoji: '✊', category: 'Halk',
@@ -296,6 +336,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Asgari ücreti artır', rightChoice: 'Grevi yasakla',
     leftEffects: [{ power: 'halk', amount: 15 }, { power: 'yatirimcilar', amount: -15 }],
     rightEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: 10 }, { power: 'ordu', amount: 5 }],
+    leftMoney: -12, rightMoney: 5,
   },
   {
     id: 42, character: 'Üniversite Rektörü', characterEmoji: '🎓', category: 'Halk',
@@ -303,6 +344,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Polisle müdahale et', rightChoice: 'Talepleri dinle',
     leftEffects: [{ power: 'halk', amount: -10 }, { power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'tarikat', amount: -5 }],
+    leftMoney: -2, rightMoney: 0,
   },
   {
     id: 43, character: 'Deprem Uzmanı', characterEmoji: '🏚️', category: 'Halk',
@@ -310,6 +352,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Sorumluluğu üstlen', rightChoice: '"Kader planı" de',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -10 }, { power: 'mafya', amount: -10 }],
     rightEffects: [{ power: 'halk', amount: -20 }, { power: 'tarikat', amount: 10 }],
+    leftMoney: -20, rightMoney: 0,
   },
   {
     id: 44, character: 'Sağlık Bakanı', characterEmoji: '🏥', category: 'Halk',
@@ -317,6 +360,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Tam kapanma', rightChoice: 'Kısmi kapanma, ekonomi dönsün',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -20 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 5 }],
+    leftMoney: -15, rightMoney: 5,
   },
   {
     id: 45, character: 'Çevreci Aktivist', characterEmoji: '🌳', category: 'Halk',
@@ -324,6 +368,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Madeni aç', rightChoice: 'Projeyi iptal et',
     leftEffects: [{ power: 'yatirimcilar', amount: 15 }, { power: 'halk', amount: -15 }, { power: 'mafya', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'yatirimcilar', amount: -10 }],
+    leftMoney: 18, rightMoney: -5,
   },
 
   // === MAFYA (8 kart) ===
@@ -333,6 +378,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Anlaşma yap', rightChoice: 'Defol, seni tutuklarım',
     leftEffects: [{ power: 'mafya', amount: 15 }, { power: 'yatirimcilar', amount: 5 }, { power: 'halk', amount: -10 }],
     rightEffects: [{ power: 'mafya', amount: -20 }, { power: 'halk', amount: 10 }, { power: 'ordu', amount: 5 }],
+    leftMoney: 15, rightMoney: -5,
   },
   {
     id: 47, character: 'Uyuşturucu Baronu', characterEmoji: '💊', category: 'Mafya',
@@ -340,6 +386,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Göz yum, para alsın', rightChoice: 'Operasyon başlat',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -10 }, { power: 'ordu', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -15 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 10 }],
+    leftMoney: 10, rightMoney: -8,
   },
   {
     id: 48, character: 'Kara Para Aklayıcı', characterEmoji: '🧹', category: 'Mafya',
@@ -347,6 +394,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Sistemi kur', rightChoice: 'Risk almayalım',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'yatirimcilar', amount: 10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -5 }, { power: 'halk', amount: 5 }],
+    leftMoney: 20, rightMoney: 0,
   },
   {
     id: 49, character: 'Tetikçi', characterEmoji: '🎯', category: 'Mafya',
@@ -354,6 +402,7 @@ export const eventCards: EventCard[] = [
     leftChoice: '...Yap', rightChoice: 'Hayır! Deli misin?',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -15 }, { power: 'ordu', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -10 }, { power: 'halk', amount: 5 }],
+    leftMoney: -5, rightMoney: 0,
   },
   {
     id: 50, character: 'İtirafçı', characterEmoji: '😱', category: 'Mafya',
@@ -361,6 +410,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Kanalı kapattır', rightChoice: 'Soruşturma başlat',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -15 }],
     rightEffects: [{ power: 'mafya', amount: -15 }, { power: 'halk', amount: 15 }, { power: 'ordu', amount: -5 }],
+    leftMoney: 0, rightMoney: -5,
   },
   {
     id: 51, character: 'Kumar Kralı', characterEmoji: '🎲', category: 'Mafya',
@@ -368,6 +418,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Payımı ver', rightChoice: 'Siteleri kapat',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -10 }, { power: 'halk', amount: 10 }],
+    leftMoney: 12, rightMoney: -3,
   },
   {
     id: 52, character: 'Silah Kaçakçısı', characterEmoji: '💣', category: 'Mafya',
@@ -375,6 +426,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'İçeri al, lazım olur', rightChoice: 'Engelle, tehlikeli',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'ordu', amount: 10 }, { power: 'mafya', amount: -10 }],
+    leftMoney: 8, rightMoney: -3,
   },
   {
     id: 53, character: 'Koruma Müdürü', characterEmoji: '🕶️', category: 'Mafya',
@@ -382,6 +434,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Görmezden gel, oy lazım', rightChoice: 'Temizle partiyi',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -5 }, { power: 'tarikat', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -15 }, { power: 'halk', amount: 10 }],
+    leftMoney: 5, rightMoney: -5,
   },
 
   // === EK KARTLAR (BONUS) ===
@@ -391,6 +444,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Halkı sokağa çağır', rightChoice: 'Ülkeden kaç',
     leftEffects: [{ power: 'halk', amount: 15 }, { power: 'ordu', amount: -15 }, { power: 'tarikat', amount: 10 }],
     rightEffects: [{ power: 'halk', amount: -20 }, { power: 'ordu', amount: 20 }],
+    leftMoney: -10, rightMoney: -30,
   },
   {
     id: 55, character: 'Saray Aşçısı', characterEmoji: '👨‍🍳', category: 'Halk',
@@ -398,6 +452,7 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Yap, görkemli olsun!', rightChoice: 'Mütevazı kal, vazgeç',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'yatirimcilar', amount: 10 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 10 }, { power: 'mafya', amount: -5 }],
+    leftMoney: -30, rightMoney: 5,
   },
   {
     id: 56, character: 'Merkez Bankası Müdürü', characterEmoji: '🏛️', category: 'Ekonomi',
@@ -405,5 +460,6 @@ export const eventCards: EventCard[] = [
     leftChoice: 'Değiştir, ben bilirim', rightChoice: 'Bırak kalsın',
     leftEffects: [{ power: 'yatirimcilar', amount: -20 }, { power: 'halk', amount: -10 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'yatirimcilar', amount: 10 }, { power: 'halk', amount: 5 }],
+    leftMoney: -10, rightMoney: 5,
   },
 ];

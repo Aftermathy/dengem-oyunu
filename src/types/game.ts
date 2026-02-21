@@ -15,6 +15,8 @@ export interface EventCard {
   rightChoice: string;
   leftEffects: PowerEffect[];
   rightEffects: PowerEffect[];
+  leftMoney?: number;
+  rightMoney?: number;
 }
 
 export interface PowerState {
@@ -33,10 +35,6 @@ export interface GameOverScenario {
   emoji: string;
 }
 
-export const POWER_INFO: Record<PowerType, { label: string; emoji: string }> = {
-  halk: { label: 'Halk', emoji: '🏛️' },
-  yatirimcilar: { label: 'Yatırımcılar', emoji: '💰' },
-  mafya: { label: 'Mafya', emoji: '🔫' },
-  tarikat: { label: 'Tarikat', emoji: '📿' },
-  ordu: { label: 'Ordu', emoji: '⚔️' },
-};
+// Bribe cost tiers: each successive bribe to the same faction costs more
+export const BRIBE_COSTS = [1, 3, 5, 10, 25, 50, 100] as const;
+export const BRIBE_REP_GAIN = 10;

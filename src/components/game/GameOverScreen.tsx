@@ -7,10 +7,11 @@ interface GameOverScreenProps {
   emoji: string;
   turn: number;
   highScore: number;
+  money: number;
   onRestart: () => void;
 }
 
-export function GameOverScreen({ title, description, emoji, turn, highScore, onRestart }: GameOverScreenProps) {
+export function GameOverScreen({ title, description, emoji, turn, highScore, money, onRestart }: GameOverScreenProps) {
   const { t } = useLanguage();
 
   return (
@@ -27,6 +28,10 @@ export function GameOverScreen({ title, description, emoji, turn, highScore, onR
         <div className="text-center">
           <div className="text-3xl font-black text-primary">{highScore}</div>
           <div className="text-xs text-muted-foreground">{t('gameover.best')}</div>
+        </div>
+        <div className="text-center">
+          <div className="text-3xl font-black text-foreground">{money}M</div>
+          <div className="text-xs text-muted-foreground">💰</div>
         </div>
       </div>
 

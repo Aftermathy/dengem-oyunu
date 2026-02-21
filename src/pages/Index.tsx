@@ -9,7 +9,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
   const { lang, t } = useLanguage();
-  const { phase, power, currentCard, turn, highScore, gameOverInfo, startGame, swipe } = useGame(lang);
+  const {
+    phase, power, money, currentCard, turn, highScore,
+    gameOverInfo, lastMoneyChange, startGame, swipe,
+    bribe, canBribe, getBribeCost,
+  } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
 
   const handleHoverEffects = useCallback((effects: PowerEffect[]) => {
@@ -27,7 +31,15 @@ const Index = () => {
       {phase === 'playing' && currentCard && (
         <>
           <div className="pt-4 pb-2">
-            <PowerBars power={power} activeEffects={activeEffects} />
+            <PowerBars
+              power={power}
+              activeEffects={activeEffects}
+              money={money}
+              lastMoneyChange={lastMoneyChange}
+              onBribe={bribe}
+              canBribe={canBribe}
+              getBribeCost={getBribeCost}
+            />
             <div className="text-center text-xs text-muted-foreground mt-1">
               {t('game.turn')}: <span className="font-bold text-foreground">{turn}</span>
             </div>
@@ -52,6 +64,7 @@ const Index = () => {
             emoji={gameOverInfo.emoji}
             turn={turn}
             highScore={highScore}
+            money={money}
             onRestart={startGame}
           />
         </div>
