@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { playClickSound } from '@/hooks/useSound';
 
 import defeatHalk from '@/assets/defeat-halk.jpg';
 import defeatYatirimcilar from '@/assets/defeat-yatirimcilar.jpg';
@@ -63,10 +64,10 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
         </div>
 
         <div className="flex gap-3 mt-4 w-full">
-          <Button size="lg" onClick={onRestart} className="flex-1 text-base px-6 py-6 font-bold bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20">
+          <Button size="lg" onClick={() => { playClickSound(); onRestart(); }} className="flex-1 text-base px-6 py-6 font-bold bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20">
             {t('gameover.restart')}
           </Button>
-          <Button size="lg" onClick={onMainMenu} variant="outline" className="flex-1 text-base px-6 py-6 font-bold bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/50">
+          <Button size="lg" onClick={() => { playClickSound(); onMainMenu(); }} variant="outline" className="flex-1 text-base px-6 py-6 font-bold bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/50">
             {t('gameover.menu')}
           </Button>
         </div>

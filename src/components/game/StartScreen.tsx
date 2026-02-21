@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { playClickSound } from '@/hooks/useSound';
 
 interface StartScreenProps {
   highScore: number;
@@ -54,7 +55,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
 
       <Button
         size="lg"
-        onClick={onStart}
+        onClick={() => { playClickSound(); onStart(); }}
         className="text-lg px-10 py-6 font-bold mt-2 shadow-lg hover:shadow-xl transition-shadow"
       >
         {t('start.play')}
