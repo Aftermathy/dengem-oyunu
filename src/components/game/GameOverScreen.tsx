@@ -36,6 +36,8 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
 
   return (
     <div className="relative flex flex-col items-center justify-end min-h-screen w-full overflow-hidden gameover-container">
+      {/* Fade from black overlay */}
+      <div className="absolute inset-0 z-20 pointer-events-none gameover-blackfade" />
 
       {bgImage && (
         <div className="absolute inset-0 z-0">
