@@ -19,7 +19,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
             lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          🇹🇷 TR
+          TR
         </button>
         <button
           onClick={() => setLang('en')}
@@ -27,7 +27,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
             lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          🇬🇧 EN
+          EN
         </button>
       </div>
 
