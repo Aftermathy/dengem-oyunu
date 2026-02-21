@@ -117,7 +117,7 @@ function AnimatedVote({ value, color, label }: { value: number; color: string; l
 }
 
 export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang, onComplete, onRestart, onMainMenu }: ElectionScreenProps) => {
-  const [playerVote, setPlayerVote] = useState(() => Math.min(60, 35 + Math.floor(halkPower * 0.25)));
+  const [playerVote, setPlayerVote] = useState(() => config.startingPlayerVote);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result'>('intro');
   const [budget, setBudget] = useState(money);
