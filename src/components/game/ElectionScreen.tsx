@@ -232,6 +232,8 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   };
 
   const canAffordAny = cards.some(c => budget >= c.cost);
+  const canAffordAnyPower = config.specialPowers.some(p => !usedPowers.includes(p.id) && laundered >= p.launderedCost);
+  const showSkip = !canAffordAny && !canAffordAnyPower;
 
   return (
     <div className={`fixed inset-0 z-50 flex flex-col overflow-auto ${phase === 'result' && !won ? 'election-shake' : ''}`}
@@ -366,7 +368,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                     </button>
                   ))}
                 </div>
-                {!canAffordAny && (
+                {showSkip && (
                   <button
                     onClick={skipTurn}
                     className="mt-2 w-full py-2.5 bg-gray-800/80 border border-gray-600/40 rounded-lg text-gray-300 text-sm font-bold hover:bg-gray-700/80 active:scale-95 transition-all"
