@@ -61,6 +61,10 @@ export function useGame(lang: Language) {
   const [tutorialFaction, setTutorialFaction] = useState<PowerType | null>(null);
   const [pendingAdvance, setPendingAdvance] = useState<{ newMoney: number; nextIndex: number } | null>(null);
   const [totalLaundered, setTotalLaundered] = useState(0);
+  const [propagandaCount, setPropagandaCount] = useState(0);
+  const [investmentCount, setInvestmentCount] = useState(0);
+  const [allianceCount, setAllianceCount] = useState(0);
+  const [lastShopResult, setLastShopResult] = useState<string | null>(null);
 
   const currentCard = deck[cardIndex] || null;
 
@@ -82,6 +86,10 @@ export function useGame(lang: Language) {
     setTutorialFaction(null);
     setPendingAdvance(null);
     setTotalLaundered(0);
+    setPropagandaCount(0);
+    setInvestmentCount(0);
+    setAllianceCount(0);
+    setLastShopResult(null);
     setPhase('playing');
   }, [lang]);
 
@@ -259,6 +267,57 @@ export function useGame(lang: Language) {
     }
   }, [money, power, checkGameOver, turn, highScore]);
 
+  // === Laundered money shop ===
+  const PROPAGANDA_COSTS = [10, 20, 30, 50];
+  const INVESTMENT_COST = 15;
+  const ALLIANCE_COSTS = [20, 30, 45, 50];
+
+  const getPropagandaCost = () => PROPAGANDA_COSTS[Math.min(propagandaCount, PROPAGANDA_COSTS.length - 1)];
+  const getInvestmentCost = () => INVESTMENT_COST;
+  const getAllianceCost = () => ALLIANCE_COSTS[Math.min(allianceCount, ALLIANCE_COSTS.length - 1)];
+
+  const canPropaganda = totalLaundered >= getPropagandaCost() && phase === 'playing';
+  const canInvest = totalLaundered >= getInvestmentCost() && phase === 'playing';
+  const canAlliance = totalLaundered >= getAllianceCost() && phase === 'playing';
+
+  const propaganda = useCallback(() => {
+    const cost = getPropagandaCost();
+    if (totalLaundered < cost) return;
+    setTotalLaundered(prev => prev - cost);
+    setPropagandaCount(prev => prev + 1);
+    const newPower = { ...power };
+    newPower.halk = Math.min(100, newPower.halk + 10);
+    setPower(newPower);
+    setLastShopResult(null);
+  }, [totalLaundered, power, propagandaCount]);
+
+  const invest = useCallback(() => {
+    const cost = getInvestmentCost();
+    if (totalLaundered < cost) return;
+    setTotalLaundered(prev => prev - cost);
+    setInvestmentCount(prev => prev + 1);
+    const win = Math.random() < 0.5;
+    if (win) {
+      setMoney(m => m + cost * 2);
+      setLastMoneyChange(cost * 2);
+      setLastShopResult('win');
+    } else {
+      setLastShopResult('lose');
+    }
+  }, [totalLaundered, investmentCount]);
+
+  const alliance = useCallback((f1: PowerType, f2: PowerType) => {
+    const cost = getAllianceCost();
+    if (totalLaundered < cost) return;
+    setTotalLaundered(prev => prev - cost);
+    setAllianceCount(prev => prev + 1);
+    const newPower = { ...power };
+    newPower[f1] = Math.min(100, newPower[f1] + 8);
+    newPower[f2] = Math.min(100, newPower[f2] + 8);
+    setPower(newPower);
+    setLastShopResult(null);
+  }, [totalLaundered, power, allianceCount]);
+
   return {
     phase,
     power,
@@ -272,6 +331,7 @@ export function useGame(lang: Language) {
     tutorialFaction,
     totalLaundered,
     canLaunder,
+    lastShopResult,
     startGame,
     swipe,
     bribe,
@@ -281,5 +341,8 @@ export function useGame(lang: Language) {
     skipTutorial,
     goToMenu,
     launder,
+    propaganda, canPropaganda, getPropagandaCost,
+    invest, canInvest, getInvestmentCost,
+    alliance, canAlliance, getAllianceCost,
   };
 }
