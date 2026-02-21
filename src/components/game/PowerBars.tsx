@@ -252,7 +252,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               </span>
               {val >= 100 && (
                 <span className="text-[8px] sm:text-[10px] font-bold text-cyan-400 animate-pulse">
-                  +2B/tur
+                  +2B/{t('game.turn').toLowerCase()}
                 </span>
               )}
 
