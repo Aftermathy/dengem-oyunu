@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useGame } from '@/hooks/useGame';
 import { PowerBars } from '@/components/game/PowerBars';
 import { SwipeCard } from '@/components/game/SwipeCard';
+import { LaunderBar } from '@/components/game/LaunderBar';
 import { GameOverScreen } from '@/components/game/GameOverScreen';
 import { StartScreen } from '@/components/game/StartScreen';
 import { BribeTutorial } from '@/components/game/BribeTutorial';
@@ -17,6 +18,7 @@ const Index = () => {
     gameOverInfo, lastMoneyChange, startGame, swipe,
     bribe, canBribe, getBribeCost, tutorialFaction,
     completeTutorialBribe, skipTutorial, goToMenu,
+    totalLaundered, canLaunder, launder,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
 
@@ -57,6 +59,13 @@ const Index = () => {
             </span>
             <span className="text-xs text-muted-foreground/40 ml-1.5 font-mono">({turn})</span>
           </div>
+
+          <LaunderBar
+            totalLaundered={totalLaundered}
+            money={money}
+            onLaunder={launder}
+            canLaunder={canLaunder}
+          />
 
           <div className="flex-1 flex items-center justify-center px-4 pb-2">
             <SwipeCard

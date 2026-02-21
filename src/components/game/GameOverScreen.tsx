@@ -60,7 +60,7 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
             <div className="text-xs text-white/60">{t('gameover.best')}</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-black text-white">{money}M</div>
+            <div className="text-3xl font-black text-white">{money}B</div>
             <div className="text-xs text-white/60">💰</div>
           </div>
         </div>
