@@ -33,12 +33,13 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
   const powers: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
   const [showBribe, setShowBribe] = useState<PowerType | null>(null);
 
-  const getBarColor = (value: number) => {
-    if (value <= 15) return 'bg-red-500';
-    if (value <= 30) return 'bg-orange-400';
-    if (value >= 85) return 'bg-red-500';
-    if (value >= 70) return 'bg-orange-400';
-    return 'bg-emerald-500';
+  const getBarGradient = (value: number) => {
+    if (value <= 15) return 'linear-gradient(to top, #ef4444, #f97316)';
+    if (value <= 30) return 'linear-gradient(to top, #f97316, #eab308)';
+    if (value <= 50) return 'linear-gradient(to top, #eab308, #22c55e)';
+    if (value <= 70) return 'linear-gradient(to top, #22c55e, #14b8a6)';
+    if (value <= 85) return 'linear-gradient(to top, #14b8a6, #06b6d4)';
+    return 'linear-gradient(to top, #06b6d4, #0ea5e9)';
   };
 
   const isAffected = (p: PowerType) => activeEffects.some(e => e.power === p);
@@ -105,11 +106,8 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               {/* Power bar */}
               <div className="w-full h-16 sm:h-20 bg-muted/50 rounded-full relative overflow-hidden border border-border/50">
                 <div
-                  className={cn(
-                    "absolute bottom-0 w-full rounded-full transition-all duration-500 ease-out",
-                    getBarColor(val)
-                  )}
-                  style={{ height: `${val}%` }}
+                  className="absolute bottom-0 w-full rounded-full transition-all duration-500 ease-out"
+                  style={{ height: `${val}%`, background: getBarGradient(val) }}
                 />
                 {affected && (
                   <div className={cn(
@@ -122,6 +120,11 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               <span className="text-[9px] sm:text-xs font-medium text-muted-foreground truncate w-full text-center">
                 {t(`power.${p}`)}
               </span>
+              {val >= 100 && (
+                <span className="text-[8px] sm:text-[10px] font-bold text-cyan-400 animate-pulse">
+                  +2M/tur
+                </span>
+              )}
 
               {/* Bribe popup */}
               {showBribe === p && (
