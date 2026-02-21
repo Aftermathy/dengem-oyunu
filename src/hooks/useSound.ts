@@ -93,6 +93,45 @@ export function playBribeSound() {
   }
 }
 
+export function playClickSound() {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+
+    // Sharp click — mechanical key down
+    const osc = ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(1800, now);
+    osc.frequency.exponentialRampToValueAtTime(600, now + 0.03);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.06);
+
+    // Subtle spring bounce
+    const osc2 = ctx.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.value = 4200;
+
+    const gain2 = ctx.createGain();
+    gain2.gain.setValueAtTime(0, now + 0.03);
+    gain2.gain.linearRampToValueAtTime(0.06, now + 0.04);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.03);
+    osc2.stop(now + 0.08);
+  } catch {
+    // Silently fail
+  }
+}
+
 export function playWarningSound() {
   try {
     const ctx = getAudioCtx();
