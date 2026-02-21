@@ -8,7 +8,7 @@ export interface ElectionCard {
   emoji: string;
   voterEffect: number;
   cost: number;
-  rarity?: CardRarity;
+  rarity: CardRarity;
 }
 
 export interface ElectionSpecialPower {
@@ -26,11 +26,7 @@ export interface ElectionConfig {
   title: string;
   subtitle: string;
   playerCards: ElectionCard[];
-  aiCards: ElectionCard[];
   specialPowers: ElectionSpecialPower[];
-  aiDifficultyBonus: number;
-  catchUpThreshold: number;
-  catchUpBonus: number;
   startingPlayerVote: number;
   isFinalBoss?: boolean;
 }
