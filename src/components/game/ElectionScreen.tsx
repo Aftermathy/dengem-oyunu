@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { ElectionConfig, ElectionResult, ElectionCard, ElectionSpecialPower } from '@/types/election';
 import { Language } from '@/contexts/LanguageContext';
 
@@ -17,6 +17,101 @@ function shuffleAndDraw(cards: ElectionCard[], count: number, exclude: number[] 
   return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 
+/* ── Animated counter hook ── */
+function useAnimatedCount(target: number, duration = 1200) {
+  const [value, setValue] = useState(0);
+  const started = useRef(false);
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      setValue(Math.round(t * target));
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [target, duration]);
+  return value;
+}
+
+/* ── Confetti component ── */
+const CONFETTI_COLORS = ['#ff6b6b', '#ffd93d', '#6bcb77', '#4d96ff', '#ff6b9d', '#c084fc', '#fb923c', '#34d399'];
+
+function ConfettiOverlay() {
+  const pieces = useMemo(() =>
+    Array.from({ length: 18 }, (_, i) => ({
+      id: i,
+      left: `${5 + Math.random() * 90}%`,
+      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+      delay: `${Math.random() * 1.5}s`,
+      duration: `${2 + Math.random() * 2}s`,
+      size: 6 + Math.random() * 6,
+    })), []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-20">
+      {pieces.map(p => (
+        <span key={p.id} className="confetti-piece"
+          style={{
+            left: p.left,
+            width: p.size, height: p.size,
+            background: p.color,
+            animationDelay: p.delay,
+            animationDuration: p.duration,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ── Ember particles ── */
+function EmberParticles({ count = 12 }: { count?: number }) {
+  const embers = useMemo(() =>
+    Array.from({ length: count }, (_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 4}s`,
+      duration: `${3 + Math.random() * 4}s`,
+      size: 3 + Math.random() * 4,
+    })), [count]);
+
+  return (
+    <>
+      {embers.map(e => (
+        <span key={e.id} className="ember-particle"
+          style={{ left: e.left, width: e.size, height: e.size, animationDelay: e.delay, animationDuration: e.duration }}
+        />
+      ))}
+    </>
+  );
+}
+
+/* ── Staggered title ── */
+function StaggeredTitle({ text, className }: { text: string; className?: string }) {
+  return (
+    <span className={className}>
+      {text.split('').map((ch, i) => (
+        <span key={i} className="letter-stagger inline-block" style={{ animationDelay: `${i * 0.05}s` }}>
+          {ch === ' ' ? '\u00A0' : ch}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+/* ── Result vote display with animated counter ── */
+function AnimatedVote({ value, color, label }: { value: number; color: string; label: string }) {
+  const display = useAnimatedCount(value);
+  return (
+    <div className="text-center">
+      <span className="text-4xl font-black" style={{ color }}>{display}%</span>
+      <p className="text-sm mt-1" style={{ color }}>{label}</p>
+    </div>
+  );
+}
+
 export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang, onComplete }: ElectionScreenProps) => {
   const [playerVote, setPlayerVote] = useState(() => Math.min(60, 35 + Math.floor(halkPower * 0.25)));
   const [round, setRound] = useState(1);
@@ -27,8 +122,12 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const [usedPowers, setUsedPowers] = useState<string[]>([]);
   const [aiCardPlayed, setAiCardPlayed] = useState<ElectionCard | null>(null);
   const [usedCardIds, setUsedCardIds] = useState<number[]>([]);
+  const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
+  const [barGlowKey, setBarGlowKey] = useState(0);
+  const [showAiFlash, setShowAiFlash] = useState(false);
 
   const opponentVote = 100 - playerVote;
+  const won = playerVote > 50;
 
   const labels = useMemo(() => lang === 'en' ? {
     opposition: 'Opposition', you: 'You', pickMove: 'Pick your move:',
@@ -56,14 +155,20 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
   const playCard = useCallback((card: ElectionCard) => {
     if (budget < card.cost) return;
-    setBudget(b => b - card.cost);
-    setPlayerVote(v => Math.max(0, Math.min(100, v + card.voterEffect)));
-    setUsedCardIds(prev => [...prev, card.id]);
-    setPhase('ai');
+    setSelectedCardId(card.id);
+    setTimeout(() => {
+      setBudget(b => b - card.cost);
+      setPlayerVote(v => Math.max(0, Math.min(100, v + card.voterEffect)));
+      setBarGlowKey(k => k + 1);
+      setUsedCardIds(prev => [...prev, card.id]);
+      setSelectedCardId(null);
+      setPhase('ai');
+    }, 400);
   }, [budget]);
 
   const skipTurn = useCallback(() => {
     setPlayerVote(v => Math.max(0, Math.min(100, v + 1)));
+    setBarGlowKey(k => k + 1);
     setPhase('ai');
   }, []);
 
@@ -71,12 +176,16 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
     if (laundered < power.launderedCost || usedPowers.includes(power.id)) return;
     setLaundered(l => l - power.launderedCost);
     setPlayerVote(v => Math.max(0, Math.min(100, v + power.voterEffect)));
+    setBarGlowKey(k => k + 1);
     setUsedPowers(prev => [...prev, power.id]);
   }, [laundered, usedPowers]);
 
   // AI turn logic
   useEffect(() => {
     if (phase !== 'ai') return;
+    setShowAiFlash(true);
+    const flashTimer = setTimeout(() => setShowAiFlash(false), 800);
+
     const timer = setTimeout(() => {
       const currentPlayerVote = playerVote;
       const currentOpponentVote = 100 - currentPlayerVote;
@@ -88,6 +197,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
       const effect = aiCard.voterEffect + bonus;
 
       setPlayerVote(v => Math.max(0, Math.min(100, v - effect)));
+      setBarGlowKey(k => k + 1);
       setAiCardPlayed(aiCard);
 
       setTimeout(() => {
@@ -95,13 +205,13 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           setPhase('result');
         } else {
           setRound(r => r + 1);
-          setCards(prev => shuffleAndDraw(config.playerCards, 4, usedCardIds));
+          setCards(shuffleAndDraw(config.playerCards, 4, usedCardIds));
           setAiCardPlayed(null);
           setPhase('player');
         }
       }, 1800);
     }, 1200);
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); clearTimeout(flashTimer); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, round]);
 
@@ -118,7 +228,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const canAffordAny = cards.some(c => budget >= c.cost);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-auto"
+    <div className={`fixed inset-0 z-50 flex flex-col overflow-auto ${phase === 'result' && !won ? 'election-shake' : ''}`}
       style={{ background: 'linear-gradient(180deg, #1a0000 0%, #3d0000 25%, #6b0000 50%, #8b2500 75%, #cc4400 100%)' }}>
 
       {/* Fire glow overlay */}
@@ -129,13 +239,32 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
         }}
       />
 
+      {/* AI red flash overlay */}
+      {showAiFlash && (
+        <div className="absolute inset-0 z-30 ai-red-flash"
+          style={{ background: 'radial-gradient(ellipse at center, rgba(220,38,38,0.3) 0%, rgba(220,38,38,0.1) 50%, transparent 80%)' }}
+        />
+      )}
+
+      {/* Loss red crack overlay */}
+      {phase === 'result' && !won && (
+        <div className="absolute inset-0 z-20 red-crack-overlay"
+          style={{
+            background: 'linear-gradient(45deg, rgba(220,38,38,0.2) 0%, transparent 30%, rgba(220,38,38,0.3) 50%, transparent 70%, rgba(220,38,38,0.2) 100%)',
+          }}
+        />
+      )}
+
       {/* INTRO */}
       {phase === 'intro' && (
         <div className="flex-1 flex flex-col items-center justify-center animate-scale-in relative z-10">
-          <span className="text-7xl mb-4">🔥</span>
+          <EmberParticles count={15} />
+          <div className="flame-ring inline-flex items-center justify-center w-20 h-20 mb-4">
+            <span className="text-7xl">🔥</span>
+          </div>
           <h1 className="text-4xl font-black text-orange-400 text-center px-4"
             style={{ textShadow: '0 0 30px rgba(255,100,0,0.6)' }}>
-            {config.title}
+            <StaggeredTitle text={config.title} />
           </h1>
           <p className="text-orange-200/80 text-lg mt-3 text-center px-6">{config.subtitle}</p>
           <span className="text-6xl mt-6 animate-pulse">🗳️</span>
@@ -164,9 +293,9 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
             {/* Opposition bar */}
             <div className="flex flex-col items-center">
               <span className="text-red-300 font-black text-xl mb-1">{opponentVote}%</span>
-              <div className="w-14 rounded-t-lg overflow-hidden border border-red-700/50"
+              <div className={`w-14 rounded-t-lg overflow-visible border border-red-700/50 relative ${phase === 'ai' && aiCardPlayed ? 'opp-bar-glow' : ''}`}
                 style={{ height: 130, background: 'rgba(100,0,0,0.3)' }}>
-                <div className="w-full transition-all duration-700 ease-out rounded-t"
+                <div className="w-full transition-all duration-700 ease-out rounded-t vote-bar-flame"
                   style={{
                     height: `${opponentVote}%`,
                     marginTop: `${100 - opponentVote}%`,
@@ -182,9 +311,9 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
             {/* Player bar */}
             <div className="flex flex-col items-center">
               <span className="text-green-300 font-black text-xl mb-1">{playerVote}%</span>
-              <div className="w-14 rounded-t-lg overflow-hidden border border-green-700/50"
+              <div key={barGlowKey} className="w-14 rounded-t-lg overflow-visible border border-green-700/50 vote-bar-glow relative"
                 style={{ height: 130, background: 'rgba(0,60,0,0.3)' }}>
-                <div className="w-full transition-all duration-700 ease-out rounded-t"
+                <div className="w-full transition-all duration-700 ease-out rounded-t vote-bar-flame"
                   style={{
                     height: `${playerVote}%`,
                     marginTop: `${100 - playerVote}%`,
@@ -212,12 +341,15 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
               <>
                 <p className="text-orange-200 text-center text-sm mb-2 font-bold">{labels.pickMove}</p>
                 <div className="grid grid-cols-2 gap-2">
-                  {cards.map(card => (
+                  {cards.map((card, i) => (
                     <button
                       key={card.id}
-                      disabled={budget < card.cost}
+                      disabled={budget < card.cost || selectedCardId !== null}
                       onClick={() => playCard(card)}
-                      className="bg-orange-950/80 border border-orange-600/40 rounded-lg p-2.5 text-left disabled:opacity-30 hover:bg-orange-900/80 active:scale-95 transition-all"
+                      className={`relative bg-orange-950/80 border border-orange-600/40 rounded-lg p-2.5 text-left disabled:opacity-30 hover:bg-orange-900/80 active:scale-95 transition-all election-card-enter election-card-shimmer overflow-hidden ${
+                        selectedCardId === card.id ? 'election-card-select' : ''
+                      }`}
+                      style={{ animationDelay: `${i * 0.1}s` }}
                     >
                       <div className="flex justify-between items-start">
                         <span className="text-lg">{card.emoji}</span>
@@ -242,7 +374,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
             {phase === 'ai' && (
               <div className="text-center">
                 {aiCardPlayed ? (
-                  <div className="bg-red-950/80 border border-red-600/50 rounded-lg p-5 mx-auto max-w-xs animate-scale-in">
+                  <div className="bg-red-950/80 border border-red-600/50 rounded-lg p-5 mx-auto max-w-xs ai-card-bounce">
                     <span className="text-4xl">{aiCardPlayed.emoji}</span>
                     <p className="text-red-100 text-sm mt-3 font-bold">{aiCardPlayed.text}</p>
                     <p className="text-red-400 text-xs mt-2 font-bold">
@@ -301,39 +433,34 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
       {/* RESULT */}
       {phase === 'result' && (
         <div className="flex-1 flex flex-col items-center justify-center px-6 animate-scale-in relative z-10">
-          <span className="text-8xl mb-6">{playerVote > 50 ? '🎉' : '💀'}</span>
+          {won && <ConfettiOverlay />}
+
+          <span className="text-8xl mb-6">{won ? '🎉' : '💀'}</span>
           <h2
-            className="text-3xl font-black mb-3 text-center"
+            className={`text-3xl font-black mb-3 text-center ${won ? 'title-glow-pulse' : 'election-glitch'}`}
             style={{
-              color: playerVote > 50 ? '#4ade80' : '#f87171',
-              textShadow: `0 0 25px ${playerVote > 50 ? 'rgba(74,222,128,0.5)' : 'rgba(248,113,113,0.5)'}`,
+              color: won ? '#4ade80' : '#f87171',
             }}
           >
-            {playerVote > 50 ? labels.electionWon : labels.electionLost}
+            {won ? labels.electionWon : labels.electionLost}
           </h2>
           <div className="flex gap-10 my-6">
-            <div className="text-center">
-              <span className="text-green-400 text-4xl font-black">{playerVote}%</span>
-              <p className="text-green-300 text-sm mt-1">{labels.you}</p>
-            </div>
-            <div className="text-center">
-              <span className="text-red-400 text-4xl font-black">{100 - playerVote}%</span>
-              <p className="text-red-300 text-sm mt-1">{labels.opposition}</p>
-            </div>
+            <AnimatedVote value={playerVote} color="#4ade80" label={labels.you} />
+            <AnimatedVote value={100 - playerVote} color="#f87171" label={labels.opposition} />
           </div>
           <button
             onClick={handleFinish}
             className="mt-4 px-10 py-3.5 font-black rounded-xl text-lg active:scale-95 transition-all border-2"
             style={{
-              background: playerVote > 50
+              background: won
                 ? 'linear-gradient(135deg, #15803d, #22c55e)'
                 : 'linear-gradient(135deg, #991b1b, #dc2626)',
-              borderColor: playerVote > 50 ? '#4ade80' : '#f87171',
+              borderColor: won ? '#4ade80' : '#f87171',
               color: 'white',
               boxShadow: '0 4px 25px rgba(0,0,0,0.5)',
             }}
           >
-            {playerVote > 50 ? labels.continue : labels.electionLost}
+            {won ? labels.continue : labels.electionLost}
           </button>
         </div>
       )}
