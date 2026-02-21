@@ -1,6 +1,15 @@
-import { PowerState, PowerType, POWER_INFO } from '@/types/game';
+import { PowerState, PowerType } from '@/types/game';
 import { PowerEffect } from '@/types/game';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+const POWER_EMOJIS: Record<PowerType, string> = {
+  halk: '🏛️',
+  yatirimcilar: '💰',
+  mafya: '🔫',
+  tarikat: '📿',
+  ordu: '⚔️',
+};
 
 interface PowerBarsProps {
   power: PowerState;
@@ -8,6 +17,7 @@ interface PowerBarsProps {
 }
 
 export function PowerBars({ power, activeEffects = [] }: PowerBarsProps) {
+  const { t } = useLanguage();
   const powers: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
 
   const getBarColor = (value: number) => {
@@ -28,7 +38,6 @@ export function PowerBars({ power, activeEffects = [] }: PowerBarsProps) {
   return (
     <div className="flex justify-between gap-1.5 sm:gap-3 px-2 sm:px-4 py-3 w-full max-w-md mx-auto">
       {powers.map((p) => {
-        const info = POWER_INFO[p];
         const val = power[p];
         const affected = isAffected(p);
         const dir = getEffectDirection(p);
@@ -39,7 +48,7 @@ export function PowerBars({ power, activeEffects = [] }: PowerBarsProps) {
               "text-lg sm:text-xl transition-transform duration-300",
               affected && "scale-125"
             )}>
-              {info.emoji}
+              {POWER_EMOJIS[p]}
             </span>
             <div className="w-full h-20 sm:h-24 bg-muted/50 rounded-full relative overflow-hidden border border-border/50">
               <div
@@ -57,7 +66,7 @@ export function PowerBars({ power, activeEffects = [] }: PowerBarsProps) {
               )}
             </div>
             <span className="text-[10px] sm:text-xs font-medium text-muted-foreground truncate w-full text-center">
-              {info.label}
+              {t(`power.${p}`)}
             </span>
           </div>
         );

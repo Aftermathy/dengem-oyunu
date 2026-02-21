@@ -1,7 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { PowerState, PowerType, EventCard } from '@/types/game';
 import { eventCards } from '@/data/cards';
+import { eventCardsEn } from '@/data/cards-en';
 import { gameOverScenarios } from '@/data/gameOverScenarios';
+import { gameOverScenariosEn } from '@/data/gameOverScenarios-en';
+import { Language } from '@/contexts/LanguageContext';
 
 const INITIAL_POWER: PowerState = {
   halk: 50,
@@ -22,7 +25,15 @@ function shuffleArray<T>(arr: T[]): T[] {
 
 export type GamePhase = 'start' | 'playing' | 'gameover';
 
-export function useGame() {
+function getCards(lang: Language) {
+  return lang === 'en' ? eventCardsEn : eventCards;
+}
+
+function getScenarios(lang: Language) {
+  return lang === 'en' ? gameOverScenariosEn : gameOverScenarios;
+}
+
+export function useGame(lang: Language) {
   const [phase, setPhase] = useState<GamePhase>('start');
   const [power, setPower] = useState<PowerState>(INITIAL_POWER);
   const [deck, setDeck] = useState<EventCard[]>([]);
@@ -37,27 +48,28 @@ export function useGame() {
 
   const startGame = useCallback(() => {
     setPower(INITIAL_POWER);
-    setDeck(shuffleArray(eventCards));
+    setDeck(shuffleArray(getCards(lang)));
     setCardIndex(0);
     setTurn(0);
     setGameOverInfo(null);
     setPhase('playing');
-  }, []);
+  }, [lang]);
 
   const checkGameOver = useCallback((newPower: PowerState): { title: string; description: string; emoji: string } | null => {
+    const scenarios = getScenarios(lang);
     for (const key of Object.keys(newPower) as PowerType[]) {
       const val = newPower[key];
       if (val <= 0) {
-        const scenario = gameOverScenarios.find(s => s.power === key && s.direction === 'low');
+        const scenario = scenarios.find(s => s.power === key && s.direction === 'low');
         if (scenario) return scenario;
       }
       if (val >= 100) {
-        const scenario = gameOverScenarios.find(s => s.power === key && s.direction === 'high');
+        const scenario = scenarios.find(s => s.power === key && s.direction === 'high');
         if (scenario) return scenario;
       }
     }
     return null;
-  }, []);
+  }, [lang]);
 
   const swipe = useCallback((direction: 'left' | 'right') => {
     if (!currentCard || phase !== 'playing') return;
@@ -83,14 +95,13 @@ export function useGame() {
       return;
     }
 
-    // Next card, reshuffle if needed
     let nextIndex = cardIndex + 1;
     if (nextIndex >= deck.length) {
-      setDeck(shuffleArray(eventCards));
+      setDeck(shuffleArray(getCards(lang)));
       nextIndex = 0;
     }
     setCardIndex(nextIndex);
-  }, [currentCard, phase, power, turn, cardIndex, deck, highScore, checkGameOver]);
+  }, [currentCard, phase, power, turn, cardIndex, deck, highScore, checkGameOver, lang]);
 
   return {
     phase,
