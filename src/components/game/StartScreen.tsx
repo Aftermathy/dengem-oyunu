@@ -44,8 +44,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         I MUST STAY
       </h1>
       <p className="text-muted-foreground text-sm sm:text-base max-w-xs leading-relaxed">
-        {t('start.subtitle')}<br />
-        <span className="text-xs opacity-70">{t('start.subtitle2')}</span>
+        {t('start.subtitle')}
       </p>
 
       {highScore > 0 && (

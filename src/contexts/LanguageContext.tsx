@@ -45,7 +45,7 @@ const translations: Record<Language, Record<string, string>> = {
     'tutorial.hint': 'İpucu: Faction başına tıklayarak da rüşvet verebilirsin!',
   },
   en: {
-    'start.subtitle': 'Balance power, hold your throne.',
+    'start.subtitle': 'Balance power, hold your grip.',
     'start.subtitle2': '',
     'start.highscore': 'High Score:',
     'start.turns': 'turns',
