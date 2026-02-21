@@ -67,11 +67,11 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         <span title={t('power.halk')}>🏛️</span>
         <span title={t('power.yatirimcilar')}>💰</span>
         <span title={t('power.mafya')}>
-          <img src={iconGun} alt="Mafya" className="w-7 h-7 object-contain" />
+          <img src={iconGun} alt="Mafya" className="w-7 h-7 object-contain brightness-150 drop-shadow-md" />
         </span>
         <span title={t('power.tarikat')}>📿</span>
         <span title={t('power.ordu')}>
-          <img src={iconTank} alt="Ordu" className="w-7 h-7 object-contain" />
+          <img src={iconTank} alt="Ordu" className="w-7 h-7 object-contain brightness-150 drop-shadow-md" />
         </span>
       </div>
 
