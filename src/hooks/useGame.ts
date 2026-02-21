@@ -112,17 +112,25 @@ export function useGame(lang: Language) {
   }, [bribeCounts]);
 
   const canBribe = useCallback((faction: PowerType): boolean => {
-    return money >= getBribeCost(faction) && power[faction] < 90;
+    const room = 100 - power[faction];
+    if (room <= 0) return false;
+    const ratio = Math.min(room, BRIBE_REP_GAIN) / BRIBE_REP_GAIN;
+    const cost = Math.max(1, Math.round(getBribeCost(faction) * ratio));
+    return money >= cost;
   }, [money, power, getBribeCost]);
 
   const bribe = useCallback((faction: PowerType) => {
-    const cost = getBribeCost(faction);
-    if (money < cost || power[faction] >= 90) return;
+    const room = 100 - power[faction];
+    if (room <= 0) return;
+    const gain = Math.min(room, BRIBE_REP_GAIN);
+    const ratio = gain / BRIBE_REP_GAIN;
+    const cost = Math.max(1, Math.round(getBribeCost(faction) * ratio));
+    if (money < cost) return;
 
     setMoney(m => m - cost);
     setPower(prev => ({
       ...prev,
-      [faction]: Math.min(100, prev[faction] + BRIBE_REP_GAIN),
+      [faction]: prev[faction] + gain,
     }));
     setBribeCounts(prev => ({
       ...prev,

@@ -195,7 +195,10 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
           const val = power[p];
           const affected = isAffected(p);
           const dir = getEffectDirection(p);
-          const cost = getBribeCost ? getBribeCost(p) : 0;
+          const room = 100 - val;
+          const gain = Math.min(room, 10);
+          const ratio = gain / 10;
+          const cost = getBribeCost ? Math.max(1, Math.round(getBribeCost(p) * ratio)) : 0;
           const canDo = canBribe ? canBribe(p) : false;
 
           return (
@@ -279,7 +282,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                         : "bg-muted text-muted-foreground cursor-not-allowed"
                     )}
                   >
-                    {cost}B → +{10} rep
+                    {cost}B → +{gain} rep
                   </button>
                   {!canDo && (
                     <p className="text-[9px] text-destructive mt-1">
