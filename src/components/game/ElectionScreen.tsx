@@ -129,8 +129,10 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const [barGlowKey, setBarGlowKey] = useState(0);
   const [showAiFlash, setShowAiFlash] = useState(false);
 
-  const opponentVote = 100 - playerVote;
-  const won = playerVote > 50;
+  // Avoid exact 50/50 ties — nudge to 49.9/50.1
+  const displayPlayerVote = playerVote === 50 ? 49.9 : playerVote;
+  const displayOpponentVote = +(100 - displayPlayerVote).toFixed(1);
+  const won = displayPlayerVote > 50;
 
   const labels = useMemo(() => lang === 'en' ? {
     opposition: 'Opposition', you: 'You', pickMove: 'Pick your move:',
@@ -220,9 +222,9 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
   const handleFinish = () => {
     onComplete({
-      won: playerVote > 50,
-      playerVote,
-      opponentVote: 100 - playerVote,
+      won: displayPlayerVote > 50,
+      playerVote: displayPlayerVote,
+      opponentVote: displayOpponentVote,
       remainingBudget: budget,
       remainingLaundered: laundered,
     });
@@ -295,13 +297,13 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           <div className="flex justify-center items-end gap-8 px-8 py-3 relative z-10">
             {/* Opposition bar */}
             <div className="flex flex-col items-center">
-              <span className="text-red-300 font-black text-xl mb-1">{opponentVote}%</span>
+              <span className="text-red-300 font-black text-xl mb-1">{displayOpponentVote}%</span>
               <div className={`w-14 rounded-t-lg overflow-visible border border-red-700/50 relative ${phase === 'ai' && aiCardPlayed ? 'opp-bar-glow' : ''}`}
                 style={{ height: 130, background: 'rgba(100,0,0,0.3)' }}>
                 <div className="w-full transition-all duration-700 ease-out rounded-t vote-bar-flame"
                   style={{
-                    height: `${opponentVote}%`,
-                    marginTop: `${100 - opponentVote}%`,
+                    height: `${displayOpponentVote}%`,
+                    marginTop: `${100 - displayOpponentVote}%`,
                     background: 'linear-gradient(180deg, #ef4444, #991b1b)',
                   }}
                 />
@@ -313,13 +315,13 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
             {/* Player bar */}
             <div className="flex flex-col items-center">
-              <span className="text-green-300 font-black text-xl mb-1">{playerVote}%</span>
+              <span className="text-green-300 font-black text-xl mb-1">{displayPlayerVote}%</span>
               <div key={barGlowKey} className="w-14 rounded-t-lg overflow-visible border border-green-700/50 vote-bar-glow relative"
                 style={{ height: 130, background: 'rgba(0,60,0,0.3)' }}>
                 <div className="w-full transition-all duration-700 ease-out rounded-t vote-bar-flame"
                   style={{
-                    height: `${playerVote}%`,
-                    marginTop: `${100 - playerVote}%`,
+                    height: `${displayPlayerVote}%`,
+                    marginTop: `${100 - displayPlayerVote}%`,
                     background: 'linear-gradient(180deg, #22c55e, #15803d)',
                   }}
                 />
