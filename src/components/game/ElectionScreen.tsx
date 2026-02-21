@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { ElectionConfig, ElectionResult, ElectionCard, ElectionSpecialPower } from '@/types/election';
+import { ElectionConfig, ElectionResult, ElectionCard, ElectionSpecialPower, CardRarity } from '@/types/election';
 import { Language } from '@/contexts/LanguageContext';
 import defeatElectionImg from '@/assets/defeat-election.jpg';
 import { playClickSound } from '@/hooks/useSound';
@@ -15,11 +15,79 @@ interface ElectionScreenProps {
   onMainMenu: () => void;
 }
 
-function shuffleAndDraw(cards: ElectionCard[], count: number, exclude: number[] = []): ElectionCard[] {
+/* ── Rarity system ── */
+const RARITY_WEIGHTS: { rarity: CardRarity; weight: number }[] = [
+  { rarity: 'common', weight: 50 },
+  { rarity: 'uncommon', weight: 30 },
+  { rarity: 'epic', weight: 15 },
+  { rarity: 'legendary', weight: 5 },
+];
+
+function rollRarity(): CardRarity {
+  const total = RARITY_WEIGHTS.reduce((s, r) => s + r.weight, 0);
+  let roll = Math.random() * total;
+  for (const r of RARITY_WEIGHTS) {
+    roll -= r.weight;
+    if (roll <= 0) return r.rarity;
+  }
+  return 'common';
+}
+
+const RARITY_MULTIPLIER: Record<CardRarity, number> = {
+  common: 1,
+  uncommon: 1.3,
+  epic: 1.6,
+  legendary: 2.2,
+};
+
+const RARITY_STYLES: Record<CardRarity, { border: string; bg: string; glow: string; label: string; labelColor: string }> = {
+  common: {
+    border: 'border-gray-500/60',
+    bg: 'bg-gray-900/80',
+    glow: '',
+    label: '★',
+    labelColor: 'text-gray-400',
+  },
+  uncommon: {
+    border: 'border-emerald-500/70',
+    bg: 'bg-emerald-950/80',
+    glow: 'shadow-[0_0_12px_rgba(16,185,129,0.3)]',
+    label: '★★',
+    labelColor: 'text-emerald-400',
+  },
+  epic: {
+    border: 'border-purple-500/70',
+    bg: 'bg-purple-950/80',
+    glow: 'shadow-[0_0_18px_rgba(168,85,247,0.4)]',
+    label: '★★★',
+    labelColor: 'text-purple-400',
+  },
+  legendary: {
+    border: 'border-red-500/80',
+    bg: 'bg-red-950/80',
+    glow: 'shadow-[0_0_25px_rgba(239,68,68,0.5)]',
+    label: '★★★★',
+    labelColor: 'text-red-400',
+  },
+};
+
+interface DrawnCard extends ElectionCard {
+  rarity: CardRarity;
+  adjustedEffect: number;
+}
+
+function drawCardsWithRarity(cards: ElectionCard[], count: number, exclude: number[] = []): DrawnCard[] {
   const pool = cards.filter(c => !exclude.includes(c.id));
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(count, shuffled.length));
+  return shuffled.slice(0, Math.min(count, shuffled.length)).map(card => {
+    const rarity = card.rarity || rollRarity();
+    const adjustedEffect = Math.round(card.voterEffect * RARITY_MULTIPLIER[rarity]);
+    return { ...card, rarity, adjustedEffect };
+  });
 }
+
+const REROLL_COST = 3;
+const MAX_REROLLS = 2;
 
 /* ── Animated counter hook ── */
 function useAnimatedCount(target: number, duration = 1200) {
@@ -122,13 +190,14 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result'>('intro');
   const [budget, setBudget] = useState(money);
   const [laundered, setLaundered] = useState(launderedMoney);
-  const [cards, setCards] = useState<ElectionCard[]>([]);
+  const [cards, setCards] = useState<DrawnCard[]>([]);
   const [usedPowers, setUsedPowers] = useState<string[]>([]);
   const [aiCardPlayed, setAiCardPlayed] = useState<ElectionCard | null>(null);
   const [usedCardIds, setUsedCardIds] = useState<number[]>([]);
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [barGlowKey, setBarGlowKey] = useState(0);
   const [showAiFlash, setShowAiFlash] = useState(false);
+  const [rerollsLeft, setRerollsLeft] = useState(MAX_REROLLS);
 
   // Avoid exact 50/50 ties — nudge to 49.9/50.1
   const displayPlayerVote = playerVote === 50 ? 49.9 : playerVote;
@@ -140,31 +209,33 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
     oppMoving: 'Opposition is making a move...', budget: 'Budget', laundered: 'Laundered',
     specialPowers: '🔮 Special Powers (Laundered)', round: 'Round',
     electionWon: 'ELECTION WON!', electionLost: 'ELECTION LOST!',
-    continue: 'Continue', skip: 'Skip Turn (+1%)', vote: 'vote',
+    continue: 'Continue', skip: 'Skip (+1%)', vote: 'vote',
+    reroll: 'Reroll', rerollCost: `${REROLL_COST}B`,
   } : {
     opposition: 'Muhalefet', you: 'Sen', pickMove: 'Hamle seç:',
     oppMoving: 'Muhalefet hamle yapıyor...', budget: 'Bütçe', laundered: 'Aklanmış',
     specialPowers: '🔮 Özel Güçler (Aklanmış Para)', round: 'Tur',
     electionWon: 'SEÇİM KAZANILDI!', electionLost: 'SEÇİM KAYBEDİLDİ!',
-    continue: 'Devam Et', skip: 'Pas Geç (+1%)', vote: 'oy',
+    continue: 'Devam Et', skip: 'Pas (+1%)', vote: 'oy',
+    reroll: 'Yenile', rerollCost: `${REROLL_COST}B`,
   }, [lang]);
 
   // Intro timer
   useEffect(() => {
     if (phase !== 'intro') return;
     const timer = setTimeout(() => {
-      setCards(shuffleAndDraw(config.playerCards, 4));
+      setCards(drawCardsWithRarity(config.playerCards, 3));
       setPhase('player');
     }, 2500);
     return () => clearTimeout(timer);
   }, [phase, config.playerCards]);
 
-  const playCard = useCallback((card: ElectionCard) => {
+  const playCard = useCallback((card: DrawnCard) => {
     if (budget < card.cost) return;
     setSelectedCardId(card.id);
     setTimeout(() => {
       setBudget(b => b - card.cost);
-      setPlayerVote(v => Math.max(0, Math.min(100, v + card.voterEffect)));
+      setPlayerVote(v => Math.max(0, Math.min(100, v + card.adjustedEffect)));
       setBarGlowKey(k => k + 1);
       setUsedCardIds(prev => [...prev, card.id]);
       setSelectedCardId(null);
@@ -177,6 +248,13 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
     setBarGlowKey(k => k + 1);
     setPhase('ai');
   }, []);
+
+  const handleReroll = useCallback(() => {
+    if (rerollsLeft <= 0 || budget < REROLL_COST) return;
+    setBudget(b => b - REROLL_COST);
+    setRerollsLeft(r => r - 1);
+    setCards(drawCardsWithRarity(config.playerCards, 3, usedCardIds));
+  }, [rerollsLeft, budget, config.playerCards, usedCardIds]);
 
   const useSpecialPower = useCallback((power: ElectionSpecialPower) => {
     if (laundered < power.launderedCost || usedPowers.includes(power.id)) return;
@@ -211,7 +289,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           setPhase('result');
         } else {
           setRound(r => r + 1);
-          setCards(shuffleAndDraw(config.playerCards, 4, usedCardIds));
+          setCards(drawCardsWithRarity(config.playerCards, 3, usedCardIds));
           setAiCardPlayed(null);
           setPhase('player');
         }
@@ -230,10 +308,6 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
       remainingLaundered: laundered,
     });
   };
-
-  const canAffordAny = cards.some(c => budget >= c.cost);
-  const canAffordAnyPower = config.specialPowers.some(p => !usedPowers.includes(p.id) && laundered >= p.launderedCost);
-  const showSkip = !canAffordAny && !canAffordAnyPower;
 
   return (
     <div className={`fixed inset-0 z-50 flex flex-col overflow-auto ${phase === 'result' && !won ? 'election-shake' : ''}`}
@@ -347,35 +421,63 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           <div className="flex-1 flex flex-col justify-center px-3 py-2 relative z-10 min-h-0">
             {phase === 'player' && (
               <>
-                <p className="text-orange-200 text-center text-sm mb-2 font-bold">{labels.pickMove}</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {cards.map((card, i) => (
-                    <button
-                      key={card.id}
-                      disabled={budget < card.cost || selectedCardId !== null}
-                      onClick={() => playCard(card)}
-                      className={`relative bg-orange-950/80 border border-orange-600/40 rounded-lg p-2.5 text-left disabled:opacity-30 hover:bg-orange-900/80 active:scale-95 transition-all election-card-enter election-card-shimmer overflow-hidden ${
-                        selectedCardId === card.id ? 'election-card-select' : ''
-                      }`}
-                      style={{ animationDelay: `${i * 0.1}s` }}
-                    >
-                      <div className="flex justify-between items-start">
-                        <span className="text-lg">{card.emoji}</span>
-                        <span className="text-yellow-400 text-xs font-black">{card.cost}B</span>
-                      </div>
-                      <p className="text-orange-100 text-[11px] mt-1 leading-tight">{card.text}</p>
-                      <p className="text-green-400 text-xs mt-1 font-bold">+{card.voterEffect}%</p>
-                    </button>
-                  ))}
+                <div className="flex justify-between items-center mb-2 px-1">
+                  <p className="text-orange-200 text-sm font-bold">{labels.pickMove}</p>
+                  {/* Reroll button */}
+                  <button
+                    disabled={rerollsLeft <= 0 || budget < REROLL_COST}
+                    onClick={handleReroll}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all active:scale-95 disabled:opacity-30 border border-yellow-600/40 bg-yellow-900/60 text-yellow-300 hover:bg-yellow-800/70"
+                  >
+                    🎲 {labels.reroll} ({rerollsLeft}) <span className="text-yellow-500">-{labels.rerollCost}</span>
+                  </button>
                 </div>
-                {showSkip && (
+                <div className="grid grid-cols-2 gap-2">
+                  {/* 3 drawn cards */}
+                  {cards.map((card, i) => {
+                    const style = RARITY_STYLES[card.rarity];
+                    const isLegendary = card.rarity === 'legendary';
+                    return (
+                      <button
+                        key={card.id}
+                        disabled={budget < card.cost || selectedCardId !== null}
+                        onClick={() => playCard(card)}
+                        className={`relative border-2 rounded-xl p-3 text-left disabled:opacity-30 hover:brightness-110 active:scale-95 transition-all election-card-enter overflow-hidden ${style.border} ${style.bg} ${style.glow} ${
+                          selectedCardId === card.id ? 'election-card-select' : ''
+                        } ${isLegendary ? 'legendary-card-flame' : ''}`}
+                        style={{ animationDelay: `${i * 0.1}s` }}
+                      >
+                        {/* Rarity stars */}
+                        <div className="flex justify-between items-center mb-1">
+                          <span className={`text-[10px] font-black ${style.labelColor}`}>{style.label}</span>
+                          <span className="text-yellow-400 text-sm font-black">{card.cost}B</span>
+                        </div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-2xl">{card.emoji}</span>
+                          <p className="text-white text-sm font-bold leading-tight flex-1">{card.text}</p>
+                        </div>
+                        <p className="text-green-400 text-sm font-black">+{card.adjustedEffect}%</p>
+                      </button>
+                    );
+                  })}
+                  {/* Skip turn card - always the 4th option */}
                   <button
                     onClick={skipTurn}
-                    className="mt-2 w-full py-2.5 bg-gray-800/80 border border-gray-600/40 rounded-lg text-gray-300 text-sm font-bold hover:bg-gray-700/80 active:scale-95 transition-all"
+                    disabled={selectedCardId !== null}
+                    className="relative border-2 border-gray-600/40 bg-gray-900/60 rounded-xl p-3 text-left hover:bg-gray-800/70 active:scale-95 transition-all election-card-enter disabled:opacity-30"
+                    style={{ animationDelay: '0.3s' }}
                   >
-                    {labels.skip}
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[10px] font-black text-gray-500">⏭️</span>
+                      <span className="text-gray-400 text-sm font-black">{lang === 'en' ? 'FREE' : 'ÜCRETSİZ'}</span>
+                    </div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-2xl">⏭️</span>
+                      <p className="text-gray-300 text-sm font-bold leading-tight flex-1">{labels.skip}</p>
+                    </div>
+                    <p className="text-green-400/70 text-sm font-black">+1%</p>
                   </button>
-                )}
+                </div>
               </>
             )}
 
@@ -384,8 +486,8 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                 {aiCardPlayed ? (
                   <div className="bg-red-950/80 border border-red-600/50 rounded-lg p-5 mx-auto max-w-xs ai-card-bounce">
                     <span className="text-4xl">{aiCardPlayed.emoji}</span>
-                    <p className="text-red-100 text-sm mt-3 font-bold">{aiCardPlayed.text}</p>
-                    <p className="text-red-400 text-xs mt-2 font-bold">
+                    <p className="text-red-100 text-base mt-3 font-bold">{aiCardPlayed.text}</p>
+                    <p className="text-red-400 text-sm mt-2 font-bold">
                       {labels.opposition} +{aiCardPlayed.voterEffect}%
                     </p>
                   </div>
