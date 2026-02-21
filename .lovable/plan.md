@@ -1,40 +1,38 @@
 
-# Launder Mekaniği Fix + Rep Gosterge Animasyonu
 
-## 3 Ana Degisiklik
+# 53 Yeni Kart Ekleme Plani
 
-### 1. Launder game-over bug fix
-Simdi launder yapildiginda zumre reputasyonu 0'a dusebiliyor ve oyun bitmiyor cunku `checkGameOver` cagirilmiyor. Launder fonksiyonunda rep degisikliklerinden sonra game-over kontrolu eklenecek.
+Mevcut 56 karta ek olarak, onceki mesajda onaylanan 50 kart + 3 yeni kart (Davos cikisi, Nufus planlamasi, Ben Ekonomistim) eklenecek. Toplam kart sayisi 109'a cikacak.
 
-### 2. Launder maliyeti ve miktari guncelleme
-- Launder ucreti: 5B yerine **50B** (25B aklama + 25B secilen zumreye)
-- Laundered miktar: 10B yerine **25B**
-- Secilen zumreye giden para: aciklamada 25B olarak gosterilecek
-- `canLaunder` kontrolu `money >= 50` olacak
+## Eklenecek 3 Ozel Kart
 
-### 3. Power bar icinde rep degisim animasyonu
-Her zumrenin barina kart swipe veya bribe/launder yapildiginda "+5" veya "-10" gibi bir sayi fade-in/fade-out seklinde gosterilecek.
+**ID 57 - Davos Cikisi (Dis Politika)**
+- Karakter: Ekonomi Zirvesi Moderatoru (🎙️)
+- Aciklama: "Efendim, uluslararasi ekonomi zirvesinde panele cikacaksiniz. Moderator sizi sikistirabilir."
+- Sol: "Masayi yumrukla, 'Bir daha gelmem!' de" -> ordu +10, halk +5, yatirimcilar -15, para: -5
+- Sag: "Diplomatik kal, gulumse" -> yatirimcilar +10, halk -5, para: +3
 
----
+**ID 58 - Nufus Planlamasi (Halk)**
+- Karakter: Aile Bakani (👶)
+- Aciklama: "Baskanim, nufus azaliyor. Vatandaslara en az 3 evlat hedefi koyalim mi?"
+- Sol: "3 degil, 5 olsun!" -> tarikat +15, halk -10, yatirimcilar -5, para: -8
+- Sag: "Karismayin ozel hayata" -> halk +10, tarikat -10, para: 0
+
+**ID 59 - Ben Ekonomistim (Ekonomi)**
+- Karakter: Baskan'in Kendisi (👑)
+- Aciklama: "Faizi artirmak enflasyonu arttirir! Dusurursen enflasyon duser. Ben ekonomistim, bunu benden iyi kimse bilmez."
+- Sol: "Faizi sifira indir, ben bilirim!" -> yatirimcilar -20, halk -10, mafya +5, para: -15
+- Sag: "Belki de uzmanlara soralim..." -> yatirimcilar +15, halk +5, tarikat -5, para: +5
+
+## Onceki Mesajda Onaylanan 50 Kart (ID 60-109)
+
+Onceki mesajdaki 50 kart aynen eklenecek (KKM, 128 Milyar, Deprem vergisi, Referandum, Maden facialari, Kayyum atamalari, vb.)
 
 ## Teknik Detaylar
 
-### `src/hooks/useGame.ts`
-- `LAUNDER_COST` = 50, `LAUNDER_AMOUNT` = 25
-- `launder` fonksiyonunda `setPower` sonrasi yeni power state'i hesaplayip `checkGameOver` cagir, game over ise `setPhase('gameover')` yap
-- Launder aciklama metninde "25B secilen zumreye" bilgisi
+- **Degisecek dosyalar**: `src/data/cards.ts` ve `src/data/cards-en.ts`
+- Her iki dosyaya da 53 yeni kart objesi eklenecek
+- Mevcut 56 kart aynen korunacak
+- Tum kartlar satirik/alayli dil kullanacak (direkt isim/yer yok)
+- ID'ler 57'den 109'a kadar siralanacak
 
-### `src/components/game/LaunderBar.tsx`
-- Button metnini `-50B` olarak guncelle
-- Modal aciklamasinda "25B aklanir, 25B secilen zumreye verilir" bilgisi
-
-### `src/components/game/PowerBars.tsx`
-- `previousPower` state'i ekle (onceki power degerleri)
-- `useEffect` ile `power` degistiginde fark hesapla
-- Her bar icinde fark varsa `+X` veya `-X` yazisi goster
-- CSS animasyonu: fade-in 0.3s, 1s bekle, fade-out 0.5s (toplam ~1.8s)
-- Font: italic, light weight, beyaz/yesil/kirmizi renk
-
-### `src/index.css`
-- `@keyframes rep-change-fade` animasyonu ekle: opacity 0 -> 1 -> 1 -> 0 seklinde
-- `.rep-change-indicator` class'i: absolute, centered, pointer-events-none
