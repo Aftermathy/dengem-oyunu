@@ -71,17 +71,16 @@ const Index = () => {
       )}
 
       {phase === 'gameover' && gameOverInfo && (
-        <div className="flex-1 flex items-center justify-center">
-          <GameOverScreen
-            title={gameOverInfo.title}
-            description={gameOverInfo.description}
-            emoji={gameOverInfo.emoji}
-            turn={turn}
-            highScore={highScore}
-            money={money}
-            onRestart={startGame}
-          />
-        </div>
+        <GameOverScreen
+          title={gameOverInfo.title}
+          description={gameOverInfo.description}
+          emoji={gameOverInfo.emoji}
+          image={gameOverInfo.image}
+          turn={turn}
+          highScore={highScore}
+          money={money}
+          onRestart={startGame}
+        />
       )}
     </div>
   );
