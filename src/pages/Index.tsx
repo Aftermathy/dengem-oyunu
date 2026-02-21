@@ -4,6 +4,7 @@ import { PowerBars } from '@/components/game/PowerBars';
 import { SwipeCard } from '@/components/game/SwipeCard';
 import { GameOverScreen } from '@/components/game/GameOverScreen';
 import { StartScreen } from '@/components/game/StartScreen';
+import { BribeTutorial } from '@/components/game/BribeTutorial';
 import { PowerEffect } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -12,7 +13,8 @@ const Index = () => {
   const {
     phase, power, money, currentCard, turn, highScore,
     gameOverInfo, lastMoneyChange, startGame, swipe,
-    bribe, canBribe, getBribeCost,
+    bribe, canBribe, getBribeCost, tutorialFaction,
+    completeTutorialBribe, skipTutorial,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
 
@@ -54,6 +56,14 @@ const Index = () => {
             />
           </div>
         </>
+      )}
+
+      {tutorialFaction && (
+        <BribeTutorial
+          faction={tutorialFaction}
+          onBribe={completeTutorialBribe}
+          onSkip={skipTutorial}
+        />
       )}
 
       {phase === 'gameover' && gameOverInfo && (

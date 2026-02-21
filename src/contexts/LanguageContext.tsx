@@ -33,6 +33,15 @@ const translations: Record<Language, Record<string, string>> = {
     // Language
     'lang.tr': 'TR',
     'lang.en': 'EN',
+    'tutorial.title': 'Tehlike!',
+    'tutorial.desc.halk': 'Halk senden nefret ediyor! Bir zarfla gülleri düzeltmek ister misin?',
+    'tutorial.desc.yatirimcilar': 'Yatırımcılar kaçıyor! Küçük bir hediye ile gönüllerini al?',
+    'tutorial.desc.mafya': 'Mafya kapına dayandı! Bir zarfla arkanı kollamalarını sağla?',
+    'tutorial.desc.tarikat': 'Tarikat sana lanet okuyor! Bir bağışla ruhunu kurtar?',
+    'tutorial.desc.ordu': 'Ordu darbe planlıyor! Küçük bir bahşişle sadakatlerini satın al?',
+    'tutorial.bribe': '💰 1M ver, +10 rep',
+    'tutorial.skip': 'Geçiş',
+    'tutorial.hint': 'İpucu: Faction başına tıklayarak da rüşvet verebilirsin!',
   },
   en: {
     'start.subtitle': 'Keep the power balanced, protect your throne.',
@@ -53,6 +62,15 @@ const translations: Record<Language, Record<string, string>> = {
     'gameover.restart': '🔄 Play Again',
     'lang.tr': 'TR',
     'lang.en': 'EN',
+    'tutorial.title': 'Danger!',
+    'tutorial.desc.halk': 'The public hates you! Wanna smooth things over with a little envelope?',
+    'tutorial.desc.yatirimcilar': 'Investors are fleeing! A small gift to win their hearts back?',
+    'tutorial.desc.mafya': 'The Mafia is at your door! A little envelope to keep them friendly?',
+    'tutorial.desc.tarikat': 'The Cult is cursing you! A donation to save your soul?',
+    'tutorial.desc.ordu': 'The Army is planning a coup! A small tip to buy their loyalty?',
+    'tutorial.bribe': '💰 Pay 1M, +10 rep',
+    'tutorial.skip': 'Skip',
+    'tutorial.hint': 'Tip: You can also bribe by tapping faction heads!',
   },
 };
 
