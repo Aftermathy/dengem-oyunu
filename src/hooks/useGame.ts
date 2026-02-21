@@ -207,6 +207,11 @@ export function useGame(lang: Language) {
     setPendingAdvance(null);
   }, [pendingAdvance]);
 
+  const goToMenu = useCallback(() => {
+    setPhase('start');
+    setGameOverInfo(null);
+  }, []);
+
   return {
     phase,
     power,
@@ -225,5 +230,6 @@ export function useGame(lang: Language) {
     getBribeCost,
     completeTutorialBribe,
     skipTutorial,
+    goToMenu,
   };
 }

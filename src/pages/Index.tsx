@@ -16,7 +16,7 @@ const Index = () => {
     phase, power, money, currentCard, turn, highScore,
     gameOverInfo, lastMoneyChange, startGame, swipe,
     bribe, canBribe, getBribeCost, tutorialFaction,
-    completeTutorialBribe, skipTutorial,
+    completeTutorialBribe, skipTutorial, goToMenu,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
 
@@ -80,6 +80,7 @@ const Index = () => {
           highScore={highScore}
           money={money}
           onRestart={startGame}
+          onMainMenu={goToMenu}
         />
       )}
     </div>

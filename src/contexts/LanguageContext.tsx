@@ -30,6 +30,7 @@ const translations: Record<Language, Record<string, string>> = {
     'gameover.turn': 'Tur',
     'gameover.best': 'En İyi',
     'gameover.restart': '🔄 Tekrar Oyna',
+    'gameover.menu': '🏠 Ana Menü',
     // Language
     'lang.tr': 'TR',
     'lang.en': 'EN',
@@ -60,6 +61,7 @@ const translations: Record<Language, Record<string, string>> = {
     'gameover.turn': 'Turn',
     'gameover.best': 'Best',
     'gameover.restart': '🔄 Play Again',
+    'gameover.menu': '🏠 Main Menu',
     'lang.tr': 'TR',
     'lang.en': 'EN',
     'tutorial.title': 'Danger!',
