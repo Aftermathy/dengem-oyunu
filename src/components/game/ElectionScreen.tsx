@@ -518,11 +518,11 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
           {/* Special powers */}
           {phase === 'player' && config.specialPowers.length > 0 && (
-            <div className="px-3 pb-3 relative z-10">
+            <div className="px-3 pb-3 relative z-10 flex flex-col items-center">
               <p className="text-purple-300 text-xs mb-1.5 text-center font-bold uppercase tracking-wider">
                 {labels.specialPowers}
               </p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2" style={{ width: '70%' }}>
                 {config.specialPowers.map(power => {
                   const used = usedPowers.includes(power.id);
                   const cantAfford = laundered < power.launderedCost;
@@ -531,7 +531,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                       key={power.id}
                       disabled={cantAfford || used}
                       onClick={() => useSpecialPower(power)}
-                      className={`border rounded-lg p-3 text-left transition-all active:scale-95 flex flex-col justify-between ${
+                      className={`border rounded-lg px-2 py-2 text-left transition-all active:scale-95 flex flex-col justify-between ${
                         used
                           ? 'bg-gray-900/80 border-gray-700/30 opacity-40'
                           : 'bg-purple-950/80 border-purple-600/40 hover:bg-purple-900/80 disabled:opacity-30'
