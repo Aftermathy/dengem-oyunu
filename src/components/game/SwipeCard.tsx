@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { EventCard, PowerEffect } from '@/types/game';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SwipeCardProps {
   card: EventCard;
@@ -9,6 +10,7 @@ interface SwipeCardProps {
 }
 
 export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
+  const { t } = useLanguage();
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [exiting, setExiting] = useState<'left' | 'right' | null>(null);
@@ -58,7 +60,6 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
   };
 
   const rotation = dragX * 0.1;
-  const opacity = Math.max(0, 1 - Math.abs(dragX) / 400);
 
   if (exiting) {
     return (
@@ -69,7 +70,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
           opacity: 0,
         }}
       >
-        <CardContent card={card} direction={null} />
+        <CardContent card={card} direction={null} t={t} />
       </div>
     );
   }
@@ -94,21 +95,21 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
         className="absolute -left-2 top-8 bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-bold z-10 transition-opacity"
         style={{ opacity: dragX < -30 ? Math.min(1, Math.abs(dragX) / 100) : 0 }}
       >
-        ← RED
+        ← {t('game.reject')}
       </div>
       <div
         className="absolute -right-2 top-8 bg-emerald-500 text-white px-3 py-1 rounded-lg text-sm font-bold z-10 transition-opacity"
         style={{ opacity: dragX > 30 ? Math.min(1, dragX / 100) : 0 }}
       >
-        KABUL →
+        {t('game.accept')} →
       </div>
 
-      <CardContent card={card} direction={direction} />
+      <CardContent card={card} direction={direction} t={t} />
     </div>
   );
 }
 
-function CardContent({ card, direction }: { card: EventCard; direction: 'left' | 'right' | null }) {
+function CardContent({ card, direction, t }: { card: EventCard; direction: 'left' | 'right' | null; t: (key: string) => string }) {
   return (
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden">
       {/* Character header */}

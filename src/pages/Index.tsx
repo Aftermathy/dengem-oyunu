@@ -5,9 +5,11 @@ import { SwipeCard } from '@/components/game/SwipeCard';
 import { GameOverScreen } from '@/components/game/GameOverScreen';
 import { StartScreen } from '@/components/game/StartScreen';
 import { PowerEffect } from '@/types/game';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
-  const { phase, power, currentCard, turn, highScore, gameOverInfo, startGame, swipe } = useGame();
+  const { lang, t } = useLanguage();
+  const { phase, power, currentCard, turn, highScore, gameOverInfo, startGame, swipe } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
 
   const handleHoverEffects = useCallback((effects: PowerEffect[]) => {
@@ -24,15 +26,13 @@ const Index = () => {
 
       {phase === 'playing' && currentCard && (
         <>
-          {/* Power bars */}
           <div className="pt-4 pb-2">
             <PowerBars power={power} activeEffects={activeEffects} />
             <div className="text-center text-xs text-muted-foreground mt-1">
-              Tur: <span className="font-bold text-foreground">{turn}</span>
+              {t('game.turn')}: <span className="font-bold text-foreground">{turn}</span>
             </div>
           </div>
 
-          {/* Card area */}
           <div className="flex-1 flex items-center justify-center px-4 pb-8">
             <SwipeCard
               key={currentCard.id + '-' + turn}
