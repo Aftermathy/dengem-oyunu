@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
+import iconGun from '@/assets/icon-gun.png';
+import iconTank from '@/assets/icon-tank.png';
 
 interface StartScreenProps {
   highScore: number;
@@ -65,15 +67,11 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         <span title={t('power.halk')}>🏛️</span>
         <span title={t('power.yatirimcilar')}>💰</span>
         <span title={t('power.mafya')}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-muted-foreground">
-            <path d="M21.707 2.293a1 1 0 00-1.414 0L18 4.586l-1.293-1.293a1 1 0 00-1.414 0L14 4.586l-.293-.293a1 1 0 00-1.414 1.414L13.586 7 6.293 14.293a1 1 0 000 .414L3.5 17.5a2.121 2.121 0 000 3 2.121 2.121 0 003 0l2.793-2.793a1 1 0 00.414 0L17 10.414l1.293 1.293a1 1 0 001.414-1.414L19.414 10l1.293-1.293a1 1 0 000-1.414L19.414 6l2.293-2.293a1 1 0 000-1.414z"/>
-          </svg>
+          <img src={iconGun} alt="Mafya" className="w-7 h-7 object-contain" />
         </span>
         <span title={t('power.tarikat')}>📿</span>
         <span title={t('power.ordu')}>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-muted-foreground">
-            <path d="M20 12h-2V8l2-3V3H4v2l2 3v4H4v2h2l-2 7h4l1-3h6l1 3h4l-2-7h2v-2zm-8-8h2v2h-2V4zM8 6h8v2H8V6zm-1.5 14l1-3h9l1 3h-11z"/>
-          </svg>
+          <img src={iconTank} alt="Ordu" className="w-7 h-7 object-contain" />
         </span>
       </div>
 
