@@ -1,11 +1,14 @@
 import { Language } from '@/contexts/LanguageContext';
 
+export type CardRarity = 'common' | 'uncommon' | 'epic' | 'legendary';
+
 export interface ElectionCard {
   id: number;
   text: string;
   emoji: string;
   voterEffect: number;
   cost: number;
+  rarity?: CardRarity;
 }
 
 export interface ElectionSpecialPower {

@@ -398,3 +398,16 @@ All colors MUST be HSL.
 .opp-bar-glow {
   animation: opp-bar-glow 1s ease-out;
 }
+
+/* Legendary card flame effect */
+@keyframes legendary-flame {
+  0% { box-shadow: 0 0 8px rgba(239,68,68,0.5), 0 0 20px rgba(255,100,0,0.3), inset 0 0 10px rgba(239,68,68,0.2); }
+  33% { box-shadow: 0 0 15px rgba(255,100,0,0.7), 0 0 35px rgba(239,68,68,0.5), inset 0 0 15px rgba(255,100,0,0.3); }
+  66% { box-shadow: 0 0 12px rgba(239,68,68,0.6), 0 0 28px rgba(255,165,0,0.4), inset 0 0 12px rgba(239,68,68,0.25); }
+  100% { box-shadow: 0 0 8px rgba(239,68,68,0.5), 0 0 20px rgba(255,100,0,0.3), inset 0 0 10px rgba(239,68,68,0.2); }
+}
+
+.legendary-card-flame {
+  animation: legendary-flame 1.5s ease-in-out infinite;
+  background: linear-gradient(135deg, rgba(127,29,29,0.9) 0%, rgba(153,27,27,0.9) 40%, rgba(185,28,28,0.9) 100%) !important;
+}
