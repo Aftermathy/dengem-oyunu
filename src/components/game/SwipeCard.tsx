@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { EventCard, PowerEffect } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { playSwipeSound } from '@/hooks/useSound';
 
 interface SwipeCardProps {
   card: EventCard;
@@ -47,6 +48,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects }: SwipeCardProps) {
 
     if (Math.abs(dragX) > threshold) {
       const dir = dragX > 0 ? 'right' : 'left';
+      playSwipeSound(dir);
       setExiting(dir);
       setTimeout(() => {
         onSwipe(dir);
