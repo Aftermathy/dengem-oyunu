@@ -15,7 +15,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       {/* Language toggle */}
       <div className="flex gap-1 bg-muted rounded-full p-1">
         <button
-          onClick={() => setLang('tr')}
+          onClick={() => { playClickSound(); setLang('tr'); }}
           className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
             lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
           }`}
@@ -23,7 +23,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
           TR
         </button>
         <button
-          onClick={() => setLang('en')}
+          onClick={() => { playClickSound(); setLang('en'); }}
           className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
             lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
           }`}
