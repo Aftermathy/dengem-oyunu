@@ -33,6 +33,7 @@ export interface GameOverScenario {
   title: string;
   description: string;
   emoji: string;
+  image: string;
 }
 
 // Bribe cost tiers: each successive bribe to the same faction costs more

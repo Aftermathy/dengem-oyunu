@@ -55,7 +55,7 @@ export function useGame(lang: Language) {
   const [highScore, setHighScore] = useState(() => {
     return parseInt(localStorage.getItem('taht_highscore') || '0', 10);
   });
-  const [gameOverInfo, setGameOverInfo] = useState<{ title: string; description: string; emoji: string } | null>(null);
+  const [gameOverInfo, setGameOverInfo] = useState<{ title: string; description: string; emoji: string; image?: string } | null>(null);
   const [lastMoneyChange, setLastMoneyChange] = useState<number | null>(null);
   const [tutorialShown, setTutorialShown] = useState(false);
   const [tutorialFaction, setTutorialFaction] = useState<PowerType | null>(null);
@@ -83,16 +83,12 @@ export function useGame(lang: Language) {
     setPhase('playing');
   }, [lang]);
 
-  const checkGameOver = useCallback((newPower: PowerState): { title: string; description: string; emoji: string } | null => {
+  const checkGameOver = useCallback((newPower: PowerState): { title: string; description: string; emoji: string; image: string } | null => {
     const scenarios = getScenarios(lang);
     for (const key of Object.keys(newPower) as PowerType[]) {
       const val = newPower[key];
       if (val <= 0) {
         const scenario = scenarios.find(s => s.power === key && s.direction === 'low');
-        if (scenario) return scenario;
-      }
-      if (val >= 100) {
-        const scenario = scenarios.find(s => s.power === key && s.direction === 'high');
         if (scenario) return scenario;
       }
     }
@@ -158,8 +154,8 @@ export function useGame(lang: Language) {
     // Check money game over
     if (newMoney <= 0) {
       const bankruptScenario = lang === 'en' 
-        ? { title: 'Bankruptcy!', description: 'The coffers are empty. No money, no power. Even the janitor quit. Time to sell the palace furniture on eBay...', emoji: '💸' }
-        : { title: 'İflas!', description: 'Kasa bomboş. Para yok, güç yok. Temizlikçi bile istifa etti. Sarayın mobilyalarını internetten satma vakti...', emoji: '💸' };
+        ? { title: 'Bankruptcy!', description: 'The coffers are empty. No money, no power. Even the janitor quit. Creditors stormed the palace, IMF took control. Your legacy? A cautionary tale of fiscal madness. The new technocrat government is auctioning off your golden toilet seats on eBay.', emoji: '💸', image: 'defeat-iflas' }
+        : { title: 'İflas!', description: 'Kasa bomboş. Para yok, güç yok. Temizlikçi bile istifa etti. Alacaklılar saraya dayandı, IMF yönetimi devraldı. Miras olarak bıraktığın tek şey mali çılgınlığın hikayesi. Yeni teknokrat hükümet altın klozet kapaklarını internetten satışa çıkardı.', emoji: '💸', image: 'defeat-iflas' };
       setGameOverInfo(bankruptScenario);
       if (newTurn > highScore) {
         setHighScore(newTurn);
