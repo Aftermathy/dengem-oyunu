@@ -519,10 +519,10 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           {/* Special powers */}
           {phase === 'player' && config.specialPowers.length > 0 && (
             <div className="px-3 pb-3 relative z-10">
-              <p className="text-purple-300 text-[10px] mb-1.5 text-center font-bold uppercase tracking-wider">
+              <p className="text-purple-300 text-xs mb-1.5 text-center font-bold uppercase tracking-wider">
                 {labels.specialPowers}
               </p>
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-2 gap-2">
                 {config.specialPowers.map(power => {
                   const used = usedPowers.includes(power.id);
                   const cantAfford = laundered < power.launderedCost;
@@ -531,20 +531,20 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                       key={power.id}
                       disabled={cantAfford || used}
                       onClick={() => useSpecialPower(power)}
-                      className={`border rounded-lg p-2 text-left transition-all active:scale-95 flex flex-col justify-between ${
+                      className={`border rounded-lg p-3 text-left transition-all active:scale-95 flex flex-col justify-between ${
                         used
                           ? 'bg-gray-900/80 border-gray-700/30 opacity-40'
                           : 'bg-purple-950/80 border-purple-600/40 hover:bg-purple-900/80 disabled:opacity-30'
                       }`}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-lg">{power.emoji}</span>
-                        <span className="text-purple-300 text-[10px] font-bold">{power.launderedCost}B</span>
+                        <span className="text-2xl">{power.emoji}</span>
+                        <span className="text-purple-300 text-sm font-bold">{power.launderedCost}B</span>
                       </div>
-                      <p className="text-purple-100 text-[10px] mt-0.5 leading-tight font-bold truncate">{power.name}</p>
-                      <p className="text-green-400 text-[10px] font-black">+{power.voterEffect}%</p>
+                      <p className="text-purple-100 text-sm mt-1 leading-tight font-bold">{power.name}</p>
+                      <p className="text-green-400 text-sm font-black">+{power.voterEffect}%</p>
                       {used && (
-                        <p className="text-gray-400 text-[8px]">{lang === 'en' ? 'Used' : 'Kullanıldı'}</p>
+                        <p className="text-gray-400 text-xs">{lang === 'en' ? 'Used' : 'Kullanıldı'}</p>
                       )}
                     </button>
                   );
