@@ -139,6 +139,11 @@ All colors MUST be HSL.
   80%, 100% { transform: translate(0, 0) rotate(0deg); }
 }
 
+@keyframes gameover-blackfade {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 @keyframes gameover-flash {
   0% { opacity: 1; }
   100% { opacity: 0; }
@@ -158,6 +163,11 @@ All colors MUST be HSL.
 
 .gameover-container {
   animation: screen-shake 0.6s ease-out;
+}
+
+.gameover-blackfade {
+  animation: gameover-blackfade 1.2s ease-out 0.3s both;
+  background: black;
 }
 
 .gameover-flash {
