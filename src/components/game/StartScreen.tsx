@@ -67,6 +67,15 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         <span title={t('power.tarikat')}>📿</span>
         <span title={t('power.ordu')}>⚔️</span>
       </div>
+
+      {/* Ad-free full version button */}
+      <button
+        onClick={() => window.open('https://example.com/purchase', '_blank')}
+        className="mt-2 flex items-center gap-2 bg-gradient-to-r from-amber-600 to-yellow-500 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
+      >
+        <span>👑</span>
+        <span>{lang === 'tr' ? 'Reklamsız Full Versiyon' : 'Ad-Free Full Version'}</span>
+      </button>
     </div>
   );
 }
