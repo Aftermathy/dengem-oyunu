@@ -115,7 +115,7 @@ export const eventCardsEn: EventCard[] = [
   },
   {
     id: 15, character: 'Mayor', characterEmoji: '🏙️', category: 'Political Intrigue',
-    description: 'We lost Istanbul, sir. Shall we repeat the election?',
+    description: 'We lost the biggest city, sir. Shall we repeat the election?',
     leftChoice: 'Repeat the election', rightChoice: 'Accept it, be democratic',
     leftEffects: [{ power: 'halk', amount: -20 }, { power: 'ordu', amount: 5 }, { power: 'tarikat', amount: 5 }],
     rightEffects: [{ power: 'halk', amount: 15 }, { power: 'tarikat', amount: -5 }],
@@ -155,7 +155,7 @@ export const eventCardsEn: EventCard[] = [
   },
   {
     id: 20, character: 'Prosecutor', characterEmoji: '👨‍⚖️', category: 'Political Intrigue',
-    description: 'Parallel structure investigation expanding. Mass arrests?',
+    description: 'Shadow network investigation expanding. Mass arrests?',
     leftChoice: 'Mass arrests', rightChoice: 'Focus on top figures only',
     leftEffects: [{ power: 'tarikat', amount: -15 }, { power: 'halk', amount: -10 }, { power: 'ordu', amount: 10 }],
     rightEffects: [{ power: 'tarikat', amount: -5 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 5 }],
@@ -163,7 +163,7 @@ export const eventCardsEn: EventCard[] = [
   },
   {
     id: 21, character: 'Sect Imam', characterEmoji: '🧔', category: 'Cult',
-    description: 'The Master sends greetings. Infiltration plan ready, awaiting approval.',
+    description: 'The Grand Master sends greetings. Infiltration plan ready, awaiting approval.',
     leftChoice: 'Approve it, proceed', rightChoice: 'Stop, too risky',
     leftEffects: [{ power: 'tarikat', amount: 15 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'tarikat', amount: -15 }, { power: 'ordu', amount: 5 }],
@@ -171,7 +171,7 @@ export const eventCardsEn: EventCard[] = [
   },
   {
     id: 22, character: 'Police Director', characterEmoji: '👮', category: 'Cult',
-    description: 'Sir, we detected a parallel structure in the police force. What do we do?',
+    description: 'Sir, we detected a shadow network in the police force. What do we do?',
     leftChoice: 'Purge them all', rightChoice: 'Turn a blind eye, might need them',
     leftEffects: [{ power: 'tarikat', amount: -15 }, { power: 'ordu', amount: 10 }, { power: 'halk', amount: 5 }],
     rightEffects: [{ power: 'tarikat', amount: 10 }, { power: 'ordu', amount: -10 }],
@@ -226,8 +226,8 @@ export const eventCardsEn: EventCard[] = [
     leftMoney: -8, rightMoney: 3,
   },
   {
-    id: 29, character: 'FETÖ Informant', characterEmoji: '😰', category: 'Cult',
-    description: 'Sir, I have the ByLock list. 50,000 names. What do we do?',
+    id: 29, character: 'Radiant Order Informant', characterEmoji: '😰', category: 'Cult',
+    description: 'Sir, I have the SecretChat list. 50,000 names. What do we do?',
     leftChoice: 'Arrest them all', rightChoice: 'Only arrest active members',
     leftEffects: [{ power: 'tarikat', amount: -20 }, { power: 'halk', amount: -15 }, { power: 'ordu', amount: 10 }],
     rightEffects: [{ power: 'tarikat', amount: -10 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 5 }],
@@ -243,7 +243,7 @@ export const eventCardsEn: EventCard[] = [
   },
   {
     id: 31, character: 'Refugee Coordinator', characterEmoji: '🏕️', category: 'Foreign Policy',
-    description: '4 million refugees in the country. Open borders to Europe?',
+    description: 'Millions of refugees in the country. Open borders to the West?',
     leftChoice: 'Open the borders', rightChoice: 'Integrate the refugees',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -15 }, { power: 'ordu', amount: -5 }],
     rightEffects: [{ power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 5 }, { power: 'tarikat', amount: 5 }],
@@ -371,7 +371,7 @@ export const eventCardsEn: EventCard[] = [
   },
   {
     id: 47, character: 'Drug Baron', characterEmoji: '💊', category: 'Mafia',
-    description: 'We control the southern routes. Just turn a blind eye.',
+    description: 'We control the southern border routes. Just turn a blind eye.',
     leftChoice: 'Turn a blind eye, take a cut', rightChoice: 'Launch an operation',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'halk', amount: -10 }, { power: 'ordu', amount: -5 }],
     rightEffects: [{ power: 'mafya', amount: -15 }, { power: 'halk', amount: 5 }, { power: 'ordu', amount: 10 }],
@@ -411,7 +411,7 @@ export const eventCardsEn: EventCard[] = [
   },
   {
     id: 52, character: 'Arms Smuggler', characterEmoji: '💣', category: 'Mafia',
-    description: 'Weapons from Syria at the border. Let them in or send them back?',
+    description: 'Weapons from the neighboring country at the border. Let them in or send them back?',
     leftChoice: 'Let them in, might be useful', rightChoice: 'Block them, too dangerous',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'ordu', amount: -10 }, { power: 'halk', amount: -5 }],
     rightEffects: [{ power: 'ordu', amount: 10 }, { power: 'mafya', amount: -10 }],
