@@ -11,8 +11,8 @@ interface LanguageContextType {
 const translations: Record<Language, Record<string, string>> = {
   tr: {
     // Start screen
-    'start.subtitle': 'Gücü dengede tut, tahtını koru.',
-    'start.subtitle2': 'Bir karar seni zirveye taşır, bir karar uçuruma sürükler.',
+    'start.subtitle': 'Gücü dengede tut, iktidarı koru.',
+    'start.subtitle2': '',
     'start.highscore': 'En Yüksek Skor:',
     'start.turns': 'tur',
     'start.play': '⚔️ Oyuna Başla',
@@ -45,8 +45,8 @@ const translations: Record<Language, Record<string, string>> = {
     'tutorial.hint': 'İpucu: Faction başına tıklayarak da rüşvet verebilirsin!',
   },
   en: {
-    'start.subtitle': 'Keep the power balanced, protect your throne.',
-    'start.subtitle2': 'One decision lifts you up, another drags you down.',
+    'start.subtitle': 'Balance power, hold your throne.',
+    'start.subtitle2': '',
     'start.highscore': 'High Score:',
     'start.turns': 'turns',
     'start.play': '⚔️ Start Game',
