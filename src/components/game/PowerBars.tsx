@@ -71,6 +71,15 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
     return 'linear-gradient(to top, #06b6d4, #0ea5e9)';
   };
 
+  const getBarColor = (value: number) => {
+    if (value <= 15) return '#ef4444';
+    if (value <= 30) return '#f97316';
+    if (value <= 50) return '#eab308';
+    if (value <= 70) return '#22c55e';
+    if (value <= 85) return '#14b8a6';
+    return '#0ea5e9';
+  };
+
   const isAffected = (p: PowerType) => activeEffects.some(e => e.power === p);
   const getEffectDirection = (p: PowerType) => {
     const effect = activeEffects.find(e => e.power === p);
@@ -244,7 +253,10 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 />
                 {showPercent === p && (
                   <div className="absolute inset-0 flex items-center justify-center z-10">
-                    <span className="text-xs font-black text-foreground drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                    <span
+                      className="text-xs font-black drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]"
+                      style={{ color: getBarColor(val) }}
+                    >
                       {val}%
                     </span>
                   </div>
