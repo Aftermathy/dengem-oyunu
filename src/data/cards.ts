@@ -903,7 +903,7 @@ export const eventCards: EventCard[] = [
     leftMoney: -5, rightMoney: 3,
   },
   {
-    id: 111, character: 'MHK Başkanı', characterEmoji: '🟨', category: 'Spor',
+    id: 111, character: 'Hakem Komitesi Başkanı', characterEmoji: '🟨', category: 'Spor',
     description: 'Hakem hataları her hafta gündemde. VAR kayıtlarını açalım mı?',
     leftChoice: 'Kayıtları gizle, skandal büyür', rightChoice: 'Şeffaf ol, kayıtları yayınla',
     leftEffects: [{ power: 'halk', amount: -10 }, { power: 'mafya', amount: 5 }],
