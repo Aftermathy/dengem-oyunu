@@ -35,8 +35,7 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
   const bgImage = image ? defeatImages[image] : null;
 
   return (
-    <div className="relative flex flex-col items-center justify-end min-h-screen w-full overflow-hidden gameover-container">
-      {/* Fade from black overlay */}
+    <div className="relative flex flex-col items-center justify-end min-h-screen w-full overflow-hidden">
       <div className="absolute inset-0 z-20 pointer-events-none gameover-blackfade" />
 
       {bgImage && (
@@ -46,12 +45,12 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
         </div>
       )}
 
-      <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto gameover-content">
+      <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto">
         <div className="text-6xl">{emoji}</div>
-        <h2 className="text-3xl sm:text-4xl font-black text-red-400 drop-shadow-lg gameover-title">{title}</h2>
+        <h2 className="text-3xl sm:text-4xl font-black text-red-400 drop-shadow-lg">{title}</h2>
         <p className="text-sm text-white/80 leading-relaxed drop-shadow-md">{description}</p>
 
-        <div className="flex gap-6 mt-2 gameover-stats">
+        <div className="flex gap-6 mt-2">
           <div className="text-center">
             <div className="text-3xl font-black text-white">{turn}</div>
             <div className="text-xs text-white/60">{t('gameover.turn')}</div>
@@ -66,7 +65,7 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
           </div>
         </div>
 
-        <div className="flex gap-3 mt-4 w-full gameover-buttons">
+        <div className="flex gap-3 mt-4 w-full">
           <Button size="lg" onClick={() => { playClickSound(); onRestart(); }} className="flex-1 text-base px-6 py-6 font-bold bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20">
             {t('gameover.restart')}
           </Button>
