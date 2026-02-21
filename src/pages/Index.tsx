@@ -9,6 +9,8 @@ import { StartScreen } from '@/components/game/StartScreen';
 import { BribeTutorial } from '@/components/game/BribeTutorial';
 import { SplashScreen } from '@/components/game/SplashScreen';
 import { PowerEffect } from '@/types/game';
+import { ElectionScreen } from '@/components/game/ElectionScreen';
+import { getElectionConfig, getNextElectionInfo } from '@/data/electionData';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
@@ -23,9 +25,12 @@ const Index = () => {
     propaganda, canPropaganda, getPropagandaCost,
     invest, canInvest, getInvestmentCost,
     alliance, canAlliance, getAllianceCost,
+    currentElectionIndex, completedElections, handleElectionComplete,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
+  const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
+  const nextElectionInfo = getNextElectionInfo(turn, completedElections);
 
   const handleHoverEffects = useCallback((effects: PowerEffect[]) => {
     setActiveEffects(effects);
@@ -60,14 +65,21 @@ const Index = () => {
             />
           </div>
 
-          <div className="flex items-center justify-center py-2 animate-fade-in" key={`turn-${turn}`}>
-            <span className="text-lg font-black tracking-wider text-foreground" style={{ fontFamily: "'Georgia', serif" }}>
-              {2002 + Math.floor(turn / 4)}
-            </span>
-            <span className="text-base font-bold text-primary ml-1.5 tracking-widest" style={{ fontFamily: "'Georgia', serif" }}>
-              Q{(turn % 4) + 1}
-            </span>
-            <span className="text-xs text-muted-foreground/40 ml-1.5 font-mono">({turn})</span>
+          <div className="flex flex-col items-center justify-center py-2 animate-fade-in" key={`turn-${turn}`}>
+            <div className="flex items-center">
+              <span className="text-lg font-black tracking-wider text-foreground" style={{ fontFamily: "'Georgia', serif" }}>
+                {2002 + Math.floor(turn / 4)}
+              </span>
+              <span className="text-base font-bold text-primary ml-1.5 tracking-widest" style={{ fontFamily: "'Georgia', serif" }}>
+                Q{(turn % 4) + 1}
+              </span>
+              <span className="text-xs text-muted-foreground/40 ml-1.5 font-mono">({turn})</span>
+            </div>
+            {nextElectionInfo && (
+              <span className="text-[10px] font-bold text-red-400 animate-pulse mt-0.5">
+                🗳️ {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
+              </span>
+            )}
           </div>
 
           <LaunderBar
@@ -108,6 +120,17 @@ const Index = () => {
           faction={tutorialFaction}
           onBribe={completeTutorialBribe}
           onSkip={skipTutorial}
+        />
+      )}
+
+      {phase === 'election' && electionConfig && (
+        <ElectionScreen
+          config={electionConfig}
+          money={money}
+          launderedMoney={totalLaundered}
+          halkPower={power.halk}
+          lang={lang}
+          onComplete={handleElectionComplete}
         />
       )}
 
