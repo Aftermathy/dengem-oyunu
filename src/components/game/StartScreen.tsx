@@ -64,7 +64,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       <div className="flex gap-3 text-2xl mt-4">
         <span title={t('power.halk')}>🏛️</span>
         <span title={t('power.yatirimcilar')}>💰</span>
-        <span title={t('power.mafya')}>🔫</span>
+        <span title={t('power.mafya')}>🗡️</span>
         <span title={t('power.tarikat')}>📿</span>
         <span title={t('power.ordu')}>⚔️</span>
       </div>
