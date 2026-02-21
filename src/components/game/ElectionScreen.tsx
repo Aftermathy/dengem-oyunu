@@ -254,7 +254,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
       {/* Loss red crack overlay */}
       {phase === 'result' && !won && (
-        <div className="absolute inset-0 z-20 red-crack-overlay"
+        <div className="absolute inset-0 z-20 red-crack-overlay pointer-events-none"
           style={{
             background: 'linear-gradient(45deg, rgba(220,38,38,0.2) 0%, transparent 30%, rgba(220,38,38,0.3) 50%, transparent 70%, rgba(220,38,38,0.2) 100%)',
           }}
