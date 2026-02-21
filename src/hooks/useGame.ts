@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { PowerState, PowerType, EventCard } from '@/types/game';
+import { PowerState, PowerType, EventCard, BRIBE_COSTS, BRIBE_REP_GAIN } from '@/types/game';
 import { eventCards } from '@/data/cards';
 import { eventCardsEn } from '@/data/cards-en';
 import { gameOverScenarios } from '@/data/gameOverScenarios';
@@ -13,6 +13,8 @@ const INITIAL_POWER: PowerState = {
   tarikat: 50,
   ordu: 50,
 };
+
+const INITIAL_MONEY = 128;
 
 function shuffleArray<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -33,9 +35,19 @@ function getScenarios(lang: Language) {
   return lang === 'en' ? gameOverScenariosEn : gameOverScenarios;
 }
 
+export interface BribeState {
+  halk: number;
+  yatirimcilar: number;
+  mafya: number;
+  tarikat: number;
+  ordu: number;
+}
+
 export function useGame(lang: Language) {
   const [phase, setPhase] = useState<GamePhase>('start');
   const [power, setPower] = useState<PowerState>(INITIAL_POWER);
+  const [money, setMoney] = useState(INITIAL_MONEY);
+  const [bribeCounts, setBribeCounts] = useState<BribeState>({ halk: 0, yatirimcilar: 0, mafya: 0, tarikat: 0, ordu: 0 });
   const [deck, setDeck] = useState<EventCard[]>([]);
   const [cardIndex, setCardIndex] = useState(0);
   const [turn, setTurn] = useState(0);
@@ -43,15 +55,19 @@ export function useGame(lang: Language) {
     return parseInt(localStorage.getItem('taht_highscore') || '0', 10);
   });
   const [gameOverInfo, setGameOverInfo] = useState<{ title: string; description: string; emoji: string } | null>(null);
+  const [lastMoneyChange, setLastMoneyChange] = useState<number | null>(null);
 
   const currentCard = deck[cardIndex] || null;
 
   const startGame = useCallback(() => {
     setPower(INITIAL_POWER);
+    setMoney(INITIAL_MONEY);
+    setBribeCounts({ halk: 0, yatirimcilar: 0, mafya: 0, tarikat: 0, ordu: 0 });
     setDeck(shuffleArray(getCards(lang)));
     setCardIndex(0);
     setTurn(0);
     setGameOverInfo(null);
+    setLastMoneyChange(null);
     setPhase('playing');
   }, [lang]);
 
@@ -71,14 +87,46 @@ export function useGame(lang: Language) {
     return null;
   }, [lang]);
 
+  const getBribeCost = useCallback((faction: PowerType): number => {
+    const count = bribeCounts[faction];
+    const idx = Math.min(count, BRIBE_COSTS.length - 1);
+    return BRIBE_COSTS[idx];
+  }, [bribeCounts]);
+
+  const canBribe = useCallback((faction: PowerType): boolean => {
+    return money >= getBribeCost(faction) && power[faction] < 90;
+  }, [money, power, getBribeCost]);
+
+  const bribe = useCallback((faction: PowerType) => {
+    const cost = getBribeCost(faction);
+    if (money < cost || power[faction] >= 90) return;
+
+    setMoney(m => m - cost);
+    setPower(prev => ({
+      ...prev,
+      [faction]: Math.min(100, prev[faction] + BRIBE_REP_GAIN),
+    }));
+    setBribeCounts(prev => ({
+      ...prev,
+      [faction]: prev[faction] + 1,
+    }));
+    setLastMoneyChange(-cost);
+  }, [money, power, getBribeCost]);
+
   const swipe = useCallback((direction: 'left' | 'right') => {
     if (!currentCard || phase !== 'playing') return;
 
     const effects = direction === 'left' ? currentCard.leftEffects : currentCard.rightEffects;
+    const moneyEffect = direction === 'left' ? (currentCard.leftMoney || 0) : (currentCard.rightMoney || 0);
+    
     const newPower = { ...power };
     effects.forEach(e => {
       newPower[e.power] = Math.max(0, Math.min(100, newPower[e.power] + e.amount));
     });
+
+    const newMoney = money + moneyEffect;
+    setMoney(newMoney);
+    if (moneyEffect !== 0) setLastMoneyChange(moneyEffect);
 
     setPower(newPower);
     const newTurn = turn + 1;
@@ -95,22 +143,42 @@ export function useGame(lang: Language) {
       return;
     }
 
+    // Check money game over
+    if (newMoney <= 0) {
+      const bankruptScenario = lang === 'en' 
+        ? { title: 'Bankruptcy!', description: 'The coffers are empty. No money, no power. Even the janitor quit. Time to sell the palace furniture on eBay...', emoji: '💸' }
+        : { title: 'İflas!', description: 'Kasa bomboş. Para yok, güç yok. Temizlikçi bile istifa etti. Sarayın mobilyalarını internetten satma vakti...', emoji: '💸' };
+      setGameOverInfo(bankruptScenario);
+      if (newTurn > highScore) {
+        setHighScore(newTurn);
+        localStorage.setItem('taht_highscore', String(newTurn));
+      }
+      setPhase('gameover');
+      return;
+    }
+
     let nextIndex = cardIndex + 1;
     if (nextIndex >= deck.length) {
       setDeck(shuffleArray(getCards(lang)));
       nextIndex = 0;
     }
     setCardIndex(nextIndex);
-  }, [currentCard, phase, power, turn, cardIndex, deck, highScore, checkGameOver, lang]);
+  }, [currentCard, phase, power, money, turn, cardIndex, deck, highScore, checkGameOver, lang]);
 
   return {
     phase,
     power,
+    money,
     currentCard,
     turn,
     highScore,
     gameOverInfo,
+    lastMoneyChange,
+    bribeCounts,
     startGame,
     swipe,
+    bribe,
+    canBribe,
+    getBribeCost,
   };
 }
