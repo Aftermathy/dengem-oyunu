@@ -20,9 +20,9 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           }, 400);
           return 100;
         }
-        return prev + Math.random() * 8 + 2;
+        return prev + Math.random() * 3 + 1;
       });
-    }, 120);
+    }, 150);
 
     return () => clearInterval(interval);
   }, [onComplete]);
