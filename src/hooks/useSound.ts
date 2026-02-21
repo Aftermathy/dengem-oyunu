@@ -98,35 +98,28 @@ export function playClickSound() {
     const ctx = getAudioCtx();
     const now = ctx.currentTime;
 
-    // Sharp click — mechanical key down
-    const osc = ctx.createOscillator();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(1800, now);
-    osc.frequency.exponentialRampToValueAtTime(600, now + 0.03);
+    // Short percussive tick
+    const bufferSize = Math.floor(ctx.sampleRate * 0.015);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 8);
+    }
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 3000;
 
     const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.15, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+    gain.gain.value = 0.4;
 
-    osc.connect(gain);
+    noise.connect(filter);
+    filter.connect(gain);
     gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.06);
-
-    // Subtle spring bounce
-    const osc2 = ctx.createOscillator();
-    osc2.type = 'sine';
-    osc2.frequency.value = 4200;
-
-    const gain2 = ctx.createGain();
-    gain2.gain.setValueAtTime(0, now + 0.03);
-    gain2.gain.linearRampToValueAtTime(0.06, now + 0.04);
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-
-    osc2.connect(gain2);
-    gain2.connect(ctx.destination);
-    osc2.start(now + 0.03);
-    osc2.stop(now + 0.08);
+    noise.start(now);
   } catch {
     // Silently fail
   }
