@@ -26,15 +26,15 @@ interface GameOverScreenProps {
   highScore: number;
   money: number;
   onRestart: () => void;
+  onMainMenu: () => void;
 }
 
-export function GameOverScreen({ title, description, emoji, image, turn, highScore, money, onRestart }: GameOverScreenProps) {
+export function GameOverScreen({ title, description, emoji, image, turn, highScore, money, onRestart, onMainMenu }: GameOverScreenProps) {
   const { t } = useLanguage();
   const bgImage = image ? defeatImages[image] : null;
 
   return (
     <div className="relative flex flex-col items-center justify-end min-h-screen w-full overflow-hidden">
-      {/* Background defeat image */}
       {bgImage && (
         <div className="absolute inset-0 z-0">
           <img src={bgImage} alt="" className="w-full h-full object-cover" />
@@ -42,7 +42,6 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
         </div>
       )}
 
-      {/* Content overlay */}
       <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto animate-fade-in">
         <div className="text-6xl">{emoji}</div>
         <h2 className="text-3xl sm:text-4xl font-black text-red-400 drop-shadow-lg">{title}</h2>
@@ -63,9 +62,14 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
           </div>
         </div>
 
-        <Button size="lg" onClick={onRestart} className="mt-4 text-lg px-8 py-6 font-bold bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20">
-          {t('gameover.restart')}
-        </Button>
+        <div className="flex gap-3 mt-4 w-full">
+          <Button size="lg" onClick={onRestart} className="flex-1 text-base px-6 py-6 font-bold bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20">
+            {t('gameover.restart')}
+          </Button>
+          <Button size="lg" onClick={onMainMenu} variant="outline" className="flex-1 text-base px-6 py-6 font-bold bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/50">
+            {t('gameover.menu')}
+          </Button>
+        </div>
       </div>
     </div>
   );
