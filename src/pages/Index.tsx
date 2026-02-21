@@ -131,6 +131,8 @@ const Index = () => {
           halkPower={power.halk}
           lang={lang}
           onComplete={handleElectionComplete}
+          onRestart={startGame}
+          onMainMenu={goToMenu}
         />
       )}
 
