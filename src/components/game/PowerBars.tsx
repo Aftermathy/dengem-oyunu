@@ -236,7 +236,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
 
               {/* Power bar */}
               <div
-                className="w-full h-16 sm:h-20 bg-muted/50 rounded-full relative overflow-hidden border-2 border-black select-none"
+                className="w-full h-16 sm:h-20 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
                 onMouseEnter={() => setShowPercent(p)}
                 onMouseLeave={() => setShowPercent(null)}
                 onTouchStart={() => {
@@ -254,8 +254,8 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 {showPercent === p && (
                   <div className="absolute inset-0 flex items-center justify-center z-10">
                     <span
-                      className="text-xs font-black drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]"
-                      style={{ color: getBarColor(val) }}
+                      className="text-sm font-black"
+                      style={{ color: getBarColor(val), textShadow: '0 0 4px #000, 0 0 8px #000, 0 1px 2px #000' }}
                     >
                       {val}%
                     </span>
