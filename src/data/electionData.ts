@@ -682,7 +682,7 @@ export function getNextElectionInfo(
     { index: 2, triggerTurn: 55, year: 2018 },
     { index: 3, triggerTurn: 63, year: 2019 },
     { index: 4, triggerTurn: 75, year: 2024 },
-    { index: 5, triggerTurn: 2, year: 2028 },
+    { index: 5, triggerTurn: 2, year: 2008 },
   ];
   for (const e of elections) {
     if (e.triggerTurn > turn && !completedElections.includes(e.index)) {
