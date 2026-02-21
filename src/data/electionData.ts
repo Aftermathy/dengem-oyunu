@@ -664,7 +664,7 @@ export const ELECTION_TRIGGER_MAP: Record<number, number> = {
   55: 2, // 2018
   63: 3, // 2019
   75: 4, // 2024
-  90: 5, // 2028
+  87: 5, // 2028 (was 90, moved closer so it's reachable)
 };
 
 export function getElectionConfig(lang: Language, index: number): ElectionConfig {
@@ -682,7 +682,7 @@ export function getNextElectionInfo(
     { index: 2, triggerTurn: 55, year: 2018 },
     { index: 3, triggerTurn: 63, year: 2019 },
     { index: 4, triggerTurn: 75, year: 2024 },
-    { index: 5, triggerTurn: 90, year: 2028 },
+    { index: 5, triggerTurn: 87, year: 2028 },
   ];
   for (const e of elections) {
     if (e.triggerTurn > turn && !completedElections.includes(e.index)) {
