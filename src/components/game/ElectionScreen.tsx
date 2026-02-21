@@ -207,7 +207,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
       setAiCardPlayed(aiCard);
 
       setTimeout(() => {
-        if (round >= 3) {
+        if (round >= 4) {
           setPhase('result');
         } else {
           setRound(r => r + 1);
@@ -290,7 +290,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
               🔥 {config.title} 🔥
             </h1>
             <p className="text-orange-300/80 text-xs mt-0.5 font-bold">
-              {labels.round} {round}/3
+              {labels.round} {round}/4
             </p>
           </div>
 
