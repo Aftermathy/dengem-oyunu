@@ -15,19 +15,19 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       {/* Language toggle — top */}
       <div className="flex gap-1 bg-muted rounded-full p-1">
         <button
-          onClick={() => { playClickSound(); setLang('tr'); }}
+          onClick={() => {playClickSound();setLang('tr');}}
           className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
-            lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
+          lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+          }>
+
           TR
         </button>
         <button
-          onClick={() => { playClickSound(); setLang('en'); }}
+          onClick={() => {playClickSound();setLang('en');}}
           className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
-            lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
-          }`}
-        >
+          lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+          }>
+
           EN
         </button>
       </div>
@@ -48,18 +48,18 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         {t('start.subtitle')}
       </p>
 
-      {highScore > 0 && (
-        <div className="bg-muted/50 border border-border rounded-xl px-4 py-2">
+      {highScore > 0 &&
+      <div className="bg-muted/50 border border-border rounded-xl px-4 py-2">
           <span className="text-xs text-muted-foreground">{t('start.highscore')} </span>
           <span className="font-bold text-primary text-lg">{highScore} {t('start.turns')}</span>
         </div>
-      )}
+      }
 
       <Button
         size="lg"
-        onClick={() => { playClickSound(); onStart(); }}
-        className="text-lg px-10 py-6 font-bold shadow-lg hover:shadow-xl transition-shadow"
-      >
+        onClick={() => {playClickSound();onStart();}}
+        className="text-lg px-10 py-6 font-bold shadow-lg hover:shadow-xl transition-shadow">
+
         {t('start.play')}
       </Button>
 
@@ -67,9 +67,9 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         href="https://apps.apple.com/app/i-must-stay"
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-2 px-6 py-2 rounded-lg text-xs font-semibold tracking-wide text-primary/80 border border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn"
-        style={{ textShadow: '0 0 8px hsl(15 80% 50% / 0.3)' }}
-      >
+        className="mt-2 rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-[11px] px-[22px] border-2"
+        style={{ textShadow: '0 0 8px hsl(15 80% 50% / 0.3)' }}>
+
         ✨ {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} ✨
       </a>
 
@@ -80,6 +80,6 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       <div className="text-xs tracking-[0.2em] uppercase text-muted-foreground pb-6">
         Aftermath Vibe Studios
       </div>
-    </div>
-  );
+    </div>);
+
 }
