@@ -56,27 +56,36 @@ function drawCards(cards: ElectionCard[], count: number, exclude: number[] = [])
 }
 
 /* ── AI card selection based on vote gap ── */
-function selectAiCard(cards: ElectionCard[], gap: number): ElectionCard {
+function selectAiCard(cards: ElectionCard[], gap: number, usedIds: number[]): ElectionCard {
+  const pool = cards.filter(c => !usedIds.includes(c.id));
+  const available = pool.length > 0 ? pool : cards;
+  const pick = (arr: ElectionCard[]) => arr[Math.floor(Math.random() * arr.length)];
+
   // gap = playerVote - opponentVote (positive = player leads)
   if (gap > 10) {
-    const legendary = cards.filter(c => c.rarity === 'legendary');
-    if (legendary.length > 0) return legendary[Math.floor(Math.random() * legendary.length)];
-    const epic = cards.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
-    if (epic.length > 0) return epic[Math.floor(Math.random() * epic.length)];
+    // %60 legendary, %80 epic+
+    const legendary = available.filter(c => c.rarity === 'legendary');
+    if (Math.random() < 0.6 && legendary.length > 0) return pick(legendary);
+    const epicPlus = available.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
+    if (Math.random() < 0.8 && epicPlus.length > 0) return pick(epicPlus);
+    return pick(available);
   }
   if (gap > 6) {
-    if (Math.random() < 0.6) {
-      const good = cards.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
-      if (good.length > 0) return good[Math.floor(Math.random() * good.length)];
-    }
+    // %40 epic or legendary
+    const epicPlus = available.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
+    if (Math.random() < 0.4 && epicPlus.length > 0) return pick(epicPlus);
+    return pick(available);
   }
   if (gap > 3) {
-    if (Math.random() < 0.4) {
-      const good = cards.filter(c => c.rarity !== 'common');
-      if (good.length > 0) return good[Math.floor(Math.random() * good.length)];
-    }
+    // %40 uncommon+, %30 epic
+    const epic = available.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
+    if (Math.random() < 0.3 && epic.length > 0) return pick(epic);
+    const uncommonPlus = available.filter(c => c.rarity !== 'common');
+    if (Math.random() < 0.4 && uncommonPlus.length > 0) return pick(uncommonPlus);
+    return pick(available);
   }
-  return cards[Math.floor(Math.random() * cards.length)];
+  // <3: random
+  return pick(available);
 }
 
 const REROLL_COST = 3;
@@ -188,6 +197,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const [usedPowers, setUsedPowers] = useState<string[]>([]);
   const [aiCardPlayed, setAiCardPlayed] = useState<ElectionCard | null>(null);
   const [usedCardIds, setUsedCardIds] = useState<number[]>([]);
+  const [usedAiCardIds, setUsedAiCardIds] = useState<number[]>([]);
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [barGlowKey, setBarGlowKey] = useState(0);
   const [showAiFlash, setShowAiFlash] = useState(false);
@@ -275,8 +285,11 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
       const currentOpponentVote = 100 - currentPlayerVote;
       const gap = currentPlayerVote - currentOpponentVote;
 
-      const aiCard = selectAiCard(config.playerCards, gap);
+      const aiCard = selectAiCard(config.playerCards, gap, usedAiCardIds);
       const effect = aiCard.voterEffect;
+
+      // Track used AI cards so they don't repeat
+      setUsedAiCardIds(prev => [...prev, aiCard.id]);
 
       // Legendary shake effect
       if (aiCard.rarity === 'legendary') {
