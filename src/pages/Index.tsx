@@ -48,6 +48,11 @@ const Index = () => {
             />
           </div>
 
+          <div className="text-center text-xs text-muted-foreground py-1">
+            <span className="font-bold text-foreground">{2002 + Math.floor(turn / 4)} Q{(turn % 4) + 1}</span>
+            <span className="text-muted-foreground/60 ml-1">({turn})</span>
+          </div>
+
           <div className="flex-1 flex flex-col items-center justify-center px-4 pb-2">
             <SwipeCard
               key={currentCard.id + '-' + turn}
@@ -55,9 +60,6 @@ const Index = () => {
               onSwipe={swipe}
               onHoverEffects={handleHoverEffects}
             />
-            <div className="text-center text-xs text-muted-foreground mt-2">
-              {t('game.turn')}: <span className="font-bold text-foreground">{turn}</span>
-            </div>
           </div>
         </>
       )}
