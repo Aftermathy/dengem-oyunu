@@ -56,6 +56,9 @@ export function useGame(lang: Language) {
   });
   const [gameOverInfo, setGameOverInfo] = useState<{ title: string; description: string; emoji: string } | null>(null);
   const [lastMoneyChange, setLastMoneyChange] = useState<number | null>(null);
+  const [tutorialShown, setTutorialShown] = useState(false);
+  const [tutorialFaction, setTutorialFaction] = useState<PowerType | null>(null);
+  const [pendingAdvance, setPendingAdvance] = useState<{ newMoney: number; nextIndex: number } | null>(null);
 
   const currentCard = deck[cardIndex] || null;
 
@@ -68,6 +71,9 @@ export function useGame(lang: Language) {
     setTurn(0);
     setGameOverInfo(null);
     setLastMoneyChange(null);
+    setTutorialShown(false);
+    setTutorialFaction(null);
+    setPendingAdvance(null);
     setPhase('playing');
   }, [lang]);
 
@@ -162,8 +168,42 @@ export function useGame(lang: Language) {
       setDeck(shuffleArray(getCards(lang)));
       nextIndex = 0;
     }
+
+    // Check tutorial trigger
+    if (!tutorialShown) {
+      for (const key of Object.keys(newPower) as PowerType[]) {
+        if (newPower[key] <= 20) {
+          setTutorialFaction(key);
+          setPendingAdvance({ newMoney, nextIndex });
+          return;
+        }
+      }
+    }
+
     setCardIndex(nextIndex);
-  }, [currentCard, phase, power, money, turn, cardIndex, deck, highScore, checkGameOver, lang]);
+  }, [currentCard, phase, power, money, turn, cardIndex, deck, highScore, checkGameOver, lang, tutorialShown]);
+
+  const completeTutorialBribe = useCallback(() => {
+    if (!tutorialFaction || !pendingAdvance) return;
+    setMoney(m => m - 1);
+    setPower(prev => ({
+      ...prev,
+      [tutorialFaction]: Math.min(100, prev[tutorialFaction] + 10),
+    }));
+    setLastMoneyChange(-1);
+    setTutorialShown(true);
+    setTutorialFaction(null);
+    setCardIndex(pendingAdvance.nextIndex);
+    setPendingAdvance(null);
+  }, [tutorialFaction, pendingAdvance]);
+
+  const skipTutorial = useCallback(() => {
+    if (!pendingAdvance) return;
+    setTutorialShown(true);
+    setTutorialFaction(null);
+    setCardIndex(pendingAdvance.nextIndex);
+    setPendingAdvance(null);
+  }, [pendingAdvance]);
 
   return {
     phase,
@@ -175,10 +215,13 @@ export function useGame(lang: Language) {
     gameOverInfo,
     lastMoneyChange,
     bribeCounts,
+    tutorialFaction,
     startGame,
     swipe,
     bribe,
     canBribe,
     getBribeCost,
+    completeTutorialBribe,
+    skipTutorial,
   };
 }
