@@ -6,7 +6,7 @@ import { eventCardsEn } from '@/data/cards-en';
 import { gameOverScenarios } from '@/data/gameOverScenarios';
 import { gameOverScenariosEn } from '@/data/gameOverScenarios-en';
 import { Language } from '@/contexts/LanguageContext';
-import { ELECTION_TRIGGER_MAP } from '@/data/electionData';
+import { ELECTION_TRIGGER_MAP, getElectionConfig } from '@/data/electionData';
 import { ElectionResult } from '@/types/election';
 
 const INITIAL_POWER: PowerState = {
@@ -258,6 +258,20 @@ export function useGame(lang: Language) {
         ? { title: 'Election Lost!', description: 'The ballot box has spoken. Your reign of corruption ends here. The people chose hope over fear. Pack your bags — the new government is already changing the locks.', emoji: '🗳️', image: 'defeat-halk' }
         : { title: 'Seçim Kaybedildi!', description: 'Sandık konuştu. Yolsuzluk saltanatın burada sona erdi. Halk korku yerine umudu seçti. Bavullarını topla — yeni hükümet kilitleri değiştirmeye başladı bile.', emoji: '🗳️', image: 'defeat-halk' };
       setGameOverInfo(lostScenario);
+      if (turn > highScore) {
+        setHighScore(turn);
+        localStorage.setItem('taht_highscore', String(turn));
+      }
+      setPhase('gameover');
+      return;
+    }
+    // Check if this was the final boss election
+    const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
+    if (electionConfig?.isFinalBoss) {
+      const victoryScenario = lang === 'en'
+        ? { title: '👑 No One\'s Better Than You! 👑', description: 'You survived every election, crushed every opponent, and held on to power through it all. 20+ years of corruption, manipulation, and iron-fisted rule. You\'re the ultimate political survivor. The throne is yours... forever. Or is it? History will judge, but for now — you win.', emoji: '🏆' }
+        : { title: '👑 Senden İyisi Yok! 👑', description: 'Her seçimi atlattın, her rakibi ezdin, 20 yılı aşkın iktidarı bırakmadın. Yolsuzluk, manipülasyon ve demir yumrukla tahtını korudun. En büyük politik hayatta kalma uzmanı sensin. Taht senindir... sonsuza dek. Yoksa öyle mi? Tarih yargılayacak, ama şimdilik — kazanan sensin.', emoji: '🏆' };
+      setGameOverInfo(victoryScenario);
       if (turn > highScore) {
         setHighScore(turn);
         localStorage.setItem('taht_highscore', String(turn));

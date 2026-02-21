@@ -4,7 +4,7 @@ import { Language } from '@/contexts/LanguageContext';
 const electionsTr: ElectionConfig[] = [
   {
     year: 2008, triggerTurn: 23, title: 'SEÇİM 2008', subtitle: 'Genel Seçim - Kolay mı sandın?',
-    aiDifficultyBonus: 0, catchUpThreshold: 15, catchUpBonus: 3,
+    aiDifficultyBonus: 0, catchUpThreshold: 15, catchUpBonus: 3, startingPlayerVote: 58,
     playerCards: [
       { id: 1, text: 'Meydan mitingi düzenle', emoji: '🎤', voterEffect: 5, cost: 8 },
       { id: 2, text: 'Ücretsiz kömür dağıt', emoji: '🪨', voterEffect: 4, cost: 5 },
@@ -29,35 +29,34 @@ const electionsTr: ElectionConfig[] = [
     ],
   },
   {
-    year: 2016, triggerTurn: 55, title: 'SEÇİM 2016', subtitle: 'Referandum - Tek adam rejimi mi?',
-    aiDifficultyBonus: 1, catchUpThreshold: 12, catchUpBonus: 4,
+    year: 2013, triggerTurn: 40, title: 'SEÇİM 2013', subtitle: 'Yerel Seçim - Gezi\'nin gölgesinde!',
+    aiDifficultyBonus: 1, catchUpThreshold: 12, catchUpBonus: 4, startingPlayerVote: 55,
     playerCards: [
-      { id: 11, text: 'OHAL korkusu yay', emoji: '😱', voterEffect: 5, cost: 10 },
+      { id: 11, text: 'Gezi olaylarını terörize et', emoji: '😱', voterEffect: 5, cost: 10 },
       { id: 12, text: 'Milli birlik çağrısı yap', emoji: '🇹🇷', voterEffect: 6, cost: 12 },
       { id: 13, text: 'Devlet töreni düzenle', emoji: '🎖️', voterEffect: 4, cost: 8 },
       { id: 14, text: 'Ekonomik istikrar vaat et', emoji: '📈', voterEffect: 4, cost: 8 },
       { id: 15, text: 'Sosyal yardım dağıt', emoji: '📦', voterEffect: 5, cost: 10 },
       { id: 16, text: 'Bayrak kampanyası başlat', emoji: '🏴', voterEffect: 3, cost: 5 },
-      { id: 17, text: 'Şehit ailelerini ziyaret et', emoji: '🕊️', voterEffect: 5, cost: 7 },
+      { id: 17, text: 'Yolsuzluk kasetlerini engelle', emoji: '📼', voterEffect: 5, cost: 7 },
       { id: 18, text: 'Muhalefete vatan haini de', emoji: '🗞️', voterEffect: 4, cost: 6 },
     ],
     aiCards: [
-      { id: 111, text: 'Demokratik hakları savundu', emoji: '⚖️', voterEffect: 5, cost: 0 },
+      { id: 111, text: 'Gezi ruhunu canlandırdı', emoji: '🌳', voterEffect: 5, cost: 0 },
       { id: 112, text: 'Sokağa çık çağrısı yaptı', emoji: '📢', voterEffect: 4, cost: 0 },
-      { id: 113, text: 'Uluslararası baskı kurdu', emoji: '🌍', voterEffect: 4, cost: 0 },
+      { id: 113, text: 'Yolsuzluk belgelerini yayınladı', emoji: '📝', voterEffect: 5, cost: 0 },
       { id: 114, text: 'Akademisyenler bildirisi yayınladı', emoji: '📝', voterEffect: 3, cost: 0 },
       { id: 115, text: 'Sosyal medya kampanyası başlattı', emoji: '📱', voterEffect: 5, cost: 0 },
       { id: 116, text: 'Barış mitingi düzenledi', emoji: '☮️', voterEffect: 4, cost: 0 },
     ],
     specialPowers: [
-      { id: '15temmuz', name: '15 Temmuz Kartı', emoji: '🎖️', description: 'Darbe girişimini hatırlat, milli birlik söylemi', voterEffect: 10, launderedCost: 20 },
-      { id: 'khk', name: 'KHK ile Tasfiye', emoji: '📜', description: 'Muhalif kurumları kapat', voterEffect: 7, launderedCost: 15 },
-      { id: 'media16', name: 'Medya Karartması', emoji: '📺', description: 'Muhalefet haberlerini engelle', voterEffect: 5, launderedCost: 10 },
+      { id: 'twitter13', name: 'Twitter Yasağı', emoji: '🐦', description: 'Sosyal medyayı kapat', voterEffect: 7, launderedCost: 12 },
+      { id: 'media13', name: 'Medya Baskısı', emoji: '📺', description: 'Ana akım medyayı kontrol et', voterEffect: 6, launderedCost: 10 },
     ],
   },
   {
-    year: 2018, triggerTurn: 63, title: 'SEÇİM 2018', subtitle: 'Cumhurbaşkanlığı - Sistem değişiyor!',
-    aiDifficultyBonus: 2, catchUpThreshold: 10, catchUpBonus: 4,
+    year: 2018, triggerTurn: 55, title: 'SEÇİM 2018', subtitle: 'Cumhurbaşkanlığı - Sistem değişiyor!',
+    aiDifficultyBonus: 2, catchUpThreshold: 10, catchUpBonus: 4, startingPlayerVote: 46,
     playerCards: [
       { id: 21, text: 'Mega proje açılışı yap', emoji: '🌉', voterEffect: 5, cost: 12 },
       { id: 22, text: 'Döviz müdahalesi yap', emoji: '💱', voterEffect: 4, cost: 10 },
@@ -83,8 +82,8 @@ const electionsTr: ElectionConfig[] = [
     ],
   },
   {
-    year: 2019, triggerTurn: 67, title: 'SEÇİM 2019', subtitle: 'Yerel Seçim - En Büyük Şehir!',
-    aiDifficultyBonus: 2, catchUpThreshold: 8, catchUpBonus: 5,
+    year: 2019, triggerTurn: 63, title: 'SEÇİM 2019', subtitle: 'Ara Seçim - Başkanlık sistemine geçiş!',
+    aiDifficultyBonus: 2, catchUpThreshold: 8, catchUpBonus: 5, startingPlayerVote: 43,
     playerCards: [
       { id: 31, text: 'Seçim güvenliği vaat et', emoji: '🔒', voterEffect: 4, cost: 10 },
       { id: 32, text: 'Altyapı projesi göster', emoji: '🚇', voterEffect: 4, cost: 8 },
@@ -110,8 +109,8 @@ const electionsTr: ElectionConfig[] = [
     ],
   },
   {
-    year: 2024, triggerTurn: 87, title: 'SEÇİM 2024', subtitle: 'Son Savaş - Ya hep ya hiç!',
-    aiDifficultyBonus: 3, catchUpThreshold: 5, catchUpBonus: 6,
+    year: 2024, triggerTurn: 75, title: 'SEÇİM 2024', subtitle: 'Kritik Seçim - Ya hep ya hiç!',
+    aiDifficultyBonus: 3, catchUpThreshold: 5, catchUpBonus: 6, startingPlayerVote: 40,
     playerCards: [
       { id: 41, text: 'Deprem yardımı vaadi ver', emoji: '🏗️', voterEffect: 4, cost: 12 },
       { id: 42, text: 'Enflasyon rakamlarını gizle', emoji: '📊', voterEffect: 3, cost: 8 },
@@ -137,12 +136,40 @@ const electionsTr: ElectionConfig[] = [
       { id: 'depremkart', name: 'Deprem Kartı', emoji: '🏗️', description: 'Afet vaatleri yap', voterEffect: 5, launderedCost: 15 },
     ],
   },
+  {
+    year: 2028, triggerTurn: 90, title: '🏆 FİNAL BOSS 2028 🏆', subtitle: 'Son Savaş - Tahtını koruyabilecek misin?',
+    aiDifficultyBonus: 4, catchUpThreshold: 3, catchUpBonus: 8, startingPlayerVote: 35, isFinalBoss: true,
+    playerCards: [
+      { id: 51, text: 'Anayasa değişikliği zorla', emoji: '📜', voterEffect: 5, cost: 15 },
+      { id: 52, text: 'Tüm medyayı sustur', emoji: '🔇', voterEffect: 4, cost: 12 },
+      { id: 53, text: 'Ekonomik mucize vaat et', emoji: '✨', voterEffect: 6, cost: 18 },
+      { id: 54, text: 'Milliyetçi kartı oyna', emoji: '🇹🇷', voterEffect: 5, cost: 12 },
+      { id: 55, text: 'Bedava her şey dağıt', emoji: '🎁', voterEffect: 4, cost: 10 },
+      { id: 56, text: 'Korku iklimi oluştur', emoji: '😰', voterEffect: 5, cost: 14 },
+      { id: 57, text: 'Sahte zafer ilan et', emoji: '🏆', voterEffect: 3, cost: 8 },
+      { id: 58, text: 'Son büyük miting', emoji: '🎪', voterEffect: 6, cost: 16 },
+    ],
+    aiCards: [
+      { id: 151, text: 'Tüm muhalefet birleşti', emoji: '💪', voterEffect: 9, cost: 0 },
+      { id: 152, text: 'Z kuşağı ayaklandı', emoji: '⚡', voterEffect: 8, cost: 0 },
+      { id: 153, text: 'Uluslararası yaptırım geldi', emoji: '🌍', voterEffect: 7, cost: 0 },
+      { id: 154, text: 'Ekonomik kriz patladı', emoji: '💥', voterEffect: 8, cost: 0 },
+      { id: 155, text: 'Halk sokağa döküldü', emoji: '🔥', voterEffect: 9, cost: 0 },
+      { id: 156, text: 'Bağımsız medya güçlendi', emoji: '📡', voterEffect: 7, cost: 0 },
+    ],
+    specialPowers: [
+      { id: 'darbe28', name: 'Darbe Tehdidi', emoji: '🎖️', description: 'Orduyu tehdit olarak kullan', voterEffect: 10, launderedCost: 30 },
+      { id: 'internet28', name: 'İnternet Kesintisi', emoji: '🌐', description: 'Tüm interneti kapat', voterEffect: 9, launderedCost: 28 },
+      { id: 'sahteoy', name: 'Sahte Oy Operasyonu', emoji: '🗳️', description: 'Sandıkları manipüle et', voterEffect: 12, launderedCost: 35 },
+      { id: 'sikiyo28', name: 'Sıkıyönetim İlan Et', emoji: '⚠️', description: 'Olağanüstü hal ilan et', voterEffect: 8, launderedCost: 25 },
+    ],
+  },
 ];
 
 const electionsEn: ElectionConfig[] = [
   {
     year: 2008, triggerTurn: 23, title: 'ELECTION 2008', subtitle: 'General Election - Think it\'s easy?',
-    aiDifficultyBonus: 0, catchUpThreshold: 15, catchUpBonus: 3,
+    aiDifficultyBonus: 0, catchUpThreshold: 15, catchUpBonus: 3, startingPlayerVote: 58,
     playerCards: [
       { id: 1, text: 'Hold a massive rally', emoji: '🎤', voterEffect: 5, cost: 8 },
       { id: 2, text: 'Distribute free coal', emoji: '🪨', voterEffect: 4, cost: 5 },
@@ -167,35 +194,34 @@ const electionsEn: ElectionConfig[] = [
     ],
   },
   {
-    year: 2016, triggerTurn: 55, title: 'ELECTION 2016', subtitle: 'Referendum - One-man rule?',
-    aiDifficultyBonus: 1, catchUpThreshold: 12, catchUpBonus: 4,
+    year: 2013, triggerTurn: 40, title: 'ELECTION 2013', subtitle: 'Local Election - In the shadow of Gezi!',
+    aiDifficultyBonus: 1, catchUpThreshold: 12, catchUpBonus: 4, startingPlayerVote: 55,
     playerCards: [
-      { id: 11, text: 'Spread emergency fear', emoji: '😱', voterEffect: 5, cost: 10 },
+      { id: 11, text: 'Label Gezi as terrorism', emoji: '😱', voterEffect: 5, cost: 10 },
       { id: 12, text: 'Call for national unity', emoji: '🇹🇷', voterEffect: 6, cost: 12 },
       { id: 13, text: 'Hold state ceremony', emoji: '🎖️', voterEffect: 4, cost: 8 },
       { id: 14, text: 'Promise economic stability', emoji: '📈', voterEffect: 4, cost: 8 },
       { id: 15, text: 'Distribute social aid', emoji: '📦', voterEffect: 5, cost: 10 },
       { id: 16, text: 'Launch flag campaign', emoji: '🏴', voterEffect: 3, cost: 5 },
-      { id: 17, text: 'Visit martyr families', emoji: '🕊️', voterEffect: 5, cost: 7 },
+      { id: 17, text: 'Block corruption tapes', emoji: '📼', voterEffect: 5, cost: 7 },
       { id: 18, text: 'Call opposition traitors', emoji: '🗞️', voterEffect: 4, cost: 6 },
     ],
     aiCards: [
-      { id: 111, text: 'Defended democratic rights', emoji: '⚖️', voterEffect: 5, cost: 0 },
+      { id: 111, text: 'Revived the Gezi spirit', emoji: '🌳', voterEffect: 5, cost: 0 },
       { id: 112, text: 'Called people to streets', emoji: '📢', voterEffect: 4, cost: 0 },
-      { id: 113, text: 'Applied international pressure', emoji: '🌍', voterEffect: 4, cost: 0 },
+      { id: 113, text: 'Published corruption evidence', emoji: '📝', voterEffect: 5, cost: 0 },
       { id: 114, text: 'Academics signed petition', emoji: '📝', voterEffect: 3, cost: 0 },
       { id: 115, text: 'Social media campaign went viral', emoji: '📱', voterEffect: 5, cost: 0 },
       { id: 116, text: 'Organized peace rally', emoji: '☮️', voterEffect: 4, cost: 0 },
     ],
     specialPowers: [
-      { id: '15temmuz', name: 'July 15th Card', emoji: '🎖️', description: 'Remind everyone of the coup attempt', voterEffect: 10, launderedCost: 20 },
-      { id: 'khk', name: 'Emergency Decree', emoji: '📜', description: 'Shut down opposition institutions', voterEffect: 7, launderedCost: 15 },
-      { id: 'media16', name: 'Media Blackout', emoji: '📺', description: 'Block opposition news', voterEffect: 5, launderedCost: 10 },
+      { id: 'twitter13', name: 'Twitter Ban', emoji: '🐦', description: 'Shut down social media', voterEffect: 7, launderedCost: 12 },
+      { id: 'media13', name: 'Media Pressure', emoji: '📺', description: 'Control mainstream media', voterEffect: 6, launderedCost: 10 },
     ],
   },
   {
-    year: 2018, triggerTurn: 63, title: 'ELECTION 2018', subtitle: 'Presidential - System change!',
-    aiDifficultyBonus: 2, catchUpThreshold: 10, catchUpBonus: 4,
+    year: 2018, triggerTurn: 55, title: 'ELECTION 2018', subtitle: 'Presidential - System change!',
+    aiDifficultyBonus: 2, catchUpThreshold: 10, catchUpBonus: 4, startingPlayerVote: 46,
     playerCards: [
       { id: 21, text: 'Open mega project', emoji: '🌉', voterEffect: 5, cost: 12 },
       { id: 22, text: 'Intervene in currency', emoji: '💱', voterEffect: 4, cost: 10 },
@@ -221,8 +247,8 @@ const electionsEn: ElectionConfig[] = [
     ],
   },
   {
-    year: 2019, triggerTurn: 67, title: 'ELECTION 2019', subtitle: 'Local Election - The Big City!',
-    aiDifficultyBonus: 2, catchUpThreshold: 8, catchUpBonus: 5,
+    year: 2019, triggerTurn: 63, title: 'ELECTION 2019', subtitle: 'Interim Election - Transition to presidential system!',
+    aiDifficultyBonus: 2, catchUpThreshold: 8, catchUpBonus: 5, startingPlayerVote: 43,
     playerCards: [
       { id: 31, text: 'Promise election security', emoji: '🔒', voterEffect: 4, cost: 10 },
       { id: 32, text: 'Show infrastructure project', emoji: '🚇', voterEffect: 4, cost: 8 },
@@ -248,8 +274,8 @@ const electionsEn: ElectionConfig[] = [
     ],
   },
   {
-    year: 2024, triggerTurn: 87, title: 'ELECTION 2024', subtitle: 'Final Battle - All or nothing!',
-    aiDifficultyBonus: 3, catchUpThreshold: 5, catchUpBonus: 6,
+    year: 2024, triggerTurn: 75, title: 'ELECTION 2024', subtitle: 'Critical Election - All or nothing!',
+    aiDifficultyBonus: 3, catchUpThreshold: 5, catchUpBonus: 6, startingPlayerVote: 40,
     playerCards: [
       { id: 41, text: 'Promise earthquake relief', emoji: '🏗️', voterEffect: 4, cost: 12 },
       { id: 42, text: 'Hide inflation numbers', emoji: '📊', voterEffect: 3, cost: 8 },
@@ -275,15 +301,44 @@ const electionsEn: ElectionConfig[] = [
       { id: 'depremkart', name: 'Earthquake Card', emoji: '🏗️', description: 'Make disaster promises', voterEffect: 5, launderedCost: 15 },
     ],
   },
+  {
+    year: 2028, triggerTurn: 90, title: '🏆 FINAL BOSS 2028 🏆', subtitle: 'Final Battle - Can you keep the throne?',
+    aiDifficultyBonus: 4, catchUpThreshold: 3, catchUpBonus: 8, startingPlayerVote: 35, isFinalBoss: true,
+    playerCards: [
+      { id: 51, text: 'Force constitution change', emoji: '📜', voterEffect: 5, cost: 15 },
+      { id: 52, text: 'Silence all media', emoji: '🔇', voterEffect: 4, cost: 12 },
+      { id: 53, text: 'Promise economic miracle', emoji: '✨', voterEffect: 6, cost: 18 },
+      { id: 54, text: 'Play the nationalist card', emoji: '🇹🇷', voterEffect: 5, cost: 12 },
+      { id: 55, text: 'Give away everything free', emoji: '🎁', voterEffect: 4, cost: 10 },
+      { id: 56, text: 'Create climate of fear', emoji: '😰', voterEffect: 5, cost: 14 },
+      { id: 57, text: 'Declare fake victory', emoji: '🏆', voterEffect: 3, cost: 8 },
+      { id: 58, text: 'Hold the final mega rally', emoji: '🎪', voterEffect: 6, cost: 16 },
+    ],
+    aiCards: [
+      { id: 151, text: 'All opposition united', emoji: '💪', voterEffect: 9, cost: 0 },
+      { id: 152, text: 'Gen-Z uprising', emoji: '⚡', voterEffect: 8, cost: 0 },
+      { id: 153, text: 'International sanctions hit', emoji: '🌍', voterEffect: 7, cost: 0 },
+      { id: 154, text: 'Economic crisis exploded', emoji: '💥', voterEffect: 8, cost: 0 },
+      { id: 155, text: 'People flooded the streets', emoji: '🔥', voterEffect: 9, cost: 0 },
+      { id: 156, text: 'Independent media rose', emoji: '📡', voterEffect: 7, cost: 0 },
+    ],
+    specialPowers: [
+      { id: 'darbe28', name: 'Coup Threat', emoji: '🎖️', description: 'Use the army as a threat', voterEffect: 10, launderedCost: 30 },
+      { id: 'internet28', name: 'Internet Blackout', emoji: '🌐', description: 'Shut down all internet', voterEffect: 9, launderedCost: 28 },
+      { id: 'sahteoy', name: 'Fake Ballot Op', emoji: '🗳️', description: 'Manipulate the ballot boxes', voterEffect: 12, launderedCost: 35 },
+      { id: 'sikiyo28', name: 'Martial Law', emoji: '⚠️', description: 'Declare state of emergency', voterEffect: 8, launderedCost: 25 },
+    ],
+  },
 ];
 
 // Maps turn number → election index
 export const ELECTION_TRIGGER_MAP: Record<number, number> = {
   23: 0,  // 2008
-  55: 1,  // 2016
-  63: 2,  // 2018
-  67: 3,  // 2019
-  87: 4,  // 2024
+  40: 1,  // 2013
+  55: 2,  // 2018
+  63: 3,  // 2019
+  75: 4,  // 2024
+  90: 5,  // 2028
 };
 
 export function getElectionConfig(lang: Language, index: number): ElectionConfig {
@@ -294,10 +349,11 @@ export function getElectionConfig(lang: Language, index: number): ElectionConfig
 export function getNextElectionInfo(turn: number, completedElections: number[]): { year: number; turnsLeft: number } | null {
   const elections = [
     { index: 0, triggerTurn: 23, year: 2008 },
-    { index: 1, triggerTurn: 55, year: 2016 },
-    { index: 2, triggerTurn: 63, year: 2018 },
-    { index: 3, triggerTurn: 67, year: 2019 },
-    { index: 4, triggerTurn: 87, year: 2024 },
+    { index: 1, triggerTurn: 40, year: 2013 },
+    { index: 2, triggerTurn: 55, year: 2018 },
+    { index: 3, triggerTurn: 63, year: 2019 },
+    { index: 4, triggerTurn: 75, year: 2024 },
+    { index: 5, triggerTurn: 90, year: 2028 },
   ];
   for (const e of elections) {
     if (e.triggerTurn > turn && !completedElections.includes(e.index)) {

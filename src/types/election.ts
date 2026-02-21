@@ -28,6 +28,8 @@ export interface ElectionConfig {
   aiDifficultyBonus: number;
   catchUpThreshold: number;
   catchUpBonus: number;
+  startingPlayerVote: number;
+  isFinalBoss?: boolean;
 }
 
 export interface ElectionResult {
