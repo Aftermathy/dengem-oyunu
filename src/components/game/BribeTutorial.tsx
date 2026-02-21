@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { PowerType } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { playWarningSound } from '@/hooks/useSound';
 import factionHalk from '@/assets/faction-halk.png';
 import factionYatirimcilar from '@/assets/faction-yatirimcilar.png';
 import factionMafya from '@/assets/faction-mafya.png';
@@ -22,6 +24,10 @@ interface BribeTutorialProps {
 
 export function BribeTutorial({ faction, onBribe, onSkip }: BribeTutorialProps) {
   const { t } = useLanguage();
+
+  useEffect(() => {
+    playWarningSound();
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-in fade-in duration-300">

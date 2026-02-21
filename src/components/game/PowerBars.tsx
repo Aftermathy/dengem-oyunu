@@ -3,6 +3,7 @@ import { PowerEffect, BRIBE_COSTS } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
+import { playBribeSound } from '@/hooks/useSound';
 
 import factionHalk from '@/assets/faction-halk.png';
 import factionYatirimcilar from '@/assets/faction-yatirimcilar.png';
@@ -136,6 +137,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                     onClick={(e) => {
                       e.stopPropagation();
                       if (onBribe && canDo) {
+                        playBribeSound();
                         onBribe(p);
                         setShowBribe(null);
                       }
