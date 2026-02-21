@@ -34,6 +34,8 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
   const { t, lang } = useLanguage();
   const powers: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
   const [showBribe, setShowBribe] = useState<PowerType | null>(null);
+  const [showPercent, setShowPercent] = useState<PowerType | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [repChanges, setRepChanges] = useState<Record<PowerType, number | null>>({ halk: null, yatirimcilar: null, mafya: null, tarikat: null, ordu: null });
   const prevPowerRef = useRef<PowerState>(power);
   const changeKeyRef = useRef(0);
@@ -224,11 +226,29 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               </button>
 
               {/* Power bar */}
-              <div className="w-full h-16 sm:h-20 bg-muted/50 rounded-full relative overflow-hidden border border-border/50">
+              <div
+                className="w-full h-16 sm:h-20 bg-muted/50 rounded-full relative overflow-hidden border border-border/50 select-none"
+                onMouseEnter={() => setShowPercent(p)}
+                onMouseLeave={() => setShowPercent(null)}
+                onTouchStart={() => {
+                  longPressTimer.current = setTimeout(() => setShowPercent(p), 300);
+                }}
+                onTouchEnd={() => {
+                  if (longPressTimer.current) clearTimeout(longPressTimer.current);
+                  setShowPercent(null);
+                }}
+              >
                 <div
                   className="absolute bottom-0 w-full rounded-full transition-all duration-500 ease-out"
                   style={{ height: `${val}%`, background: getBarGradient(val) }}
                 />
+                {showPercent === p && (
+                  <div className="absolute inset-0 flex items-center justify-center z-10">
+                    <span className="text-xs font-black text-foreground drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                      {val}%
+                    </span>
+                  </div>
+                )}
                 {affected && (
                   <div className={cn(
                     "absolute inset-0 rounded-full animate-pulse",
