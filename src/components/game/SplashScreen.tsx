@@ -41,11 +41,8 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
       </div>
 
-      {/* Top spacer */}
-      <div className="flex-1" />
-
-      {/* Center content */}
-      <div className="relative z-10 flex flex-col items-center gap-6 px-6 -mt-16">
+      {/* Center content — positioned at 25% from top (center of upper half) */}
+      <div className="relative z-10 flex flex-col items-center gap-6 px-6" style={{ marginTop: '20vh' }}>
         <h1
           className="text-4xl sm:text-5xl font-black tracking-tight text-center"
           style={{
