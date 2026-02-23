@@ -201,7 +201,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         )}
       </div>
 
-      <div className="flex justify-between gap-1.5 sm:gap-3 px-2 sm:px-4 py-3">
+      <div className="flex justify-between gap-1.5 sm:gap-3 px-2 sm:px-4 py-2">
         {powers.map((p) => {
           const val = power[p];
           const affected = isAffected(p);
@@ -291,40 +291,43 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 </span>
               )}
 
-              {/* Bribe popup */}
+              {/* Bribe popup as centered modal */}
               {showBribe === p && (
-                <div className="absolute mt-28 sm:mt-32 z-20 bg-card border-2 border-border rounded-xl p-2 shadow-xl min-w-[140px] text-center animate-fade-in">
-                  <p className="text-[10px] text-muted-foreground mb-1">
-                    {bribeTextCache[p]}
-                  </p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (onBribe && canDo) {
-                        playBribeSound();
-                        onBribe(p);
-                        setShowBribe(null);
-                      }
-                    }}
-                    disabled={!canDo}
-                    className={cn(
-                      "text-xs font-bold px-3 py-1 rounded-lg transition-colors w-full",
-                      canDo
-                        ? "bg-primary text-primary-foreground hover:opacity-90"
-                        : "bg-muted text-muted-foreground cursor-not-allowed"
-                    )}
-                  >
-                    {cost}B → +{gain} rep
-                  </button>
-                  {!canDo && (
-                    <p className="text-[9px] text-destructive mt-1">
-                      {money < cost
-                        ? (lang === 'tr' ? 'Paran yetmez reis 😅' : 'Not enough cash boss 😅')
-                        : (lang === 'tr' ? 'Zaten çok seviliyorsun 😎' : 'Already loved too much 😎')
-                      }
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowBribe(null)} />
+                  <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-card border-2 border-border rounded-xl p-3 shadow-2xl min-w-[200px] max-w-[260px] text-center animate-fade-in">
+                    <p className="text-[10px] text-muted-foreground mb-1.5">
+                      {bribeTextCache[p]}
                     </p>
-                  )}
-                </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onBribe && canDo) {
+                          playBribeSound();
+                          onBribe(p);
+                          setShowBribe(null);
+                        }
+                      }}
+                      disabled={!canDo}
+                      className={cn(
+                        "text-xs font-bold px-3 py-1.5 rounded-lg transition-colors w-full",
+                        canDo
+                          ? "bg-primary text-primary-foreground hover:opacity-90"
+                          : "bg-muted text-muted-foreground cursor-not-allowed"
+                      )}
+                    >
+                      {cost}B → +{gain} rep
+                    </button>
+                    {!canDo && (
+                      <p className="text-[9px] text-destructive mt-1">
+                        {money < cost
+                          ? (lang === 'tr' ? 'Paran yetmez reis 😅' : 'Not enough cash boss 😅')
+                          : (lang === 'tr' ? 'Zaten çok seviliyorsun 😎' : 'Already loved too much 😎')
+                        }
+                      </p>
+                    )}
+                  </div>
+                </>
               )}
             </div>
           );

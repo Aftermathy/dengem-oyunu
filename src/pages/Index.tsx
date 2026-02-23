@@ -41,7 +41,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-[100dvh] bg-background">
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
@@ -52,7 +52,7 @@ const Index = () => {
 
       {phase === 'playing' && currentCard && (
         <>
-          <div className="pt-2 pb-0">
+          <div className="pt-1 pb-0">
             <PowerBars
               power={power}
               activeEffects={activeEffects}
@@ -65,7 +65,7 @@ const Index = () => {
             />
           </div>
 
-          <div className="flex flex-col items-center justify-center py-2 animate-fade-in" key={`turn-${turn}`}>
+          <div className="flex flex-col items-center justify-center py-1 animate-fade-in" key={`turn-${turn}`}>
             <div className="flex items-center">
               <span className="text-lg font-black tracking-wider text-foreground" style={{ fontFamily: "'Georgia', serif" }}>
                 {2002 + Math.floor(turn / 4)}
@@ -103,7 +103,7 @@ const Index = () => {
             allianceCost={getAllianceCost()}
           />
 
-          <div className="flex-1 flex items-center justify-center px-4 pb-2">
+          <div className="flex-1 flex items-center justify-center px-4 pb-1 min-h-0">
             <SwipeCard
               key={currentCard.id + '-' + turn}
               card={currentCard}

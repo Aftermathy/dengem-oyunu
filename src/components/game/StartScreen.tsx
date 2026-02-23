@@ -11,7 +11,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
   const { lang, setLang, t } = useLanguage();
 
   return (
-    <div className="flex flex-col items-center justify-center gap-5 p-6 text-center animate-fade-in min-h-screen">
+    <div className="flex flex-col items-center justify-center gap-4 p-6 text-center animate-fade-in min-h-[100dvh]">
       {/* Language toggle — top */}
       <div className="flex gap-1 bg-muted rounded-full p-1">
         <button
