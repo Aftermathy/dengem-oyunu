@@ -95,9 +95,6 @@ const Index = () => {
             onPropaganda={propaganda}
             canPropaganda={canPropaganda}
             propagandaCost={getPropagandaCost()}
-            onInvest={invest}
-            canInvest={canInvest}
-            investCost={getInvestmentCost()}
             onAlliance={alliance}
             canAlliance={canAlliance}
             allianceCost={getAllianceCost()}

@@ -25,9 +25,6 @@ interface LaunderShopProps {
   onPropaganda: () => void;
   canPropaganda: boolean;
   propagandaCost: number;
-  onInvest: () => void;
-  canInvest: boolean;
-  investCost: number;
   onAlliance: (f1: PowerType, f2: PowerType) => void;
   canAlliance: boolean;
   allianceCost: number;
@@ -37,7 +34,6 @@ export function LaunderShop({
   totalLaundered,
   lastShopResult,
   onPropaganda, canPropaganda, propagandaCost,
-  onInvest, canInvest, investCost,
   onAlliance, canAlliance, allianceCost,
 }: LaunderShopProps) {
   const { t, lang } = useLanguage();
@@ -67,53 +63,26 @@ export function LaunderShop({
         💸 {lang === 'tr' ? 'Aklanmış para' : 'Laundered funds'}: <span className="font-bold text-emerald-400">{totalLaundered}B</span>
       </div>
 
-      <div className="flex gap-1.5">
+      <div className="flex gap-2">
         {/* Propaganda */}
         <button
           onClick={onPropaganda}
           disabled={!canPropaganda}
           className={cn(
-            "flex-1 rounded-lg border px-2 py-1.5 text-center transition-all",
+            "flex-1 rounded-xl py-3 text-center transition-all",
             canPropaganda
-              ? "border-emerald-500/30 bg-emerald-950/30 hover:bg-emerald-900/40 cursor-pointer"
-              : "border-border/30 bg-muted/20 cursor-not-allowed opacity-50"
+              ? "bg-primary/80 hover:bg-primary cursor-pointer"
+              : "bg-muted/40 cursor-not-allowed opacity-50"
           )}
         >
-          <div className="text-sm">📢</div>
-          <div className="text-[9px] font-bold text-foreground">
+          <div className="text-lg">📢</div>
+          <div className="text-[10px] font-bold text-primary-foreground">
             {lang === 'tr' ? 'Propaganda' : 'Propaganda'}
           </div>
-          <div className="text-[8px] text-muted-foreground">
+          <div className="text-[8px] text-primary-foreground/70">
             {lang === 'tr' ? 'Halk +10 rep' : 'Public +10 rep'}
           </div>
-          <div className="text-[9px] font-bold text-emerald-400 mt-0.5">-{propagandaCost}B</div>
-        </button>
-
-        {/* Kara Para Yatırımı */}
-        <button
-          onClick={onInvest}
-          disabled={!canInvest}
-          className={cn(
-            "flex-1 rounded-lg border px-2 py-1.5 text-center transition-all",
-            canInvest
-              ? "border-amber-500/30 bg-amber-950/30 hover:bg-amber-900/40 cursor-pointer"
-              : "border-border/30 bg-muted/20 cursor-not-allowed opacity-50"
-          )}
-        >
-          <div className="text-sm">🎰</div>
-          <div className="text-[9px] font-bold text-foreground">
-            {lang === 'tr' ? 'Yatırım' : 'Invest'}
-          </div>
-          <div className="text-[8px] text-muted-foreground">
-            {lang === 'tr' ? '%50 → 2x veya 0' : '50% → 2x or 0'}
-          </div>
-          <div className="text-[9px] font-bold text-amber-400 mt-0.5">-{investCost}B</div>
-          {lastShopResult === 'win' && (
-            <div className="text-[9px] font-bold text-emerald-400 animate-bounce">+{investCost * 2}B! 🎉</div>
-          )}
-          {lastShopResult === 'lose' && (
-            <div className="text-[9px] font-bold text-red-400 animate-bounce">💀</div>
-          )}
+          <div className="text-[10px] font-bold text-primary-foreground mt-0.5">-{propagandaCost}B</div>
         </button>
 
         {/* Gizli İttifak */}
@@ -121,20 +90,20 @@ export function LaunderShop({
           onClick={() => setShowAlliance(true)}
           disabled={!canAlliance}
           className={cn(
-            "flex-1 rounded-lg border px-2 py-1.5 text-center transition-all",
+            "flex-1 rounded-xl py-3 text-center transition-all",
             canAlliance
-              ? "border-blue-500/30 bg-blue-950/30 hover:bg-blue-900/40 cursor-pointer"
-              : "border-border/30 bg-muted/20 cursor-not-allowed opacity-50"
+              ? "bg-accent/80 hover:bg-accent cursor-pointer"
+              : "bg-muted/40 cursor-not-allowed opacity-50"
           )}
         >
-          <div className="text-sm">🤝</div>
-          <div className="text-[9px] font-bold text-foreground">
+          <div className="text-lg">🤝</div>
+          <div className="text-[10px] font-bold text-accent-foreground">
             {lang === 'tr' ? 'İttifak' : 'Alliance'}
           </div>
-          <div className="text-[8px] text-muted-foreground">
+          <div className="text-[8px] text-accent-foreground/70">
             {lang === 'tr' ? '2 zümre +8 rep' : '2 factions +8 rep'}
           </div>
-          <div className="text-[9px] font-bold text-blue-400 mt-0.5">-{allianceCost}B</div>
+          <div className="text-[10px] font-bold text-accent-foreground mt-0.5">-{allianceCost}B</div>
         </button>
       </div>
 

@@ -30,16 +30,81 @@ interface PowerBarsProps {
   getBribeCost?: (faction: PowerType) => number;
 }
 
+const bribeTextsAll: Record<PowerType, { tr: string; en: string }[]> = {
+  halk: [
+    { tr: '🎁 Halka yardım paketi', en: '🎁 Aid package sent' },
+    { tr: '🍞 Bedava ekmek dağıtıldı', en: '🍞 Free bread distributed' },
+    { tr: '🏥 Ücretsiz sağlık taraması', en: '🏥 Free health screening' },
+    { tr: '🎪 Meydan mitingi düzenlendi', en: '🎪 Public rally organized' },
+    { tr: '📺 Halka hitap edildi', en: '📺 Addressed the nation' },
+    { tr: '🏠 Konut müjdesi verildi', en: '🏠 Housing announced' },
+    { tr: '⛽ Akaryakıt indirimi', en: '⛽ Fuel price cut' },
+    { tr: '🎓 Burs programı başlatıldı', en: '🎓 Scholarships launched' },
+    { tr: '🧓 Emekli maaşına zam', en: '🧓 Pensions raised' },
+    { tr: '🚰 Bedava su dağıtıldı', en: '🚰 Free water handed out' },
+  ],
+  yatirimcilar: [
+    { tr: '💎 Vergi indirimi verildi', en: '💎 Tax breaks offered' },
+    { tr: '🏗️ Özel sektöre ihale açıldı', en: '🏗️ Tenders opened' },
+    { tr: '📊 Borsa düzenlemesi gevşetildi', en: '📊 Market regulations loosened' },
+    { tr: '🏦 Özel bankaya lisans', en: '🏦 Banking license granted' },
+    { tr: '✈️ Serbest ticaret bölgesi', en: '✈️ Free trade zone' },
+    { tr: '💰 Yatırımcıya vatandaşlık', en: '💰 Citizenship sold' },
+    { tr: '🏭 Fabrika arazisi tahsis', en: '🏭 Factory land allocated' },
+    { tr: '📈 Devlet garantili kredi', en: '📈 State loans offered' },
+    { tr: '🤑 Patronlarla gizli yemek', en: '🤑 Secret tycoon dinner' },
+    { tr: '🛢️ Maden ruhsatı verildi', en: '🛢️ Mining permits slipped' },
+  ],
+  mafya: [
+    { tr: '💵 Zarf uzatıldı', en: '💵 Envelope slid under' },
+    { tr: '🔫 Silah ruhsatı kolaylaştı', en: '🔫 Gun permits expedited' },
+    { tr: '🚬 Kaçakçılığa göz yumuldu', en: '🚬 Smuggling overlooked' },
+    { tr: '🎰 Kumarhane lisansı', en: '🎰 Casino licensed' },
+    { tr: '🤫 Dosya kayboldu', en: '🤫 File lost' },
+    { tr: '🚗 Çalıntı araç şebekesi korundu', en: '🚗 Car ring protected' },
+    { tr: '💀 Rakip çete susturuldu', en: '💀 Rival gang silenced' },
+    { tr: '🍸 Gece kulübü buluşması', en: '🍸 Nightclub meeting' },
+    { tr: '🏴 Haraç bölgeleri paylaşıldı', en: '🏴 Racket zones split' },
+    { tr: '🗝️ Cezaevi müdürüne torpil', en: '🗝️ Prison warden bribed' },
+  ],
+  tarikat: [
+    { tr: '🕌 Vakfa bağış yapıldı', en: '🕌 Foundation donation' },
+    { tr: '📿 Tarikat lideri davet edildi', en: '📿 Cult leader invited' },
+    { tr: '🏫 Özel okul izni hızlandı', en: '🏫 School permits fast-tracked' },
+    { tr: '📖 Dini yayınevine destek', en: '📖 Religious press funded' },
+    { tr: '🎤 Cuma hutbesinde ad geçti', en: '🎤 Named in Friday sermon' },
+    { tr: '🌙 İftar sponsorluğu', en: '🌙 Iftar sponsored' },
+    { tr: '🕯️ Türbe restorasyonu', en: '🕯️ Shrine restored' },
+    { tr: '👳 Cemaat okullarına kadro', en: '👳 Sect school positions' },
+    { tr: '🏛️ Vakıf arazisi imara açıldı', en: '🏛️ Foundation land zoned' },
+    { tr: '🤲 Şeyhe helikopter', en: '🤲 Helicopter for sheikh' },
+  ],
+  ordu: [
+    { tr: '🎖️ Silah sözleşmesi imzalandı', en: '🎖️ Arms contract signed' },
+    { tr: '🪖 Generallere erken terfi', en: '🪖 Early promotions' },
+    { tr: '🛡️ Savunma bütçesi artırıldı', en: '🛡️ Defense budget raised' },
+    { tr: '🚁 Helikopter filosu alındı', en: '🚁 Helicopter fleet bought' },
+    { tr: '🏅 Askeri tatbikat düzenlendi', en: '🏅 Military exercises' },
+    { tr: '🗺️ Sınır karakolları güçlendirildi', en: '🗺️ Borders reinforced' },
+    { tr: '⭐ Paşalara lojman', en: '⭐ General residences' },
+    { tr: '🔧 Savunma ihalesi ayarlandı', en: '🔧 Defense tender rigged' },
+    { tr: '🎯 Özel harp kursu finanse', en: '🎯 Warfare training funded' },
+    { tr: '🛩️ İHA projesine ek bütçe', en: '🛩️ Drone project funded' },
+  ],
+};
+
 export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChange, projectedMoney, onBribe, canBribe, getBribeCost }: PowerBarsProps) {
   const { t, lang } = useLanguage();
   const powers: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
-  const [showBribe, setShowBribe] = useState<PowerType | null>(null);
   const [showPercent, setShowPercent] = useState<PowerType | null>(null);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [repChanges, setRepChanges] = useState<Record<PowerType, number | null>>({ halk: null, yatirimcilar: null, mafya: null, tarikat: null, ordu: null });
   const prevPowerRef = useRef<PowerState>(power);
   const changeKeyRef = useRef(0);
   const [changeKey, setChangeKey] = useState(0);
+  
+  // Bribe feedback: shows text + cost overlay on the faction image
+  const [bribeFeedback, setBribeFeedback] = useState<{ faction: PowerType; text: string; cost: number; gain: number } | null>(null);
 
   useEffect(() => {
     const prev = prevPowerRef.current;
@@ -87,87 +152,25 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
     return effect.amount > 0 ? 'up' : 'down';
   };
 
-  const bribeTextsAll: Record<PowerType, { tr: string; en: string }[]> = {
-    halk: [
-      { tr: '🎁 Halka yardım paketi gönder', en: '🎁 Send aid package to the people' },
-      { tr: '🍞 Bedava ekmek dağıt', en: '🍞 Distribute free bread' },
-      { tr: '🏥 Ücretsiz sağlık taraması yap', en: '🏥 Offer free health screenings' },
-      { tr: '🎪 Meydan mitingi düzenle', en: '🎪 Organize a public rally' },
-      { tr: '📺 Halka hitap et, gözyaşı dök', en: '📺 Address the nation, shed a tear' },
-      { tr: '🏠 Dar gelirliye konut müjdesi ver', en: '🏠 Announce housing for the poor' },
-      { tr: '⛽ Akaryakıt indirimi ilan et', en: '⛽ Announce fuel price cuts' },
-      { tr: '🎓 Burs programı başlat', en: '🎓 Launch a scholarship program' },
-      { tr: '🧓 Emekli maaşlarına zam yap', en: '🧓 Raise pension payments' },
-      { tr: '🚰 Bedava su dağıt, fotoğraf çektir', en: '🚰 Hand out free water, pose for photos' },
-    ],
-    yatirimcilar: [
-      { tr: '💎 Vergi indirimi teklif et', en: '💎 Offer tax breaks' },
-      { tr: '🏗️ Özel sektöre ihale aç', en: '🏗️ Open tenders for private sector' },
-      { tr: '📊 Borsa düzenlenmesini gevşet', en: '📊 Loosen stock market regulations' },
-      { tr: '🏦 Özel bankaya lisans ver', en: '🏦 Grant a private banking license' },
-      { tr: '✈️ Serbest ticaret bölgesi kur', en: '✈️ Establish a free trade zone' },
-      { tr: '💰 Yabancı yatırımcıya vatandaşlık sat', en: '💰 Sell citizenship to foreign investors' },
-      { tr: '🏭 Fabrika arazisi tahsis et', en: '🏭 Allocate factory land' },
-      { tr: '📈 Devlet garantili kredi ver', en: '📈 Offer state-guaranteed loans' },
-      { tr: '🤑 Holding patronuyla gizlice yemek ye', en: '🤑 Dine secretly with tycoons' },
-      { tr: '🛢️ Maden ruhsatı arka kapıdan ver', en: '🛢️ Slip mining permits through back channels' },
-    ],
-    mafya: [
-      { tr: '💵 Zarfı masanın altından uzat', en: '💵 Slide the envelope under the table' },
-      { tr: '🔫 Silah ruhsatı işlemlerini kolaylaştır', en: '🔫 Expedite gun permits' },
-      { tr: '🚬 Kaçak mal operasyonuna göz yum', en: '🚬 Turn a blind eye to smuggling' },
-      { tr: '🎰 Kumarhane lisansı ver', en: '🎰 Grant casino licenses' },
-      { tr: '🤫 Savcılık dosyasını kaybet', en: '🤫 Lose the prosecutor\'s file' },
-      { tr: '🚗 Çalıntı araç şebekesini koru', en: '🚗 Protect the stolen car ring' },
-      { tr: '💀 Rakip çeteyi sustur', en: '💀 Silence the rival gang' },
-      { tr: '🍸 Gece kulübünde buluşma ayarla', en: '🍸 Arrange a nightclub meeting' },
-      { tr: '🏴 Haraç bölgelerini yeniden paylaştır', en: '🏴 Redistribute protection racket zones' },
-      { tr: '🗝️ Cezaevi müdürüne torpil yap', en: '🗝️ Pull strings with the prison warden' },
-    ],
-    tarikat: [
-      { tr: '🕌 Vakfa bağış yap', en: '🕌 Donate to the foundation' },
-      { tr: '📿 Tarikat liderini saraya davet et', en: '📿 Invite the cult leader to the palace' },
-      { tr: '🏫 Özel okul iznini hızlandır', en: '🏫 Fast-track private school permits' },
-      { tr: '📖 Dini yayınevine devlet desteği ver', en: '📖 Fund religious publishing house' },
-      { tr: '🎤 Cuma hutbesinde adını anlat', en: '🎤 Get your name in Friday sermon' },
-      { tr: '🌙 İftar programına sponsor ol', en: '🌙 Sponsor iftar events' },
-      { tr: '🕯️ Türbe restorasyonu başlat', en: '🕯️ Start shrine restoration' },
-      { tr: '👳 Cemaat okullarına kadro aç', en: '👳 Open positions in sect schools' },
-      { tr: '🏛️ Vakıf arazisini imar planına sok', en: '🏛️ Zone foundation land for development' },
-      { tr: '🤲 Şeyhe özel helikopter tahsis et', en: '🤲 Assign a private helicopter to the sheikh' },
-    ],
-    ordu: [
-      { tr: '🎖️ Yeni silah sözleşmesi imzala', en: '🎖️ Sign new arms contract' },
-      { tr: '🪖 Generallere erken terfi ver', en: '🪖 Grant early promotions to generals' },
-      { tr: '🛡️ Savunma bütçesini artır', en: '🛡️ Increase defense budget' },
-      { tr: '🚁 Yeni helikopter filosu al', en: '🚁 Purchase new helicopter fleet' },
-      { tr: '🏅 Askeri tatbikat düzenle', en: '🏅 Organize military exercises' },
-      { tr: '🗺️ Sınır karakollarını güçlendir', en: '🗺️ Reinforce border outposts' },
-      { tr: '⭐ Paşalara lojman tahsis et', en: '⭐ Allocate residences for generals' },
-      { tr: '🔧 Savunma sanayi ihalesini ayarla', en: '🔧 Rig the defense industry tender' },
-      { tr: '🎯 Özel harp kursunu finanse et', en: '🎯 Fund special warfare training' },
-      { tr: '🛩️ İHA projesine ek bütçe ver', en: '🛩️ Allocate extra budget for drone project' },
-    ],
-  };
+  const handleDirectBribe = (p: PowerType) => {
+    if (!onBribe || !canBribe || !getBribeCost) return;
+    if (!canBribe(p)) return;
 
-  const getBribeText = (p: PowerType) => {
+    const room = 100 - power[p];
+    const gain = Math.min(room, 10);
+    const ratio = gain / 10;
+    const cost = Math.max(1, Math.round(getBribeCost(p) * ratio));
+
+    // Get random bribe text
     const texts = bribeTextsAll[p];
-    const idx = Math.floor(Math.random() * texts.length);
-    return texts[idx][lang];
-  };
+    const text = texts[Math.floor(Math.random() * texts.length)][lang];
 
-  // Pre-select random text per faction on each render of bribe popup
-  const [bribeTextCache, setBribeTextCache] = useState<Record<PowerType, string>>({
-    halk: '', yatirimcilar: '', mafya: '', tarikat: '', ordu: '',
-  });
+    playBribeSound();
+    onBribe(p);
 
-  const handleShowBribe = (p: PowerType) => {
-    if (showBribe === p) {
-      setShowBribe(null);
-    } else {
-      setBribeTextCache(prev => ({ ...prev, [p]: getBribeText(p) }));
-      setShowBribe(p);
-    }
+    // Show feedback
+    setBribeFeedback({ faction: p, text, cost, gain });
+    setTimeout(() => setBribeFeedback(null), 1500);
   };
 
   return (
@@ -206,22 +209,17 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
           const val = power[p];
           const affected = isAffected(p);
           const dir = getEffectDirection(p);
-          const room = 100 - val;
-          const gain = Math.min(room, 10);
-          const ratio = gain / 10;
-          const cost = getBribeCost ? Math.max(1, Math.round(getBribeCost(p) * ratio)) : 0;
           const canDo = canBribe ? canBribe(p) : false;
 
           return (
-            <div key={p} className="flex flex-col items-center gap-1 flex-1 min-w-0">
-              {/* Faction head with mouth animation */}
+            <div key={p} className="flex flex-col items-center gap-1 flex-1 min-w-0 relative">
+              {/* Faction head - direct bribe on click */}
               <button
-                onClick={() => handleShowBribe(p)}
+                onClick={() => handleDirectBribe(p)}
                 className={cn(
-                  "w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 transition-all duration-300",
+                  "w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
                   affected ? "scale-110 border-primary" : "border-border/50",
-                  "hover:scale-110 hover:border-primary cursor-pointer",
-                  showBribe === p && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                  canDo ? "hover:scale-110 hover:border-primary cursor-pointer active:scale-95" : "opacity-60",
                 )}
               >
                 <img
@@ -233,6 +231,20 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                   )}
                 />
               </button>
+
+              {/* Bribe feedback overlay */}
+              {bribeFeedback?.faction === p && (
+                <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-30 pointer-events-none animate-bribe-feedback">
+                  <div className="bg-card/95 border border-primary/50 rounded-lg px-2 py-1 shadow-lg whitespace-nowrap text-center">
+                    <div className="text-[8px] text-muted-foreground">{bribeFeedback.text}</div>
+                    <div className="text-[9px] font-bold">
+                      <span className="text-red-400">-{bribeFeedback.cost}B</span>
+                      {' '}
+                      <span className="text-emerald-400">+{bribeFeedback.gain} rep</span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Power bar */}
               <div
@@ -289,45 +301,6 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 <span className="text-[8px] sm:text-[10px] font-bold text-cyan-400 animate-pulse">
                   +2B/{t('game.turn').toLowerCase()}
                 </span>
-              )}
-
-              {/* Bribe popup as centered modal */}
-              {showBribe === p && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setShowBribe(null)} />
-                  <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-card border-2 border-border rounded-xl p-3 shadow-2xl min-w-[200px] max-w-[260px] text-center animate-fade-in">
-                    <p className="text-[10px] text-muted-foreground mb-1.5">
-                      {bribeTextCache[p]}
-                    </p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (onBribe && canDo) {
-                          playBribeSound();
-                          onBribe(p);
-                          setShowBribe(null);
-                        }
-                      }}
-                      disabled={!canDo}
-                      className={cn(
-                        "text-xs font-bold px-3 py-1.5 rounded-lg transition-colors w-full",
-                        canDo
-                          ? "bg-primary text-primary-foreground hover:opacity-90"
-                          : "bg-muted text-muted-foreground cursor-not-allowed"
-                      )}
-                    >
-                      {cost}B → +{gain} rep
-                    </button>
-                    {!canDo && (
-                      <p className="text-[9px] text-destructive mt-1">
-                        {money < cost
-                          ? (lang === 'tr' ? 'Paran yetmez reis 😅' : 'Not enough cash boss 😅')
-                          : (lang === 'tr' ? 'Zaten çok seviliyorsun 😎' : 'Already loved too much 😎')
-                        }
-                      </p>
-                    )}
-                  </div>
-                </>
               )}
             </div>
           );
