@@ -382,9 +382,9 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
       {/* GAMEPLAY */}
       {(phase === 'player' || phase === 'ai') && (
-        <>
+        <div className="flex-1 flex flex-col overflow-y-auto relative z-10">
           {/* Title bar */}
-          <div className="text-center pt-4 pb-1 relative z-10">
+          <div className="text-center pt-4 pb-1">
             <h1 className="text-xl font-black text-orange-400"
               style={{ textShadow: '0 0 15px rgba(255,100,0,0.4)' }}>
               🔥 {config.title} 🔥
@@ -395,7 +395,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           </div>
 
           {/* Vote bars */}
-          <div className="flex justify-center items-end gap-8 px-8 py-3 relative z-10">
+          <div className="flex justify-center items-end gap-8 px-8 py-3">
             {/* Opposition bar */}
             <div className="flex flex-col items-center">
               <span className="text-red-300 font-black text-xl mb-1">{displayOpponentVote}%</span>
@@ -432,7 +432,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           </div>
 
           {/* Budget row */}
-          <div className="flex justify-center gap-3 text-xs px-4 py-1 relative z-10">
+          <div className="flex justify-center gap-3 text-xs px-4 py-1">
             <span className="bg-yellow-900/60 px-2.5 py-1 rounded-full text-yellow-300 font-bold border border-yellow-700/30">
               💰 {labels.budget}: {budget}B
             </span>
@@ -442,7 +442,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           </div>
 
           {/* Card area */}
-          <div className="flex-1 flex flex-col justify-center px-3 py-2 relative z-10 min-h-0">
+          <div className="flex flex-col px-3 py-2">
             {phase === 'player' && (
               <>
                 <div className="flex justify-between items-center mb-2 px-1">
