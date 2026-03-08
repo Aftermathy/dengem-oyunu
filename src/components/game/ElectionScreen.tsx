@@ -536,7 +536,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
           {/* Special powers */}
           {phase === 'player' && config.specialPowers.length > 0 && (
-            <div className="px-3 pb-3 relative z-10 flex flex-col items-center">
+            <div className="px-3 pb-3 flex flex-col items-center">
               <p className="text-purple-300 text-xs mb-1.5 text-center font-bold uppercase tracking-wider">
                 {labels.specialPowers}
               </p>
@@ -570,7 +570,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
 
       {/* RESULT (brief before victory transition) */}
