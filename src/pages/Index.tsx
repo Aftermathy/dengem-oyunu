@@ -52,7 +52,10 @@ const Index = () => {
 
       {phase === 'playing' && currentCard && (
         <>
-          <div className="pt-1 pb-0 shrink-0">
+          <div className="pt-1 pb-0 shrink-0 relative">
+            <div className="absolute right-2 top-1 z-40">
+              <SettingsMenu onMainMenu={goToMenu} />
+            </div>
             <PowerBars
               power={power}
               activeEffects={activeEffects}

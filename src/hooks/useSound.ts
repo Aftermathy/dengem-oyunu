@@ -2,10 +2,18 @@ import { hapticWarStart, hapticDoubleSharp, hapticError, hapticLight, hapticMedi
 
 // Simple swoosh sound using Web Audio API — no files needed
 let audioCtx: AudioContext | null = null;
+let isMuted = localStorage.getItem('sound-muted') === 'true';
+
+// Listen for mute toggle events
+if (typeof window !== 'undefined') {
+  window.addEventListener('sound-mute-toggle', ((e: CustomEvent) => {
+    isMuted = e.detail;
+  }) as EventListener);
+}
 
 function getAudioCtx() {
+  if (isMuted) return null;
   if (!audioCtx) audioCtx = new AudioContext();
-  // Resume suspended context (iOS requirement)
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
