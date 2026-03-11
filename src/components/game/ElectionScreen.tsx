@@ -519,7 +519,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                         <span className="text-red-300 text-xs font-bold uppercase tracking-wider">{labels.opposition}</span>
                       </div>
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-4xl">{aiCardPlayed.emoji}</span>
+                        <EmojiImg emoji={aiCardPlayed.emoji} size={36} />
                         <p className="text-white text-sm font-bold leading-tight flex-1">{aiCardPlayed.text}</p>
                       </div>
                       <p className="text-red-400 text-base font-black">-{aiCardPlayed.voterEffect}%</p>
