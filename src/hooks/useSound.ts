@@ -170,6 +170,7 @@ export function playWarningSound() {
   hapticDoubleSharp();
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     // Two-tone urgent alarm
