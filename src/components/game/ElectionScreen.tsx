@@ -438,7 +438,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
               <EmojiImg emoji="💰" size={14} className="mr-1" /> {labels.budget}: {budget}B
             </span>
             <span className="bg-purple-900/60 px-2.5 py-1 rounded-full text-purple-300 font-bold border border-purple-700/30">
-              🧹 {labels.laundered}: {laundered}B
+              <EmojiImg emoji="🧹" size={14} className="mr-1" /> {labels.laundered}: {laundered}B
             </span>
           </div>
 
