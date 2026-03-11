@@ -2697,3 +2697,45 @@ export const eventCards: EventCard[] = [
     rightMoney: -25,
   },
 ];
+
+// === EASTER EGG KARTLARI ===
+export const catConsultantCard: EventCard = {
+  id: 9001,
+  character: 'Saray Kedisi Miyav Paşa',
+  characterEmoji: '🐱',
+  category: 'Easter Egg',
+  description: 'Miyav! *Masaya tırmanır, evrakları yere atar* ...Başkanım, bu kedi danışman olmak istiyor gibi görünüyor.',
+  leftChoice: 'Danışman yap, kedi bilir',
+  rightChoice: 'Kov, ciddi işlerimiz var',
+  leftEffects: [
+    { power: 'halk', amount: 15 },
+    { power: 'tarikat', amount: -5 },
+  ],
+  rightEffects: [
+    { power: 'halk', amount: -10 },
+    { power: 'mafya', amount: 5 },
+  ],
+  leftMoney: -3,
+  rightMoney: 0,
+};
+
+export const milestoneCard50: EventCard = {
+  id: 9002,
+  character: 'Sürgün Postacısı',
+  characterEmoji: '✉️',
+  category: 'Easter Egg',
+  description: 'Başkanım, 50 turdur iktidarsınız! Yurtdışından bir mektup geldi: "Buraya gel, sana villa ve offshore hesap ayarladık." Gidiyor musun?',
+  leftChoice: 'Git, yeter artık!',
+  rightChoice: 'ASLA! Ben buradayım!',
+  leftEffects: [
+    { power: 'halk', amount: 20 },
+    { power: 'ordu', amount: 10 },
+  ],
+  rightEffects: [
+    { power: 'halk', amount: -10 },
+    { power: 'mafya', amount: 10 },
+    { power: 'tarikat', amount: 5 },
+  ],
+  leftMoney: 50,
+  rightMoney: -10,
+};
