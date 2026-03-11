@@ -78,7 +78,7 @@ const Index = () => {
             </div>
             {nextElectionInfo && (
               <span className="text-[10px] font-bold text-red-400 animate-pulse mt-0.5">
-                🗳️ {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
+                <EmojiImg emoji="🗳️" size={12} className="mr-0.5" /> {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
               </span>
             )}
           </div>
