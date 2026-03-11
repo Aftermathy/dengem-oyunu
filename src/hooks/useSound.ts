@@ -5,6 +5,10 @@ let audioCtx: AudioContext | null = null;
 
 function getAudioCtx() {
   if (!audioCtx) audioCtx = new AudioContext();
+  // Resume suspended context (iOS requirement)
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
   return audioCtx;
 }
 

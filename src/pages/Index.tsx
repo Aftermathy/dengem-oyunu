@@ -101,7 +101,7 @@ const Index = () => {
             allianceCost={getAllianceCost()}
           />
 
-          <div className="flex-1 flex items-center justify-center px-3 pb-1 min-h-0">
+          <div className="flex-1 flex items-center justify-center px-4 pb-1 min-h-0">
             <SwipeCard
               key={currentCard.id + '-' + turn}
               card={currentCard}

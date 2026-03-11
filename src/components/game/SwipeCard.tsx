@@ -78,7 +78,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
   if (exiting) {
     return (
       <div
-        className="relative w-full max-w-sm transition-all duration-300 ease-out"
+        className="relative w-full max-w-md transition-all duration-300 ease-out"
         style={{
           transform: `translateX(${exiting === 'left' ? -500 : 500}px) rotate(${exiting === 'left' ? -30 : 30}deg)`,
           opacity: 0,
@@ -93,7 +93,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
     <div
       ref={cardRef}
       className={cn(
-        "relative w-full max-w-sm cursor-grab select-none touch-none",
+        "relative w-full max-w-md cursor-grab select-none touch-none",
         isDragging && "cursor-grabbing"
       )}
       style={{

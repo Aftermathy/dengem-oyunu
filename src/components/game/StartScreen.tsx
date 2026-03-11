@@ -13,11 +13,11 @@ const TITLE_VARIANTS = [
   { text: 'ICH *MUSS* BLEIBEN' },
   { text: 'JE *DOIS* RESTER' },
   { text: '*DEBO* QUEDARME' },
-  { text: 'أنا *لازم* أبقى' },
-  { text: 'אני *חייב* להישאר' },
   { text: 'Я *ДОЛЖЕН* ОСТАТЬСЯ' },
-  { text: '私は*絶対*残る' },
-  { text: '나는 *반드시* 남는다' },
+  { text: '*NUNCA* ME VOY' },
+  { text: 'IO *DEVO* RESTARE' },
+  { text: 'EU *DEVO* FICAR' },
+  { text: 'JAG *MÅSTE* STANNA' },
 ];
 
 // Shake directions cycle

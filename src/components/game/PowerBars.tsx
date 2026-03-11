@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useEffect, useRef } from 'react';
 import { playBribeSound } from '@/hooks/useSound';
-import { EmojiText } from '@/components/EmojiImg';
+import { EmojiImg, EmojiText } from '@/components/EmojiImg';
 
 import factionHalk from '@/assets/faction-halk.jpg';
 import factionYatirimcilar from '@/assets/faction-yatirimcilar.jpg';
@@ -175,7 +175,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
     <div className="w-full max-w-md mx-auto">
       {/* Money display */}
       <div className="flex items-center justify-center gap-2 mb-1">
-        <span className="text-xl">💰</span>
+        <EmojiImg emoji="💰" size={22} />
         <span className={cn(
           "text-lg font-black transition-colors duration-300",
           projectedMoney != null
@@ -215,7 +215,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               <button
                 onClick={() => handleDirectBribe(p)}
                 className={cn(
-                  "w-12 h-12 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
+                  "w-14 h-14 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
                   affected ? "scale-110 border-primary" : "border-border/50",
                   canDo ? "hover:scale-110 hover:border-primary cursor-pointer active:scale-95" : "opacity-60",
                 )}
@@ -246,7 +246,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
 
               {/* Power bar - taller for iPhone */}
               <div
-                className="w-full h-20 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
+                className="w-full h-40 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
                 onMouseEnter={() => setShowPercent(p)}
                 onMouseLeave={() => setShowPercent(null)}
                 onTouchStart={() => {
