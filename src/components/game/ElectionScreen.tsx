@@ -633,7 +633,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
       {/* VICTORY BALCONY SCREEN */}
       {phase === 'victory' && (
-        <div className="flex-1 flex flex-col items-center justify-end relative z-10 animate-fade-in">
+        <div className="fixed inset-0 flex flex-col items-center justify-end z-10 animate-fade-in">
           <ConfettiOverlay />
           
           {/* Balcony background image */}
