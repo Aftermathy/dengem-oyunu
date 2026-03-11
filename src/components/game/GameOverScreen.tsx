@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
+import { EmojiImg } from '@/components/EmojiImg';
 
 import defeatHalk from '@/assets/defeat-halk.jpg';
 import defeatYatirimcilar from '@/assets/defeat-yatirimcilar.jpg';
