@@ -105,7 +105,7 @@ const Index = () => {
             />
           </div>
 
-          <div className="flex-1 flex items-center justify-center px-4 min-h-0">
+          <div className="flex-1 flex items-center justify-center px-4 min-h-0 pb-[env(safe-area-inset-bottom)]">
             <SwipeCard
               key={currentCard.id + '-' + turn}
               card={currentCard}
