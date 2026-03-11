@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { PowerType } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playWarningSound } from '@/hooks/useSound';
+import { EmojiImg } from '@/components/EmojiImg';
 import factionHalk from '@/assets/faction-halk.jpg';
 import factionYatirimcilar from '@/assets/faction-yatirimcilar.jpg';
 import factionMafya from '@/assets/faction-mafya.jpg';
