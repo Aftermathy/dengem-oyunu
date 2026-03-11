@@ -538,8 +538,8 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           {/* Special powers */}
           {phase === 'player' && config.specialPowers.length > 0 && (
             <div className="px-3 pb-4">
-              <p className="text-purple-300/80 text-[10px] mb-1.5 text-center font-bold uppercase tracking-widest">
-                {labels.specialPowers}
+              <p className="text-purple-300/80 text-[10px] mb-1.5 text-center font-bold uppercase tracking-widest flex items-center justify-center gap-1">
+                <EmojiImg emoji="🔮" size={12} /> {labels.specialPowers}
               </p>
               <div className="grid grid-cols-2 gap-1.5 w-full">
                 {config.specialPowers.map(power => {
