@@ -1078,3 +1078,43 @@ export const eventCardsEn: EventCard[] = [
     leftMoney: -10, rightMoney: -25,
   },
 ];
+
+// === EASTER EGG CARDS ===
+export const catConsultantCardEn: EventCard = {
+  id: 9001,
+  character: 'Palace Cat Lord Whiskers',
+  characterEmoji: '🐱',
+  category: 'Easter Egg',
+  description: 'Meow! *Jumps on desk, knocks papers off* ...Sir, this cat appears to want a cabinet position.',
+  leftChoice: 'Make it advisor, cats know best',
+  rightChoice: 'Shoo! We have serious work',
+  leftEffects: [
+    { power: 'halk', amount: 15 },
+    { power: 'tarikat', amount: -5 },
+  ],
+  rightEffects: [
+    { power: 'halk', amount: -10 },
+    { power: 'mafya', amount: 5 },
+  ],
+  leftMoney: -3, rightMoney: 0,
+};
+
+export const milestoneCard50En: EventCard = {
+  id: 9002,
+  character: 'Exile Postman',
+  characterEmoji: '✉️',
+  category: 'Easter Egg',
+  description: 'Sir, you\'ve been in power for 50 turns! A letter from abroad: "Come here, we\'ve set up a villa and offshore account for you." Will you go?',
+  leftChoice: 'Leave, enough is enough!',
+  rightChoice: 'NEVER! I\'m staying!',
+  leftEffects: [
+    { power: 'halk', amount: 20 },
+    { power: 'ordu', amount: 10 },
+  ],
+  rightEffects: [
+    { power: 'halk', amount: -10 },
+    { power: 'mafya', amount: 10 },
+    { power: 'tarikat', amount: 5 },
+  ],
+  leftMoney: 50, rightMoney: -10,
+};

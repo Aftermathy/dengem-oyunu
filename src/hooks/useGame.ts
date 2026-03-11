@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 import { PowerState, PowerType, EventCard, BRIBE_COSTS, BRIBE_REP_GAIN } from '@/types/game';
 import { showInterstitialAd, isAdFree } from '@/hooks/useAds';
-import { eventCards } from '@/data/cards';
-import { eventCardsEn } from '@/data/cards-en';
+import { eventCards, catConsultantCard, milestoneCard50 } from '@/data/cards';
+import { eventCardsEn, catConsultantCardEn, milestoneCard50En } from '@/data/cards-en';
 import { gameOverScenarios } from '@/data/gameOverScenarios';
 import { gameOverScenariosEn } from '@/data/gameOverScenarios-en';
 import { Language } from '@/contexts/LanguageContext';
@@ -31,7 +31,20 @@ function shuffleArray<T>(arr: T[]): T[] {
 export type GamePhase = 'start' | 'playing' | 'gameover' | 'election';
 
 function getCards(lang: Language) {
-  return lang === 'en' ? eventCardsEn : eventCards;
+  const base = lang === 'en' ? eventCardsEn : eventCards;
+  // 5% chance to inject cat consultant card
+  const cat = lang === 'en' ? catConsultantCardEn : catConsultantCard;
+  if (Math.random() < 0.05) {
+    const copy = [...base];
+    const pos = Math.floor(Math.random() * Math.min(20, copy.length));
+    copy.splice(pos, 0, cat);
+    return copy;
+  }
+  return base;
+}
+
+function getMilestoneCard(lang: Language) {
+  return lang === 'en' ? milestoneCard50En : milestoneCard50;
 }
 
 function getScenarios(lang: Language) {
@@ -194,6 +207,16 @@ export function useGame(lang: Language) {
       }
       setPhase('gameover');
       return;
+    }
+
+    // Inject milestone card at turn 50
+    if (newTurn === 50) {
+      const milestone = getMilestoneCard(lang);
+      setDeck(prev => {
+        const copy = [...prev];
+        copy.splice(cardIndex + 1, 0, milestone);
+        return copy;
+      });
     }
 
     let nextIndex = cardIndex + 1;
