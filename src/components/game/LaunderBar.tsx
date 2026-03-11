@@ -62,7 +62,7 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
             style={{ width: `${Math.min(totalLaundered, 100)}%` }}
           />
           <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-foreground">
-            💸 {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
+            <EmojiImg emoji="💸" size={10} /> {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
           </span>
         </div>
       </div>
