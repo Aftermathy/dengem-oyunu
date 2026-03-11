@@ -498,7 +498,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                       <span className="text-gray-400 text-base font-black">{lang === 'en' ? 'FREE' : 'ÜCRETSİZ'}</span>
                     </div>
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-3xl">⏭️</span>
+                      <EmojiImg emoji="⏭️" size={28} />
                       <p className="text-gray-300 text-sm font-bold leading-tight flex-1">{labels.skip}</p>
                     </div>
                     <p className="text-green-400/70 text-base font-black">+1%</p>
