@@ -61,6 +61,7 @@ export function playGameOverSound() {
   hapticError();
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     const osc = ctx.createOscillator();
