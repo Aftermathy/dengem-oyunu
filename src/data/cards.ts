@@ -2739,3 +2739,24 @@ export const milestoneCard50: EventCard = {
   leftMoney: 50,
   rightMoney: -10,
 };
+
+// Dark mode easter egg card
+export const darkModeCard: EventCard = {
+  id: 9999,
+  character: "Gölge Danışman",
+  characterEmoji: "🌑",
+  category: "Gizli",
+  description: "Efendim, karanlık taraf aktif oldu. Dış güçler gece operasyonlarını artırmış. Gece kahvesi ister misiniz?",
+  leftChoice: "Sade olsun, şekersiz!",
+  rightChoice: "Türk kahvesi, bol köpüklü",
+  leftEffects: [
+    { power: "halk", amount: 5 },
+    { power: "ordu", amount: 5 },
+  ],
+  rightEffects: [
+    { power: "tarikat", amount: 5 },
+    { power: "mafya", amount: 5 },
+  ],
+  leftMoney: 0,
+  rightMoney: 0,
+};

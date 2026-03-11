@@ -203,6 +203,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const [barGlowKey, setBarGlowKey] = useState(0);
   const [showAiFlash, setShowAiFlash] = useState(false);
   const [rerollsLeft, setRerollsLeft] = useState(MAX_REROLLS);
+  const [budgetWarning, setBudgetWarning] = useState<number | null>(null);
 
   // Avoid exact 50/50 ties — nudge to 49.9/50.1
   const displayPlayerVote = playerVote === 50 ? 49.9 : playerVote;
@@ -463,20 +464,44 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                   {cards.map((card, i) => {
                     const style = RARITY_STYLES[card.rarity];
                     const isLegendary = card.rarity === 'legendary';
+                    const cantAfford = budget < card.cost;
                     return (
                       <button
                         key={card.id}
-                        disabled={budget < card.cost || selectedCardId !== null}
-                        onClick={() => playCard(card)}
-                        className={`relative border-2 rounded-xl p-3.5 text-left disabled:opacity-30 hover:brightness-110 active:scale-95 transition-all election-card-enter overflow-hidden ${style.border} ${style.bg} ${style.glow} ${
+                        disabled={cantAfford || selectedCardId !== null}
+                        onClick={() => {
+                          if (cantAfford) return;
+                          playCard(card);
+                        }}
+                        onTouchStart={() => {
+                          if (cantAfford) {
+                            setBudgetWarning(card.id);
+                            setTimeout(() => setBudgetWarning(null), 1500);
+                          }
+                        }}
+                        onMouseDown={() => {
+                          if (cantAfford) {
+                            setBudgetWarning(card.id);
+                            setTimeout(() => setBudgetWarning(null), 1500);
+                          }
+                        }}
+                        className={`relative border-2 rounded-xl p-3.5 text-left disabled:opacity-40 hover:brightness-110 active:scale-95 transition-all election-card-enter overflow-hidden ${style.border} ${style.bg} ${style.glow} ${
                           selectedCardId === card.id ? 'election-card-select' : ''
                         } ${isLegendary ? 'legendary-card-flame' : ''}`}
                         style={{ animationDelay: `${i * 0.1}s` }}
                       >
+                        {/* Insufficient budget warning */}
+                        {budgetWarning === card.id && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-xl z-10 animate-fade-in">
+                            <span className="text-red-400 text-xs font-black text-center px-2">
+                              {lang === 'en' ? '⚠️ Insufficient Budget!' : '⚠️ Yetersiz Bütçe!'}
+                            </span>
+                          </div>
+                        )}
                         {/* Rarity stars */}
                         <div className="flex justify-between items-center mb-1.5">
                           <span className={`text-xs font-black ${style.labelColor}`}>{style.label}</span>
-                          <span className="text-yellow-400 text-base font-black">{card.cost}B</span>
+                          <span className={`text-base font-black ${cantAfford ? 'text-red-500' : 'text-yellow-400'}`}>{card.cost}B</span>
                         </div>
                         <div className="flex items-center gap-2 mb-1.5">
                           <EmojiImg emoji={card.emoji} size={28} />
