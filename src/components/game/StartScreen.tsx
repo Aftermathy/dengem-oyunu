@@ -38,8 +38,8 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
 
       {/* Crown + Title */}
       <div className="relative">
-        <div className="text-8xl sm:text-9xl">🪑</div>
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-4xl sm:text-5xl">👑</div>
+        <div><EmojiImg emoji="🪑" size={96} /></div>
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2"><EmojiImg emoji="👑" size={48} /></div>
       </div>
 
       <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-foreground">
