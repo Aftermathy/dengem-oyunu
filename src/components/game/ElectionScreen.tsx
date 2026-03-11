@@ -556,7 +556,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                           : 'bg-purple-900 hover:bg-purple-800 disabled:opacity-30'
                       }`}
                     >
-                      <span className="text-sm shrink-0">{power.emoji}</span>
+                      <EmojiImg emoji={power.emoji} size={16} className="shrink-0" />
                       <span className="text-purple-100 text-[10px] font-bold leading-tight flex-1 text-left whitespace-nowrap overflow-hidden text-ellipsis">{power.name}</span>
                       <span className="text-green-400 text-[10px] font-black shrink-0">+{power.voterEffect}%</span>
                       <span className="text-purple-400 text-[9px] font-bold shrink-0">{power.launderedCost}B</span>
