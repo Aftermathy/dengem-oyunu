@@ -41,7 +41,7 @@ export function LaunderShop({
   const [showAlliance, setShowAlliance] = useState(false);
   const [alliancePick, setAlliancePick] = useState<PowerType[]>([]);
 
-  if (totalLaundered <= 0) return null;
+  // Always show, but disable buttons if no laundered money
 
   const handleAlliancePick = (f: PowerType) => {
     if (alliancePick.includes(f)) {

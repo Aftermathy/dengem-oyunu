@@ -246,7 +246,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
 
               {/* Power bar - taller for iPhone */}
               <div
-                className="w-full h-20 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
+                className="w-full h-40 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
                 onMouseEnter={() => setShowPercent(p)}
                 onMouseLeave={() => setShowPercent(null)}
                 onTouchStart={() => {
