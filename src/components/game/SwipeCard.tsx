@@ -93,7 +93,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
     <div
       ref={cardRef}
       className={cn(
-        "relative w-full max-w-md cursor-grab select-none touch-none",
+        "relative w-full max-w-md h-full cursor-grab select-none touch-none",
         isDragging && "cursor-grabbing"
       )}
       style={{
