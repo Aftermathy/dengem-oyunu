@@ -32,15 +32,20 @@ export type GamePhase = 'start' | 'playing' | 'gameover' | 'election';
 
 function getCards(lang: Language) {
   const base = lang === 'en' ? eventCardsEn : eventCards;
+  const cards = [...base];
   // 5% chance to inject cat consultant card
   const cat = lang === 'en' ? catConsultantCardEn : catConsultantCard;
   if (Math.random() < 0.05) {
-    const copy = [...base];
-    const pos = Math.floor(Math.random() * Math.min(20, copy.length));
-    copy.splice(pos, 0, cat);
-    return copy;
+    const pos = Math.floor(Math.random() * Math.min(20, cards.length));
+    cards.splice(pos, 0, cat);
   }
-  return base;
+  // Inject dark mode card if dark mode is active
+  if (document.documentElement.classList.contains('dark')) {
+    const dm = lang === 'en' ? darkModeCardEn : darkModeCard;
+    const dmPos = Math.floor(Math.random() * Math.min(15, cards.length));
+    cards.splice(dmPos, 0, dm);
+  }
+  return cards;
 }
 
 function getMilestoneCard(lang: Language) {
