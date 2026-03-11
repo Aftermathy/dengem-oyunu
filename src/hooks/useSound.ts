@@ -89,7 +89,6 @@ export function playBribeSound() {
     if (!ctx) return;
     const now = ctx.currentTime;
 
-    // Part 1: Coin clink (high pitch, metallic)
     const osc = ctx.createOscillator();
     osc.type = 'sine';
     osc.frequency.setValueAtTime(2800, now);
@@ -104,7 +103,6 @@ export function playBribeSound() {
     osc.start(now);
     osc.stop(now + 0.08);
 
-    // Part 2: Money rustle (high-pass white noise)
     const bufferSize = ctx.sampleRate * 0.12;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -139,7 +137,6 @@ export function playClickSound() {
     if (!ctx) return;
     const now = ctx.currentTime;
 
-    // Short percussive tick
     const bufferSize = Math.floor(ctx.sampleRate * 0.015);
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -173,7 +170,6 @@ export function playWarningSound() {
     if (!ctx) return;
     const now = ctx.currentTime;
 
-    // Two-tone urgent alarm
     [0, 0.2].forEach((offset) => {
       const osc = ctx.createOscillator();
       osc.type = 'square';
@@ -201,7 +197,6 @@ export function playWarStartSound() {
     if (!ctx) return;
     const now = ctx.currentTime;
 
-    // Deep war drum hit 1
     const drum1 = ctx.createOscillator();
     drum1.type = 'sine';
     drum1.frequency.setValueAtTime(80, now);
@@ -214,7 +209,6 @@ export function playWarStartSound() {
     drum1.start(now);
     drum1.stop(now + 0.3);
 
-    // Deep war drum hit 2
     const drum2 = ctx.createOscillator();
     drum2.type = 'sine';
     drum2.frequency.setValueAtTime(90, now + 0.2);
@@ -227,7 +221,6 @@ export function playWarStartSound() {
     drum2.start(now + 0.2);
     drum2.stop(now + 0.5);
 
-    // Tension riser
     const riser = ctx.createOscillator();
     riser.type = 'sawtooth';
     riser.frequency.setValueAtTime(100, now);
@@ -243,3 +236,159 @@ export function playWarStartSound() {
     // Silently fail
   }
 }
+
+/* ── Election-specific sounds ── */
+
+/** Player plays an election card — rising chime */
+export function playElectionCardSound() {
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(600, now);
+    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.15);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.2);
+
+    // Subtle shimmer
+    const osc2 = ctx.createOscillator();
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(900, now + 0.05);
+    osc2.frequency.exponentialRampToValueAtTime(1600, now + 0.18);
+
+    const gain2 = ctx.createGain();
+    gain2.gain.setValueAtTime(0.08, now + 0.05);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.05);
+    osc2.stop(now + 0.2);
+  } catch {}
+}
+
+/** AI plays a card — ominous descending tone */
+export function playAiCardSound() {
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(500, now);
+    osc.frequency.exponentialRampToValueAtTime(150, now + 0.4);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1500, now);
+    filter.frequency.exponentialRampToValueAtTime(300, now + 0.4);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.45);
+  } catch {}
+}
+
+/** Special power activation — dramatic charge */
+export function playSpecialPowerSound() {
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    // Deep pulse
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(100, now);
+    osc.frequency.exponentialRampToValueAtTime(300, now + 0.3);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.35);
+
+    // Sparkle
+    const osc2 = ctx.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(1200, now + 0.1);
+    osc2.frequency.exponentialRampToValueAtTime(2400, now + 0.25);
+
+    const gain2 = ctx.createGain();
+    gain2.gain.setValueAtTime(0.1, now + 0.1);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.1);
+    osc2.stop(now + 0.3);
+  } catch {}
+}
+
+/** Reroll — dice rattle */
+export function playRerollSound() {
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    for (let i = 0; i < 3; i++) {
+      const t = now + i * 0.06;
+      const osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(1800 + i * 400, t);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.05);
+    }
+  } catch {}
+}
+
+/** Budget warning — buzzer */
+export function playBudgetWarningSound() {
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(200, now);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.15);
+  } catch {}
+}
+
