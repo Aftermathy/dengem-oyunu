@@ -139,8 +139,8 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
 
   return (
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden h-full flex flex-col">
-      {/* Character header - compact */}
-      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-2 text-center shrink-0">
+      {/* Character header - 25% of card */}
+      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-2 text-center flex-[1] flex flex-col items-center justify-center min-h-0">
         <div className="mb-0.5"><EmojiImg emoji={card.characterEmoji} size={36} /></div>
         <h3 className="font-bold text-foreground text-sm">{card.character}</h3>
         <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
@@ -148,15 +148,15 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
         </span>
       </div>
 
-      {/* Description - compact */}
-      <div className="px-4 py-2 flex-1 flex items-center">
+      {/* Description - halved */}
+      <div className="px-5 py-1 flex-[0.5] flex items-center border-t border-border/30 min-h-0">
         <p className="text-sm text-foreground leading-snug italic w-full">
           "{card.description}"
         </p>
       </div>
 
-      {/* Choices */}
-      <div className="grid grid-cols-2 border-t border-border shrink-0">
+      {/* Choices - 25% of card */}
+      <div className="grid grid-cols-2 border-t border-border flex-[1] min-h-0">
         <div className={cn(
           "p-3 flex flex-col items-center justify-center text-sm transition-colors border-r border-border",
           direction === 'left' ? 'bg-red-500/20 text-red-700 font-bold' : 'text-muted-foreground'

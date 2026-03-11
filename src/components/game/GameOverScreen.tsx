@@ -36,7 +36,7 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
   const bgImage = image ? defeatImages[image] : null;
 
   return (
-    <div className="relative flex flex-col items-center justify-end min-h-[100dvh] w-full overflow-hidden">
+    <div className="relative flex flex-col items-center justify-end h-[100dvh] w-full overflow-hidden" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="absolute inset-0 z-20 pointer-events-none gameover-blackfade" />
 
       {bgImage && (
@@ -46,31 +46,31 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
         </div>
       )}
 
-      <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto">
-        <div className="text-6xl"><EmojiImg emoji={emoji} size={64} /></div>
-        <h2 className="text-3xl sm:text-4xl font-black text-red-400 drop-shadow-lg">{title}</h2>
+      <div className="relative z-10 flex flex-col items-center gap-3 p-6 pb-4 text-center max-w-sm mx-auto">
+        <div className="text-5xl"><EmojiImg emoji={emoji} size={56} /></div>
+        <h2 className="text-2xl sm:text-3xl font-black text-red-400 drop-shadow-lg">{title}</h2>
         <p className="text-sm text-white/80 leading-relaxed drop-shadow-md">{description}</p>
 
-        <div className="flex gap-6 mt-2">
+        <div className="flex gap-6 mt-1">
           <div className="text-center">
-            <div className="text-3xl font-black text-white">{turn}</div>
+            <div className="text-2xl font-black text-white">{turn}</div>
             <div className="text-xs text-white/60">{t('gameover.turn')}</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-black text-amber-400">{highScore}</div>
+            <div className="text-2xl font-black text-amber-400">{highScore}</div>
             <div className="text-xs text-white/60">{t('gameover.best')}</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-black text-white">{money}B</div>
+            <div className="text-2xl font-black text-white">{money}B</div>
             <div className="text-xs text-white/60"><EmojiImg emoji="💰" size={14} /></div>
           </div>
         </div>
 
-        <div className="flex gap-3 mt-4 w-full">
-          <Button size="lg" onClick={() => { playClickSound(); onRestart(); }} className="flex-1 text-base px-6 py-6 font-bold bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20">
+        <div className="flex gap-3 mt-3 w-full">
+          <Button size="lg" onClick={() => { playClickSound(); onRestart(); }} className="flex-1 text-sm px-4 py-4 font-bold bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20">
             {t('gameover.restart')}
           </Button>
-          <Button size="lg" onClick={() => { playClickSound(); onMainMenu(); }} variant="outline" className="flex-1 text-base px-6 py-6 font-bold bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/50">
+          <Button size="lg" onClick={() => { playClickSound(); onMainMenu(); }} variant="outline" className="flex-1 text-sm px-4 py-4 font-bold bg-black/30 backdrop-blur-sm border border-white/20 text-white/80 hover:bg-black/50">
             {t('gameover.menu')}
           </Button>
         </div>
