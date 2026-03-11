@@ -455,7 +455,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-black transition-all active:scale-95 disabled:opacity-30 border-2 border-yellow-500/60 bg-yellow-900/70 text-yellow-200 hover:bg-yellow-800/80 hover:border-yellow-400/80"
                     style={{ boxShadow: '0 0 12px rgba(234,179,8,0.2)' }}
                   >
-                    {labels.reroll} ({rerollsLeft}) <span className="text-yellow-400 font-black">-{labels.rerollCost}</span>
+                    <EmojiImg emoji="🎲" size={16} /> {labels.reroll} ({rerollsLeft}) <span className="text-yellow-400 font-black">-{labels.rerollCost}</span>
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
