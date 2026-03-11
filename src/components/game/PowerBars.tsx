@@ -202,7 +202,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         )}
       </div>
 
-      <div className="flex justify-between gap-1 px-2 py-1">
+      <div className="flex justify-between gap-0.5 px-1 py-1">
         {powers.map((p) => {
           const val = power[p];
           const affected = isAffected(p);
