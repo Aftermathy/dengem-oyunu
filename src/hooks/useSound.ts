@@ -70,6 +70,7 @@ export function playGameOverSound() {
 
 export function playBribeSound() {
   hapticMedium();
+  try {
     const ctx = getAudioCtx();
     const now = ctx.currentTime;
 
