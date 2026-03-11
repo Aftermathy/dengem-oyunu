@@ -527,7 +527,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                   );
                 })() : (
                   <div className="animate-pulse">
-                    <span className="text-5xl">🎭</span>
+                    <EmojiImg emoji="🎭" size={48} />
                     <p className="text-red-300 text-lg font-bold mt-3">{labels.oppMoving}</p>
                   </div>
                 )}
