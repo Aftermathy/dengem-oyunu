@@ -616,7 +616,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                   className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white cursor-pointer"
                   style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}
                 >
-                  {lang === 'en' ? '🔄 Play Again' : '🔄 Yeniden Oyna'}
+                  {lang === 'en' ? '' : ''}<EmojiImg emoji="🔄" size={16} className="mr-1" />{lang === 'en' ? ' Play Again' : ' Yeniden Oyna'}
                 </button>
                 <button
                   onClick={() => { playClickSound(); onMainMenu(); }}
