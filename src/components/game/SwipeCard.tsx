@@ -148,14 +148,14 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
         </span>
       </div>
 
-      {/* Description - halved */}
-      <div className="px-5 py-1 flex-[0.5] flex items-center border-t border-border/30 min-h-0">
+      {/* Description */}
+      <div className="px-5 py-1 flex-[1] flex items-center border-t border-border/30 min-h-0">
         <p className="text-sm text-foreground leading-snug italic w-full">
           "{card.description}"
         </p>
       </div>
 
-      {/* Choices - 25% of card */}
+      {/* Choices */}
       <div className="grid grid-cols-2 border-t border-border flex-[1] min-h-0">
         <div className={cn(
           "p-3 flex flex-col items-center justify-center text-sm transition-colors border-r border-border",
