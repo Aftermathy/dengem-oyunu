@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { playClickSound } from '@/hooks/useSound';
+import { playClickSound, playWarStartSound } from '@/hooks/useSound';
 import { EmojiImg } from '@/components/EmojiImg';
 import throneIcon from '@/assets/throne-icon.png';
 
@@ -56,7 +56,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
 
       <Button
         size="lg"
-        onClick={() => {playClickSound();onStart();}}
+        onClick={() => {playWarStartSound();onStart();}}
         className="text-lg px-10 py-6 font-bold shadow-lg hover:shadow-xl transition-shadow">
 
         {t('start.play')}
