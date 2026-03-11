@@ -15,11 +15,13 @@ interface EmojiImgProps {
 
 function emojiToCodepoint(emoji: string): string {
   const codepoints: string[] = [];
+  const hasZwj = emoji.includes('\u200d');
   for (const char of emoji) {
     const cp = char.codePointAt(0);
-    if (cp !== undefined && cp !== 0xfe0f) {
-      codepoints.push(cp.toString(16));
-    }
+    if (cp === undefined) continue;
+    // Keep fe0f in ZWJ sequences (e.g. 👨‍⚖️), strip in simple emoji
+    if (cp === 0xfe0f && !hasZwj) continue;
+    codepoints.push(cp.toString(16));
   }
   return codepoints.join('-');
 }

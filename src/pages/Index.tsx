@@ -44,6 +44,12 @@ const Index = () => {
 
   return (
     <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none" style={{ overscrollBehavior: 'none', paddingTop: 'env(safe-area-inset-top)' }} onContextMenu={e => e.preventDefault()}>
+      {/* Landscape block overlay */}
+      <div className="landscape-block hidden fixed inset-0 z-[200] items-center justify-center bg-black text-white text-center p-8 flex-col gap-4" style={{ display: 'none' }}>
+        <EmojiImg emoji="🔄" size={64} />
+        <p className="text-xl font-black">{lang === 'en' ? 'Please rotate your device' : 'Lütfen cihazınızı dikey çevirin'}</p>
+        <p className="text-sm text-white/60">{lang === 'en' ? 'This game is designed for portrait mode' : 'Bu oyun dikey mod için tasarlanmıştır'}</p>
+      </div>
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (

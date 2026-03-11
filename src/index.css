@@ -10,9 +10,16 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-img {
+img:not(.interactive-img) {
   pointer-events: none;
   -webkit-user-drag: none;
+}
+
+/* Landscape block overlay */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscape-block {
+    display: flex !important;
+  }
 }
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
