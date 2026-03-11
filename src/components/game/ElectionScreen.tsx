@@ -367,7 +367,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
         <div className="flex-1 flex flex-col items-center justify-center animate-scale-in relative z-10">
           <EmberParticles count={15} />
           <div className="flame-ring inline-flex items-center justify-center w-20 h-20 mb-4">
-            <span className="text-7xl">🔥</span>
+            <span><EmojiImg emoji="🔥" size={56} /></span>
           </div>
           <h1 className="text-4xl font-black text-orange-400 text-center px-4"
             style={{ textShadow: '0 0 30px rgba(255,100,0,0.6)' }}>
