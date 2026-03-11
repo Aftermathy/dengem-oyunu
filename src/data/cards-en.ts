@@ -154,7 +154,7 @@ export const eventCardsEn: EventCard[] = [
     leftMoney: 0, rightMoney: 5,
   },
   {
-    id: 20, character: 'Prosecutor', characterEmoji: '👨‍⚖️', category: 'Political Intrigue',
+    id: 20, character: 'Prosecutor', characterEmoji: '⚖️', category: 'Political Intrigue',
     description: 'Shadow network investigation expanding. Mass arrests?',
     leftChoice: 'Mass arrests', rightChoice: 'Focus on top figures only',
     leftEffects: [{ power: 'tarikat', amount: -15 }, { power: 'halk', amount: -10 }, { power: 'ordu', amount: 10 }],
