@@ -38,10 +38,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       <div className="flex-1" />
 
       {/* Crown + Title */}
-      <div className="relative">
-        <div><EmojiImg emoji="🪑" size={96} /></div>
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2"><EmojiImg emoji="👑" size={48} /></div>
-      </div>
+      <img src={throneIcon} alt="Throne" className="w-32 h-32 object-contain drop-shadow-lg" />
 
       <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-foreground">
         I MUST STAY
