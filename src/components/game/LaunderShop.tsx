@@ -76,7 +76,7 @@ export function LaunderShop({
               : "bg-muted/40 cursor-not-allowed opacity-50"
           )}
         >
-          <div className="text-lg">📢</div>
+          <div className="text-lg"><EmojiImg emoji="📢" size={20} /></div>
           <div className="text-[10px] font-bold text-primary-foreground">
             {lang === 'tr' ? 'Propaganda' : 'Propaganda'}
           </div>
