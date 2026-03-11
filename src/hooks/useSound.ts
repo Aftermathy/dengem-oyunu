@@ -198,6 +198,7 @@ export function playWarStartSound() {
   hapticWarStart();
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     // Deep war drum hit 1
