@@ -71,7 +71,7 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
       {showPicker && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-in fade-in duration-200">
           <div className="bg-card border border-border rounded-2xl p-5 mx-4 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200 text-center">
-            <div className="text-2xl mb-2">🧼</div>
+            <div className="mb-2"><EmojiImg emoji="🧼" size={28} /></div>
             <h3 className="text-lg font-bold text-foreground mb-1">
               {lang === 'tr' ? 'Kimin üzerinden aklayalım?' : 'Launder through whom?'}
             </h3>
