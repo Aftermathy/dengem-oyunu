@@ -24,7 +24,7 @@ export function playSwipeSound(direction: 'left' | 'right') {
   hapticLight();
   try {
     const ctx = getAudioCtx();
-    const now = ctx.currentTime;
+    if (!ctx) return;
 
     const bufferSize = ctx.sampleRate * 0.12;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
