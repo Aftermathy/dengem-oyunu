@@ -140,8 +140,8 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
   return (
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden h-full flex flex-col">
       {/* Character header */}
-      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-4 text-center">
-        <div className="mb-2"><EmojiImg emoji={card.characterEmoji} size={56} /></div>
+      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-3 text-center">
+        <div className="mb-1"><EmojiImg emoji={card.characterEmoji} size={48} /></div>
         <h3 className="font-bold text-foreground text-base">{card.character}</h3>
         <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
           {card.category}
