@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 import { PowerState, PowerType, EventCard, BRIBE_COSTS, BRIBE_REP_GAIN } from '@/types/game';
 import { showInterstitialAd, isAdFree } from '@/hooks/useAds';
-import { eventCards } from '@/data/cards';
-import { eventCardsEn } from '@/data/cards-en';
+import { eventCards, catConsultantCard, milestoneCard50 } from '@/data/cards';
+import { eventCardsEn, catConsultantCardEn, milestoneCard50En } from '@/data/cards-en';
 import { gameOverScenarios } from '@/data/gameOverScenarios';
 import { gameOverScenariosEn } from '@/data/gameOverScenarios-en';
 import { Language } from '@/contexts/LanguageContext';
