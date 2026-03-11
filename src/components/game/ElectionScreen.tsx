@@ -494,7 +494,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                     style={{ animationDelay: '0.3s' }}
                   >
                     <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-xs font-black text-gray-500">⏭️</span>
+                      <span className="text-xs font-black text-gray-500"><EmojiImg emoji="⏭️" size={14} /></span>
                       <span className="text-gray-400 text-base font-black">{lang === 'en' ? 'FREE' : 'ÜCRETSİZ'}</span>
                     </div>
                     <div className="flex items-center gap-2 mb-1.5">
