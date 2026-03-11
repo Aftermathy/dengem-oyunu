@@ -61,3 +61,39 @@ export async function hapticDoubleSharp() {
     await Haptics.impact({ style: ImpactStyle.Heavy });
   } catch { /* web fallback: no-op */ }
 }
+
+/** Long subtle vibration — AI thinking */
+export async function hapticAiThinking() {
+  try {
+    for (let i = 0; i < 6; i++) {
+      await Haptics.impact({ style: ImpactStyle.Light });
+      await new Promise(r => setTimeout(r, 150));
+    }
+  } catch { /* web fallback: no-op */ }
+}
+
+/** Rarity-scaled haptic — card reveal */
+export async function hapticByRarity(rarity: string) {
+  try {
+    switch (rarity) {
+      case 'common':
+        await Haptics.impact({ style: ImpactStyle.Light });
+        break;
+      case 'uncommon':
+        await Haptics.impact({ style: ImpactStyle.Medium });
+        break;
+      case 'epic':
+        await Haptics.impact({ style: ImpactStyle.Heavy });
+        await new Promise(r => setTimeout(r, 80));
+        await Haptics.impact({ style: ImpactStyle.Medium });
+        break;
+      case 'legendary':
+        await Haptics.impact({ style: ImpactStyle.Heavy });
+        await new Promise(r => setTimeout(r, 80));
+        await Haptics.impact({ style: ImpactStyle.Heavy });
+        await new Promise(r => setTimeout(r, 80));
+        await Haptics.impact({ style: ImpactStyle.Heavy });
+        break;
+    }
+  } catch { /* web fallback: no-op */ }
+}

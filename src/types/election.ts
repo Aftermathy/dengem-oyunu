@@ -26,6 +26,7 @@ export interface ElectionConfig {
   title: string;
   subtitle: string;
   playerCards: ElectionCard[];
+  oppositionCards: ElectionCard[];
   specialPowers: ElectionSpecialPower[];
   startingPlayerVote: number;
   isFinalBoss?: boolean;
