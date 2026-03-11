@@ -61,7 +61,7 @@ export function LaunderShop({
   return (
     <div className="w-full max-w-md mx-auto px-4 mt-1">
       <div className="text-[10px] text-muted-foreground text-center mb-1.5">
-        💸 {lang === 'tr' ? 'Aklanmış para' : 'Laundered funds'}: <span className="font-bold text-emerald-400">{totalLaundered}B</span>
+        <EmojiImg emoji="💸" size={12} className="mr-0.5" /> {lang === 'tr' ? 'Aklanmış para' : 'Laundered funds'}: <span className="font-bold text-emerald-400">{totalLaundered}B</span>
       </div>
 
       <div className="flex gap-2">
