@@ -209,6 +209,16 @@ export function useGame(lang: Language) {
       return;
     }
 
+    // Inject milestone card at turn 50
+    if (newTurn === 50) {
+      const milestone = getMilestoneCard(lang);
+      setDeck(prev => {
+        const copy = [...prev];
+        copy.splice(cardIndex + 1, 0, milestone);
+        return copy;
+      });
+    }
+
     let nextIndex = cardIndex + 1;
     if (nextIndex >= deck.length) {
       setDeck(shuffleArray(getCards(lang)));
