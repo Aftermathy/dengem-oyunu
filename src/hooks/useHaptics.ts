@@ -1,77 +1,87 @@
-import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+// Dynamic import to avoid build errors when @capacitor/haptics isn't resolvable
+let Haptics: any = null;
+let ImpactStyle: any = null;
+let NotificationType: any = null;
 
-// Check if Capacitor Haptics is available (native only)
-let hapticsAvailable: boolean | null = null;
-
-async function checkHaptics(): Promise<boolean> {
-  if (hapticsAvailable !== null) return hapticsAvailable;
+const loadHaptics = (async () => {
   try {
-    await Haptics.impact({ style: ImpactStyle.Light });
-    hapticsAvailable = true;
+    const mod = await import('@capacitor/haptics');
+    Haptics = mod.Haptics;
+    ImpactStyle = mod.ImpactStyle;
+    NotificationType = mod.NotificationType;
   } catch {
-    hapticsAvailable = false;
+    // Not available (web build without Capacitor)
   }
-  return hapticsAvailable;
-}
+})();
 
 /** Light tap — swipe cards */
 export async function hapticLight() {
   try {
-    await Haptics.impact({ style: ImpactStyle.Light });
-  } catch { /* web fallback: no-op */ }
+    await loadHaptics;
+    if (Haptics) await Haptics.impact({ style: ImpactStyle.Light });
+  } catch { /* no-op */ }
 }
 
 /** Medium tap — button presses, bribe */
 export async function hapticMedium() {
   try {
-    await Haptics.impact({ style: ImpactStyle.Medium });
-  } catch { /* web fallback: no-op */ }
+    await loadHaptics;
+    if (Haptics) await Haptics.impact({ style: ImpactStyle.Medium });
+  } catch { /* no-op */ }
 }
 
 /** Heavy tap — game start, important actions */
 export async function hapticHeavy() {
   try {
-    await Haptics.impact({ style: ImpactStyle.Heavy });
-  } catch { /* web fallback: no-op */ }
+    await loadHaptics;
+    if (Haptics) await Haptics.impact({ style: ImpactStyle.Heavy });
+  } catch { /* no-op */ }
 }
 
 /** Double sharp vibration — warnings, elections */
 export async function hapticWarning() {
   try {
-    await Haptics.notification({ type: NotificationType.Warning });
-  } catch { /* web fallback: no-op */ }
+    await loadHaptics;
+    if (Haptics) await Haptics.notification({ type: NotificationType.Warning });
+  } catch { /* no-op */ }
 }
 
 /** Success vibration */
 export async function hapticSuccess() {
   try {
-    await Haptics.notification({ type: NotificationType.Success });
-  } catch { /* web fallback: no-op */ }
+    await loadHaptics;
+    if (Haptics) await Haptics.notification({ type: NotificationType.Success });
+  } catch { /* no-op */ }
 }
 
 /** Error vibration — game over */
 export async function hapticError() {
   try {
-    await Haptics.notification({ type: NotificationType.Error });
-  } catch { /* web fallback: no-op */ }
+    await loadHaptics;
+    if (Haptics) await Haptics.notification({ type: NotificationType.Error });
+  } catch { /* no-op */ }
 }
 
 /** War drums start — heavy + delay + heavy */
 export async function hapticWarStart() {
   try {
+    await loadHaptics;
+    if (!Haptics) return;
     await Haptics.impact({ style: ImpactStyle.Heavy });
     await new Promise(r => setTimeout(r, 120));
     await Haptics.impact({ style: ImpactStyle.Heavy });
     await new Promise(r => setTimeout(r, 120));
     await Haptics.impact({ style: ImpactStyle.Medium });
-  } catch { /* web fallback: no-op */ }
+  } catch { /* no-op */ }
 }
 
 /** Double sharp — pre-election, critical alerts */
 export async function hapticDoubleSharp() {
   try {
+    await loadHaptics;
+    if (!Haptics) return;
     await Haptics.impact({ style: ImpactStyle.Heavy });
     await new Promise(r => setTimeout(r, 100));
     await Haptics.impact({ style: ImpactStyle.Heavy });
-  } catch { /* web fallback: no-op */ }
+  } catch { /* no-op */ }
 }
