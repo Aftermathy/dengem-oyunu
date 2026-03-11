@@ -571,7 +571,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
       {/* RESULT (brief before victory transition) */}
       {phase === 'result' && (
-        <div className={`flex-1 flex flex-col items-center justify-center px-6 animate-scale-in relative z-10 ${!won ? 'election-shake' : ''}`}>
+        <div className={`fixed inset-0 flex flex-col items-center justify-center px-6 animate-scale-in z-10 ${!won ? 'election-shake' : ''}`}>
           {won && <ConfettiOverlay />}
 
           {won ? (
