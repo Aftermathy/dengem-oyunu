@@ -36,7 +36,7 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
   const bgImage = image ? defeatImages[image] : null;
 
   return (
-    <div className="relative flex flex-col items-center justify-end h-[100dvh] w-full overflow-hidden" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="fixed inset-0 flex flex-col items-center justify-end w-full overflow-hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="absolute inset-0 z-20 pointer-events-none gameover-blackfade" />
 
       {bgImage && (

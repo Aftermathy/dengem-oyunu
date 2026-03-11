@@ -638,7 +638,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           
           {/* Balcony background image */}
           <div className="absolute inset-0 z-0">
-            <img src={victoryBalconyImg} alt="Victory balcony" className="w-full h-full object-cover" />
+            <img src={victoryBalconyImg} alt="Victory balcony" className="w-full h-full object-cover object-center" />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
           </div>
 
