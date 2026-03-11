@@ -46,9 +46,7 @@ const Index = () => {
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
-        <div className="flex-1 flex items-center justify-center">
-          <StartScreen highScore={highScore} onStart={startGame} />
-        </div>
+        <StartScreen highScore={highScore} onStart={startGame} />
       )}
 
       {phase === 'playing' && currentCard && (

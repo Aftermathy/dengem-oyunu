@@ -140,10 +140,10 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
   return (
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden h-full flex flex-col">
       {/* Character header - 25% of card */}
-      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-2 text-center flex-[1] flex flex-col items-center justify-center min-h-0">
-        <div className="mb-0.5"><EmojiImg emoji={card.characterEmoji} size={36} /></div>
-        <h3 className="font-bold text-foreground text-sm">{card.character}</h3>
-        <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-3 text-center flex-[1] flex flex-col items-center justify-center min-h-0">
+        <div className="mb-1"><EmojiImg emoji={card.characterEmoji} size={90} /></div>
+        <h3 className="font-bold text-foreground text-2xl">{card.character}</h3>
+        <span className="text-sm bg-muted px-3 py-0.5 rounded-full text-muted-foreground mt-0.5">
           {card.category}
         </span>
       </div>

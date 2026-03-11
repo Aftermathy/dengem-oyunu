@@ -571,7 +571,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
       {/* RESULT (brief before victory transition) */}
       {phase === 'result' && (
-        <div className={`flex-1 flex flex-col items-center justify-center px-6 animate-scale-in relative z-10 ${!won ? 'election-shake' : ''}`}>
+        <div className={`fixed inset-0 flex flex-col items-center justify-center px-6 animate-scale-in z-10 ${!won ? 'election-shake' : ''}`}>
           {won && <ConfettiOverlay />}
 
           {won ? (
@@ -633,12 +633,12 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
       {/* VICTORY BALCONY SCREEN */}
       {phase === 'victory' && (
-        <div className="flex-1 flex flex-col items-center justify-end relative z-10 animate-fade-in">
+        <div className="fixed inset-0 flex flex-col items-center justify-end z-10 animate-fade-in">
           <ConfettiOverlay />
           
           {/* Balcony background image */}
           <div className="absolute inset-0 z-0">
-            <img src={victoryBalconyImg} alt="Victory balcony" className="w-full h-full object-cover" />
+            <img src={victoryBalconyImg} alt="Victory balcony" className="w-full h-full object-cover object-center" />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
           </div>
 
