@@ -3,11 +3,11 @@ import { PowerType } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
-import factionHalk from '@/assets/faction-halk.png';
-import factionYatirimcilar from '@/assets/faction-yatirimcilar.png';
-import factionMafya from '@/assets/faction-mafya.png';
-import factionTarikat from '@/assets/faction-tarikat.png';
-import factionOrdu from '@/assets/faction-ordu.png';
+import factionHalk from '@/assets/faction-halk.jpg';
+import factionYatirimcilar from '@/assets/faction-yatirimcilar.jpg';
+import factionMafya from '@/assets/faction-mafya.jpg';
+import factionTarikat from '@/assets/faction-tarikat.jpg';
+import factionOrdu from '@/assets/faction-ordu.jpg';
 
 const FACTION_IMAGES: Record<PowerType, string> = {
   halk: factionHalk,
