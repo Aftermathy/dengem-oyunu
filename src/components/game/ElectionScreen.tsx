@@ -576,7 +576,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
           {won ? (
             <>
-              <span className="text-8xl mb-6">🎉</span>
+              <EmojiImg emoji="🎉" size={72} className="mb-6" />
               <h2 className="text-3xl font-black mb-3 text-center title-glow-pulse" style={{ color: '#4ade80' }}>
                 {labels.electionWon}
               </h2>
