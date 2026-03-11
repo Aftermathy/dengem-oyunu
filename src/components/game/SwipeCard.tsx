@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { EventCard, PowerEffect } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { EmojiImg } from '@/components/EmojiImg';
 import { playSwipeSound } from '@/hooks/useSound';
 
 interface SwipeCardProps {
