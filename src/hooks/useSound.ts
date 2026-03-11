@@ -25,6 +25,7 @@ export function playSwipeSound(direction: 'left' | 'right') {
   try {
     const ctx = getAudioCtx();
     if (!ctx) return;
+    const now = ctx.currentTime;
 
     const bufferSize = ctx.sampleRate * 0.12;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
