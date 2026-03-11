@@ -1118,3 +1118,23 @@ export const milestoneCard50En: EventCard = {
   ],
   leftMoney: 50, rightMoney: -10,
 };
+
+// Dark mode easter egg card
+export const darkModeCardEn: EventCard = {
+  id: 9999,
+  character: 'Shadow Advisor',
+  characterEmoji: '🌑',
+  category: 'Secret',
+  description: 'Sir, the dark side is active. Foreign powers have increased night operations. Would you like some midnight coffee?',
+  leftChoice: 'Black, no sugar!',
+  rightChoice: 'Turkish coffee, extra foam',
+  leftEffects: [
+    { power: 'halk', amount: 5 },
+    { power: 'ordu', amount: 5 },
+  ],
+  rightEffects: [
+    { power: 'tarikat', amount: 5 },
+    { power: 'mafya', amount: 5 },
+  ],
+  leftMoney: 0, rightMoney: 0,
+};
