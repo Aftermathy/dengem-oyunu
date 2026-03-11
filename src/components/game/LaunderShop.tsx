@@ -59,9 +59,9 @@ export function LaunderShop({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto px-4 mt-1">
-      <div className="text-[10px] text-muted-foreground text-center mb-1.5">
-        <EmojiImg emoji="💸" size={12} className="mr-0.5" /> {lang === 'tr' ? 'Aklanmış para' : 'Laundered funds'}: <span className="font-bold text-emerald-400">{totalLaundered}B</span>
+    <div className="w-full max-w-md mx-auto px-3 mt-1">
+      <div className="text-[11px] text-muted-foreground text-center mb-1">
+        <EmojiImg emoji="💸" size={13} className="mr-0.5" /> {lang === 'tr' ? 'Aklanmış para' : 'Laundered funds'}: <span className="font-bold text-emerald-400">{totalLaundered}B</span>
       </div>
 
       <div className="flex gap-2">
@@ -76,14 +76,14 @@ export function LaunderShop({
               : "bg-muted/40 cursor-not-allowed opacity-50"
           )}
         >
-          <div className="text-lg"><EmojiImg emoji="📢" size={20} /></div>
-          <div className="text-[10px] font-bold text-primary-foreground">
+          <div className="text-xl"><EmojiImg emoji="📢" size={24} /></div>
+          <div className="text-xs font-bold text-primary-foreground">
             {lang === 'tr' ? 'Propaganda' : 'Propaganda'}
           </div>
-          <div className="text-[8px] text-primary-foreground/70">
+          <div className="text-[10px] text-primary-foreground/70">
             {lang === 'tr' ? 'Halk +10 rep' : 'Public +10 rep'}
           </div>
-          <div className="text-[10px] font-bold text-primary-foreground mt-0.5">-{propagandaCost}B</div>
+          <div className="text-xs font-bold text-primary-foreground mt-0.5">-{propagandaCost}B</div>
         </button>
 
         {/* Gizli İttifak */}
@@ -97,14 +97,14 @@ export function LaunderShop({
               : "bg-muted/40 cursor-not-allowed opacity-50"
           )}
         >
-          <div className="text-lg"><EmojiImg emoji="🤝" size={20} /></div>
-          <div className="text-[10px] font-bold text-accent-foreground">
+          <div className="text-xl"><EmojiImg emoji="🤝" size={24} /></div>
+          <div className="text-xs font-bold text-accent-foreground">
             {lang === 'tr' ? 'İttifak' : 'Alliance'}
           </div>
-          <div className="text-[8px] text-accent-foreground/70">
+          <div className="text-[10px] text-accent-foreground/70">
             {lang === 'tr' ? '2 zümre +8 rep' : '2 factions +8 rep'}
           </div>
-          <div className="text-[10px] font-bold text-accent-foreground mt-0.5">-{allianceCost}B</div>
+          <div className="text-xs font-bold text-accent-foreground mt-0.5">-{allianceCost}B</div>
         </button>
       </div>
 
@@ -128,23 +128,23 @@ export function LaunderShop({
                   key={faction}
                   onClick={() => handleAlliancePick(faction)}
                   className={cn(
-                    "flex flex-col items-center gap-1 p-2 rounded-xl border transition-all cursor-pointer",
+                    "flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all cursor-pointer",
                     alliancePick.includes(faction)
                       ? "border-blue-500 bg-blue-500/20 ring-2 ring-blue-500"
                       : "border-border/50 bg-background hover:bg-primary/10 hover:border-primary"
                   )}
                 >
-                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-border/50">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-border/50">
                     <img src={FACTION_IMAGES[faction]} alt={t(`power.${faction}`)} className="w-full h-full object-cover" />
                   </div>
-                  <span className="text-[9px] font-bold text-foreground">{t(`power.${faction}`)}</span>
+                  <span className="text-[10px] font-bold text-foreground">{t(`power.${faction}`)}</span>
                 </button>
               ))}
             </div>
 
             <button
               onClick={() => { setShowAlliance(false); setAlliancePick([]); }}
-              className="mt-4 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
             >
               {lang === 'tr' ? 'Vazgeç' : 'Cancel'}
             </button>

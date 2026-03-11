@@ -494,3 +494,17 @@ All colors MUST be HSL.
 .animate-throne-wobble { animation: throne-wobble 0.5s ease-out; }
 .animate-throne-spin { animation: throne-spin 0.6s ease-in-out; }
 .animate-throne-bounce { animation: throne-bounce 0.5s ease-out; }
+
+/* Throne shatter & reassemble */
+@keyframes throne-shatter {
+  0% { transform: scale(1) rotate(0); opacity: 1; filter: blur(0); }
+  15% { transform: scale(1.15) rotate(3deg); opacity: 1; filter: blur(0); }
+  30% { transform: scale(0.3) rotate(-15deg); opacity: 0.2; filter: blur(4px); }
+  45% { transform: scale(0.1) rotate(30deg); opacity: 0; filter: blur(8px); }
+  55% { transform: scale(0.1) rotate(-20deg); opacity: 0; filter: blur(8px); }
+  70% { transform: scale(0.5) rotate(10deg); opacity: 0.5; filter: blur(3px); }
+  85% { transform: scale(1.1) rotate(-3deg); opacity: 0.9; filter: blur(1px); }
+  100% { transform: scale(1) rotate(0); opacity: 1; filter: blur(0); }
+}
+
+.animate-throne-shatter { animation: throne-shatter 1.2s ease-in-out; }

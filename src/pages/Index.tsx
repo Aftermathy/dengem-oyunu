@@ -66,19 +66,19 @@ const Index = () => {
             />
           </div>
 
-          <div className="flex flex-col items-center justify-center py-1 animate-fade-in" key={`turn-${turn}`}>
+          <div className="flex flex-col items-center justify-center py-0.5 animate-fade-in" key={`turn-${turn}`}>
             <div className="flex items-center">
-              <span className="text-lg font-black tracking-wider text-foreground" style={{ fontFamily: "'Georgia', serif" }}>
+              <span className="text-base font-black tracking-wider text-foreground" style={{ fontFamily: "'Georgia', serif" }}>
                 {2002 + Math.floor(turn / 4)}
               </span>
-              <span className="text-base font-bold text-primary ml-1.5 tracking-widest" style={{ fontFamily: "'Georgia', serif" }}>
+              <span className="text-sm font-bold text-primary ml-1.5 tracking-widest" style={{ fontFamily: "'Georgia', serif" }}>
                 Q{(turn % 4) + 1}
               </span>
-              <span className="text-xs text-muted-foreground/40 ml-1.5 font-mono">({turn})</span>
+              <span className="text-[10px] text-muted-foreground/40 ml-1.5 font-mono">({turn})</span>
             </div>
             {nextElectionInfo && (
               <span className="text-[10px] font-bold text-red-400 animate-pulse mt-0.5">
-                <EmojiImg emoji="🗳️" size={12} className="mr-0.5" /> {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
+                <EmojiImg emoji="🗳️" size={11} className="mr-0.5" /> {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
               </span>
             )}
           </div>
@@ -101,7 +101,7 @@ const Index = () => {
             allianceCost={getAllianceCost()}
           />
 
-          <div className="flex-1 flex items-center justify-center px-4 pb-1 min-h-0">
+          <div className="flex-1 flex items-center justify-center px-3 pb-1 min-h-0">
             <SwipeCard
               key={currentCard.id + '-' + turn}
               card={currentCard}

@@ -104,7 +104,6 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
   const changeKeyRef = useRef(0);
   const [changeKey, setChangeKey] = useState(0);
   
-  // Bribe feedback: shows text + cost overlay on the faction image
   const [bribeFeedback, setBribeFeedback] = useState<{ faction: PowerType; text: string; cost: number; gain: number } | null>(null);
 
   useEffect(() => {
@@ -162,14 +161,12 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
     const ratio = gain / 10;
     const cost = Math.max(1, Math.round(getBribeCost(p) * ratio));
 
-    // Get random bribe text
     const texts = bribeTextsAll[p];
     const text = texts[Math.floor(Math.random() * texts.length)][lang];
 
     playBribeSound();
     onBribe(p);
 
-    // Show feedback
     setBribeFeedback({ faction: p, text, cost, gain });
     setTimeout(() => setBribeFeedback(null), 1500);
   };
@@ -177,10 +174,10 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
   return (
     <div className="w-full max-w-md mx-auto">
       {/* Money display */}
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <span className="text-2xl">💰</span>
+      <div className="flex items-center justify-center gap-2 mb-1">
+        <span className="text-xl">💰</span>
         <span className={cn(
-          "text-xl font-black transition-colors duration-300",
+          "text-lg font-black transition-colors duration-300",
           projectedMoney != null
             ? (money + projectedMoney <= 0 ? 'text-red-500' : 'text-foreground')
             : 'text-foreground'
@@ -189,7 +186,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         </span>
         {projectedMoney != null && (
           <span className={cn(
-            "text-sm font-bold italic transition-opacity",
+            "text-xs font-bold italic transition-opacity",
             projectedMoney > 0 ? 'text-emerald-400' : 'text-red-400'
           )}>
             → {money + projectedMoney}B ({projectedMoney > 0 ? '+' : ''}{projectedMoney})
@@ -197,7 +194,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         )}
         {projectedMoney == null && lastMoneyChange !== null && lastMoneyChange !== undefined && (
           <span className={cn(
-            "text-sm font-bold animate-bounce",
+            "text-xs font-bold animate-bounce",
             lastMoneyChange > 0 ? 'text-emerald-500' : 'text-red-500'
           )}>
             {lastMoneyChange > 0 ? '+' : ''}{lastMoneyChange}B
@@ -205,7 +202,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         )}
       </div>
 
-      <div className="flex justify-between gap-1.5 sm:gap-3 px-2 sm:px-4 py-2">
+      <div className="flex justify-between gap-1 px-2 py-1">
         {powers.map((p) => {
           const val = power[p];
           const affected = isAffected(p);
@@ -213,12 +210,12 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
           const canDo = canBribe ? canBribe(p) : false;
 
           return (
-            <div key={p} className="flex flex-col items-center gap-1 flex-1 min-w-0 relative">
-              {/* Faction head - direct bribe on click */}
+            <div key={p} className="flex flex-col items-center gap-0.5 flex-1 min-w-0 relative">
+              {/* Faction head - BIGGER touch target */}
               <button
                 onClick={() => handleDirectBribe(p)}
                 className={cn(
-                  "w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
+                  "w-12 h-12 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
                   affected ? "scale-110 border-primary" : "border-border/50",
                   canDo ? "hover:scale-110 hover:border-primary cursor-pointer active:scale-95" : "opacity-60",
                 )}
@@ -247,9 +244,9 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 </div>
               )}
 
-              {/* Power bar */}
+              {/* Power bar - taller for iPhone */}
               <div
-                className="w-full h-16 sm:h-20 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
+                className="w-full h-20 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
                 onMouseEnter={() => setShowPercent(p)}
                 onMouseLeave={() => setShowPercent(null)}
                 onTouchStart={() => {
@@ -286,7 +283,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                     className="rep-change-indicator"
                   >
                     <span className={cn(
-                      "text-xs sm:text-sm font-light italic drop-shadow-md",
+                      "text-xs font-light italic drop-shadow-md",
                       repChanges[p]! > 0 ? 'text-emerald-300' : 'text-red-300'
                     )}>
                       {repChanges[p]! > 0 ? '+' : ''}{repChanges[p]}
@@ -295,11 +292,11 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 )}
               </div>
 
-              <span className="text-[9px] sm:text-xs font-medium text-muted-foreground truncate w-full text-center">
+              <span className="text-[10px] font-medium text-muted-foreground truncate w-full text-center">
                 {t(`power.${p}`)}
               </span>
               {val >= 100 && (
-                <span className="text-[8px] sm:text-[10px] font-bold text-cyan-400 animate-pulse">
+                <span className="text-[9px] font-bold text-cyan-400 animate-pulse">
                   +2B/{t('game.turn').toLowerCase()}
                 </span>
               )}
