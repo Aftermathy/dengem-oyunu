@@ -45,7 +45,7 @@ export function playSwipeSound(direction: 'left' | 'right') {
 }
 
 export function playGameOverSound() {
-  try {
+  hapticError();
     const ctx = getAudioCtx();
     const now = ctx.currentTime;
 
