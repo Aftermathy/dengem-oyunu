@@ -2,10 +2,18 @@ import { hapticWarStart, hapticDoubleSharp, hapticError, hapticLight, hapticMedi
 
 // Simple swoosh sound using Web Audio API — no files needed
 let audioCtx: AudioContext | null = null;
+let isMuted = localStorage.getItem('sound-muted') === 'true';
+
+// Listen for mute toggle events
+if (typeof window !== 'undefined') {
+  window.addEventListener('sound-mute-toggle', ((e: CustomEvent) => {
+    isMuted = e.detail;
+  }) as EventListener);
+}
 
 function getAudioCtx() {
+  if (isMuted) return null;
   if (!audioCtx) audioCtx = new AudioContext();
-  // Resume suspended context (iOS requirement)
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
@@ -16,6 +24,7 @@ export function playSwipeSound(direction: 'left' | 'right') {
   hapticLight();
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     const bufferSize = ctx.sampleRate * 0.12;
@@ -52,6 +61,7 @@ export function playGameOverSound() {
   hapticError();
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     const osc = ctx.createOscillator();
@@ -76,6 +86,7 @@ export function playBribeSound() {
   hapticMedium();
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     // Part 1: Coin clink (high pitch, metallic)
@@ -125,6 +136,7 @@ export function playBribeSound() {
 export function playClickSound() {
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     // Short percussive tick
@@ -158,6 +170,7 @@ export function playWarningSound() {
   hapticDoubleSharp();
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     // Two-tone urgent alarm
@@ -185,6 +198,7 @@ export function playWarStartSound() {
   hapticWarStart();
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     // Deep war drum hit 1

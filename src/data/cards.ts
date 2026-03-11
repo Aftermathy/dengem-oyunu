@@ -143,7 +143,7 @@ export const eventCards: EventCard[] = [
   {
     id: 8,
     character: "Kripto Danışmanı",
-    characterEmoji: "₿",
+    characterEmoji: "🪙",
     category: "Ekonomi",
     description: "Başkanım, kripto borsası batıyor. Yatırımcılar kapıda.",
     leftChoice: "Borsayı kapat, soruşturma aç",

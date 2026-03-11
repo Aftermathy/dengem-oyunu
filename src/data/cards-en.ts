@@ -58,7 +58,7 @@ export const eventCardsEn: EventCard[] = [
     leftMoney: 12, rightMoney: -18,
   },
   {
-    id: 8, character: 'Crypto Advisor', characterEmoji: '₿', category: 'Economy',
+    id: 8, character: 'Crypto Advisor', characterEmoji: '🪙', category: 'Economy',
     description: 'Boss, the crypto exchange is collapsing. Investors are at the door.',
     leftChoice: 'Shut it down, investigate', rightChoice: 'Ignore it',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -10 }, { power: 'mafya', amount: -5 }],

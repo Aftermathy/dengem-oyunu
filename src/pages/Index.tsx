@@ -8,6 +8,7 @@ import { LaunderShop } from '@/components/game/LaunderShop';
 import { GameOverScreen } from '@/components/game/GameOverScreen';
 import { StartScreen } from '@/components/game/StartScreen';
 import { BribeTutorial } from '@/components/game/BribeTutorial';
+import { SettingsMenu } from '@/components/game/SettingsMenu';
 import { SplashScreen } from '@/components/game/SplashScreen';
 import { PowerEffect } from '@/types/game';
 import { ElectionScreen } from '@/components/game/ElectionScreen';
@@ -51,7 +52,10 @@ const Index = () => {
 
       {phase === 'playing' && currentCard && (
         <>
-          <div className="pt-1 pb-0 shrink-0">
+          <div className="pt-1 pb-0 shrink-0 relative">
+            <div className="absolute right-2 top-1 z-40">
+              <SettingsMenu onMainMenu={goToMenu} />
+            </div>
             <PowerBars
               power={power}
               activeEffects={activeEffects}
