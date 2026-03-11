@@ -93,7 +93,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
     <div
       ref={cardRef}
       className={cn(
-        "relative w-full max-w-md cursor-grab select-none touch-none",
+        "relative w-full max-w-md h-full cursor-grab select-none touch-none",
         isDragging && "cursor-grabbing"
       )}
       style={{
@@ -138,10 +138,10 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
   const rightMoney = card.rightMoney || 0;
 
   return (
-    <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden">
+    <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden h-full flex flex-col">
       {/* Character header */}
-      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-4 text-center">
-        <div className="mb-2"><EmojiImg emoji={card.characterEmoji} size={56} /></div>
+      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-3 text-center">
+        <div className="mb-1"><EmojiImg emoji={card.characterEmoji} size={48} /></div>
         <h3 className="font-bold text-foreground text-base">{card.character}</h3>
         <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
           {card.category}
@@ -149,7 +149,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
       </div>
 
       {/* Description */}
-      <div className="px-4 py-3">
+      <div className="px-4 py-2 flex-1 flex items-center">
         <p className="text-base text-foreground leading-relaxed italic">
           "{card.description}"
         </p>

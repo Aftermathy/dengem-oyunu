@@ -59,31 +59,29 @@ export function LaunderShop({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto px-3 mt-1">
-      <div className="text-[11px] text-muted-foreground text-center mb-1">
-        <EmojiImg emoji="💸" size={13} className="mr-0.5" /> {lang === 'tr' ? 'Aklanmış para' : 'Laundered funds'}: <span className="font-bold text-emerald-400">{totalLaundered}B</span>
-      </div>
-
+    <div className="w-full max-w-md mx-auto px-3 py-1.5">
       <div className="flex gap-2">
         {/* Propaganda */}
         <button
           onClick={onPropaganda}
           disabled={!canPropaganda}
           className={cn(
-            "flex-1 rounded-xl py-3 text-center transition-all",
+            "flex-1 flex items-center gap-2 rounded-xl px-3 py-2 transition-all",
             canPropaganda
               ? "bg-primary/80 hover:bg-primary cursor-pointer"
-              : "bg-muted/40 cursor-not-allowed opacity-50"
+              : "bg-foreground/20 cursor-not-allowed opacity-60"
           )}
         >
-          <div className="text-xl"><EmojiImg emoji="📢" size={24} /></div>
-          <div className="text-xs font-bold text-primary-foreground">
-            {lang === 'tr' ? 'Propaganda' : 'Propaganda'}
+          <EmojiImg emoji="📢" size={20} />
+          <div className="text-left">
+            <span className={cn("text-xs font-bold", canPropaganda ? "text-primary-foreground" : "text-foreground")}>
+              {lang === 'tr' ? 'Propaganda' : 'Propaganda'}
+            </span>
+            <span className={cn("text-[10px] ml-1", canPropaganda ? "text-primary-foreground/70" : "text-foreground/50")}>
+              {lang === 'tr' ? 'Halk +10' : 'Public +10'}
+            </span>
           </div>
-          <div className="text-[10px] text-primary-foreground/70">
-            {lang === 'tr' ? 'Halk +10 rep' : 'Public +10 rep'}
-          </div>
-          <div className="text-xs font-bold text-primary-foreground mt-0.5">-{propagandaCost}B</div>
+          <span className={cn("text-[10px] font-bold ml-auto", canPropaganda ? "text-primary-foreground" : "text-foreground/50")}>-{propagandaCost}B</span>
         </button>
 
         {/* Gizli İttifak */}
@@ -91,20 +89,22 @@ export function LaunderShop({
           onClick={() => setShowAlliance(true)}
           disabled={!canAlliance}
           className={cn(
-            "flex-1 rounded-xl py-3 text-center transition-all",
+            "flex-1 flex items-center gap-2 rounded-xl px-3 py-2 transition-all",
             canAlliance
               ? "bg-accent/80 hover:bg-accent cursor-pointer"
-              : "bg-muted/40 cursor-not-allowed opacity-50"
+              : "bg-foreground/20 cursor-not-allowed opacity-60"
           )}
         >
-          <div className="text-xl"><EmojiImg emoji="🤝" size={24} /></div>
-          <div className="text-xs font-bold text-accent-foreground">
-            {lang === 'tr' ? 'İttifak' : 'Alliance'}
+          <EmojiImg emoji="🤝" size={20} />
+          <div className="text-left">
+            <span className={cn("text-xs font-bold", canAlliance ? "text-accent-foreground" : "text-foreground")}>
+              {lang === 'tr' ? 'İttifak' : 'Alliance'}
+            </span>
+            <span className={cn("text-[10px] ml-1", canAlliance ? "text-accent-foreground/70" : "text-foreground/50")}>
+              {lang === 'tr' ? '2 zümre +8' : '2 factions +8'}
+            </span>
           </div>
-          <div className="text-[10px] text-accent-foreground/70">
-            {lang === 'tr' ? '2 zümre +8 rep' : '2 factions +8 rep'}
-          </div>
-          <div className="text-xs font-bold text-accent-foreground mt-0.5">-{allianceCost}B</div>
+          <span className={cn("text-[10px] font-bold ml-auto", canAlliance ? "text-accent-foreground" : "text-foreground/50")}>-{allianceCost}B</span>
         </button>
       </div>
 
