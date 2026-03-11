@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import splashBg from '@/assets/splash-bg.jpg';
+import { EmojiImg } from '@/components/EmojiImg';
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -81,7 +82,7 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           Bu oyundaki tüm olaylar, karakterler ve kurumlar tamamen hayal ürünüdür.
           Gerçek kişi ve olaylarla herhangi bir benzerlik...{' '}
           <span style={{ color: 'hsl(35, 40%, 60%)' }}>
-            şaşırtıcı derecede tesadüftür. 😏
+            şaşırtıcı derecede tesadüftür. <EmojiImg emoji="😏" size={14} />
           </span>
         </p>
       </div>

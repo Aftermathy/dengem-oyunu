@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { EventCard, PowerEffect } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { EmojiImg } from '@/components/EmojiImg';
 import { playSwipeSound } from '@/hooks/useSound';
 
 interface SwipeCardProps {
@@ -140,7 +141,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden">
       {/* Character header */}
       <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-5 sm:p-7 text-center">
-        <div className="text-6xl sm:text-7xl mb-3">{card.characterEmoji}</div>
+        <div className="mb-3"><EmojiImg emoji={card.characterEmoji} size={72} /></div>
         <h3 className="font-bold text-foreground text-base sm:text-lg">{card.character}</h3>
         <span className="text-xs sm:text-sm bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
           {card.category}
@@ -163,7 +164,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
           ← {card.leftChoice}
           {leftMoney !== 0 && (
             <div className={cn("text-xs font-bold mt-0.5", leftMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
-              {leftMoney > 0 ? '+' : ''}{leftMoney}B 💰
+              {leftMoney > 0 ? '+' : ''}{leftMoney}B <EmojiImg emoji="💰" size={12} />
             </div>
           )}
         </div>
@@ -174,7 +175,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
           {card.rightChoice} →
           {rightMoney !== 0 && (
             <div className={cn("text-xs font-bold mt-0.5", rightMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
-              {rightMoney > 0 ? '+' : ''}{rightMoney}B 💰
+              {rightMoney > 0 ? '+' : ''}{rightMoney}B <EmojiImg emoji="💰" size={12} />
             </div>
           )}
         </div>

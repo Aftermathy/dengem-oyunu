@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
+import { EmojiImg } from '@/components/EmojiImg';
 
 import defeatHalk from '@/assets/defeat-halk.jpg';
 import defeatYatirimcilar from '@/assets/defeat-yatirimcilar.jpg';
@@ -46,7 +47,7 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
       )}
 
       <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto">
-        <div className="text-6xl">{emoji}</div>
+        <div className="text-6xl"><EmojiImg emoji={emoji} size={64} /></div>
         <h2 className="text-3xl sm:text-4xl font-black text-red-400 drop-shadow-lg">{title}</h2>
         <p className="text-sm text-white/80 leading-relaxed drop-shadow-md">{description}</p>
 
@@ -61,7 +62,7 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
           </div>
           <div className="text-center">
             <div className="text-3xl font-black text-white">{money}B</div>
-            <div className="text-xs text-white/60">💰</div>
+            <div className="text-xs text-white/60"><EmojiImg emoji="💰" size={14} /></div>
           </div>
         </div>
 

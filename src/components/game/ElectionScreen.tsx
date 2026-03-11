@@ -4,6 +4,7 @@ import { Language } from '@/contexts/LanguageContext';
 import defeatElectionImg from '@/assets/defeat-election.jpg';
 import victoryBalconyImg from '@/assets/victory-balcony.jpg';
 import { playClickSound } from '@/hooks/useSound';
+import { EmojiImg } from '@/components/EmojiImg';
 
 interface ElectionScreenProps {
   config: ElectionConfig;
@@ -211,23 +212,23 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const labels = useMemo(() => lang === 'en' ? {
     opposition: 'Opposition', you: 'You', pickMove: 'Pick your move:',
     oppMoving: 'Opposition is making a move...', budget: 'Budget', laundered: 'Laundered',
-    specialPowers: '🔮 Special Powers (Laundered)', round: 'Round',
+    specialPowers: 'Special Powers (Laundered)', round: 'Round',
     electionWon: 'ELECTION WON!', electionLost: 'ELECTION LOST!',
     continue: '4 More Years!', skip: 'Skip (+1%)', vote: 'vote',
-    reroll: '🎲 Reroll', rerollCost: `${REROLL_COST}B`,
+    reroll: 'Reroll', rerollCost: `${REROLL_COST}B`,
     balconyTitle: 'CONGRATULATIONS!',
     balconySubtitle: 'The people have chosen you... again!',
-    balconyContinue: '4 More Years! 🎉',
+    balconyContinue: '4 More Years!',
   } : {
     opposition: 'Muhalefet', you: 'Sen', pickMove: 'Hamle seç:',
     oppMoving: 'Muhalefet hamle yapıyor...', budget: 'Bütçe', laundered: 'Aklanmış',
-    specialPowers: '🔮 Özel Güçler (Aklanmış Para)', round: 'Tur',
+    specialPowers: 'Özel Güçler (Aklanmış Para)', round: 'Tur',
     electionWon: 'SEÇİM KAZANILDI!', electionLost: 'SEÇİM KAYBEDİLDİ!',
     continue: '4 Sene Daha!', skip: 'Pas (+1%)', vote: 'oy',
-    reroll: '🎲 Yenile', rerollCost: `${REROLL_COST}B`,
+    reroll: 'Yenile', rerollCost: `${REROLL_COST}B`,
     balconyTitle: 'TEBRİKLER!',
     balconySubtitle: 'Millet yine seni seçti... yine de!',
-    balconyContinue: '4 Sene Daha Devam! 🎉',
+    balconyContinue: '4 Sene Daha Devam!',
   }, [lang]);
 
   // Intro timer
@@ -366,14 +367,14 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
         <div className="flex-1 flex flex-col items-center justify-center animate-scale-in relative z-10">
           <EmberParticles count={15} />
           <div className="flame-ring inline-flex items-center justify-center w-20 h-20 mb-4">
-            <span className="text-7xl">🔥</span>
+            <span><EmojiImg emoji="🔥" size={56} /></span>
           </div>
           <h1 className="text-4xl font-black text-orange-400 text-center px-4"
             style={{ textShadow: '0 0 30px rgba(255,100,0,0.6)' }}>
             <StaggeredTitle text={config.title} />
           </h1>
           <p className="text-orange-200/80 text-lg mt-3 text-center px-6">{config.subtitle}</p>
-          <span className="text-6xl mt-6 animate-pulse">🗳️</span>
+          <span className="mt-6 animate-pulse"><EmojiImg emoji="🗳️" size={56} /></span>
           <p className="text-orange-300/60 text-sm mt-4 animate-pulse">
             {lang === 'en' ? 'Preparing ballot boxes...' : 'Sandıklar hazırlanıyor...'}
           </p>
@@ -387,7 +388,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           <div className="text-center pt-4 pb-1">
             <h1 className="text-xl font-black text-orange-400"
               style={{ textShadow: '0 0 15px rgba(255,100,0,0.4)' }}>
-              🔥 {config.title} 🔥
+              <EmojiImg emoji="🔥" size={20} className="mr-1" /> {config.title} <EmojiImg emoji="🔥" size={20} className="ml-1" />
             </h1>
             <p className="text-orange-300/80 text-xs mt-0.5 font-bold">
               {labels.round} {round}/4
@@ -434,10 +435,10 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           {/* Budget row */}
           <div className="flex justify-center gap-3 text-xs px-4 py-1">
             <span className="bg-yellow-900/60 px-2.5 py-1 rounded-full text-yellow-300 font-bold border border-yellow-700/30">
-              💰 {labels.budget}: {budget}B
+              <EmojiImg emoji="💰" size={14} className="mr-1" /> {labels.budget}: {budget}B
             </span>
             <span className="bg-purple-900/60 px-2.5 py-1 rounded-full text-purple-300 font-bold border border-purple-700/30">
-              🧹 {labels.laundered}: {laundered}B
+              <EmojiImg emoji="🧹" size={14} className="mr-1" /> {labels.laundered}: {laundered}B
             </span>
           </div>
 
@@ -454,7 +455,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-black transition-all active:scale-95 disabled:opacity-30 border-2 border-yellow-500/60 bg-yellow-900/70 text-yellow-200 hover:bg-yellow-800/80 hover:border-yellow-400/80"
                     style={{ boxShadow: '0 0 12px rgba(234,179,8,0.2)' }}
                   >
-                    {labels.reroll} ({rerollsLeft}) <span className="text-yellow-400 font-black">-{labels.rerollCost}</span>
+                    <EmojiImg emoji="🎲" size={16} /> {labels.reroll} ({rerollsLeft}) <span className="text-yellow-400 font-black">-{labels.rerollCost}</span>
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -478,7 +479,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                           <span className="text-yellow-400 text-base font-black">{card.cost}B</span>
                         </div>
                         <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-3xl">{card.emoji}</span>
+                          <EmojiImg emoji={card.emoji} size={28} />
                           <p className="text-white text-sm font-bold leading-tight flex-1">{card.text}</p>
                         </div>
                         <p className="text-green-400 text-base font-black">+{card.voterEffect}%</p>
@@ -493,11 +494,11 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                     style={{ animationDelay: '0.3s' }}
                   >
                     <div className="flex justify-between items-center mb-1.5">
-                      <span className="text-xs font-black text-gray-500">⏭️</span>
+                      <span className="text-xs font-black text-gray-500"><EmojiImg emoji="⏭️" size={14} /></span>
                       <span className="text-gray-400 text-base font-black">{lang === 'en' ? 'FREE' : 'ÜCRETSİZ'}</span>
                     </div>
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-3xl">⏭️</span>
+                      <EmojiImg emoji="⏭️" size={28} />
                       <p className="text-gray-300 text-sm font-bold leading-tight flex-1">{labels.skip}</p>
                     </div>
                     <p className="text-green-400/70 text-base font-black">+1%</p>
@@ -518,7 +519,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                         <span className="text-red-300 text-xs font-bold uppercase tracking-wider">{labels.opposition}</span>
                       </div>
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-4xl">{aiCardPlayed.emoji}</span>
+                        <EmojiImg emoji={aiCardPlayed.emoji} size={36} />
                         <p className="text-white text-sm font-bold leading-tight flex-1">{aiCardPlayed.text}</p>
                       </div>
                       <p className="text-red-400 text-base font-black">-{aiCardPlayed.voterEffect}%</p>
@@ -526,7 +527,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                   );
                 })() : (
                   <div className="animate-pulse">
-                    <span className="text-5xl">🎭</span>
+                    <EmojiImg emoji="🎭" size={48} />
                     <p className="text-red-300 text-lg font-bold mt-3">{labels.oppMoving}</p>
                   </div>
                 )}
@@ -537,8 +538,8 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           {/* Special powers */}
           {phase === 'player' && config.specialPowers.length > 0 && (
             <div className="px-3 pb-4">
-              <p className="text-purple-300/80 text-[10px] mb-1.5 text-center font-bold uppercase tracking-widest">
-                {labels.specialPowers}
+              <p className="text-purple-300/80 text-[10px] mb-1.5 text-center font-bold uppercase tracking-widest flex items-center justify-center gap-1">
+                <EmojiImg emoji="🔮" size={12} /> {labels.specialPowers}
               </p>
               <div className="grid grid-cols-2 gap-1.5 w-full">
                 {config.specialPowers.map(power => {
@@ -555,7 +556,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                           : 'bg-purple-900 hover:bg-purple-800 disabled:opacity-30'
                       }`}
                     >
-                      <span className="text-sm shrink-0">{power.emoji}</span>
+                      <EmojiImg emoji={power.emoji} size={16} className="shrink-0" />
                       <span className="text-purple-100 text-[10px] font-bold leading-tight flex-1 text-left whitespace-nowrap overflow-hidden text-ellipsis">{power.name}</span>
                       <span className="text-green-400 text-[10px] font-black shrink-0">+{power.voterEffect}%</span>
                       <span className="text-purple-400 text-[9px] font-bold shrink-0">{power.launderedCost}B</span>
@@ -575,7 +576,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
           {won ? (
             <>
-              <span className="text-8xl mb-6">🎉</span>
+              <EmojiImg emoji="🎉" size={72} className="mb-6" />
               <h2 className="text-3xl font-black mb-3 text-center title-glow-pulse" style={{ color: '#4ade80' }}>
                 {labels.electionWon}
               </h2>
@@ -615,14 +616,14 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                   className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white cursor-pointer"
                   style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}
                 >
-                  {lang === 'en' ? '🔄 Play Again' : '🔄 Yeniden Oyna'}
+                  {lang === 'en' ? '' : ''}<EmojiImg emoji="🔄" size={16} className="mr-1" />{lang === 'en' ? ' Play Again' : ' Yeniden Oyna'}
                 </button>
                 <button
                   onClick={() => { playClickSound(); onMainMenu(); }}
                   className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white/80 cursor-pointer"
                   style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)' }}
                 >
-                  {lang === 'en' ? '🏠 Main Menu' : '🏠 Ana Menü'}
+                  <EmojiImg emoji="🏠" size={16} className="mr-1" />{lang === 'en' ? ' Main Menu' : ' Ana Menü'}
                 </button>
               </div>
             </>
@@ -642,7 +643,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           </div>
 
           <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto">
-            <span className="text-7xl animate-bounce">🏆</span>
+            <EmojiImg emoji="🏆" size={64} className="animate-bounce" />
             
             <h2 className="text-4xl font-black text-yellow-400 drop-shadow-lg"
               style={{ textShadow: '0 0 30px rgba(234,179,8,0.5)' }}>

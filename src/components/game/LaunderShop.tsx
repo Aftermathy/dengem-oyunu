@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { EmojiImg } from '@/components/EmojiImg';
 import { PowerType } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -60,7 +61,7 @@ export function LaunderShop({
   return (
     <div className="w-full max-w-md mx-auto px-4 mt-1">
       <div className="text-[10px] text-muted-foreground text-center mb-1.5">
-        💸 {lang === 'tr' ? 'Aklanmış para' : 'Laundered funds'}: <span className="font-bold text-emerald-400">{totalLaundered}B</span>
+        <EmojiImg emoji="💸" size={12} className="mr-0.5" /> {lang === 'tr' ? 'Aklanmış para' : 'Laundered funds'}: <span className="font-bold text-emerald-400">{totalLaundered}B</span>
       </div>
 
       <div className="flex gap-2">
@@ -75,7 +76,7 @@ export function LaunderShop({
               : "bg-muted/40 cursor-not-allowed opacity-50"
           )}
         >
-          <div className="text-lg">📢</div>
+          <div className="text-lg"><EmojiImg emoji="📢" size={20} /></div>
           <div className="text-[10px] font-bold text-primary-foreground">
             {lang === 'tr' ? 'Propaganda' : 'Propaganda'}
           </div>
@@ -96,7 +97,7 @@ export function LaunderShop({
               : "bg-muted/40 cursor-not-allowed opacity-50"
           )}
         >
-          <div className="text-lg">🤝</div>
+          <div className="text-lg"><EmojiImg emoji="🤝" size={20} /></div>
           <div className="text-[10px] font-bold text-accent-foreground">
             {lang === 'tr' ? 'İttifak' : 'Alliance'}
           </div>
@@ -111,7 +112,7 @@ export function LaunderShop({
       {showAlliance && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-in fade-in duration-200">
           <div className="bg-card border border-border rounded-2xl p-5 mx-4 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200 text-center">
-            <div className="text-2xl mb-2">🤝</div>
+            <div className="mb-2"><EmojiImg emoji="🤝" size={28} /></div>
             <h3 className="text-lg font-bold text-foreground mb-1">
               {lang === 'tr' ? '2 zümre seç' : 'Pick 2 factions'}
             </h3>

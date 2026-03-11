@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { EmojiImg } from '@/components/EmojiImg';
 import { PowerType } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -52,7 +53,7 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
               : "bg-muted text-muted-foreground cursor-not-allowed"
           )}
         >
-          🧼 {lang === 'tr' ? 'Akla' : 'Launder'} (-50B)
+          <EmojiImg emoji="🧼" size={14} /> {lang === 'tr' ? 'Akla' : 'Launder'} (-50B)
         </button>
 
         <div className="flex-1 h-4 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
@@ -61,7 +62,7 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
             style={{ width: `${Math.min(totalLaundered, 100)}%` }}
           />
           <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-foreground">
-            💸 {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
+            <EmojiImg emoji="💸" size={10} /> {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
           </span>
         </div>
       </div>
@@ -70,7 +71,7 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
       {showPicker && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-in fade-in duration-200">
           <div className="bg-card border border-border rounded-2xl p-5 mx-4 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200 text-center">
-            <div className="text-2xl mb-2">🧼</div>
+            <div className="mb-2"><EmojiImg emoji="🧼" size={28} /></div>
             <h3 className="text-lg font-bold text-foreground mb-1">
               {lang === 'tr' ? 'Kimin üzerinden aklayalım?' : 'Launder through whom?'}
             </h3>

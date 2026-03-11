@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { EmojiImg } from '@/components/EmojiImg';
 import { useGame } from '@/hooks/useGame';
 import { PowerBars } from '@/components/game/PowerBars';
 import { SwipeCard } from '@/components/game/SwipeCard';
@@ -77,7 +78,7 @@ const Index = () => {
             </div>
             {nextElectionInfo && (
               <span className="text-[10px] font-bold text-red-400 animate-pulse mt-0.5">
-                🗳️ {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
+                <EmojiImg emoji="🗳️" size={12} className="mr-0.5" /> {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
               </span>
             )}
           </div>

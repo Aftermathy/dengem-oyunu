@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
+import { EmojiImg } from '@/components/EmojiImg';
 
 interface StartScreenProps {
   highScore: number;
@@ -37,8 +38,8 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
 
       {/* Crown + Title */}
       <div className="relative">
-        <div className="text-8xl sm:text-9xl">🪑</div>
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-4xl sm:text-5xl">👑</div>
+        <div><EmojiImg emoji="🪑" size={96} /></div>
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2"><EmojiImg emoji="👑" size={48} /></div>
       </div>
 
       <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-foreground">
@@ -70,7 +71,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         className="mt-2 rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-[11px] px-[22px] border-2"
         style={{ textShadow: '0 0 8px hsl(15 80% 50% / 0.3)' }}>
 
-        ✨ {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} ✨
+        <EmojiImg emoji="✨" size={14} /> {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} <EmojiImg emoji="✨" size={14} />
       </a>
 
       {/* Spacer */}
