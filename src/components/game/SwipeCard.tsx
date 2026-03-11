@@ -138,7 +138,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
   const rightMoney = card.rightMoney || 0;
 
   return (
-    <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden">
+    <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden h-full flex flex-col">
       {/* Character header */}
       <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-4 text-center">
         <div className="mb-2"><EmojiImg emoji={card.characterEmoji} size={56} /></div>
