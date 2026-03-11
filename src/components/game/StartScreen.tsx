@@ -71,7 +71,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         className="mt-2 rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-[11px] px-[22px] border-2"
         style={{ textShadow: '0 0 8px hsl(15 80% 50% / 0.3)' }}>
 
-        ✨ {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} ✨
+        <EmojiImg emoji="✨" size={14} /> {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} <EmojiImg emoji="✨" size={14} />
       </a>
 
       {/* Spacer */}
