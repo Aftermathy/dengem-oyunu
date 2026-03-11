@@ -139,42 +139,42 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
 
   return (
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden h-full flex flex-col">
-      {/* Character header */}
-      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-3 text-center">
-        <div className="mb-1"><EmojiImg emoji={card.characterEmoji} size={48} /></div>
-        <h3 className="font-bold text-foreground text-base">{card.character}</h3>
-        <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+      {/* Character header - compact */}
+      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-2 text-center shrink-0">
+        <div className="mb-0.5"><EmojiImg emoji={card.characterEmoji} size={36} /></div>
+        <h3 className="font-bold text-foreground text-sm">{card.character}</h3>
+        <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
           {card.category}
         </span>
       </div>
 
       {/* Description - compact */}
-      <div className="px-3 py-1.5 flex items-center">
-        <p className="text-sm text-foreground leading-snug italic">
+      <div className="px-4 py-2 flex-1 flex items-center">
+        <p className="text-sm text-foreground leading-snug italic w-full">
           "{card.description}"
         </p>
       </div>
 
-      {/* Choices - larger */}
-      <div className="grid grid-cols-2 border-t border-border flex-1">
+      {/* Choices */}
+      <div className="grid grid-cols-2 border-t border-border shrink-0">
         <div className={cn(
-          "p-4 flex flex-col items-center justify-center text-sm transition-colors border-r border-border",
+          "p-3 flex flex-col items-center justify-center text-sm transition-colors border-r border-border",
           direction === 'left' ? 'bg-red-500/20 text-red-700 font-bold' : 'text-muted-foreground'
         )}>
           ← {card.leftChoice}
           {leftMoney !== 0 && (
-            <div className={cn("text-xs font-bold mt-1", leftMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
+            <div className={cn("text-xs font-bold mt-0.5", leftMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
               {leftMoney > 0 ? '+' : ''}{leftMoney}B <EmojiImg emoji="💰" size={12} />
             </div>
           )}
         </div>
         <div className={cn(
-          "p-4 flex flex-col items-center justify-center text-sm transition-colors",
+          "p-3 flex flex-col items-center justify-center text-sm transition-colors",
           direction === 'right' ? 'bg-emerald-500/20 text-emerald-700 font-bold' : 'text-muted-foreground'
         )}>
           {card.rightChoice} →
           {rightMoney !== 0 && (
-            <div className={cn("text-xs font-bold mt-1", rightMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
+            <div className={cn("text-xs font-bold mt-0.5", rightMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
               {rightMoney > 0 ? '+' : ''}{rightMoney}B <EmojiImg emoji="💰" size={12} />
             </div>
           )}

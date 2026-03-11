@@ -89,7 +89,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 p-6 text-center animate-fade-in min-h-[100dvh]">
+    <div className="flex flex-col items-center justify-center gap-4 p-6 text-center animate-fade-in min-h-[100dvh]" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 16px)' }}>
       {/* Language toggle — top */}
       <div className="flex gap-1 bg-muted rounded-full p-1">
         <button

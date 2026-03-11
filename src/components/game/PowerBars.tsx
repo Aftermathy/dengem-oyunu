@@ -202,7 +202,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         )}
       </div>
 
-      <div className="flex justify-between gap-1 px-2 py-1">
+      <div className="flex justify-between gap-0.5 px-1 py-1">
         {powers.map((p) => {
           const val = power[p];
           const affected = isAffected(p);
@@ -215,7 +215,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               <button
                 onClick={() => handleDirectBribe(p)}
                 className={cn(
-                  "w-14 h-14 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
+                  "w-10 h-10 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
                   affected ? "scale-110 border-primary" : "border-border/50",
                   canDo ? "hover:scale-110 hover:border-primary cursor-pointer active:scale-95" : "opacity-60",
                 )}
@@ -246,7 +246,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
 
               {/* Power bar - taller for iPhone */}
               <div
-                className="w-full h-40 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
+                className="w-full h-24 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
                 onMouseEnter={() => setShowPercent(p)}
                 onMouseLeave={() => setShowPercent(null)}
                 onTouchStart={() => {

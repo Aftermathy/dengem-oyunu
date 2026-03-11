@@ -42,7 +42,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none" style={{ overscrollBehavior: 'none' }}>
+    <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none" style={{ overscrollBehavior: 'none', paddingTop: 'env(safe-area-inset-top)' }}>
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
@@ -105,7 +105,7 @@ const Index = () => {
             />
           </div>
 
-          <div className="flex-1 flex items-center justify-center px-4 min-h-0">
+          <div className="flex-1 flex items-center justify-center px-4 min-h-0 pb-[env(safe-area-inset-bottom)]">
             <SwipeCard
               key={currentCard.id + '-' + turn}
               card={currentCard}
