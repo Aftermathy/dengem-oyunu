@@ -164,7 +164,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
           ← {card.leftChoice}
           {leftMoney !== 0 && (
             <div className={cn("text-xs font-bold mt-0.5", leftMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
-              {leftMoney > 0 ? '+' : ''}{leftMoney}B 💰
+              {leftMoney > 0 ? '+' : ''}{leftMoney}B <EmojiImg emoji="💰" size={12} />
             </div>
           )}
         </div>
