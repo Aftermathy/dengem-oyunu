@@ -26,7 +26,7 @@ function emojiToCodepoint(emoji: string): string {
 
 export function EmojiImg({ emoji, size = 24, className = '', alt }: EmojiImgProps) {
   const codepoint = emojiToCodepoint(emoji);
-  const src = `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/${codepoint}.png`;
+  const src = `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${codepoint}.svg`;
 
   return (
     <img

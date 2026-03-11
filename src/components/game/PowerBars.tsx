@@ -215,7 +215,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               <button
                 onClick={() => handleDirectBribe(p)}
                 className={cn(
-                  "w-9 h-9 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
+                  "w-14 h-14 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
                   affected ? "scale-110 border-primary" : "border-border/50",
                   canDo ? "hover:scale-110 hover:border-primary cursor-pointer active:scale-95" : "opacity-60",
                 )}
