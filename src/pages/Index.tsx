@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { EmojiImg } from '@/components/EmojiImg';
 import { useGame } from '@/hooks/useGame';
 import { PowerBars } from '@/components/game/PowerBars';
 import { SwipeCard } from '@/components/game/SwipeCard';
