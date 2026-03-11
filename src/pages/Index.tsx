@@ -42,7 +42,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-background overflow-hidden">
+    <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none" style={{ overscrollBehavior: 'none' }}>
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
@@ -53,7 +53,7 @@ const Index = () => {
 
       {phase === 'playing' && currentCard && (
         <>
-          <div className="pt-1 pb-0">
+          <div className="pt-1 pb-0 shrink-0">
             <PowerBars
               power={power}
               activeEffects={activeEffects}
@@ -66,7 +66,7 @@ const Index = () => {
             />
           </div>
 
-          <div className="flex flex-col items-center justify-center py-0.5 animate-fade-in" key={`turn-${turn}`}>
+          <div className="flex flex-col items-center justify-center py-0.5 animate-fade-in shrink-0" key={`turn-${turn}`}>
             <div className="flex items-center">
               <span className="text-base font-black tracking-wider text-foreground" style={{ fontFamily: "'Georgia', serif" }}>
                 {2002 + Math.floor(turn / 4)}
@@ -83,6 +83,28 @@ const Index = () => {
             )}
           </div>
 
+          <div className="shrink-0">
+            <LaunderBar
+              totalLaundered={totalLaundered}
+              money={money}
+              onLaunder={launder}
+              canLaunder={canLaunder}
+            />
+          </div>
+
+          <div className="shrink-0">
+            <LaunderShop
+              totalLaundered={totalLaundered}
+              lastShopResult={lastShopResult}
+              onPropaganda={propaganda}
+              canPropaganda={canPropaganda}
+              propagandaCost={getPropagandaCost()}
+              onAlliance={alliance}
+              canAlliance={canAlliance}
+              allianceCost={getAllianceCost()}
+            />
+          </div>
+
           <div className="flex-1 flex items-center justify-center px-4 min-h-0">
             <SwipeCard
               key={currentCard.id + '-' + turn}
@@ -92,24 +114,6 @@ const Index = () => {
               onHoverMoney={handleHoverMoney}
             />
           </div>
-
-          <LaunderBar
-            totalLaundered={totalLaundered}
-            money={money}
-            onLaunder={launder}
-            canLaunder={canLaunder}
-          />
-
-          <LaunderShop
-            totalLaundered={totalLaundered}
-            lastShopResult={lastShopResult}
-            onPropaganda={propaganda}
-            canPropaganda={canPropaganda}
-            propagandaCost={getPropagandaCost()}
-            onAlliance={alliance}
-            canAlliance={canAlliance}
-            allianceCost={getAllianceCost()}
-          />
         </>
       )}
 
