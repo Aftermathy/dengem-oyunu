@@ -623,7 +623,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                   className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white/80 cursor-pointer"
                   style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)' }}
                 >
-                  {lang === 'en' ? '🏠 Main Menu' : '🏠 Ana Menü'}
+                  <EmojiImg emoji="🏠" size={16} className="mr-1" />{lang === 'en' ? ' Main Menu' : ' Ana Menü'}
                 </button>
               </div>
             </>
