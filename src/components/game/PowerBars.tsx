@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useEffect, useRef } from 'react';
 import { playBribeSound } from '@/hooks/useSound';
-import { EmojiText } from '@/components/EmojiImg';
+import { EmojiImg, EmojiText } from '@/components/EmojiImg';
 
 import factionHalk from '@/assets/faction-halk.jpg';
 import factionYatirimcilar from '@/assets/faction-yatirimcilar.jpg';
