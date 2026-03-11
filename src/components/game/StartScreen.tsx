@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
+import { EmojiImg } from '@/components/EmojiImg';
 
 interface StartScreenProps {
   highScore: number;
