@@ -41,7 +41,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       <img src={throneIcon} alt="Throne" className="w-56 h-56 sm:w-64 sm:h-64 object-contain drop-shadow-lg" />
 
       <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-foreground">
-        I MUST STAY
+        I <span className="text-red-800 underline decoration-2 underline-offset-4">MUST</span> STAY
       </h1>
       <p className="text-muted-foreground text-sm sm:text-base max-w-xs leading-relaxed">
         {t('start.subtitle')}
