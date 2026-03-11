@@ -152,6 +152,7 @@ export function playClickSound() {
 
 export function playWarningSound() {
   hapticDoubleSharp();
+  try {
     const ctx = getAudioCtx();
     const now = ctx.currentTime;
 
