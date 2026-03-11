@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { EmojiImg } from '@/components/EmojiImg';
 import { PowerType } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
