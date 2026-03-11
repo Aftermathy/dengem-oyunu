@@ -150,7 +150,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         <img
           src={throneIcon}
           alt="Throne"
-          className={`w-72 h-72 sm:w-80 sm:h-80 object-contain drop-shadow-lg cursor-pointer select-none shrink-0 ${throneAnim}`}
+          className={`interactive-img w-72 h-72 sm:w-80 sm:h-80 object-contain drop-shadow-lg cursor-pointer select-none shrink-0 ${throneAnim}`}
           onClick={handleThroneClick}
         />
       </div>

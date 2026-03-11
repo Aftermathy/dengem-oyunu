@@ -388,7 +388,7 @@ export const eventCards: EventCard[] = [
   {
     id: 20,
     character: "Savcı",
-    characterEmoji: "👨‍⚖️",
+    characterEmoji: "⚖️",
     category: "Siyasi Entrika",
     description: "Gizli yapılanma soruşturması genişliyor. Binlerce kişiyi tutuklayalım mı?",
     leftChoice: "Toplu tutuklama yap",
