@@ -68,7 +68,7 @@ export function playGameOverSound() {
 }
 
 export function playBribeSound() {
-  try {
+  hapticMedium();
     const ctx = getAudioCtx();
     const now = ctx.currentTime;
 
