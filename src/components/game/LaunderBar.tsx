@@ -41,7 +41,7 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
   };
 
   return (
-    <div className="w-full max-w-md mx-auto px-4 relative">
+    <div className="w-full max-w-md mx-auto px-3 relative">
       <div className="flex items-center gap-2">
         <button
           onClick={handleClick}
@@ -56,13 +56,13 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
           <EmojiImg emoji="🧼" size={14} /> {lang === 'tr' ? 'Akla' : 'Launder'} (-50B)
         </button>
 
-        <div className="flex-1 h-4 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
+        <div className="flex-1 h-5 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
           <div
             className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500"
             style={{ width: `${Math.min(totalLaundered, 100)}%` }}
           />
-          <span className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-foreground">
-            <EmojiImg emoji="💸" size={10} /> {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-foreground">
+            <EmojiImg emoji="💸" size={11} /> {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
           </span>
         </div>
       </div>
@@ -88,18 +88,18 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
                   onClick={() => handleSelect(faction)}
                   className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-border/50 bg-background hover:bg-primary/10 hover:border-primary transition-all cursor-pointer"
                 >
-                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-border/50">
+                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-border/50">
                     <img src={FACTION_IMAGES[faction]} alt={t(`power.${faction}`)} className="w-full h-full object-cover" />
                   </div>
-                  <span className="text-xs font-bold text-foreground">{t(`power.${faction}`)}</span>
-                  <span className="text-[10px] text-emerald-500">+5 rep, +25B</span>
+                  <span className="text-sm font-bold text-foreground">{t(`power.${faction}`)}</span>
+                  <span className="text-xs text-emerald-500">+5 rep, +25B</span>
                 </button>
               ))}
             </div>
 
             <button
               onClick={() => setShowPicker(false)}
-              className="mt-4 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
             >
               {lang === 'tr' ? 'Vazgeç' : 'Cancel'}
             </button>

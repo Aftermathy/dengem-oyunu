@@ -20,8 +20,8 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
   const startX = useRef(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const threshold = 100;
-  const direction = dragX > 30 ? 'right' : dragX < -30 ? 'left' : null;
+  const threshold = 80;
+  const direction = dragX > 25 ? 'right' : dragX < -25 ? 'left' : null;
 
   useEffect(() => {
     if (direction === 'right') {
@@ -78,7 +78,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
   if (exiting) {
     return (
       <div
-        className="relative w-72 sm:w-80 md:w-96 transition-all duration-300 ease-out"
+        className="relative w-full max-w-sm transition-all duration-300 ease-out"
         style={{
           transform: `translateX(${exiting === 'left' ? -500 : 500}px) rotate(${exiting === 'left' ? -30 : 30}deg)`,
           opacity: 0,
@@ -93,7 +93,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
     <div
       ref={cardRef}
       className={cn(
-        "relative w-72 sm:w-80 md:w-96 cursor-grab select-none touch-none",
+        "relative w-full max-w-sm cursor-grab select-none touch-none",
         isDragging && "cursor-grabbing"
       )}
       style={{
@@ -106,8 +106,8 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
     >
       {/* Choice labels */}
       <div
-        className="absolute -left-2 top-8 bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-bold z-10 transition-opacity"
-        style={{ opacity: dragX < -30 ? Math.min(1, Math.abs(dragX) / 100) : 0 }}
+        className="absolute -left-1 top-6 bg-red-500 text-white px-2.5 py-1 rounded-lg text-sm font-bold z-10 transition-opacity"
+        style={{ opacity: dragX < -25 ? Math.min(1, Math.abs(dragX) / 80) : 0 }}
       >
         ← {t('game.reject')}
         {getMoneyPreview('left') !== null && (
@@ -117,8 +117,8 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
         )}
       </div>
       <div
-        className="absolute -right-2 top-8 bg-emerald-500 text-white px-3 py-1 rounded-lg text-sm font-bold z-10 transition-opacity"
-        style={{ opacity: dragX > 30 ? Math.min(1, dragX / 100) : 0 }}
+        className="absolute -right-1 top-6 bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-sm font-bold z-10 transition-opacity"
+        style={{ opacity: dragX > 25 ? Math.min(1, dragX / 80) : 0 }}
       >
         {t('game.accept')} →
         {getMoneyPreview('right') !== null && (
@@ -140,17 +140,17 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
   return (
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden">
       {/* Character header */}
-      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-5 sm:p-7 text-center">
-        <div className="mb-3"><EmojiImg emoji={card.characterEmoji} size={72} /></div>
-        <h3 className="font-bold text-foreground text-base sm:text-lg">{card.character}</h3>
-        <span className="text-xs sm:text-sm bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-4 text-center">
+        <div className="mb-2"><EmojiImg emoji={card.characterEmoji} size={56} /></div>
+        <h3 className="font-bold text-foreground text-base">{card.character}</h3>
+        <span className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
           {card.category}
         </span>
       </div>
 
       {/* Description */}
-      <div className="p-5 sm:p-6">
-        <p className="text-base sm:text-lg text-foreground leading-relaxed italic">
+      <div className="px-4 py-3">
+        <p className="text-base text-foreground leading-relaxed italic">
           "{card.description}"
         </p>
       </div>
@@ -158,7 +158,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
       {/* Choices */}
       <div className="grid grid-cols-2 border-t border-border">
         <div className={cn(
-          "p-3 sm:p-4 text-center text-sm sm:text-base transition-colors border-r border-border",
+          "p-3 text-center text-sm transition-colors border-r border-border",
           direction === 'left' ? 'bg-red-500/20 text-red-700 font-bold' : 'text-muted-foreground'
         )}>
           ← {card.leftChoice}
@@ -169,7 +169,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
           )}
         </div>
         <div className={cn(
-          "p-3 sm:p-4 text-center text-sm sm:text-base transition-colors",
+          "p-3 text-center text-sm transition-colors",
           direction === 'right' ? 'bg-emerald-500/20 text-emerald-700 font-bold' : 'text-muted-foreground'
         )}>
           {card.rightChoice} →
