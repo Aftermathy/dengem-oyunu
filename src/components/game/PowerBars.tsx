@@ -174,10 +174,10 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
   return (
     <div className="w-full max-w-md mx-auto">
       {/* Money display */}
-      <div className="flex items-center justify-center gap-2 mb-1">
-        <EmojiImg emoji="💰" size={22} />
+      <div className="flex items-center justify-center gap-2 mb-0.5">
+        <EmojiImg emoji="💰" size={20} />
         <span className={cn(
-          "text-lg font-black transition-colors duration-300",
+          "text-base font-black transition-colors duration-300",
           projectedMoney != null
             ? (money + projectedMoney <= 0 ? 'text-red-500' : 'text-foreground')
             : 'text-foreground'
@@ -202,7 +202,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         )}
       </div>
 
-      <div className="flex justify-between gap-0.5 px-1 py-1">
+      <div className="flex justify-between gap-0.5 px-1 py-0.5">
         {powers.map((p) => {
           const val = power[p];
           const affected = isAffected(p);
@@ -211,11 +211,11 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
 
           return (
             <div key={p} className="flex flex-col items-center gap-0.5 flex-1 min-w-0 relative">
-              {/* Faction head - BIGGER touch target */}
+              {/* Faction head */}
               <button
                 onClick={() => handleDirectBribe(p)}
                 className={cn(
-                  "w-10 h-10 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
+                  "w-9 h-9 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
                   affected ? "scale-110 border-primary" : "border-border/50",
                   canDo ? "hover:scale-110 hover:border-primary cursor-pointer active:scale-95" : "opacity-60",
                 )}
@@ -244,9 +244,9 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 </div>
               )}
 
-              {/* Power bar - taller for iPhone */}
+              {/* Power bar */}
               <div
-                className="w-full h-24 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
+                className="w-full h-20 bg-muted/50 rounded-full relative overflow-hidden border-4 border-black select-none"
                 onMouseEnter={() => setShowPercent(p)}
                 onMouseLeave={() => setShowPercent(null)}
                 onTouchStart={() => {
@@ -292,7 +292,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 )}
               </div>
 
-              <span className="text-[10px] font-medium text-muted-foreground truncate w-full text-center">
+              <span className="text-[9px] font-medium text-muted-foreground truncate w-full text-center">
                 {t(`power.${p}`)}
               </span>
               {val >= 100 && (

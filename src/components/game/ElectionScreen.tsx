@@ -616,7 +616,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                   className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white cursor-pointer"
                   style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}
                 >
-                  {lang === 'en' ? '' : ''}<EmojiImg emoji="🔄" size={16} className="mr-1" />{lang === 'en' ? ' Play Again' : ' Yeniden Oyna'}
+                  <EmojiImg emoji="🔄" size={16} className="mr-1" />{lang === 'en' ? ' Play Again' : ' Yeniden Oyna'}
                 </button>
                 <button
                   onClick={() => { playClickSound(); onMainMenu(); }}
@@ -642,7 +642,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
           </div>
 
-          <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto">
+          <div className="relative z-10 flex flex-col items-center gap-3 p-6 pb-6 text-center max-w-sm mx-auto">
             <EmojiImg emoji="🏆" size={64} className="animate-bounce" />
             
             <h2 className="text-4xl font-black text-yellow-400 drop-shadow-lg"

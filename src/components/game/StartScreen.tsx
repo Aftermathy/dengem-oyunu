@@ -58,7 +58,6 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
     playClickSound();
     const next = throneClicks + 1;
     setThroneClicks(next);
-    // Cycle: wobble → spin → shatter → wobble → spin → shatter...
     const cycle = (next - 1) % 3;
     if (cycle === 0) {
       setThroneAnim('animate-throne-wobble');
@@ -67,7 +66,6 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       setThroneAnim('animate-throne-spin');
       setTimeout(() => setThroneAnim(''), 600);
     } else {
-      // Shatter and reassemble
       setThroneAnim('animate-throne-shatter');
       setTimeout(() => setThroneAnim(''), 1200);
     }
@@ -89,9 +87,9 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4 p-6 text-center animate-fade-in min-h-[100dvh]" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 16px)' }}>
-      {/* Language toggle — top */}
-      <div className="flex gap-1 bg-muted rounded-full p-1">
+    <div className="flex flex-col items-center gap-3 p-4 text-center animate-fade-in h-[100dvh] overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      {/* Language toggle — right below notch */}
+      <div className="flex gap-1 bg-muted rounded-full p-1 shrink-0">
         <button
           onClick={() => {playClickSound();setLang('tr');}}
           className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
@@ -109,37 +107,37 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       </div>
 
       {/* Spacer */}
-      <div className="flex-1" />
+      <div className="flex-1 min-h-0" />
 
       {/* Crown + Title */}
       <img
         src={throneIcon}
         alt="Throne"
-        className={`w-56 h-56 sm:w-64 sm:h-64 object-contain drop-shadow-lg cursor-pointer select-none ${throneAnim}`}
+        className={`w-40 h-40 sm:w-52 sm:h-52 object-contain drop-shadow-lg cursor-pointer select-none shrink-0 ${throneAnim}`}
         onClick={handleThroneClick}
       />
 
       <h1
-        className={`text-5xl sm:text-6xl font-black tracking-tight text-foreground cursor-pointer select-none ${shakeClass}`}
+        className={`text-4xl sm:text-5xl font-black tracking-tight text-foreground cursor-pointer select-none ${shakeClass}`}
         onClick={handleTitleClick}
       >
         {renderTitle()}
       </h1>
-      <p className="text-muted-foreground text-sm sm:text-base max-w-xs leading-relaxed">
+      <p className="text-muted-foreground text-sm max-w-xs leading-relaxed shrink-0">
         {t('start.subtitle')}
       </p>
 
       {highScore > 0 &&
-      <div className="bg-muted/50 border border-border rounded-xl px-4 py-2">
+      <div className="bg-muted/50 border border-border rounded-xl px-4 py-1.5 shrink-0">
           <span className="text-xs text-muted-foreground">{t('start.highscore')} </span>
-          <span className="font-bold text-primary text-lg">{highScore} {t('start.turns')}</span>
+          <span className="font-bold text-primary text-base">{highScore} {t('start.turns')}</span>
         </div>
       }
 
       <Button
         size="lg"
         onClick={() => {playWarStartSound();onStart();}}
-        className="text-lg px-10 py-6 font-bold shadow-lg hover:shadow-xl transition-shadow">
+        className="text-lg px-10 py-5 font-bold shadow-lg hover:shadow-xl transition-shadow shrink-0">
         {t('start.play')}
       </Button>
 
@@ -147,16 +145,16 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
         href="https://apps.apple.com/app/i-must-stay"
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-2 rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-[11px] px-[22px] border-2"
+        className="rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-2 px-5 border-2 shrink-0"
         style={{ textShadow: '0 0 8px hsl(15 80% 50% / 0.3)' }}>
         <EmojiImg emoji="✨" size={14} /> {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} <EmojiImg emoji="✨" size={14} />
       </a>
 
       {/* Spacer */}
-      <div className="flex-1" />
+      <div className="flex-1 min-h-0" />
 
       {/* Studio branding */}
-      <div className="text-xs tracking-[0.2em] uppercase text-muted-foreground pb-6">
+      <div className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground pb-1 shrink-0">
         Aftermath Vibe Studios
       </div>
     </div>);
