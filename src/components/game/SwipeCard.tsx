@@ -149,7 +149,7 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
       </div>
 
       {/* Description */}
-      <div className="px-4 py-3">
+      <div className="px-4 py-2 flex-1 flex items-center">
         <p className="text-base text-foreground leading-relaxed italic">
           "{card.description}"
         </p>
