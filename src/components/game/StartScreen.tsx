@@ -56,7 +56,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
 
       <Button
         size="lg"
-        onClick={() => {playClickSound();onStart();}}
+        onClick={() => {playWarStartSound();onStart();}}
         className="text-lg px-10 py-6 font-bold shadow-lg hover:shadow-xl transition-shadow">
 
         {t('start.play')}
