@@ -203,6 +203,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const [barGlowKey, setBarGlowKey] = useState(0);
   const [showAiFlash, setShowAiFlash] = useState(false);
   const [rerollsLeft, setRerollsLeft] = useState(MAX_REROLLS);
+  const [budgetWarning, setBudgetWarning] = useState<number | null>(null);
 
   // Avoid exact 50/50 ties — nudge to 49.9/50.1
   const displayPlayerVote = playerVote === 50 ? 49.9 : playerVote;
