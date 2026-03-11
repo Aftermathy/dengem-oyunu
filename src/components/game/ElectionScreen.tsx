@@ -388,7 +388,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           <div className="text-center pt-4 pb-1">
             <h1 className="text-xl font-black text-orange-400"
               style={{ textShadow: '0 0 15px rgba(255,100,0,0.4)' }}>
-              🔥 {config.title} 🔥
+              <EmojiImg emoji="🔥" size={20} className="mr-1" /> {config.title} <EmojiImg emoji="🔥" size={20} className="ml-1" />
             </h1>
             <p className="text-orange-300/80 text-xs mt-0.5 font-bold">
               {labels.round} {round}/4
