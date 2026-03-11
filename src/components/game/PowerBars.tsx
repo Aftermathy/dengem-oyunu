@@ -175,7 +175,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
     <div className="w-full max-w-md mx-auto">
       {/* Money display */}
       <div className="flex items-center justify-center gap-2 mb-1">
-        <span className="text-xl">💰</span>
+        <EmojiImg emoji="💰" size={22} />
         <span className={cn(
           "text-lg font-black transition-colors duration-300",
           projectedMoney != null
