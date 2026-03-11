@@ -4,6 +4,7 @@ import { Language } from '@/contexts/LanguageContext';
 import defeatElectionImg from '@/assets/defeat-election.jpg';
 import victoryBalconyImg from '@/assets/victory-balcony.jpg';
 import { playClickSound } from '@/hooks/useSound';
+import { EmojiImg } from '@/components/EmojiImg';
 
 interface ElectionScreenProps {
   config: ElectionConfig;
