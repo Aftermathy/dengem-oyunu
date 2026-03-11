@@ -237,7 +237,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               {bribeFeedback?.faction === p && (
                 <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-30 pointer-events-none animate-bribe-feedback">
                   <div className="bg-card/95 border border-primary/50 rounded-lg px-2 py-1 shadow-lg whitespace-nowrap text-center">
-                    <div className="text-[8px] text-muted-foreground">{bribeFeedback.text}</div>
+                    <div className="text-[8px] text-muted-foreground"><EmojiText text={bribeFeedback.text} size={10} /></div>
                     <div className="text-[9px] font-bold">
                       <span className="text-red-400">-{bribeFeedback.cost}B</span>
                       {' '}
