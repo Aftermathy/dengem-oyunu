@@ -176,3 +176,52 @@ export function playWarningSound() {
     // Silently fail
   }
 }
+
+export function playWarStartSound() {
+  hapticWarStart();
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+
+    // Deep war drum hit 1
+    const drum1 = ctx.createOscillator();
+    drum1.type = 'sine';
+    drum1.frequency.setValueAtTime(80, now);
+    drum1.frequency.exponentialRampToValueAtTime(40, now + 0.3);
+    const drumGain1 = ctx.createGain();
+    drumGain1.gain.setValueAtTime(0.35, now);
+    drumGain1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+    drum1.connect(drumGain1);
+    drumGain1.connect(ctx.destination);
+    drum1.start(now);
+    drum1.stop(now + 0.3);
+
+    // Deep war drum hit 2
+    const drum2 = ctx.createOscillator();
+    drum2.type = 'sine';
+    drum2.frequency.setValueAtTime(90, now + 0.2);
+    drum2.frequency.exponentialRampToValueAtTime(35, now + 0.5);
+    const drumGain2 = ctx.createGain();
+    drumGain2.gain.setValueAtTime(0.4, now + 0.2);
+    drumGain2.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    drum2.connect(drumGain2);
+    drumGain2.connect(ctx.destination);
+    drum2.start(now + 0.2);
+    drum2.stop(now + 0.5);
+
+    // Tension riser
+    const riser = ctx.createOscillator();
+    riser.type = 'sawtooth';
+    riser.frequency.setValueAtTime(100, now);
+    riser.frequency.exponentialRampToValueAtTime(300, now + 0.5);
+    const riserGain = ctx.createGain();
+    riserGain.gain.setValueAtTime(0.08, now);
+    riserGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    riser.connect(riserGain);
+    riserGain.connect(ctx.destination);
+    riser.start(now);
+    riser.stop(now + 0.5);
+  } catch {
+    // Silently fail
+  }
+}
