@@ -3,8 +3,10 @@ import { ElectionConfig, ElectionResult, ElectionCard, ElectionSpecialPower, Car
 import { Language } from '@/contexts/LanguageContext';
 import defeatElectionImg from '@/assets/defeat-election.jpg';
 import victoryBalconyImg from '@/assets/victory-balcony.jpg';
-import { playClickSound } from '@/hooks/useSound';
+import { playClickSound, playElectionCardSound, playAiCardSound, playSpecialPowerSound, playRerollSound, playBudgetWarningSound } from '@/hooks/useSound';
+import { hapticAiThinking, hapticByRarity, hapticMedium } from '@/hooks/useHaptics';
 import { EmojiImg } from '@/components/EmojiImg';
+import { SettingsMenu } from '@/components/game/SettingsMenu';
 
 interface ElectionScreenProps {
   config: ElectionConfig;
@@ -56,15 +58,13 @@ function drawCards(cards: ElectionCard[], count: number, exclude: number[] = [])
   return shuffled.slice(0, Math.min(count, shuffled.length));
 }
 
-/* ── AI card selection based on vote gap ── */
+/* ── AI card selection based on vote gap — uses OPPOSITION cards ── */
 function selectAiCard(cards: ElectionCard[], gap: number, usedIds: number[]): ElectionCard {
   const pool = cards.filter(c => !usedIds.includes(c.id));
   const available = pool.length > 0 ? pool : cards;
   const pick = (arr: ElectionCard[]) => arr[Math.floor(Math.random() * arr.length)];
 
-  // gap = playerVote - opponentVote (positive = player leads)
   if (gap > 10) {
-    // %60 legendary, %80 epic+
     const legendary = available.filter(c => c.rarity === 'legendary');
     if (Math.random() < 0.6 && legendary.length > 0) return pick(legendary);
     const epicPlus = available.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
@@ -72,20 +72,17 @@ function selectAiCard(cards: ElectionCard[], gap: number, usedIds: number[]): El
     return pick(available);
   }
   if (gap > 6) {
-    // %40 epic or legendary
     const epicPlus = available.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
     if (Math.random() < 0.4 && epicPlus.length > 0) return pick(epicPlus);
     return pick(available);
   }
   if (gap > 3) {
-    // %40 uncommon+, %30 epic
     const epic = available.filter(c => c.rarity === 'epic' || c.rarity === 'legendary');
     if (Math.random() < 0.3 && epic.length > 0) return pick(epic);
     const uncommonPlus = available.filter(c => c.rarity !== 'common');
     if (Math.random() < 0.4 && uncommonPlus.length > 0) return pick(uncommonPlus);
     return pick(available);
   }
-  // <3: random
   return pick(available);
 }
 
@@ -203,7 +200,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   const [barGlowKey, setBarGlowKey] = useState(0);
   const [showAiFlash, setShowAiFlash] = useState(false);
   const [rerollsLeft, setRerollsLeft] = useState(MAX_REROLLS);
-  const [budgetWarning, setBudgetWarning] = useState<number | null>(null);
+  const [budgetWarning, setBudgetWarning] = useState<number | string | null>(null);
 
   // Avoid exact 50/50 ties — nudge to 49.9/50.1
   const displayPlayerVote = playerVote === 50 ? 49.9 : playerVote;
@@ -220,6 +217,8 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
     balconyTitle: 'CONGRATULATIONS!',
     balconySubtitle: 'The people have chosen you... again!',
     balconyContinue: '4 More Years!',
+    insufficientBudget: '⚠️ Insufficient Budget!',
+    insufficientLaundered: '⚠️ Not Enough Laundered!',
   } : {
     opposition: 'Muhalefet', you: 'Sen', pickMove: 'Hamle seç:',
     oppMoving: 'Muhalefet hamle yapıyor...', budget: 'Bütçe', laundered: 'Aklanmış',
@@ -230,7 +229,16 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
     balconyTitle: 'TEBRİKLER!',
     balconySubtitle: 'Millet yine seni seçti... yine de!',
     balconyContinue: '4 Sene Daha Devam!',
+    insufficientBudget: '⚠️ Yetersiz Bütçe!',
+    insufficientLaundered: '⚠️ Yetersiz Aklanmış Para!',
   }, [lang]);
+
+  // Show budget warning helper
+  const showBudgetWarningFor = useCallback((id: number | string, isLaundered?: boolean) => {
+    setBudgetWarning(id);
+    playBudgetWarningSound();
+    setTimeout(() => setBudgetWarning(null), 1500);
+  }, []);
 
   // Intro timer
   useEffect(() => {
@@ -244,6 +252,8 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
   const playCard = useCallback((card: ElectionCard) => {
     if (budget < card.cost) return;
+    playElectionCardSound();
+    hapticMedium();
     setSelectedCardId(card.id);
     setTimeout(() => {
       setBudget(b => b - card.cost);
@@ -256,42 +266,61 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   }, [budget]);
 
   const skipTurn = useCallback(() => {
+    playClickSound();
     setPlayerVote(v => Math.max(0, Math.min(100, v + 1)));
     setBarGlowKey(k => k + 1);
     setPhase('ai');
   }, []);
 
   const handleReroll = useCallback(() => {
-    if (rerollsLeft <= 0 || budget < REROLL_COST) return;
+    if (rerollsLeft <= 0 || budget < REROLL_COST) {
+      if (budget < REROLL_COST) showBudgetWarningFor('reroll');
+      return;
+    }
+    playRerollSound();
     setBudget(b => b - REROLL_COST);
     setRerollsLeft(r => r - 1);
     setCards(drawCards(config.playerCards, 3, usedCardIds));
-  }, [rerollsLeft, budget, config.playerCards, usedCardIds]);
+  }, [rerollsLeft, budget, config.playerCards, usedCardIds, showBudgetWarningFor]);
 
   const useSpecialPower = useCallback((power: ElectionSpecialPower) => {
-    if (laundered < power.launderedCost || usedPowers.includes(power.id)) return;
+    if (usedPowers.includes(power.id)) return;
+    if (laundered < power.launderedCost) {
+      showBudgetWarningFor(power.id);
+      return;
+    }
+    playSpecialPowerSound();
+    hapticMedium();
     setLaundered(l => l - power.launderedCost);
     setPlayerVote(v => Math.max(0, Math.min(100, v + power.voterEffect)));
     setBarGlowKey(k => k + 1);
     setUsedPowers(prev => [...prev, power.id]);
-  }, [laundered, usedPowers]);
+  }, [laundered, usedPowers, showBudgetWarningFor]);
 
-  // AI turn logic
+  // AI turn logic — uses OPPOSITION cards
   useEffect(() => {
     if (phase !== 'ai') return;
     setShowAiFlash(true);
     const flashTimer = setTimeout(() => setShowAiFlash(false), 800);
+
+    // Start AI thinking haptic
+    hapticAiThinking();
 
     const timer = setTimeout(() => {
       const currentPlayerVote = playerVote;
       const currentOpponentVote = 100 - currentPlayerVote;
       const gap = currentPlayerVote - currentOpponentVote;
 
-      const aiCard = selectAiCard(config.playerCards, gap, usedAiCardIds);
+      // AI uses opposition cards
+      const aiCard = selectAiCard(config.oppositionCards, gap, usedAiCardIds);
       const effect = aiCard.voterEffect;
 
-      // Track used AI cards so they don't repeat
+      // Track used AI cards
       setUsedAiCardIds(prev => [...prev, aiCard.id]);
+
+      // Rarity-based haptic on reveal
+      hapticByRarity(aiCard.rarity);
+      playAiCardSound();
 
       // Legendary shake effect
       if (aiCard.rarity === 'legendary') {
@@ -336,8 +365,11 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
   };
 
   return (
-    <div className={`fixed inset-0 z-50 flex flex-col overflow-auto ${phase === 'result' && !won ? 'election-shake' : ''}`}
-      style={{ background: 'linear-gradient(180deg, #1a0000 0%, #3d0000 25%, #6b0000 50%, #8b2500 75%, #cc4400 100%)', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div
+      className={`fixed inset-0 z-50 flex flex-col overflow-auto ${phase === 'result' && !won ? 'election-shake' : ''}`}
+      style={{ background: 'linear-gradient(180deg, #1a0000 0%, #3d0000 25%, #6b0000 50%, #8b2500 75%, #cc4400 100%)', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+      onContextMenu={e => e.preventDefault()}
+    >
 
       {/* Fire glow overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-30"
@@ -385,8 +417,11 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
       {/* GAMEPLAY */}
       {(phase === 'player' || phase === 'ai') && (
         <div className="flex-1 flex flex-col overflow-y-auto relative z-10">
-          {/* Title bar */}
-          <div className="text-center pt-4 pb-1">
+          {/* Title bar with settings */}
+          <div className="text-center pt-4 pb-1 relative">
+            <div className="absolute right-2 top-3 z-40">
+              <SettingsMenu onMainMenu={onMainMenu} />
+            </div>
             <h1 className="text-xl font-black text-orange-400"
               style={{ textShadow: '0 0 15px rgba(255,100,0,0.4)' }}>
               <EmojiImg emoji="🔥" size={20} className="mr-1" /> {config.title} <EmojiImg emoji="🔥" size={20} className="ml-1" />
@@ -449,13 +484,20 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
               <>
                 <div className="flex justify-between items-center mb-2 px-1">
                   <p className="text-orange-200 text-base font-bold">{labels.pickMove}</p>
-                  {/* Reroll button - BIGGER */}
+                  {/* Reroll button */}
                   <button
-                    disabled={rerollsLeft <= 0 || budget < REROLL_COST}
+                    disabled={rerollsLeft <= 0}
                     onClick={handleReroll}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-black transition-all active:scale-95 disabled:opacity-30 border-2 border-yellow-500/60 bg-yellow-900/70 text-yellow-200 hover:bg-yellow-800/80 hover:border-yellow-400/80"
+                    className={`relative flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-black transition-all active:scale-95 disabled:opacity-30 border-2 border-yellow-500/60 bg-yellow-900/70 text-yellow-200 hover:bg-yellow-800/80 hover:border-yellow-400/80 ${
+                      budget < REROLL_COST && rerollsLeft > 0 ? 'opacity-40' : ''
+                    }`}
                     style={{ boxShadow: '0 0 12px rgba(234,179,8,0.2)' }}
                   >
+                    {budgetWarning === 'reroll' && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/80 rounded-xl z-10 animate-fade-in">
+                        <span className="text-red-400 text-[10px] font-black">{labels.insufficientBudget}</span>
+                      </div>
+                    )}
                     <EmojiImg emoji="🎲" size={16} /> {labels.reroll} ({rerollsLeft}) <span className="text-yellow-400 font-black">-{labels.rerollCost}</span>
                   </button>
                 </div>
@@ -468,33 +510,30 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                     return (
                       <button
                         key={card.id}
-                        disabled={cantAfford || selectedCardId !== null}
+                        disabled={selectedCardId !== null}
                         onClick={() => {
-                          if (cantAfford) return;
+                          if (cantAfford) {
+                            showBudgetWarningFor(card.id);
+                            return;
+                          }
                           playCard(card);
                         }}
                         onTouchStart={() => {
-                          if (cantAfford) {
-                            setBudgetWarning(card.id);
-                            setTimeout(() => setBudgetWarning(null), 1500);
-                          }
+                          if (cantAfford) showBudgetWarningFor(card.id);
                         }}
                         onMouseDown={() => {
-                          if (cantAfford) {
-                            setBudgetWarning(card.id);
-                            setTimeout(() => setBudgetWarning(null), 1500);
-                          }
+                          if (cantAfford) showBudgetWarningFor(card.id);
                         }}
-                        className={`relative border-2 rounded-xl p-3.5 text-left disabled:opacity-40 hover:brightness-110 active:scale-95 transition-all election-card-enter overflow-hidden ${style.border} ${style.bg} ${style.glow} ${
-                          selectedCardId === card.id ? 'election-card-select' : ''
-                        } ${isLegendary ? 'legendary-card-flame' : ''}`}
+                        className={`relative border-2 rounded-xl p-3.5 text-left hover:brightness-110 active:scale-95 transition-all election-card-enter overflow-hidden ${style.border} ${style.bg} ${style.glow} ${
+                          cantAfford ? 'opacity-40' : ''
+                        } ${selectedCardId === card.id ? 'election-card-select' : ''} ${isLegendary ? 'legendary-card-flame' : ''}`}
                         style={{ animationDelay: `${i * 0.1}s` }}
                       >
                         {/* Insufficient budget warning */}
                         {budgetWarning === card.id && (
                           <div className="absolute inset-0 flex items-center justify-center bg-black/70 rounded-xl z-10 animate-fade-in">
                             <span className="text-red-400 text-xs font-black text-center px-2">
-                              {lang === 'en' ? '⚠️ Insufficient Budget!' : '⚠️ Yetersiz Bütçe!'}
+                              {labels.insufficientBudget}
                             </span>
                           </div>
                         )}
@@ -511,7 +550,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                       </button>
                     );
                   })}
-                  {/* Skip turn card - always the 4th option */}
+                  {/* Skip turn card */}
                   <button
                     onClick={skipTurn}
                     disabled={selectedCardId !== null}
@@ -573,18 +612,34 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                   return (
                     <button
                       key={power.id}
-                      disabled={cantAfford || used}
+                      disabled={used}
                       onClick={() => useSpecialPower(power)}
-                      className={`rounded-xl px-3 py-3 flex items-center gap-2 transition-all active:scale-95 w-full ${
+                      onTouchStart={() => {
+                        if (cantAfford && !used) showBudgetWarningFor(power.id);
+                      }}
+                      onMouseDown={() => {
+                        if (cantAfford && !used) showBudgetWarningFor(power.id);
+                      }}
+                      className={`relative rounded-xl px-3 py-3 flex items-center gap-2 transition-all active:scale-95 w-full overflow-hidden ${
                         used
                           ? 'bg-gray-800 opacity-30'
-                          : 'bg-purple-900 hover:bg-purple-800 disabled:opacity-30'
+                          : cantAfford
+                            ? 'bg-purple-900 opacity-40'
+                            : 'bg-purple-900 hover:bg-purple-800'
                       }`}
                     >
+                      {/* Insufficient laundered warning */}
+                      {budgetWarning === power.id && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/80 rounded-xl z-10 animate-fade-in">
+                          <span className="text-red-400 text-[10px] font-black text-center px-1">
+                            {labels.insufficientLaundered}
+                          </span>
+                        </div>
+                      )}
                       <EmojiImg emoji={power.emoji} size={20} className="shrink-0" />
                       <span className="text-purple-100 text-xs font-bold leading-tight flex-1 text-left">{power.name}</span>
                       <span className="text-green-400 text-xs font-black shrink-0">+{power.voterEffect}%</span>
-                      <span className="text-purple-400 text-[10px] font-bold shrink-0">{power.launderedCost}B</span>
+                      <span className={`text-[10px] font-bold shrink-0 ${cantAfford ? 'text-red-400' : 'text-purple-400'}`}>{power.launderedCost}B</span>
                     </button>
                   );
                 })}
