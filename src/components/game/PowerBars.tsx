@@ -232,10 +232,10 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
 
               {/* Bribe feedback overlay */}
               {bribeFeedback?.faction === p && (
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-30 pointer-events-none animate-bribe-feedback">
-                  <div className="bg-card/95 border border-primary/50 rounded-lg px-2 py-1 shadow-lg whitespace-nowrap text-center">
-                    <div className="text-[8px] text-muted-foreground"><EmojiText text={bribeFeedback.text} size={10} /></div>
-                    <div className="text-[9px] font-bold">
+                <div className="fixed left-1/2 top-1/3 -translate-x-1/2 z-50 pointer-events-none animate-bribe-feedback">
+                  <div className="bg-card/95 border-2 border-primary/50 rounded-2xl px-5 py-3 shadow-2xl text-center min-w-[200px]">
+                    <div className="text-base text-foreground font-medium"><EmojiText text={bribeFeedback.text} size={18} /></div>
+                    <div className="text-sm font-bold mt-1">
                       <span className="text-red-400">-{bribeFeedback.cost}B</span>
                       {' '}
                       <span className="text-emerald-400">+{bribeFeedback.gain} rep</span>

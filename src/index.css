@@ -434,16 +434,16 @@ All colors MUST be HSL.
   background: linear-gradient(135deg, rgba(127,29,29,0.9) 0%, rgba(153,27,27,0.9) 40%, rgba(185,28,28,0.9) 100%) !important;
 }
 
-/* Bribe feedback animation */
+/* Bribe feedback animation - drops from center screen */
 @keyframes bribe-feedback {
-  0% { opacity: 0; transform: translate(-50%, 0) scale(0.8); }
-  15% { opacity: 1; transform: translate(-50%, -8px) scale(1); }
-  75% { opacity: 1; transform: translate(-50%, -12px) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -24px) scale(0.9); }
+  0% { opacity: 0; transform: translateY(-20px) scale(0.5); }
+  10% { opacity: 1; transform: translateY(0) scale(1); }
+  60% { opacity: 1; transform: translateY(40px) scale(1); }
+  100% { opacity: 0; transform: translateY(120px) scale(0.7); }
 }
 
 .animate-bribe-feedback {
-  animation: bribe-feedback 1.5s ease-out forwards;
+  animation: bribe-feedback 2s ease-out forwards;
 }
 
 /* Title shake easter egg */
