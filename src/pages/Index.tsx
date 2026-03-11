@@ -83,6 +83,16 @@ const Index = () => {
             )}
           </div>
 
+          <div className="flex-1 flex items-center justify-center px-4 min-h-0">
+            <SwipeCard
+              key={currentCard.id + '-' + turn}
+              card={currentCard}
+              onSwipe={swipe}
+              onHoverEffects={handleHoverEffects}
+              onHoverMoney={handleHoverMoney}
+            />
+          </div>
+
           <LaunderBar
             totalLaundered={totalLaundered}
             money={money}
@@ -100,16 +110,6 @@ const Index = () => {
             canAlliance={canAlliance}
             allianceCost={getAllianceCost()}
           />
-
-          <div className="flex-1 flex items-center justify-center px-4 pb-1 min-h-0">
-            <SwipeCard
-              key={currentCard.id + '-' + turn}
-              card={currentCard}
-              onSwipe={swipe}
-              onHoverEffects={handleHoverEffects}
-              onHoverMoney={handleHoverMoney}
-            />
-          </div>
         </>
       )}
 
