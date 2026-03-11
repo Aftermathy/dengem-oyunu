@@ -47,7 +47,7 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
       )}
 
       <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto">
-        <div className="text-6xl">{emoji}</div>
+        <div className="text-6xl"><EmojiImg emoji={emoji} size={64} /></div>
         <h2 className="text-3xl sm:text-4xl font-black text-red-400 drop-shadow-lg">{title}</h2>
         <p className="text-sm text-white/80 leading-relaxed drop-shadow-md">{description}</p>
 
