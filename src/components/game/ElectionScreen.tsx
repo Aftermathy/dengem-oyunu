@@ -643,7 +643,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           </div>
 
           <div className="relative z-10 flex flex-col items-center gap-4 p-6 pb-10 text-center max-w-sm mx-auto">
-            <span className="text-7xl animate-bounce">🏆</span>
+            <EmojiImg emoji="🏆" size={64} className="animate-bounce" />
             
             <h2 className="text-4xl font-black text-yellow-400 drop-shadow-lg"
               style={{ textShadow: '0 0 30px rgba(234,179,8,0.5)' }}>
