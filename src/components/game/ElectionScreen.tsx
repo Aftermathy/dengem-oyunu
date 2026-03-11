@@ -374,7 +374,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
             <StaggeredTitle text={config.title} />
           </h1>
           <p className="text-orange-200/80 text-lg mt-3 text-center px-6">{config.subtitle}</p>
-          <span className="text-6xl mt-6 animate-pulse">🗳️</span>
+          <span className="mt-6 animate-pulse"><EmojiImg emoji="🗳️" size={56} /></span>
           <p className="text-orange-300/60 text-sm mt-4 animate-pulse">
             {lang === 'en' ? 'Preparing ballot boxes...' : 'Sandıklar hazırlanıyor...'}
           </p>
