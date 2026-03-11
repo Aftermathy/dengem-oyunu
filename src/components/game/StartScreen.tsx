@@ -8,34 +8,25 @@ import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 
 // Multilingual "I MUST STAY" variants — bold word marked with *word*
 const TITLE_VARIANTS = [
-  { text: 'I *MUST* STAY', lang: 'en' },
-  { text: '*ASLA* GİTMEM', lang: 'tr' },
-  { text: 'ICH *MUSS* BLEIBEN', lang: 'de' },
-  { text: 'JE *DOIS* RESTER', lang: 'fr' },
-  { text: '*DEBO* QUEDARME', lang: 'es' },
-  { text: 'أنا *لازم* أبقى', lang: 'ar' },
-  { text: 'אני *חייב* להישאר', lang: 'he' },
-  { text: 'Я *ДОЛЖЕН* ОСТАТЬСЯ', lang: 'ru' },
-  { text: '私は*絶対*残る', lang: 'ja' },
-  { text: '나는 *반드시* 남는다', lang: 'ko' },
+  { text: 'I *MUST* STAY' },
+  { text: '*ASLA* GİTMEM' },
+  { text: 'ICH *MUSS* BLEIBEN' },
+  { text: 'JE *DOIS* RESTER' },
+  { text: '*DEBO* QUEDARME' },
+  { text: 'أنا *لازم* أبقى' },
+  { text: 'אני *חייב* להישאר' },
+  { text: 'Я *ДОЛЖЕН* ОСТАТЬСЯ' },
+  { text: '私は*絶対*残る' },
+  { text: '나는 *반드시* 남는다' },
 ];
 
-// Shake directions cycle: right, left, right, left, up (angry nod)
+// Shake directions cycle
 const SHAKE_CLASSES = [
   'animate-shake-right',
   'animate-shake-left',
   'animate-shake-right',
   'animate-shake-left',
   'animate-shake-up',
-];
-
-// Throne click animations
-const THRONE_ANIMATIONS = [
-  'animate-throne-wobble',
-  'animate-throne-spin',
-  'animate-throne-bounce',
-  'animate-throne-wobble',
-  'animate-throne-spin',
 ];
 
 interface StartScreenProps {
@@ -57,10 +48,8 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
     hapticMedium();
     const nextIndex = (titleIndex + 1) % TITLE_VARIANTS.length;
     setTitleIndex(nextIndex);
-    // Cycle shake direction
     const shakeIdx = nextIndex % SHAKE_CLASSES.length;
     setShakeClass(SHAKE_CLASSES[shakeIdx]);
-    // Remove class after animation ends to allow re-trigger
     setTimeout(() => setShakeClass(''), 400);
   }, [titleIndex]);
 
@@ -69,9 +58,19 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
     playClickSound();
     const next = throneClicks + 1;
     setThroneClicks(next);
-    const animIdx = (next - 1) % THRONE_ANIMATIONS.length;
-    setThroneAnim(THRONE_ANIMATIONS[animIdx]);
-    setTimeout(() => setThroneAnim(''), 600);
+    // Cycle: wobble → spin → shatter → wobble → spin → shatter...
+    const cycle = (next - 1) % 3;
+    if (cycle === 0) {
+      setThroneAnim('animate-throne-wobble');
+      setTimeout(() => setThroneAnim(''), 600);
+    } else if (cycle === 1) {
+      setThroneAnim('animate-throne-spin');
+      setTimeout(() => setThroneAnim(''), 600);
+    } else {
+      // Shatter and reassemble
+      setThroneAnim('animate-throne-shatter');
+      setTimeout(() => setThroneAnim(''), 1200);
+    }
   }, [throneClicks]);
 
   // Render title with bold word
@@ -79,7 +78,6 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
     const parts = currentTitle.text.split(/\*([^*]+)\*/);
     return parts.map((part, i) => {
       if (i % 2 === 1) {
-        // Bold word
         return (
           <span key={i} className="text-red-800 underline decoration-2 underline-offset-4 font-black">
             {part}

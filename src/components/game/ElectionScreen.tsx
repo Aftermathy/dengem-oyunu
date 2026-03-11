@@ -538,10 +538,10 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
           {/* Special powers */}
           {phase === 'player' && config.specialPowers.length > 0 && (
             <div className="px-3 pb-4">
-              <p className="text-purple-300/80 text-[10px] mb-1.5 text-center font-bold uppercase tracking-widest flex items-center justify-center gap-1">
-                <EmojiImg emoji="🔮" size={12} /> {labels.specialPowers}
+              <p className="text-purple-300/80 text-xs mb-2 text-center font-bold uppercase tracking-widest flex items-center justify-center gap-1">
+                <EmojiImg emoji="🔮" size={14} /> {labels.specialPowers}
               </p>
-              <div className="grid grid-cols-2 gap-1.5 w-full">
+              <div className="grid grid-cols-2 gap-2 w-full">
                 {config.specialPowers.map(power => {
                   const used = usedPowers.includes(power.id);
                   const cantAfford = laundered < power.launderedCost;
@@ -550,16 +550,16 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                       key={power.id}
                       disabled={cantAfford || used}
                       onClick={() => useSpecialPower(power)}
-                      className={`rounded-lg px-2 py-2 flex items-center gap-1.5 transition-all active:scale-95 w-full ${
+                      className={`rounded-xl px-3 py-3 flex items-center gap-2 transition-all active:scale-95 w-full ${
                         used
                           ? 'bg-gray-800 opacity-30'
                           : 'bg-purple-900 hover:bg-purple-800 disabled:opacity-30'
                       }`}
                     >
-                      <EmojiImg emoji={power.emoji} size={16} className="shrink-0" />
-                      <span className="text-purple-100 text-[10px] font-bold leading-tight flex-1 text-left whitespace-nowrap overflow-hidden text-ellipsis">{power.name}</span>
-                      <span className="text-green-400 text-[10px] font-black shrink-0">+{power.voterEffect}%</span>
-                      <span className="text-purple-400 text-[9px] font-bold shrink-0">{power.launderedCost}B</span>
+                      <EmojiImg emoji={power.emoji} size={20} className="shrink-0" />
+                      <span className="text-purple-100 text-xs font-bold leading-tight flex-1 text-left">{power.name}</span>
+                      <span className="text-green-400 text-xs font-black shrink-0">+{power.voterEffect}%</span>
+                      <span className="text-purple-400 text-[10px] font-bold shrink-0">{power.launderedCost}B</span>
                     </button>
                   );
                 })}
