@@ -8,6 +8,7 @@ import { LaunderShop } from '@/components/game/LaunderShop';
 import { GameOverScreen } from '@/components/game/GameOverScreen';
 import { StartScreen } from '@/components/game/StartScreen';
 import { BribeTutorial } from '@/components/game/BribeTutorial';
+import { SettingsMenu } from '@/components/game/SettingsMenu';
 import { SplashScreen } from '@/components/game/SplashScreen';
 import { PowerEffect } from '@/types/game';
 import { ElectionScreen } from '@/components/game/ElectionScreen';
