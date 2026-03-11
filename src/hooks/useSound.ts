@@ -136,6 +136,7 @@ export function playBribeSound() {
 export function playClickSound() {
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     // Short percussive tick
