@@ -3,10 +3,10 @@ import { PowerType } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
-import factionYatirimcilar from '@/assets/faction-yatirimcilar.png';
-import factionMafya from '@/assets/faction-mafya.png';
-import factionTarikat from '@/assets/faction-tarikat.png';
-import factionOrdu from '@/assets/faction-ordu.png';
+import factionYatirimcilar from '@/assets/faction-yatirimcilar.jpg';
+import factionMafya from '@/assets/faction-mafya.jpg';
+import factionTarikat from '@/assets/faction-tarikat.jpg';
+import factionOrdu from '@/assets/faction-ordu.jpg';
 
 const LAUNDER_FACTIONS: PowerType[] = ['yatirimcilar', 'mafya', 'tarikat', 'ordu'];
 
