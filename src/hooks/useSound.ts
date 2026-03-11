@@ -86,6 +86,7 @@ export function playBribeSound() {
   hapticMedium();
   try {
     const ctx = getAudioCtx();
+    if (!ctx) return;
     const now = ctx.currentTime;
 
     // Part 1: Coin clink (high pitch, metallic)
