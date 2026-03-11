@@ -42,7 +42,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none" style={{ overscrollBehavior: 'none' }}>
+    <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none" style={{ overscrollBehavior: 'none', paddingTop: 'env(safe-area-inset-top)' }}>
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
