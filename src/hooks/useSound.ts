@@ -1,3 +1,5 @@
+import { hapticWarStart, hapticDoubleSharp, hapticError, hapticLight, hapticMedium } from './useHaptics';
+
 // Simple swoosh sound using Web Audio API — no files needed
 let audioCtx: AudioContext | null = null;
 
