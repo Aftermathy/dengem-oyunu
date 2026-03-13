@@ -1,5 +1,5 @@
 import { PowerState, PowerType } from '@/types/game';
-import { PowerEffect, BRIBE_COSTS } from '@/types/game';
+import { PowerEffect } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useEffect, useRef } from 'react';

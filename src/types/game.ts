@@ -20,6 +20,7 @@ export interface EventCard {
 }
 
 export interface PowerState {
+  [key: string]: number;
   halk: number;
   yatirimcilar: number;
   mafya: number;

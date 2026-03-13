@@ -21,7 +21,7 @@ import { STORAGE_KEYS } from '@/constants/storage';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
-  const { lang, t } = useLanguage();
+  const { lang } = useLanguage();
   const {
     phase, power, money, currentCard, turn, highScore,
     gameOverInfo, lastMoneyChange, startGame, continueGame, swipe,

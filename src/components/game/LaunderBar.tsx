@@ -26,7 +26,7 @@ interface LaunderBarProps {
   canLaunder: boolean;
 }
 
-export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: LaunderBarProps) {
+export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunder }: LaunderBarProps) {
   const { t, lang } = useLanguage();
   const [showPicker, setShowPicker] = useState(false);
 
