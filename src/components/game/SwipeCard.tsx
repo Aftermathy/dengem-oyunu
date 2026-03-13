@@ -136,7 +136,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
   );
 }
 
-function CardContent({ card, direction, t, isFirstSeen }: {
+function CardContent({ card, direction, t: _t, isFirstSeen }: {
   card: EventCard;
   direction: 'left' | 'right' | null;
   t: (key: string) => string;

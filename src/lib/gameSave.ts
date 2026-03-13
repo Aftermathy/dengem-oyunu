@@ -1,11 +1,11 @@
 const SAVE_KEY = 'imuststay_savegame';
 
 export interface SavedGameState {
-  power: Record<string, number>;
+  power: { [key: string]: number };
   money: number;
   turn: number;
   cardIndex: number;
-  bribeCounts: Record<string, number>;
+  bribeCounts: { [key: string]: number };
   reputation: number;
   savedAt: number; // timestamp
 }

@@ -234,7 +234,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
   }, [lang]);
 
   // Show budget warning helper
-  const showBudgetWarningFor = useCallback((id: number | string, isLaundered?: boolean) => {
+  const showBudgetWarningFor = useCallback((id: number | string, _isLaundered?: boolean) => {
     setBudgetWarning(id);
     playBudgetWarningSound();
     setTimeout(() => setBudgetWarning(null), 1500);

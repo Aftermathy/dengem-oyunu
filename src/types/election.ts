@@ -1,4 +1,4 @@
-import { Language } from '@/contexts/LanguageContext';
+// Language type used in election configs
 
 export type CardRarity = 'common' | 'uncommon' | 'epic' | 'legendary';
 
