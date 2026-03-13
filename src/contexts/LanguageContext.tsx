@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { STORAGE_KEYS } from "@/constants/storage";
 
 export type Language = "tr" | "en";
 
@@ -15,7 +16,7 @@ const translations: Record<Language, Record<string, string>> = {
     "start.subtitle2": "",
     "start.highscore": "En Yüksek Skor:",
     "start.turns": "tur",
-    "start.play": "⚔️ Oyuna Başla",
+    "start.play": "Yeni Oyun",
     // Game
     "game.turn": "Tur",
     "game.accept": "KABUL",
@@ -31,6 +32,13 @@ const translations: Record<Language, Record<string, string>> = {
     "gameover.best": "En İyi",
     "gameover.restart": "🔄 Tekrar Oyna",
     "gameover.menu": "🏠 Ana Menü",
+    // Game-over scenarios
+    "gameover.bankruptcy.title": "İflas!",
+    "gameover.bankruptcy.desc": "Kasa bomboş. Para yok, güç yok. Temizlikçi bile istifa etti. Alacaklılar saraya dayandı, IMF yönetimi devraldı. Miras olarak bıraktığın tek şey mali çılgınlığın hikayesi. Yeni teknokrat hükümet altın klozet kapaklarını internetten satışa çıkardı.",
+    "gameover.election_lost.title": "Seçim Kaybedildi!",
+    "gameover.election_lost.desc": "Sandık konuştu. Yolsuzluk saltanatın burada sona erdi. Halk korku yerine umudu seçti. Bavullarını topla — yeni hükümet kilitleri değiştirmeye başladı bile.",
+    "gameover.victory.title": "👑 Senden İyisi Yok! 👑",
+    "gameover.victory.desc": "Her seçimi atlattın, her rakibi ezdin, 20 yılı aşkın iktidarı bırakmadın. Yolsuzluk, manipülasyon ve demir yumrukla tahtını korudun. En büyük politik hayatta kalma uzmanı sensin. Taht senindir... sonsuza dek. Yoksa öyle mi? Tarih yargılayacak, ama şimdilik — kazanan sensin.",
     // Language
     "lang.tr": "TR",
     "lang.en": "EN",
@@ -49,7 +57,7 @@ const translations: Record<Language, Record<string, string>> = {
     "start.subtitle2": "",
     "start.highscore": "High Score:",
     "start.turns": "turns",
-    "start.play": "⚔️ Start Game",
+    "start.play": "New Game",
     "game.turn": "Turn",
     "game.accept": "ACCEPT",
     "game.reject": "REJECT",
@@ -62,6 +70,13 @@ const translations: Record<Language, Record<string, string>> = {
     "gameover.best": "Best",
     "gameover.restart": "🔄 Play Again",
     "gameover.menu": "🏠 Main Menu",
+    // Game-over scenarios
+    "gameover.bankruptcy.title": "Bankruptcy!",
+    "gameover.bankruptcy.desc": "The coffers are empty. No money, no power. Even the janitor quit. Creditors stormed the palace, IMF took control. Your legacy? A cautionary tale of fiscal madness. The new technocrat government is auctioning off your golden toilet seats on eBay.",
+    "gameover.election_lost.title": "Election Lost!",
+    "gameover.election_lost.desc": "The ballot box has spoken. Your reign of corruption ends here. The people chose hope over fear. Pack your bags — the new government is already changing the locks.",
+    "gameover.victory.title": "👑 No One's Better Than You! 👑",
+    "gameover.victory.desc": "You survived every election, crushed every opponent, and held on to power through it all. 20+ years of corruption, manipulation, and iron-fisted rule. You're the ultimate political survivor. The throne is yours... forever. Or is it? History will judge, but for now — you win.",
     "lang.tr": "TR",
     "lang.en": "EN",
     "tutorial.title": "Danger!",
@@ -80,12 +95,12 @@ const LanguageContext = createContext<LanguageContextType | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>(() => {
-    return (localStorage.getItem("ims_lang") as Language) || "tr";
+    return (localStorage.getItem(STORAGE_KEYS.LANGUAGE) as Language) || "tr";
   });
 
   const setLang = useCallback((l: Language) => {
     setLangState(l);
-    localStorage.setItem("ims_lang", l);
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, l);
   }, []);
 
   const t = useCallback(

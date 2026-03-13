@@ -41,28 +41,28 @@ export function LaunderBar({ totalLaundered, money, onLaunder, canLaunder }: Lau
   };
 
   return (
-    <div className="w-full max-w-md mx-auto px-3 relative">
-      <div className="flex items-center gap-2">
+    <div className="w-full max-w-md mx-auto px-3 py-1 relative">
+      <div className="flex items-center gap-3">
         <button
           onClick={handleClick}
           disabled={!canLaunder}
           className={cn(
-            "text-xs font-bold px-3 py-1.5 rounded-lg transition-all whitespace-nowrap",
+            "text-sm font-bold px-4 py-2 rounded-xl transition-all whitespace-nowrap shrink-0",
             canLaunder
-              ? "bg-emerald-600/80 text-white hover:bg-emerald-500 cursor-pointer"
+              ? "bg-emerald-600/80 text-white hover:bg-emerald-500 cursor-pointer active:scale-95"
               : "bg-muted text-muted-foreground cursor-not-allowed"
           )}
         >
-          <EmojiImg emoji="🧼" size={14} /> {lang === 'tr' ? 'Akla' : 'Launder'} (-50B)
+          <EmojiImg emoji="🧼" size={15} /> {lang === 'tr' ? 'Akla' : 'Launder'} (-50B)
         </button>
 
-        <div className="flex-1 h-5 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
+        <div className="flex-1 h-7 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
           <div
             className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500"
             style={{ width: `${Math.min(totalLaundered, 100)}%` }}
           />
-          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-foreground">
-            <EmojiImg emoji="💸" size={11} /> {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
+          <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-foreground">
+            <EmojiImg emoji="💸" size={12} /> {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
           </span>
         </div>
       </div>

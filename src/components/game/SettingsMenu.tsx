@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Settings, Volume2, VolumeX, Home } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { STORAGE_KEYS } from '@/constants/storage';
 
 interface SettingsMenuProps {
   onMainMenu: () => void;
@@ -10,14 +11,13 @@ export function SettingsMenu({ onMainMenu }: SettingsMenuProps) {
   const { lang } = useLanguage();
   const [open, setOpen] = useState(false);
   const [muted, setMuted] = useState(() => {
-    return localStorage.getItem('sound-muted') === 'true';
+    return localStorage.getItem(STORAGE_KEYS.SOUND_MUTED) === 'true';
   });
 
   const toggleMute = () => {
     const next = !muted;
     setMuted(next);
-    localStorage.setItem('sound-muted', String(next));
-    // Dispatch event so useSound can listen
+    localStorage.setItem(STORAGE_KEYS.SOUND_MUTED, String(next));
     window.dispatchEvent(new CustomEvent('sound-mute-toggle', { detail: next }));
   };
 

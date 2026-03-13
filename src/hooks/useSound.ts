@@ -1,8 +1,9 @@
 import { hapticWarStart, hapticDoubleSharp, hapticError, hapticLight, hapticMedium } from './useHaptics';
+import { STORAGE_KEYS } from '@/constants/storage';
 
 // Simple swoosh sound using Web Audio API — no files needed
 let audioCtx: AudioContext | null = null;
-let isMuted = localStorage.getItem('sound-muted') === 'true';
+let isMuted = localStorage.getItem(STORAGE_KEYS.SOUND_MUTED) === 'true';
 
 // Listen for mute toggle events
 if (typeof window !== 'undefined') {

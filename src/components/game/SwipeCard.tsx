@@ -4,15 +4,18 @@ import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { EmojiImg } from '@/components/EmojiImg';
 import { playSwipeSound } from '@/hooks/useSound';
+import arrowLeft from '@/assets/arrow-left.svg';
+import arrowRight from '@/assets/arrow-right.svg';
 
 interface SwipeCardProps {
   card: EventCard;
   onSwipe: (direction: 'left' | 'right') => void;
   onHoverEffects: (effects: PowerEffect[]) => void;
   onHoverMoney: (amount: number | null) => void;
+  isFirstSeen: boolean;
 }
 
-export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: SwipeCardProps) {
+export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirstSeen }: SwipeCardProps) {
   const { t } = useLanguage();
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -25,16 +28,17 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
 
   useEffect(() => {
     if (direction === 'right') {
+      // Always pass effects so PowerBars can show white glow on first-seen
       onHoverEffects(card.rightEffects);
-      onHoverMoney(card.rightMoney || null);
+      onHoverMoney(isFirstSeen ? null : (card.rightMoney || null));
     } else if (direction === 'left') {
       onHoverEffects(card.leftEffects);
-      onHoverMoney(card.leftMoney || null);
+      onHoverMoney(isFirstSeen ? null : (card.leftMoney || null));
     } else {
       onHoverEffects([]);
       onHoverMoney(null);
     }
-  }, [direction, card, onHoverEffects, onHoverMoney]);
+  }, [direction, card, onHoverEffects, onHoverMoney, isFirstSeen]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDragging(true);
@@ -68,79 +72,83 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney }: Swipe
   };
 
   const rotation = dragX * 0.1;
-
-  const getMoneyPreview = (dir: 'left' | 'right') => {
-    const m = dir === 'left' ? card.leftMoney : card.rightMoney;
-    if (!m) return null;
-    return m;
-  };
+  const leftActive = dragX < -25;
+  const rightActive = dragX > 25;
 
   if (exiting) {
     return (
-      <div
-        className="relative w-full max-w-md transition-all duration-300 ease-out"
-        style={{
-          transform: `translateX(${exiting === 'left' ? -500 : 500}px) rotate(${exiting === 'left' ? -30 : 30}deg)`,
-          opacity: 0,
-        }}
-      >
-        <CardContent card={card} direction={null} t={t} />
+      <div className="relative w-full max-w-md h-full">
+        <div
+          className="relative w-full h-full transition-all duration-300 ease-out"
+          style={{
+            transform: `translateX(${exiting === 'left' ? -500 : 500}px) rotate(${exiting === 'left' ? -30 : 30}deg)`,
+            opacity: 0,
+          }}
+        >
+          <CardContent card={card} direction={null} t={t} isFirstSeen={false} />
+        </div>
       </div>
     );
   }
 
   return (
-    <div
-      ref={cardRef}
-      className={cn(
-        "relative w-full max-w-md h-full cursor-grab select-none touch-none",
-        isDragging && "cursor-grabbing"
-      )}
-      style={{
-        transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
-        transition: isDragging ? 'none' : 'transform 0.3s ease',
-      }}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-    >
-      {/* Choice labels */}
-      <div
-        className="absolute -left-1 top-6 bg-red-500 text-white px-2.5 py-1 rounded-lg text-sm font-bold z-10 transition-opacity"
-        style={{ opacity: dragX < -25 ? Math.min(1, Math.abs(dragX) / 80) : 0 }}
-      >
-        ← {t('game.reject')}
-        {getMoneyPreview('left') !== null && (
-        <span className="ml-1 text-xs">
-            ({getMoneyPreview('left')! > 0 ? '+' : ''}{getMoneyPreview('left')}B)
-          </span>
+    <div className="relative w-full max-w-md h-full flex items-center">
+      {/* Left arrow — far left edge */}
+      <img
+        src={arrowLeft}
+        alt="swipe left"
+        className={cn(
+          "absolute -left-7 z-20 w-12 h-12 transition-all duration-200 pointer-events-none select-none",
+          leftActive ? "opacity-100 scale-110" : "opacity-20"
         )}
-      </div>
-      <div
-        className="absolute -right-1 top-6 bg-emerald-500 text-white px-2.5 py-1 rounded-lg text-sm font-bold z-10 transition-opacity"
-        style={{ opacity: dragX > 25 ? Math.min(1, dragX / 80) : 0 }}
-      >
-        {t('game.accept')} →
-        {getMoneyPreview('right') !== null && (
-          <span className="ml-1 text-xs">
-            ({getMoneyPreview('right')! > 0 ? '+' : ''}{getMoneyPreview('right')}B)
-          </span>
-        )}
-      </div>
+      />
 
-      <CardContent card={card} direction={direction} t={t} />
+      {/* Right arrow — far right edge */}
+      <img
+        src={arrowRight}
+        alt="swipe right"
+        className={cn(
+          "absolute -right-7 z-20 w-12 h-12 transition-all duration-200 pointer-events-none select-none",
+          rightActive ? "opacity-100 scale-110" : "opacity-20"
+        )}
+      />
+
+      {/* Swipeable card */}
+      <div
+        ref={cardRef}
+        className={cn(
+          "relative w-full h-full cursor-grab select-none touch-none",
+          isDragging && "cursor-grabbing",
+          leftActive && "ring-2 ring-red-400 rounded-2xl",
+          rightActive && "ring-2 ring-emerald-400 rounded-2xl",
+        )}
+        style={{
+          transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
+          transition: isDragging ? 'none' : 'transform 0.3s ease',
+        }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      >
+        <CardContent card={card} direction={direction} t={t} isFirstSeen={isFirstSeen} />
+      </div>
     </div>
   );
 }
 
-function CardContent({ card, direction, t }: { card: EventCard; direction: 'left' | 'right' | null; t: (key: string) => string }) {
-  const leftMoney = card.leftMoney || 0;
-  const rightMoney = card.rightMoney || 0;
+function CardContent({ card, direction, t, isFirstSeen }: {
+  card: EventCard;
+  direction: 'left' | 'right' | null;
+  t: (key: string) => string;
+  isFirstSeen: boolean;
+}) {
+  const leftMoney = card.leftMoney ?? 0;
+  const rightMoney = card.rightMoney ?? 0;
 
   return (
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden h-full flex flex-col" style={{ transform: 'scale(0.9)', transformOrigin: 'center' }}>
-      {/* Character header - 25% of card */}
-      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-3 text-center flex-[1] flex flex-col items-center justify-center min-h-0">
+      {/* Character header */}
+      <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-3 text-center flex-[2] flex flex-col items-center justify-center min-h-0">
         <div className="mb-1"><EmojiImg emoji={card.characterEmoji} size={90} /></div>
         <h3 className="font-bold text-foreground text-2xl">{card.character}</h3>
         <span className="text-sm bg-muted px-3 py-0.5 rounded-full text-muted-foreground mt-0.5">
@@ -149,34 +157,52 @@ function CardContent({ card, direction, t }: { card: EventCard; direction: 'left
       </div>
 
       {/* Description */}
-      <div className="px-5 py-1 flex-[1] flex items-center border-t border-border/30 min-h-0">
+      <div className="px-5 py-2 flex-[2] flex items-center border-t border-border/30 min-h-0">
         <p className="text-sm text-foreground leading-snug italic w-full">
           "{card.description}"
         </p>
       </div>
 
-      {/* Choices */}
-      <div className="grid grid-cols-2 border-t border-border flex-[1] min-h-0">
+      {/* Section A — Choices row (2× taller) */}
+      <div className="grid grid-cols-2 border-t border-border flex-shrink-0">
         <div className={cn(
-          "p-3 flex flex-col items-center justify-center text-sm transition-colors border-r border-border",
-          direction === 'left' ? 'bg-red-500/20 text-red-700 font-bold' : 'text-muted-foreground'
+          "flex items-center gap-2 px-3 py-4 text-sm transition-colors border-r border-border min-h-[72px]",
+          direction === 'left' ? 'bg-red-500/15 text-red-600 font-bold' : 'text-muted-foreground'
         )}>
-          ← {card.leftChoice}
-          {leftMoney !== 0 && (
-            <div className={cn("text-xs font-bold mt-0.5", leftMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
-              {leftMoney > 0 ? '+' : ''}{leftMoney}B <EmojiImg emoji="💰" size={12} />
-            </div>
-          )}
+          <span className="text-base shrink-0">←</span>
+          <span className="leading-tight">{card.leftChoice}</span>
         </div>
         <div className={cn(
-          "p-3 flex flex-col items-center justify-center text-sm transition-colors",
-          direction === 'right' ? 'bg-emerald-500/20 text-emerald-700 font-bold' : 'text-muted-foreground'
+          "flex items-center justify-end gap-2 px-3 py-4 text-sm transition-colors min-h-[72px]",
+          direction === 'right' ? 'bg-emerald-500/15 text-emerald-600 font-bold' : 'text-muted-foreground'
         )}>
-          {card.rightChoice} →
-          {rightMoney !== 0 && (
-            <div className={cn("text-xs font-bold mt-0.5", rightMoney > 0 ? 'text-emerald-600' : 'text-red-600')}>
-              {rightMoney > 0 ? '+' : ''}{rightMoney}B <EmojiImg emoji="💰" size={12} />
-            </div>
+          <span className="text-right leading-tight">{card.rightChoice}</span>
+          <span className="text-base shrink-0">→</span>
+        </div>
+      </div>
+
+      {/* Section B — Money row (2× taller) */}
+      <div className="grid grid-cols-2 border-t border-border/60 bg-muted/20 flex-shrink-0">
+        <div className="flex items-center justify-center text-sm font-bold py-3 min-h-[52px] border-r border-border/60">
+          {isFirstSeen ? (
+            <span className="text-muted-foreground/60 tracking-widest">? 💰</span>
+          ) : leftMoney !== 0 ? (
+            <span className={leftMoney > 0 ? 'text-emerald-600' : 'text-red-500'}>
+              {leftMoney > 0 ? '+' : ''}{leftMoney}B 💰
+            </span>
+          ) : (
+            <span className="text-muted-foreground/40">—</span>
+          )}
+        </div>
+        <div className="flex items-center justify-center text-sm font-bold py-3 min-h-[52px]">
+          {isFirstSeen ? (
+            <span className="text-muted-foreground/60 tracking-widest">? 💰</span>
+          ) : rightMoney !== 0 ? (
+            <span className={rightMoney > 0 ? 'text-emerald-600' : 'text-red-500'}>
+              {rightMoney > 0 ? '+' : ''}{rightMoney}B 💰
+            </span>
+          ) : (
+            <span className="text-muted-foreground/40">—</span>
           )}
         </div>
       </div>

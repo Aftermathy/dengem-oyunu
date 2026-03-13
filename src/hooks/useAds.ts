@@ -16,6 +16,8 @@
  * }
  */
 
+import { STORAGE_KEYS } from '@/constants/storage';
+
 let gameCount = 0;
 
 /**
@@ -44,12 +46,12 @@ export async function showInterstitialAd(every = 1): Promise<void> {
  * TODO: Integrate with App Store in-app purchase verification.
  */
 export function isAdFree(): boolean {
-  return localStorage.getItem('ad_free_purchased') === 'true';
+  return localStorage.getItem(STORAGE_KEYS.AD_FREE) === 'true';
 }
 
 /**
  * Call this after a successful in-app purchase.
  */
 export function setAdFree(): void {
-  localStorage.setItem('ad_free_purchased', 'true');
+  localStorage.setItem(STORAGE_KEYS.AD_FREE, 'true');
 }

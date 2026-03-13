@@ -7,6 +7,8 @@ import throneIcon from '@/assets/throne-icon.png';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 import { Switch } from '@/components/ui/switch';
 import { Moon, Sun } from 'lucide-react';
+import { hasSavedGame } from '@/lib/gameSave';
+import { STORAGE_KEYS } from '@/constants/storage';
 
 // Multilingual "I MUST STAY" variants — bold word marked with *word*
 const TITLE_VARIANTS = [
@@ -34,9 +36,10 @@ const SHAKE_CLASSES = [
 interface StartScreenProps {
   highScore: number;
   onStart: () => void;
+  onContinue?: () => void;
 }
 
-export function StartScreen({ highScore, onStart }: StartScreenProps) {
+export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps) {
   const { lang, setLang, t } = useLanguage();
   const [titleIndex, setTitleIndex] = useState(0);
   const [shakeClass, setShakeClass] = useState('');
@@ -82,20 +85,20 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
       setShowDarkWarning(true);
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('ims_dark', 'false');
+      localStorage.setItem(STORAGE_KEYS.DARK_MODE, 'false');
       setIsDark(false);
     }
   }, [isDark]);
 
   const confirmDarkMode = useCallback(() => {
     document.documentElement.classList.add('dark');
-    localStorage.setItem('ims_dark', 'true');
+    localStorage.setItem(STORAGE_KEYS.DARK_MODE, 'true');
     setIsDark(true);
     setShowDarkWarning(false);
   }, []);
 
   useEffect(() => {
-    const saved = localStorage.getItem('ims_dark');
+    const saved = localStorage.getItem(STORAGE_KEYS.DARK_MODE);
     if (saved === 'true') {
       document.documentElement.classList.add('dark');
       setIsDark(true);
@@ -118,7 +121,7 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
   };
 
   return (
-    <div className="flex flex-col items-center p-4 text-center animate-fade-in h-[100dvh] overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 4px)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="flex flex-col items-center p-4 text-center animate-fade-in h-[100dvh] overflow-hidden pt-safe-plus-1 pb-safe">
       {/* Top bar: Language toggle + Dark mode */}
       <div className="flex items-center justify-between w-full shrink-0 mb-1">
         <div className="flex gap-1 bg-muted rounded-full p-1">
@@ -175,19 +178,30 @@ export function StartScreen({ highScore, onStart }: StartScreenProps) {
           </div>
         }
 
-        <Button
-          size="lg"
-          onClick={() => {playWarStartSound();onStart();}}
-          className="text-lg px-10 py-5 font-bold shadow-lg hover:shadow-xl transition-shadow shrink-0">
-          {t('start.play')}
-        </Button>
+        <div className="flex flex-col items-center gap-3 w-full max-w-[240px]">
+          <Button
+            size="lg"
+            onClick={() => {playWarStartSound();onStart();}}
+            className="w-full text-lg py-5 font-bold shadow-lg hover:shadow-xl transition-shadow justify-center">
+            {t('start.play')}
+          </Button>
+
+          {hasSavedGame() && onContinue && (
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => {playClickSound();hapticMedium();onContinue();}}
+              className="w-full text-lg py-5 font-bold justify-center">
+              {lang === 'tr' ? 'Devam Et' : 'Continue'}
+            </Button>
+          )}
+        </div>
 
         <a
           href="https://apps.apple.com/app/i-must-stay"
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-2 px-5 border-2 shrink-0"
-          style={{ textShadow: '0 0 8px hsl(15 80% 50% / 0.3)' }}>
+          className="rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-2 px-5 border-2 shrink-0 text-shadow-glow">
           <EmojiImg emoji="✨" size={14} /> {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} <EmojiImg emoji="✨" size={14} />
         </a>
       </div>

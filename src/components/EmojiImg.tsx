@@ -1,7 +1,6 @@
 /**
- * EmojiImg — renders emoji characters as cross-platform PNG images
- * using the Twemoji CDN. Works in WKWebView / Capacitor where
- * native emoji fonts may not render.
+ * EmojiImg — renders emoji characters natively using a <span> element.
+ * Falls back to Twemoji CDN images only when the `useCDN` prop is explicitly passed.
  */
 
 import React from 'react';
@@ -11,6 +10,9 @@ interface EmojiImgProps {
   size?: number;
   className?: string;
   alt?: string;
+  /** Pass useCDN to force CDN image rendering (Twemoji). Default: false (native span). */
+  useCDN?: boolean;
+  label?: string;
 }
 
 function emojiToCodepoint(emoji: string): string {
@@ -26,21 +28,38 @@ function emojiToCodepoint(emoji: string): string {
   return codepoints.join('-');
 }
 
-export function EmojiImg({ emoji, size = 24, className = '', alt }: EmojiImgProps) {
-  const codepoint = emojiToCodepoint(emoji);
-  const src = `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${codepoint}.svg`;
+export function EmojiImg({ emoji, size = 24, className = '', alt, useCDN = false, label }: EmojiImgProps) {
+  if (useCDN) {
+    const codepoint = emojiToCodepoint(emoji);
+    const src = `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${codepoint}.svg`;
+    return (
+      <img
+        src={src}
+        alt={alt || emoji}
+        width={size}
+        height={size}
+        className={`inline-block ${className}`}
+        style={{ width: size, height: size, verticalAlign: 'middle' }}
+        draggable={false}
+        loading="lazy"
+      />
+    );
+  }
 
   return (
-    <img
-      src={src}
-      alt={alt || emoji}
-      width={size}
-      height={size}
+    <span
+      role="img"
+      aria-label={label || alt || emoji}
       className={`inline-block ${className}`}
-      style={{ width: size, height: size, verticalAlign: 'middle' }}
-      draggable={false}
-      loading="lazy"
-    />
+      style={{
+        fontFamily: 'Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji, sans-serif',
+        fontSize: size ? `${size}px` : '1em',
+        lineHeight: 1,
+        verticalAlign: 'middle',
+      }}
+    >
+      {emoji}
+    </span>
   );
 }
 

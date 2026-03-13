@@ -2740,6 +2740,20 @@ export const milestoneCard50: EventCard = {
   rightMoney: -10,
 };
 
+export const prologueCard: EventCard = {
+  id: 9001,
+  character: "Gizemli Ziyaretçi",
+  characterEmoji: "🕵️",
+  category: "Dış Güçler",
+  description: "Bir yabancı elçi sarayınıza girdi. Masanıza bir fincan Türk kahvesi bıraktı ve gülümsedi. 'İçer misiniz, liderim?' dedi.",
+  leftChoice: "Reddet — zehir olabilir",
+  rightChoice: "İç — diplomasi şarttır",
+  leftEffects: [{ power: "ordu", amount: 5 }],
+  rightEffects: [{ power: "yatirimcilar", amount: 5 }],
+  leftMoney: 0,
+  rightMoney: -2,
+};
+
 // Dark mode easter egg card
 export const darkModeCard: EventCard = {
   id: 9999,

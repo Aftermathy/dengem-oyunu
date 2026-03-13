@@ -1119,6 +1119,20 @@ export const milestoneCard50En: EventCard = {
   leftMoney: 50, rightMoney: -10,
 };
 
+export const prologueCardEn: EventCard = {
+  id: 9001,
+  character: "Mysterious Visitor",
+  characterEmoji: "🕵️",
+  category: "Foreign Powers",
+  description: "A foreign envoy entered your palace. They placed a cup of Turkish coffee on your desk and smiled. 'Will you drink, my leader?'",
+  leftChoice: "Refuse — could be poisoned",
+  rightChoice: "Accept — diplomacy first",
+  leftEffects: [{ power: "ordu", amount: 5 }],
+  rightEffects: [{ power: "yatirimcilar", amount: 5 }],
+  leftMoney: 0,
+  rightMoney: -2,
+};
+
 // Dark mode easter egg card
 export const darkModeCardEn: EventCard = {
   id: 9999,

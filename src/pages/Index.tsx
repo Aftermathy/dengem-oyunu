@@ -1,10 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { EmojiImg } from '@/components/EmojiImg';
 import { useGame } from '@/hooks/useGame';
 import { PowerBars } from '@/components/game/PowerBars';
 import { SwipeCard } from '@/components/game/SwipeCard';
 import { LaunderBar } from '@/components/game/LaunderBar';
-import { LaunderShop } from '@/components/game/LaunderShop';
 import { GameOverScreen } from '@/components/game/GameOverScreen';
 import { StartScreen } from '@/components/game/StartScreen';
 import { BribeTutorial } from '@/components/game/BribeTutorial';
@@ -14,25 +13,34 @@ import { PowerEffect } from '@/types/game';
 import { ElectionScreen } from '@/components/game/ElectionScreen';
 import { getElectionConfig, getNextElectionInfo } from '@/data/electionData';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { CardKnowledgeAnnouncement } from '@/components/game/CardKnowledgeAnnouncement';
+import { TutorialAskScreen } from '@/components/game/TutorialAskScreen';
+import { TutorialOverlay } from '@/components/game/TutorialOverlay';
+import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
+import { STORAGE_KEYS } from '@/constants/storage';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const { lang, t } = useLanguage();
   const {
     phase, power, money, currentCard, turn, highScore,
-    gameOverInfo, lastMoneyChange, startGame, swipe,
+    gameOverInfo, lastMoneyChange, startGame, continueGame, swipe,
     bribe, canBribe, getBribeCost, tutorialFaction,
     completeTutorialBribe, skipTutorial, goToMenu,
-    totalLaundered, canLaunder, launder, lastShopResult,
-    propaganda, canPropaganda, getPropagandaCost,
-    invest, canInvest, getInvestmentCost,
-    alliance, canAlliance, getAllianceCost,
+    totalLaundered, canLaunder, launder,
+    currentCardFirstSeen,
     currentElectionIndex, completedElections, handleElectionComplete,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
+  const [showKnowledgeAnnouncement, setShowKnowledgeAnnouncement] = useState(false);
+  const [showTutorialAsk, setShowTutorialAsk] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
   const nextElectionInfo = getNextElectionInfo(turn, completedElections);
+  // Track election defeat so knowledge announcement fires even when onMainMenu is called directly
+  // from ElectionScreen's defeat result (before phase ever becomes 'gameover')
+  const electionDefeatRef = useRef(false);
 
   const handleHoverEffects = useCallback((effects: PowerEffect[]) => {
     setActiveEffects(effects);
@@ -42,8 +50,26 @@ const Index = () => {
     setProjectedMoney(amount);
   }, []);
 
+  const handleGoToMenu = useCallback(() => {
+    const wasGameOver = phase === 'gameover' || electionDefeatRef.current;
+    electionDefeatRef.current = false;
+    goToMenu();
+    if (wasGameOver && hasSeenAnyCard() && !hasShownKnowledgeAnnouncement()) {
+      setShowKnowledgeAnnouncement(true);
+    }
+  }, [phase, goToMenu]);
+
+  const handleStartGame = useCallback(() => {
+    startGame();
+    const neverDeclined = localStorage.getItem(STORAGE_KEYS.TUTORIAL_DECLINED) !== 'true';
+    const firstTimer = !hasSeenAnyCard();
+    if (neverDeclined && firstTimer) {
+      setShowTutorialAsk(true);
+    }
+  }, [startGame]);
+
   return (
-    <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none" style={{ overscrollBehavior: 'none', paddingTop: 'env(safe-area-inset-top)' }} onContextMenu={e => e.preventDefault()}>
+    <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none overscroll-none pt-safe" onContextMenu={e => e.preventDefault()}>
       {/* Landscape block overlay */}
       <div className="landscape-block hidden fixed inset-0 z-[200] items-center justify-center bg-black text-white text-center p-8 flex-col gap-4" style={{ display: 'none' }}>
         <EmojiImg emoji="🔄" size={64} />
@@ -53,14 +79,14 @@ const Index = () => {
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
-        <StartScreen highScore={highScore} onStart={startGame} />
+        <StartScreen highScore={highScore} onStart={handleStartGame} onContinue={continueGame} />
       )}
 
       {phase === 'playing' && currentCard && (
         <>
           <div className="pt-1 pb-0 shrink-0 relative">
             <div className="absolute right-2 top-1 z-40">
-              <SettingsMenu onMainMenu={goToMenu} />
+              <SettingsMenu onMainMenu={handleGoToMenu} />
             </div>
             <PowerBars
               power={power}
@@ -71,15 +97,16 @@ const Index = () => {
               onBribe={bribe}
               canBribe={canBribe}
               getBribeCost={getBribeCost}
+              isFirstSeenCard={currentCardFirstSeen}
             />
           </div>
 
           <div className="flex flex-col items-center justify-center py-0.5 animate-fade-in shrink-0" key={`turn-${turn}`}>
             <div className="flex items-center">
-              <span className="text-base font-black tracking-wider text-foreground" style={{ fontFamily: "'Georgia', serif" }}>
+              <span className="text-base font-black tracking-wider text-foreground font-georgia">
                 {2002 + Math.floor(turn / 4)}
               </span>
-              <span className="text-sm font-bold text-primary ml-1.5 tracking-widest" style={{ fontFamily: "'Georgia', serif" }}>
+              <span className="text-sm font-bold text-primary ml-1.5 tracking-widest font-georgia">
                 Q{(turn % 4) + 1}
               </span>
               <span className="text-[10px] text-muted-foreground/40 ml-1.5 font-mono">({turn})</span>
@@ -100,19 +127,6 @@ const Index = () => {
             />
           </div>
 
-          <div className="shrink-0">
-            <LaunderShop
-              totalLaundered={totalLaundered}
-              lastShopResult={lastShopResult}
-              onPropaganda={propaganda}
-              canPropaganda={canPropaganda}
-              propagandaCost={getPropagandaCost()}
-              onAlliance={alliance}
-              canAlliance={canAlliance}
-              allianceCost={getAllianceCost()}
-            />
-          </div>
-
           <div className="flex-1 flex items-center justify-center px-4 min-h-0 pb-[env(safe-area-inset-bottom)]">
             <SwipeCard
               key={currentCard.id + '-' + turn}
@@ -120,6 +134,7 @@ const Index = () => {
               onSwipe={swipe}
               onHoverEffects={handleHoverEffects}
               onHoverMoney={handleHoverMoney}
+              isFirstSeen={currentCardFirstSeen}
             />
           </div>
         </>
@@ -142,7 +157,13 @@ const Index = () => {
           lang={lang}
           onComplete={handleElectionComplete}
           onRestart={startGame}
-          onMainMenu={goToMenu}
+          onMainMenu={() => {
+            // Mark as election defeat so knowledge announcement fires correctly.
+            // ElectionScreen's defeat screen calls onMainMenu directly (bypassing onComplete),
+            // so phase stays 'election' — we need this ref to know it was a loss.
+            electionDefeatRef.current = true;
+            handleGoToMenu();
+          }}
         />
       )}
 
@@ -156,8 +177,23 @@ const Index = () => {
           highScore={highScore}
           money={money}
           onRestart={startGame}
-          onMainMenu={goToMenu}
+          onMainMenu={handleGoToMenu}
         />
+      )}
+
+      {showKnowledgeAnnouncement && (
+        <CardKnowledgeAnnouncement seenCount={getSeenCards().size} onDismiss={() => { markKnowledgeAnnouncementShown(); setShowKnowledgeAnnouncement(false); }} />
+      )}
+
+      {showTutorialAsk && (
+        <TutorialAskScreen
+          onYes={() => { setShowTutorialAsk(false); setShowTutorial(true); }}
+          onNo={() => { localStorage.setItem(STORAGE_KEYS.TUTORIAL_DECLINED, 'true'); setShowTutorialAsk(false); }}
+        />
+      )}
+
+      {showTutorial && (
+        <TutorialOverlay onComplete={() => setShowTutorial(false)} />
       )}
     </div>
   );

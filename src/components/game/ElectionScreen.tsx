@@ -433,24 +433,6 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
 
           {/* Vote bars */}
           <div className="flex justify-center items-end gap-8 px-8 py-3">
-            {/* Opposition bar */}
-            <div className="flex flex-col items-center">
-              <span className="text-red-300 font-black text-xl mb-1">{displayOpponentVote}%</span>
-              <div className={`w-14 rounded-t-lg overflow-visible border border-red-700/50 relative ${phase === 'ai' && aiCardPlayed ? 'opp-bar-glow' : ''}`}
-                style={{ height: 130, background: 'rgba(100,0,0,0.3)' }}>
-                <div className="w-full transition-all duration-700 ease-out rounded-t vote-bar-flame"
-                  style={{
-                    height: `${displayOpponentVote}%`,
-                    marginTop: `${100 - displayOpponentVote}%`,
-                    background: 'linear-gradient(180deg, #ef4444, #991b1b)',
-                  }}
-                />
-              </div>
-              <span className="text-red-300 text-xs mt-1 font-bold">{labels.opposition}</span>
-            </div>
-
-            <span className="text-3xl font-black text-orange-600/50 pb-10 select-none">VS</span>
-
             {/* Player bar */}
             <div className="flex flex-col items-center">
               <span className="text-green-300 font-black text-xl mb-1">{displayPlayerVote}%</span>
@@ -465,6 +447,24 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang,
                 />
               </div>
               <span className="text-green-300 text-xs mt-1 font-bold">{labels.you}</span>
+            </div>
+
+            <span className="text-3xl font-black text-orange-600/50 pb-10 select-none">VS</span>
+
+            {/* Opposition bar */}
+            <div className="flex flex-col items-center">
+              <span className="text-red-300 font-black text-xl mb-1">{displayOpponentVote}%</span>
+              <div className={`w-14 rounded-t-lg overflow-visible border border-red-700/50 relative ${phase === 'ai' && aiCardPlayed ? 'opp-bar-glow' : ''}`}
+                style={{ height: 130, background: 'rgba(100,0,0,0.3)' }}>
+                <div className="w-full transition-all duration-700 ease-out rounded-t vote-bar-flame"
+                  style={{
+                    height: `${displayOpponentVote}%`,
+                    marginTop: `${100 - displayOpponentVote}%`,
+                    background: 'linear-gradient(180deg, #ef4444, #991b1b)',
+                  }}
+                />
+              </div>
+              <span className="text-red-300 text-xs mt-1 font-bold">{labels.opposition}</span>
             </div>
           </div>
 
