@@ -47,6 +47,7 @@ function getScenarios(lang: Language) {
 }
 
 export interface BribeState {
+  [key: string]: number;
   halk: number;
   yatirimcilar: number;
   mafya: number;
