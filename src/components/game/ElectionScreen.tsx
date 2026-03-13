@@ -184,7 +184,7 @@ function AnimatedVote({ value, color, label }: { value: number; color: string; l
   );
 }
 
-export const ElectionScreen = ({ config, money, launderedMoney, halkPower, lang, onComplete, onRestart, onMainMenu }: ElectionScreenProps) => {
+export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu }: ElectionScreenProps) => {
   const [playerVote, setPlayerVote] = useState(() => config.startingPlayerVote);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result' | 'victory'>('intro');
