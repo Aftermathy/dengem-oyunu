@@ -1,9 +1,10 @@
 import { EventCard } from '@/types/game';
+import { normalizeCards } from '@/lib/gameLogic';
 
 // Chain A = rejected coffee (left on prologue), Chain B = accepted coffee (right on prologue)
 // Index 0 = after election 1, index 1 = after election 2, etc.
 
-export const chainCardsA_TR: EventCard[] = [
+export const chainCardsA_TR: EventCard[] = normalizeCards([
   // After election 1: rejected coffee branch
   {
     id: 9101,
