@@ -19,44 +19,42 @@ export function ElectionResultScreen({ won, playerVote, labels, lang, onRestart,
       {won ? (
         <>
           <EmojiImg emoji="🎉" size={72} className="mb-6" />
-          <h2 className="text-3xl font-black mb-3 text-center title-glow-pulse" style={{ color: '#4ade80' }}>
+          <h2 className="text-3xl font-black mb-3 text-center title-glow-pulse text-game-success-light">
             {labels.electionWon}
           </h2>
           <div className="flex gap-10 my-6">
-            <AnimatedVote value={playerVote} color="#4ade80" label={labels.you} />
-            <AnimatedVote value={100 - playerVote} color="#f87171" label={labels.opposition} />
+            <AnimatedVote value={playerVote} color="hsl(var(--game-success-light))" label={labels.you} />
+            <AnimatedVote value={100 - playerVote} color="hsl(var(--game-danger-light))" label={labels.opposition} />
           </div>
         </>
       ) : (
         <>
-          <div className="w-full max-w-xs rounded-xl overflow-hidden border-2 border-red-800/60 shadow-2xl mb-4">
+          <div className="w-full max-w-xs rounded-xl overflow-hidden border-2 border-game-danger/60 shadow-2xl mb-4">
             <img src={defeatElectionImg} alt="Election defeat" className="w-full h-48 object-cover" />
           </div>
-          <h2 className="text-2xl font-black mb-2 text-center election-glitch" style={{ color: '#f87171' }}>
+          <h2 className="text-2xl font-black mb-2 text-center election-glitch text-game-danger-light">
             {labels.electionLost}
           </h2>
-          <p className="text-orange-200/90 text-center text-sm px-4 mb-2 italic leading-relaxed max-w-xs"
-            style={{ textShadow: '0 0 10px rgba(255,100,0,0.3)' }}>
+          <p className="text-game-election-light/90 text-center text-sm px-4 mb-2 italic leading-relaxed max-w-xs"
+            style={{ textShadow: '0 0 10px hsl(var(--game-election) / 0.3)' }}>
             {lang === 'en'
               ? '"He who came with the ballot box, left with the ballot box. Democracy is a beautiful thing... when it works against you."'
               : '"Sandıkla gelen, sandıkla gitti. Demokrasi ne güzel şey... sana karşı işleyince."'}
           </p>
-          <p className="text-red-400/70 text-xs mb-4">
+          <p className="text-game-danger/70 text-xs mb-4">
             {lang === 'en' ? '— The People have spoken.' : '— Millet iradesini gösterdi.'}
           </p>
           <div className="flex gap-10 my-3">
-            <AnimatedVote value={playerVote} color="#4ade80" label={labels.you} />
-            <AnimatedVote value={100 - playerVote} color="#f87171" label={labels.opposition} />
+            <AnimatedVote value={playerVote} color="hsl(var(--game-success-light))" label={labels.you} />
+            <AnimatedVote value={100 - playerVote} color="hsl(var(--game-danger-light))" label={labels.opposition} />
           </div>
           <div className="flex gap-3 mt-4 w-full max-w-xs relative z-50">
             <button onClick={() => { playClickSound(); onRestart(); }}
-              className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white cursor-pointer"
-              style={{ background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(8px)' }}>
+              className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-primary-foreground/20 text-primary-foreground cursor-pointer bg-primary-foreground/10 backdrop-blur-sm">
               <EmojiImg emoji="🔄" size={16} className="mr-1" />{lang === 'en' ? ' Play Again' : ' Yeniden Oyna'}
             </button>
             <button onClick={() => { playClickSound(); onMainMenu(); }}
-              className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-white/20 text-white/80 cursor-pointer"
-              style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(8px)' }}>
+              className="flex-1 py-3 font-black rounded-xl text-sm active:scale-95 transition-all border border-primary-foreground/20 text-primary-foreground/80 cursor-pointer bg-game-overlay/30 backdrop-blur-sm">
               <EmojiImg emoji="🏠" size={16} className="mr-1" />{lang === 'en' ? ' Main Menu' : ' Ana Menü'}
             </button>
           </div>
