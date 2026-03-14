@@ -148,15 +148,8 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
   useEffect(() => {
     if (phase !== 'result' || won || lossHandledRef.current) return;
     lossHandledRef.current = true;
-    // Trigger AP award immediately when loss is detected
-    onComplete({
-      won: false,
-      playerVote: displayPlayerVote,
-      opponentVote: displayOpponentVote,
-      remainingBudget: budget,
-      remainingLaundered: laundered,
-    });
-  }, [phase, won]);
+    onLossDetected?.();
+  }, [phase, won, onLossDetected]);
 
   // Victory transition
   useEffect(() => {
