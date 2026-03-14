@@ -16,6 +16,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { CardKnowledgeAnnouncement } from '@/components/game/CardKnowledgeAnnouncement';
 import { TutorialAskScreen } from '@/components/game/TutorialAskScreen';
 import { TutorialOverlay } from '@/components/game/TutorialOverlay';
+import { AchievementPopup } from '@/components/game/AchievementPopup';
 import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
 import { STORAGE_KEYS } from '@/constants/storage';
 
