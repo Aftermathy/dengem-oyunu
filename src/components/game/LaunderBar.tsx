@@ -49,7 +49,7 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
           className={cn(
             "text-sm font-bold px-4 py-2 rounded-xl transition-all whitespace-nowrap shrink-0",
             canLaunder
-              ? "bg-emerald-600/80 text-white hover:bg-emerald-500 cursor-pointer active:scale-95"
+              ? "bg-game-success/80 text-primary-foreground hover:bg-game-success cursor-pointer active:scale-95"
               : "bg-muted text-muted-foreground cursor-not-allowed"
           )}
         >
@@ -58,7 +58,7 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
 
         <div className="flex-1 h-7 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
           <div
-            className="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full transition-all duration-500"
+            className="h-full bg-gradient-to-r from-game-success to-game-success-light rounded-full transition-all duration-500"
             style={{ width: `${Math.min(totalLaundered, 100)}%` }}
           />
           <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-foreground">
@@ -69,7 +69,7 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
 
       {/* Faction picker modal */}
       {showPicker && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-game-overlay/70 animate-in fade-in duration-200">
           <div className="bg-card border border-border rounded-2xl p-5 mx-4 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200 text-center">
             <div className="mb-2"><EmojiImg emoji="🧼" size={28} /></div>
             <h3 className="text-lg font-bold text-foreground mb-1">
@@ -92,7 +92,7 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
                     <img src={FACTION_IMAGES[faction]} alt={t(`power.${faction}`)} className="w-full h-full object-cover" />
                   </div>
                   <span className="text-sm font-bold text-foreground">{t(`power.${faction}`)}</span>
-                  <span className="text-xs text-emerald-500">+10 rep</span>
+                  <span className="text-xs text-game-success">+10 rep</span>
                 </button>
               ))}
             </div>

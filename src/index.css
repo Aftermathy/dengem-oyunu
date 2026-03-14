@@ -66,20 +66,27 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* Game-specific semantic tokens */
+    --game-success: 145 70% 42%;
+    --game-success-light: 155 72% 67%;
+    --game-danger: 0 84% 60%;
+    --game-danger-light: 0 91% 71%;
+    --game-gold: 45 93% 58%;
+    --game-gold-dark: 38 92% 50%;
+    --game-income: 189 94% 43%;
+    --game-election: 25 95% 53%;
+    --game-election-light: 30 95% 67%;
+    --game-special: 270 67% 55%;
+    --game-special-light: 270 80% 72%;
+    --game-overlay: 0 0% 0%;
+
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -111,6 +118,21 @@ All colors MUST be HSL.
     --border: 20 10% 20%;
     --input: 20 10% 20%;
     --ring: 15 80% 50%;
+
+    /* Game-specific semantic tokens (dark) */
+    --game-success: 142 71% 45%;
+    --game-success-light: 155 72% 67%;
+    --game-danger: 0 84% 60%;
+    --game-danger-light: 0 91% 71%;
+    --game-gold: 45 93% 58%;
+    --game-gold-dark: 38 92% 50%;
+    --game-income: 189 94% 43%;
+    --game-election: 25 95% 53%;
+    --game-election-light: 30 95% 67%;
+    --game-special: 270 67% 55%;
+    --game-special-light: 270 80% 72%;
+    --game-overlay: 0 0% 0%;
+
     --sidebar-background: 20 15% 8%;
     --sidebar-foreground: 40 20% 92%;
     --sidebar-primary: 15 80% 50%;

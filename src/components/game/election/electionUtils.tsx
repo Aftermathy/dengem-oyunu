@@ -3,10 +3,10 @@ import { ElectionCard, CardRarity } from '@/types/election';
 
 /* ── Rarity styles ── */
 export const RARITY_STYLES: Record<CardRarity, { border: string; bg: string; glow: string; label: string; labelColor: string }> = {
-  common: { border: 'border-gray-500/60', bg: 'bg-gray-900/80', glow: '', label: '★', labelColor: 'text-gray-400' },
-  uncommon: { border: 'border-emerald-500/70', bg: 'bg-emerald-950/80', glow: 'shadow-[0_0_12px_rgba(16,185,129,0.3)]', label: '★★', labelColor: 'text-emerald-400' },
-  epic: { border: 'border-purple-500/70', bg: 'bg-purple-950/80', glow: 'shadow-[0_0_18px_rgba(168,85,247,0.4)]', label: '★★★', labelColor: 'text-purple-400' },
-  legendary: { border: 'border-red-500/80', bg: 'bg-red-950/80', glow: 'shadow-[0_0_25px_rgba(239,68,68,0.5)]', label: '★★★★', labelColor: 'text-red-400' },
+  common: { border: 'border-muted-foreground/60', bg: 'bg-muted/80', glow: '', label: '★', labelColor: 'text-muted-foreground' },
+  uncommon: { border: 'border-game-success/70', bg: 'bg-game-success/10', glow: 'shadow-[0_0_12px_hsl(var(--game-success)/0.3)]', label: '★★', labelColor: 'text-game-success-light' },
+  epic: { border: 'border-game-special/70', bg: 'bg-game-special/10', glow: 'shadow-[0_0_18px_hsl(var(--game-special)/0.4)]', label: '★★★', labelColor: 'text-game-special-light' },
+  legendary: { border: 'border-game-danger/80', bg: 'bg-game-danger/10', glow: 'shadow-[0_0_25px_hsl(var(--game-danger)/0.5)]', label: '★★★★', labelColor: 'text-game-danger-light' },
 };
 
 export const REROLL_COST = 3;
