@@ -80,9 +80,9 @@ export const chainCardsA_TR: EventCard[] = normalizeCards([
     ],
     leftMoney: -5, rightMoney: -10,
   },
-];
+]);
 
-export const chainCardsB_TR: EventCard[] = [
+export const chainCardsB_TR: EventCard[] = normalizeCards([
   // After election 1: accepted coffee branch
   {
     id: 9201,
