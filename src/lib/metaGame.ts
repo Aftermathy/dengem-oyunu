@@ -4,7 +4,13 @@ const CLAIMS_KEY = 'ims_claimed_achievements';
 
 export function loadAP(): number {
   try {
-    return parseInt(localStorage.getItem(AP_KEY) || '0', 10);
+    const stored = parseInt(localStorage.getItem(AP_KEY) || '0', 10);
+    // TEST: Give 1000 AP if player has 0
+    if (stored === 0) {
+      localStorage.setItem(AP_KEY, '1000');
+      return 1000;
+    }
+    return stored;
   } catch {
     return 0;
   }
