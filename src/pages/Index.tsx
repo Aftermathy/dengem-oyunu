@@ -9,6 +9,7 @@ import { StartScreen } from '@/components/game/StartScreen';
 import { BribeTutorial } from '@/components/game/BribeTutorial';
 import { SettingsMenu } from '@/components/game/SettingsMenu';
 import { SplashScreen } from '@/components/game/SplashScreen';
+import { CrisisAlert } from '@/components/game/CrisisAlert';
 import { PowerEffect } from '@/types/game';
 import { ElectionScreen } from '@/components/game/ElectionScreen';
 import { getElectionConfig, getNextElectionInfo } from '@/data/electionData';
@@ -19,6 +20,7 @@ import { TutorialOverlay } from '@/components/game/TutorialOverlay';
 import { AchievementPopup } from '@/components/game/AchievementPopup';
 import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
 import { STORAGE_KEYS } from '@/constants/storage';
+import { AlertTriangle } from 'lucide-react';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -35,6 +37,8 @@ const Index = () => {
     pendingAchievements, clearPendingAchievement,
     maxMoney: _maxMoney, maxElectionPct: _maxElectionPct, peakLaundered: _peakLaundered,
     lastEarnedAP,
+    crisisAlertType, clearCrisisAlert,
+    ohalLevel,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
@@ -43,8 +47,6 @@ const Index = () => {
   const [showTutorial, setShowTutorial] = useState(false);
   const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
   const nextElectionInfo = getNextElectionInfo(turn, completedElections);
-  // Track election defeat so knowledge announcement fires even when onMainMenu is called directly
-  // from ElectionScreen's defeat result (before phase ever becomes 'gameover')
   const electionDefeatRef = useRef(false);
 
   const handleHoverEffects = useCallback((effects: PowerEffect[]) => {
@@ -116,11 +118,26 @@ const Index = () => {
               </span>
               <span className="text-[10px] text-muted-foreground/40 ml-1.5 font-mono">({turn})</span>
             </div>
-            {nextElectionInfo && (
-              <span className="text-[10px] font-bold text-red-400 animate-pulse mt-0.5">
-                <EmojiImg emoji="🗳️" size={11} className="mr-0.5" /> {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {nextElectionInfo && (
+                <span className="text-[10px] font-bold text-red-400 animate-pulse mt-0.5">
+                  <EmojiImg emoji="🗳️" size={11} className="mr-0.5" /> {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
+                </span>
+              )}
+              {/* OHAL indicator */}
+              {ohalLevel > 0 && (
+                <span className="text-[10px] font-black mt-0.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full"
+                  style={{
+                    background: 'hsl(0 80% 50% / 0.2)',
+                    color: 'hsl(0 80% 60%)',
+                    border: '1px solid hsl(0 80% 50% / 0.4)',
+                  }}
+                >
+                  <AlertTriangle size={9} />
+                  OHAL {ohalLevel}
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="shrink-0">
@@ -207,6 +224,15 @@ const Index = () => {
           key={pendingAchievements[0]}
           achievementId={pendingAchievements[0]}
           onDone={clearPendingAchievement}
+        />
+      )}
+
+      {/* Crisis / Emergency Fund Alert */}
+      {crisisAlertType && (
+        <CrisisAlert
+          key={crisisAlertType}
+          type={crisisAlertType}
+          onDone={clearCrisisAlert}
         />
       )}
     </div>
