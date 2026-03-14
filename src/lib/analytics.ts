@@ -30,7 +30,9 @@ function enqueue(type: string, name: string, properties: Record<string, unknown>
   // Sanitize properties to JSON-compatible values
   const safe: Record<string, string | number | boolean | null> = {};
   for (const [k, v] of Object.entries(properties)) {
-    if (v === null || typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
+    if (v === null) {
+      safe[k] = v;
+    } else if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
       safe[k] = v;
     } else {
       safe[k] = String(v);
