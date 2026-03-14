@@ -14,7 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leaderboard_scores: {
+        Row: {
+          created_at: string
+          death_reason: string | null
+          elections_won: number
+          id: string
+          max_election_pct: number
+          max_laundered: number
+          max_money: number
+          nickname: string
+          score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          death_reason?: string | null
+          elections_won?: number
+          id?: string
+          max_election_pct?: number
+          max_laundered?: number
+          max_money?: number
+          nickname: string
+          score?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          death_reason?: string | null
+          elections_won?: number
+          id?: string
+          max_election_pct?: number
+          max_laundered?: number
+          max_money?: number
+          nickname?: string
+          score?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          nickname: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          nickname?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          nickname?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
