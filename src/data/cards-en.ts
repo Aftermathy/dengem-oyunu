@@ -1090,11 +1090,17 @@ export const catConsultantCardEn: EventCard = {
   rightChoice: 'Shoo! We have serious work',
   leftEffects: [
     { power: 'halk', amount: 15 },
+    { power: 'yatirimcilar', amount: 0 },
+    { power: 'mafya', amount: 0 },
     { power: 'tarikat', amount: -5 },
+    { power: 'ordu', amount: 0 },
   ],
   rightEffects: [
     { power: 'halk', amount: -10 },
+    { power: 'yatirimcilar', amount: 0 },
     { power: 'mafya', amount: 5 },
+    { power: 'tarikat', amount: 0 },
+    { power: 'ordu', amount: 0 },
   ],
   leftMoney: -3, rightMoney: 0,
 };
@@ -1109,28 +1115,44 @@ export const milestoneCard50En: EventCard = {
   rightChoice: 'NEVER! I\'m staying!',
   leftEffects: [
     { power: 'halk', amount: 20 },
+    { power: 'yatirimcilar', amount: 0 },
+    { power: 'mafya', amount: 0 },
+    { power: 'tarikat', amount: 0 },
     { power: 'ordu', amount: 10 },
   ],
   rightEffects: [
     { power: 'halk', amount: -10 },
+    { power: 'yatirimcilar', amount: 0 },
     { power: 'mafya', amount: 10 },
     { power: 'tarikat', amount: 5 },
+    { power: 'ordu', amount: 0 },
   ],
   leftMoney: 50, rightMoney: -10,
 };
 
 export const prologueCardEn: EventCard = {
-  id: 9001,
+  id: 9003,
   character: "Mysterious Visitor",
   characterEmoji: "🕵️",
   category: "Foreign Powers",
   description: "A foreign envoy entered your palace. They placed a cup of Turkish coffee on your desk and smiled. 'Will you drink, my leader?'",
   leftChoice: "Refuse — could be poisoned",
   rightChoice: "Accept — diplomacy first",
-  leftEffects: [{ power: "ordu", amount: 5 }],
-  rightEffects: [{ power: "yatirimcilar", amount: 5 }],
-  leftMoney: 0,
-  rightMoney: -2,
+  leftEffects: [
+    { power: "halk", amount: 0 },
+    { power: "yatirimcilar", amount: 0 },
+    { power: "mafya", amount: 0 },
+    { power: "tarikat", amount: 0 },
+    { power: "ordu", amount: 5 },
+  ],
+  rightEffects: [
+    { power: "halk", amount: 0 },
+    { power: "yatirimcilar", amount: 5 },
+    { power: "mafya", amount: 0 },
+    { power: "tarikat", amount: 0 },
+    { power: "ordu", amount: 0 },
+  ],
+  leftMoney: 0, rightMoney: -2,
 };
 
 // Dark mode easter egg card
@@ -1144,11 +1166,17 @@ export const darkModeCardEn: EventCard = {
   rightChoice: 'Turkish coffee, extra foam',
   leftEffects: [
     { power: 'halk', amount: 5 },
+    { power: 'yatirimcilar', amount: 0 },
+    { power: 'mafya', amount: 0 },
+    { power: 'tarikat', amount: 0 },
     { power: 'ordu', amount: 5 },
   ],
   rightEffects: [
-    { power: 'tarikat', amount: 5 },
+    { power: 'halk', amount: 0 },
+    { power: 'yatirimcilar', amount: 0 },
     { power: 'mafya', amount: 5 },
+    { power: 'tarikat', amount: 5 },
+    { power: 'ordu', amount: 0 },
   ],
   leftMoney: 0, rightMoney: 0,
 };
