@@ -1,4 +1,5 @@
 import { EventCard } from '@/types/game';
+import { normalizeCards, normalizeCard } from '@/lib/gameLogic';
 
 export const eventCardsEn: EventCard[] = [
   {
