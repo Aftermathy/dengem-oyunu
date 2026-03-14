@@ -480,6 +480,13 @@ export function useGame(lang: Language) {
         localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(turn));
       }
       awardAP(turn, totalLaundered);
+      // OHAL achievements only trigger after 2028 final victory
+      if (modifiers.ohalLevel > 0) {
+        const ohalAch = checkOhalAchievements(modifiers.ohalLevel);
+        if (ohalAch.length > 0) {
+          setPendingAchievements(prev => [...prev, ...ohalAch]);
+        }
+      }
       clearSave();
       setPhase('gameover');
       return;
