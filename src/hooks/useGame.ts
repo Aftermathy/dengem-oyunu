@@ -291,6 +291,7 @@ export function useGame(lang: Language) {
         cardIndex: nextIndex,
         bribeCounts,
         reputation: 0,
+        completedElections,
         savedAt: Date.now(),
       });
       setPhase('election');
