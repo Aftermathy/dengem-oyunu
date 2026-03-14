@@ -205,6 +205,7 @@ export function useGame(lang: Language) {
       [faction]: prev[faction] + 1,
     }));
     setLastMoneyChange(-cost);
+    trackBribeAchievement();
   }, [money, power, bribeCounts]);
 
   const swipe = useCallback((direction: 'left' | 'right') => {
