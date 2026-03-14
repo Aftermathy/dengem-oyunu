@@ -26,7 +26,7 @@ function record(type: string, payload: unknown) {
 }
 
 function enqueue(type: string, name: string, properties: Record<string, unknown> = {}) {
-  batchQueue.push({ event_type: type, event_name: name, properties });
+  batchQueue.push({ event_type: type, event_name: name, properties: properties as Record<string, string | number | boolean | null> });
   
   if (batchQueue.length >= MAX_BATCH_SIZE) {
     flush();
