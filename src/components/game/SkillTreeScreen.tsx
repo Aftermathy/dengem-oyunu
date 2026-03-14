@@ -78,7 +78,7 @@ function getNextEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en'): s
   return '';
 }
 
-export function SkillTreeScreen({ onClose }: SkillTreeScreenProps) {
+export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
   const { lang } = useLanguage();
   const { authorityPoints, purchaseSkill, getSkillLevel } = useMetaGame();
   const [selectedSkill, setSelectedSkill] = useState<SkillDef | null>(null);
