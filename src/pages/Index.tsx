@@ -197,6 +197,14 @@ const Index = () => {
       {showTutorial && (
         <TutorialOverlay onComplete={() => setShowTutorial(false)} />
       )}
+
+      {pendingAchievements.length > 0 && (
+        <AchievementPopup
+          key={pendingAchievements[0]}
+          achievementId={pendingAchievements[0]}
+          onDone={clearPendingAchievement}
+        />
+      )}
     </div>
   );
 };
