@@ -31,6 +31,7 @@ const Index = () => {
     totalLaundered, canLaunder, launder,
     currentCardFirstSeen,
     currentElectionIndex, completedElections, handleElectionComplete,
+    handleElectionLoss,
     pendingAchievements, clearPendingAchievement,
     maxMoney: _maxMoney, maxElectionPct: _maxElectionPct, peakLaundered: _peakLaundered,
     lastEarnedAP,
