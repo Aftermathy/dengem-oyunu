@@ -1,20 +1,72 @@
 /**
- * Analytics & crash reporting module.
- *
- * Currently logs to console in development and buffers events in production.
- * To integrate Sentry: npm install @sentry/capacitor @sentry/react, then
- * call Sentry.init() in main.tsx and replace the stubs below with Sentry calls.
+ * Analytics module — sends game events to Lovable Cloud for tracking.
+ * Events are batched and flushed periodically or on page unload.
  */
+
+import { supabase } from '@/integrations/supabase/client';
 
 const isDev = import.meta.env.DEV;
 
-// In-memory ring buffer so the last N events are always accessible (e.g. for bug reports)
+// Generate a unique session ID per browser session
+const SESSION_ID = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+// In-memory ring buffer for local debugging
 const MAX_BUFFER = 50;
 const eventBuffer: { ts: number; type: string; payload: unknown }[] = [];
+
+// Batch queue for DB writes
+const batchQueue: { event_type: string; event_name: string; properties: Record<string, unknown> }[] = [];
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
+const FLUSH_INTERVAL = 5000; // 5 seconds
+const MAX_BATCH_SIZE = 20;
 
 function record(type: string, payload: unknown) {
   eventBuffer.push({ ts: Date.now(), type, payload });
   if (eventBuffer.length > MAX_BUFFER) eventBuffer.shift();
+}
+
+function enqueue(type: string, name: string, properties: Record<string, unknown> = {}) {
+  batchQueue.push({ event_type: type, event_name: name, properties });
+  
+  if (batchQueue.length >= MAX_BATCH_SIZE) {
+    flush();
+  } else if (!flushTimer) {
+    flushTimer = setTimeout(flush, FLUSH_INTERVAL);
+  }
+}
+
+async function flush() {
+  if (flushTimer) {
+    clearTimeout(flushTimer);
+    flushTimer = null;
+  }
+  
+  if (batchQueue.length === 0) return;
+  
+  const batch = batchQueue.splice(0, MAX_BATCH_SIZE);
+  const rows = batch.map(e => ({
+    session_id: SESSION_ID,
+    event_type: e.event_type,
+    event_name: e.event_name,
+    properties: e.properties,
+  }));
+
+  try {
+    const { error } = await supabase.from('game_events').insert(rows);
+    if (error && isDev) {
+      console.warn('[Analytics] Flush error:', error.message);
+    }
+  } catch (err) {
+    if (isDev) console.warn('[Analytics] Flush failed:', err);
+  }
+}
+
+// Flush on page unload
+if (typeof window !== 'undefined') {
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flush();
+  });
+  window.addEventListener('pagehide', flush);
 }
 
 /** Report a caught error (e.g. from ErrorBoundary or try/catch). */
@@ -22,24 +74,21 @@ export function reportError(error: unknown, context?: string) {
   const message = error instanceof Error ? error.message : String(error);
   const stack = error instanceof Error ? error.stack : undefined;
   record('error', { message, stack, context });
+  enqueue('error', message, { stack, context });
 
   if (isDev) {
     console.error(`[Analytics] Error${context ? ` (${context})` : ''}:`, error);
   }
-
-  // TODO: Sentry.captureException(error, { extra: { context } });
 }
 
 /** Track a named game event with optional metadata. */
 export function trackEvent(name: string, properties?: Record<string, unknown>) {
   record('event', { name, properties });
+  enqueue('event', name, properties ?? {});
 
   if (isDev) {
     console.log(`[Analytics] Event: ${name}`, properties ?? '');
   }
-
-  // TODO: Sentry.addBreadcrumb({ message: name, data: properties });
-  // TODO: posthog.capture(name, properties);
 }
 
 /** Returns the buffered events (useful for attaching to user-facing bug reports). */
