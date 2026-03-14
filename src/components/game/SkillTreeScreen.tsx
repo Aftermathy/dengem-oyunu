@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useMetaGame, type SkillLockReason } from '@/contexts/MetaGameContext';
+import { useMetaGame } from '@/contexts/MetaGameContext';
+import type { SkillLockReason } from '@/contexts/MetaGameContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SKILL_DEFS, getSkillTitle, type SkillDef, OHAL_AP_MULTIPLIER, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, OHAL_ELECTION_COST_MULT, OHAL_MONEY_VOLATILITY } from '@/types/metaGame';
 import { playClickSound } from '@/hooks/useSound';
