@@ -77,8 +77,8 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
             </h3>
             <p className="text-xs text-muted-foreground mb-4">
               {lang === 'tr'
-                ? '25B aklanır, 25B seçtiğin zümreye verilir. Seçtiğin +5 rep, diğer 3 grup -5 rep, Halk -10 rep.'
-                : '25B laundered, 25B given to selected. Selected +5 rep, other 3 get -5 rep, Public -10 rep.'}
+                ? '20B aklanır. Seçtiğin zümre +10 rep, diğer 3 grup -5 rep, Halk -10 rep.'
+                : '20B laundered. Selected faction +10 rep, other 3 get -5 rep, Public -10 rep.'}
             </p>
 
             <div className="grid grid-cols-2 gap-3">
