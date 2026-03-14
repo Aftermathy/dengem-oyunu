@@ -2750,9 +2750,9 @@ export const milestoneCard50: EventCard = normalizeCard({
   ],
   leftMoney: 50,
   rightMoney: -10,
-};
+});
 
-export const prologueCard: EventCard = {
+export const prologueCard: EventCard = normalizeCard({
   id: 9003,
   character: "Gizemli Ziyaretçi",
   characterEmoji: "🕵️",
