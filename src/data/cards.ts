@@ -2724,9 +2724,9 @@ export const catConsultantCard: EventCard = normalizeCard({
   ],
   leftMoney: -3,
   rightMoney: 0,
-};
+});
 
-export const milestoneCard50: EventCard = {
+export const milestoneCard50: EventCard = normalizeCard({
   id: 9002,
   character: 'Sürgün Postacısı',
   characterEmoji: '✉️',
