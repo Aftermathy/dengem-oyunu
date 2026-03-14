@@ -1078,10 +1078,10 @@ export const eventCardsEn: EventCard[] = normalizeCards([
     rightEffects: [{ power: 'halk', amount: -25 }, { power: 'ordu', amount: -10 }, { power: 'mafya', amount: 10 }],
     leftMoney: -10, rightMoney: -25,
   },
-];
+]);
 
 // === EASTER EGG CARDS ===
-export const catConsultantCardEn: EventCard = {
+export const catConsultantCardEn: EventCard = normalizeCard({
   id: 9001,
   character: 'Palace Cat Lord Whiskers',
   characterEmoji: '🐱',

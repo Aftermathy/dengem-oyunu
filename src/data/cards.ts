@@ -2697,10 +2697,10 @@ export const eventCards: EventCard[] = normalizeCards([
     leftMoney: -10,
     rightMoney: -25,
   },
-];
+]);
 
 // === EASTER EGG KARTLARI ===
-export const catConsultantCard: EventCard = {
+export const catConsultantCard: EventCard = normalizeCard({
   id: 9001,
   character: 'Saray Kedisi Miyav Paşa',
   characterEmoji: '🐱',
