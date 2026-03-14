@@ -490,13 +490,14 @@ function SkillBubble({
 
 // ── Detail Panel (Slide-up modal) ──
 function SkillDetailPanel({
-  skill, level, ap, lang, justPurchased, onPurchase, onClose,
+  skill, level, ap, lang, justPurchased, lockReason, onPurchase, onClose,
 }: {
   skill: SkillDef;
   level: number;
   ap: number;
   lang: 'tr' | 'en';
   justPurchased: boolean;
+  lockReason: SkillLockReason;
   onPurchase: () => void;
   onClose: () => void;
 }) {
