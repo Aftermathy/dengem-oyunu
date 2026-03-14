@@ -24,7 +24,7 @@ export function unlockAchievement(id: string): boolean {
   if (unlocked.includes(id)) return false;
   unlocked.push(id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(unlocked));
-  return true; // newly unlocked
+  return true;
 }
 
 export function isUnlocked(id: string): boolean {
@@ -61,7 +61,6 @@ export function checkPowerAchievements(power: PowerState): string[] {
   const newlyUnlocked: string[] = [];
   const factions: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
 
-  // Max faction
   for (const f of factions) {
     if (power[f] >= 100) {
       if (unlockAchievement('max_faction')) newlyUnlocked.push('max_faction');
@@ -69,7 +68,6 @@ export function checkPowerAchievements(power: PowerState): string[] {
     }
   }
 
-  // Perfect balance (all within 50±5)
   const allBalanced = factions.every(f => power[f] >= 45 && power[f] <= 55);
   if (allBalanced && unlockAchievement('perfect_balance')) {
     newlyUnlocked.push('perfect_balance');
@@ -88,13 +86,13 @@ export function checkElectionAchievements(completedCount: number, isFinalBoss: b
   return newlyUnlocked;
 }
 
-// --- OHAL achievement checks ---
+// --- OHAL achievement checks (only after 2028 final victory) ---
 
 export function checkOhalAchievements(ohalLevel: number): string[] {
   const newlyUnlocked: string[] = [];
   if (ohalLevel >= 1 && unlockAchievement('ohal_1')) newlyUnlocked.push('ohal_1');
   if (ohalLevel >= 2 && unlockAchievement('ohal_2')) newlyUnlocked.push('ohal_2');
-  if (ohalLevel >= 5 && unlockAchievement('ohal_5')) newlyUnlocked.push('ohal_5');
+  if (ohalLevel >= 3 && unlockAchievement('ohal_3')) newlyUnlocked.push('ohal_3');
   return newlyUnlocked;
 }
 
@@ -157,14 +155,10 @@ export function trackLaunder(): string[] {
 export function checkCardAchievement(cardId: number): string[] {
   const newlyUnlocked: string[] = [];
 
-  // Cat consultant (id 9001)
   if (cardId === 9001 && unlockAchievement('cat_encounter')) newlyUnlocked.push('cat_encounter');
-  // Shadow advisor (id 9999)
   if (cardId === 9999 && unlockAchievement('dark_mode_event')) newlyUnlocked.push('dark_mode_event');
-  // Exile letter (id 9002)
   if (cardId === 9002 && unlockAchievement('exile_letter')) newlyUnlocked.push('exile_letter');
 
-  // Chain cards (9101-9103, 9201-9203)
   if ([9101, 9102, 9103, 9201, 9202, 9203].includes(cardId)) {
     try {
       const raw = localStorage.getItem(CHAIN_SEEN_KEY);
@@ -173,7 +167,6 @@ export function checkCardAchievement(cardId: number): string[] {
         seen.push(cardId);
         localStorage.setItem(CHAIN_SEEN_KEY, JSON.stringify(seen));
       }
-      // Check if all 3 cards in either chain are seen
       const chainA = [9101, 9102, 9103].every(id => seen.includes(id));
       const chainB = [9201, 9202, 9203].every(id => seen.includes(id));
       if ((chainA || chainB) && unlockAchievement('coffee_chain')) {

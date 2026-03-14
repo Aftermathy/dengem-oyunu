@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useMetaGame } from '@/contexts/MetaGameContext';
+import type { SkillLockReason } from '@/contexts/MetaGameContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SKILL_DEFS, getSkillTitle, type SkillDef, OHAL_AP_MULTIPLIER, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, OHAL_ELECTION_COST_MULT, OHAL_MONEY_VOLATILITY } from '@/types/metaGame';
 import { playClickSound } from '@/hooks/useSound';
@@ -96,7 +97,7 @@ function getNextEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en'): s
 
 export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
   const { lang } = useLanguage();
-  const { authorityPoints, purchaseSkill, getSkillLevel, resetAllSkills } = useMetaGame();
+  const { authorityPoints, purchaseSkill, getSkillLevel, getSkillLockReason, resetAllSkills } = useMetaGame();
   const [selectedSkill, setSelectedSkill] = useState<SkillDef | null>(null);
   const [justPurchasedId, setJustPurchasedId] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -154,22 +155,21 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
           {lang === 'en' ? 'SKILL TREE' : 'YETENEK AĞACI'}
         </h2>
         <div className="flex items-center gap-2">
-          {/* Reset button */}
-          {totalSpent > 0 && (
-            <button
-              onClick={() => { playClickSound(); setShowResetConfirm(true); }}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full active:scale-90 transition-transform"
-              style={{
-                background: 'hsl(0 70% 50% / 0.15)',
-                border: '1px solid hsl(0 70% 50% / 0.4)',
-              }}
-            >
-              <RotateCcw size={12} style={{ color: 'hsl(0 70% 60%)' }} />
-              <span className="text-[10px] font-bold" style={{ color: 'hsl(0 70% 60%)' }}>
-                {lang === 'en' ? 'Reset' : 'Sıfırla'}
-              </span>
-            </button>
-          )}
+          {/* Reset button - always visible */}
+          <button
+            onClick={() => { if (totalSpent > 0) { playClickSound(); setShowResetConfirm(true); } }}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full transition-transform ${totalSpent > 0 ? 'active:scale-90' : 'opacity-40'}`}
+            style={{
+              background: 'hsl(0 70% 50% / 0.15)',
+              border: '1px solid hsl(0 70% 50% / 0.4)',
+            }}
+            disabled={totalSpent <= 0}
+          >
+            <RotateCcw size={12} style={{ color: 'hsl(0 70% 60%)' }} />
+            <span className="text-[10px] font-bold" style={{ color: 'hsl(0 70% 60%)' }}>
+              {lang === 'en' ? 'Reset' : 'Sıfırla'}
+            </span>
+          </button>
           {/* AP Badge */}
           <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full"
             style={{
@@ -216,6 +216,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
           ap={authorityPoints}
           lang={lang}
           justPurchased={justPurchasedId === selectedSkill.id}
+          lockReason={getSkillLockReason(selectedSkill.id)}
           onPurchase={handlePurchase}
           onClose={() => setSelectedSkill(null)}
         />
@@ -489,13 +490,14 @@ function SkillBubble({
 
 // ── Detail Panel (Slide-up modal) ──
 function SkillDetailPanel({
-  skill, level, ap, lang, justPurchased, onPurchase, onClose,
+  skill, level, ap, lang, justPurchased, lockReason, onPurchase, onClose,
 }: {
   skill: SkillDef;
   level: number;
   ap: number;
   lang: 'tr' | 'en';
   justPurchased: boolean;
+  lockReason: SkillLockReason;
   onPurchase: () => void;
   onClose: () => void;
 }) {
@@ -592,12 +594,33 @@ function SkillDetailPanel({
           </div>
         )}
 
+        {/* Lock Warning */}
+        {lockReason && !maxed && (
+          <div className="rounded-xl p-3 mb-3 flex items-center gap-2 mt-3"
+            style={{ background: 'hsl(0 70% 50% / 0.1)', border: '1px solid hsl(0 70% 50% / 0.3)' }}
+          >
+            <Lock size={14} style={{ color: 'hsl(0 70% 60%)' }} />
+            <p className="text-xs font-semibold" style={{ color: 'hsl(0 70% 60%)' }}>
+              {lockReason === 'ohal_blocks_others'
+                ? (lang === 'en' ? 'OHAL is active! Reset skills first to purchase this.' : 'OHAL aktif! Bunu almak için önce yetenekleri sıfırlayın.')
+                : (lang === 'en' ? 'Other skills are active! Reset skills first to activate OHAL.' : 'Başka yetenekler aktif! OHAL için önce yetenekleri sıfırlayın.')}
+            </p>
+          </div>
+        )}
+
         {/* Purchase Button */}
         {maxed ? (
           <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
             style={{ background: 'hsl(145 70% 42% / 0.15)', color: 'hsl(145 70% 55%)', border: '1px solid hsl(145 70% 42% / 0.3)' }}
           >
             {lang === 'en' ? '✓ MAXIMUM LEVEL' : '✓ MAKSİMUM SEVİYE'}
+          </div>
+        ) : lockReason ? (
+          <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
+            style={{ background: 'hsl(0 0% 100% / 0.05)', color: 'hsl(0 0% 35%)', border: '1px solid hsl(0 0% 100% / 0.08)' }}
+          >
+            <Lock size={14} className="inline mr-1" style={{ color: 'hsl(0 0% 35%)' }} />
+            {lang === 'en' ? 'Locked' : 'Kilitli'}
           </div>
         ) : (
           <button
