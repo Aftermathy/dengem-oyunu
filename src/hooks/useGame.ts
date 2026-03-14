@@ -235,6 +235,7 @@ export function useGame(lang: Language) {
 
     const newMoney = money + moneyEffect + maxIncome;
     setMoney(newMoney);
+    if (newMoney > maxMoney) setMaxMoney(newMoney);
     const totalMoneyChange = moneyEffect + maxIncome;
     if (totalMoneyChange !== 0) setLastMoneyChange(totalMoneyChange);
 
