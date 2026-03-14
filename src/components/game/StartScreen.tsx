@@ -9,6 +9,8 @@ import { Switch } from '@/components/ui/switch';
 import { Moon, Sun } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
+import { AchievementList } from '@/components/game/AchievementList';
+import { getUnlockedIds } from '@/lib/achievements';
 
 // Multilingual "I MUST STAY" variants — bold word marked with *word*
 const TITLE_VARIANTS = [
