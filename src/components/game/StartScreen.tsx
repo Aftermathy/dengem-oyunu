@@ -269,6 +269,10 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
       {showAchievements && (
         <AchievementList onClose={() => setShowAchievements(false)} />
       )}
+
+      {showLeaderboard && (
+        <LeaderboardScreen onClose={() => setShowLeaderboard(false)} />
+      )}
     </div>
   );
 }
