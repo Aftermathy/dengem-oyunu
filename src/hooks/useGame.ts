@@ -425,6 +425,10 @@ export function useGame(lang: Language) {
     setMoney(result.remainingBudget);
     setTotalLaundered(result.remainingLaundered);
     const newCompletedElections = currentElectionIndex !== null ? [...completedElections, currentElectionIndex] : completedElections;
+    // Check election achievements
+    const isFinalBoss = electionConfig?.isFinalBoss ?? false;
+    const electionAch = checkElectionAchievements(newCompletedElections.length, isFinalBoss);
+    if (electionAch.length > 0) setPendingAchievements(prev => [...prev, ...electionAch]);
     if (currentElectionIndex !== null) {
       setCompletedElections(newCompletedElections);
     }
