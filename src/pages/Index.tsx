@@ -194,7 +194,7 @@ const Index = () => {
         />
       )}
 
-      {phase === 'gameover' && gameOverInfo && (
+      {phase === 'gameover' && gameOverInfo && !showOnboarding && (
         <GameOverScreen
           title={gameOverInfo.title}
           description={gameOverInfo.description}
@@ -205,8 +205,63 @@ const Index = () => {
           money={money}
           electionsWon={completedElections.length}
           earnedAP={lastEarnedAP}
-          onRestart={startGame}
-          onMainMenu={handleGoToMenu}
+          onRestart={() => {
+            // Update profile stats on game end
+            const updated = {
+              ...userProfile,
+              totalTurns: userProfile.totalTurns + turn,
+              totalAP: userProfile.totalAP + lastEarnedAP,
+              gamesPlayed: userProfile.gamesPlayed + 1,
+            };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+            // Trigger onboarding on first game over if not completed
+            if (!userProfile.hasCompletedOnboarding) {
+              setShowOnboarding(true);
+              return;
+            }
+            startGame();
+          }}
+          onMainMenu={() => {
+            // Update profile stats
+            const updated = {
+              ...userProfile,
+              totalTurns: userProfile.totalTurns + turn,
+              totalAP: userProfile.totalAP + lastEarnedAP,
+              gamesPlayed: userProfile.gamesPlayed + 1,
+            };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+            if (!userProfile.hasCompletedOnboarding) {
+              setShowOnboarding(true);
+              return;
+            }
+            handleGoToMenu();
+          }}
+        />
+      )}
+
+      {showOnboarding && (
+        <OnboardingScreen
+          onComplete={(nickname, avatarId) => {
+            const updated = { ...userProfile, nickname, avatarId, hasCompletedOnboarding: true };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+            setShowOnboarding(false);
+            handleGoToMenu();
+          }}
+        />
+      )}
+
+      {showProfile && (
+        <ProfileScreen
+          profile={userProfile}
+          onUpdateProfile={(updates) => {
+            const updated = { ...userProfile, ...updates };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+          }}
+          onClose={() => setShowProfile(false)}
         />
       )}
 
