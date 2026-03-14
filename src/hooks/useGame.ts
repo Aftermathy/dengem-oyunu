@@ -10,7 +10,6 @@ import {
   checkTurnAchievements, checkMoneyAchievements, checkPowerAchievements,
   checkElectionAchievements, checkCardAchievement, trackDeath, trackBankruptcy,
   trackSpeedDeath, trackBribe as trackBribeAchievement, trackLaunder as trackLaunderAchievement,
-  checkPropagandaAchievement,
 } from '@/lib/achievements';
 import { markCardSeen, isCardSeen } from '@/lib/cardMemory';
 import { eventCards, catConsultantCard, milestoneCard50, darkModeCard } from '@/data/cards';
