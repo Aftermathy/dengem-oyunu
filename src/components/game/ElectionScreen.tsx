@@ -18,10 +18,11 @@ interface ElectionScreenProps {
   onComplete: (result: ElectionResult) => void;
   onRestart: () => void;
   onMainMenu: () => void;
+  onLossDetected?: () => void;
   earnedAP?: number;
 }
 
-export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu, earnedAP = 0 }: ElectionScreenProps) => {
+export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu, onLossDetected, earnedAP = 0 }: ElectionScreenProps) => {
   const [playerVote, setPlayerVote] = useState(() => config.startingPlayerVote);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result' | 'victory'>('intro');
