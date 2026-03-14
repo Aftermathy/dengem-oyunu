@@ -6,6 +6,11 @@ import { STORAGE_KEYS } from '@/constants/storage';
 import { GAME_CONFIG } from '@/constants/gameConfig';
 import { shuffleArray, applyCardEffects, calculateMaxIncome, getBribeCostForFaction, canBribeFaction, findLowFaction } from '@/lib/gameLogic';
 import { trackEvent } from '@/lib/analytics';
+import {
+  checkTurnAchievements, checkMoneyAchievements, checkPowerAchievements,
+  checkElectionAchievements, checkCardAchievement, trackDeath, trackBankruptcy,
+  trackSpeedDeath, trackBribe as trackBribeAchievement, trackLaunder as trackLaunderAchievement,
+} from '@/lib/achievements';
 import { markCardSeen, isCardSeen } from '@/lib/cardMemory';
 import { eventCards, catConsultantCard, milestoneCard50, darkModeCard } from '@/data/cards';
 import { eventCardsEn, catConsultantCardEn, milestoneCard50En, darkModeCardEn } from '@/data/cards-en';
@@ -97,9 +102,14 @@ export function useGame(lang: Language) {
   const [investmentCount, setInvestmentCount] = useState(0);
   const [allianceCount, setAllianceCount] = useState(0);
   const [lastShopResult, setLastShopResult] = useState<string | null>(null);
-  const [completedElections, setCompletedElections] = useState<number[]>([]);
+  const [completedElections, setCompletedElections] = useState<number[]>(() => {
+    const saved = loadGame();
+    if (saved && saved.completedElections) return saved.completedElections;
+    return [];
+  });
   const [currentElectionIndex, setCurrentElectionIndex] = useState<number | null>(null);
   const [currentCardFirstSeen, setCurrentCardFirstSeen] = useState(() => false);
+  const [pendingAchievements, setPendingAchievements] = useState<string[]>([]);
 
   const currentCard = deck[cardIndex] || null;
 
@@ -151,7 +161,7 @@ export function useGame(lang: Language) {
     setTutorialFaction(null);
     setPendingAdvance(null);
     setLastShopResult(null);
-    setCompletedElections([]);
+    // completedElections preserved from state (loaded from save)
     setCurrentElectionIndex(null);
     setPhase('playing');
   }, [lang]);
@@ -194,6 +204,7 @@ export function useGame(lang: Language) {
       [faction]: prev[faction] + 1,
     }));
     setLastMoneyChange(-cost);
+    trackBribeAchievement();
   }, [money, power, bribeCounts]);
 
   const swipe = useCallback((direction: 'left' | 'right') => {
@@ -228,6 +239,11 @@ export function useGame(lang: Language) {
     const over = checkGameOver(newPower);
     if (over) {
       trackEvent('game_over', { reason: over.title, turn: newTurn });
+      // Track death achievements
+      const scenarios = getScenarios(lang);
+      const deathFaction = scenarios.find(s => s.title === over.title)?.power;
+      if (deathFaction) trackDeath(deathFaction);
+      trackSpeedDeath(newTurn);
       setGameOverInfo(over);
       if (newTurn > highScore) {
         setHighScore(newTurn);
@@ -241,6 +257,8 @@ export function useGame(lang: Language) {
     // Check money game over
     if (newMoney <= 0) {
       const bankruptScenario = { title: t('gameover.bankruptcy.title'), description: t('gameover.bankruptcy.desc'), emoji: '💸', image: 'defeat-iflas' };
+      trackBankruptcy();
+      trackSpeedDeath(newTurn);
       setGameOverInfo(bankruptScenario);
       if (newTurn > highScore) {
         setHighScore(newTurn);
@@ -249,6 +267,16 @@ export function useGame(lang: Language) {
       clearSave();
       setPhase('gameover');
       return;
+    }
+
+    // Check achievements
+    const achQueue: string[] = [];
+    achQueue.push(...checkTurnAchievements(newTurn));
+    achQueue.push(...checkMoneyAchievements(newMoney));
+    achQueue.push(...checkPowerAchievements(newPower));
+    achQueue.push(...checkCardAchievement(currentCard.id));
+    if (achQueue.length > 0) {
+      setPendingAchievements(prev => [...prev, ...achQueue]);
     }
 
     // Inject milestone card at MILESTONE_TURN
@@ -287,6 +315,7 @@ export function useGame(lang: Language) {
         cardIndex: nextIndex,
         bribeCounts,
         reputation: 0,
+        completedElections,
         savedAt: Date.now(),
       });
       setPhase('election');
@@ -308,6 +337,7 @@ export function useGame(lang: Language) {
           cardIndex: nextIndex,
           bribeCounts,
           reputation: 0,
+          completedElections,
           savedAt: Date.now(),
         });
         return;
@@ -321,6 +351,7 @@ export function useGame(lang: Language) {
       cardIndex: nextIndex,
       bribeCounts,
       reputation: 0,
+      completedElections,
       savedAt: Date.now(),
     });
     setCardIndex(nextIndex);
@@ -357,6 +388,7 @@ export function useGame(lang: Language) {
         cardIndex,
         bribeCounts,
         reputation: 0,
+        completedElections,
         savedAt: Date.now(),
       });
     }
@@ -392,6 +424,10 @@ export function useGame(lang: Language) {
     setMoney(result.remainingBudget);
     setTotalLaundered(result.remainingLaundered);
     const newCompletedElections = currentElectionIndex !== null ? [...completedElections, currentElectionIndex] : completedElections;
+    // Check election achievements
+    const isFinalBoss = electionConfig?.isFinalBoss ?? false;
+    const electionAch = checkElectionAchievements(newCompletedElections.length, isFinalBoss);
+    if (electionAch.length > 0) setPendingAchievements(prev => [...prev, ...electionAch]);
     if (currentElectionIndex !== null) {
       setCompletedElections(newCompletedElections);
     }
@@ -427,6 +463,7 @@ export function useGame(lang: Language) {
     setMoney(m => m - GAME_CONFIG.LAUNDER_COST);
     setTotalLaundered(prev => prev + GAME_CONFIG.LAUNDER_AMOUNT);
     setLastMoneyChange(-GAME_CONFIG.LAUNDER_COST);
+    trackLaunderAchievement();
 
     const otherFactions: PowerType[] = ['yatirimcilar', 'mafya', 'tarikat', 'ordu'].filter(f => f !== faction) as PowerType[];
 
@@ -529,5 +566,6 @@ export function useGame(lang: Language) {
     invest, canInvest, getInvestmentCost,
     alliance, canAlliance, getAllianceCost,
     currentElectionIndex, completedElections, handleElectionComplete,
+    pendingAchievements, clearPendingAchievement: () => setPendingAchievements(prev => prev.slice(1)),
   };
 }

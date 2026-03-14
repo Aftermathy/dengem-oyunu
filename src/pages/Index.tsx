@@ -16,6 +16,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { CardKnowledgeAnnouncement } from '@/components/game/CardKnowledgeAnnouncement';
 import { TutorialAskScreen } from '@/components/game/TutorialAskScreen';
 import { TutorialOverlay } from '@/components/game/TutorialOverlay';
+import { AchievementPopup } from '@/components/game/AchievementPopup';
 import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
 import { STORAGE_KEYS } from '@/constants/storage';
 
@@ -30,6 +31,7 @@ const Index = () => {
     totalLaundered, canLaunder, launder,
     currentCardFirstSeen,
     currentElectionIndex, completedElections, handleElectionComplete,
+    pendingAchievements, clearPendingAchievement,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
@@ -194,6 +196,14 @@ const Index = () => {
 
       {showTutorial && (
         <TutorialOverlay onComplete={() => setShowTutorial(false)} />
+      )}
+
+      {pendingAchievements.length > 0 && (
+        <AchievementPopup
+          key={pendingAchievements[0]}
+          achievementId={pendingAchievements[0]}
+          onDone={clearPendingAchievement}
+        />
       )}
     </div>
   );

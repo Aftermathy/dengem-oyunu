@@ -9,6 +9,8 @@ import { Switch } from '@/components/ui/switch';
 import { Moon, Sun } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
+import { AchievementList } from '@/components/game/AchievementList';
+import { getUnlockedIds } from '@/lib/achievements';
 
 // Multilingual "I MUST STAY" variants — bold word marked with *word*
 const TITLE_VARIANTS = [
@@ -47,6 +49,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
   const [throneAnim, setThroneAnim] = useState('');
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [showDarkWarning, setShowDarkWarning] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
 
   const currentTitle = TITLE_VARIANTS[titleIndex];
 
@@ -195,6 +198,15 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
               {lang === 'tr' ? 'Devam Et' : 'Continue'}
             </Button>
           )}
+
+          <button
+            onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
+            className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+          >
+            <EmojiImg emoji="🏅" size={16} />
+            {lang === 'tr' ? 'Başarımlar' : 'Achievements'}
+            <span className="text-xs text-primary/70">({getUnlockedIds().length})</span>
+          </button>
         </div>
 
         <a
@@ -240,6 +252,10 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
             </div>
           </div>
         </div>
+      )}
+
+      {showAchievements && (
+        <AchievementList onClose={() => setShowAchievements(false)} />
       )}
     </div>
   );

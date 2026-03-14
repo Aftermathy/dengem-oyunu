@@ -7,6 +7,7 @@ export interface SavedGameState {
   cardIndex: number;
   bribeCounts: { [key: string]: number };
   reputation: number;
+  completedElections: number[];
   savedAt: number; // timestamp
 }
 
@@ -20,7 +21,10 @@ export function loadGame(): SavedGameState | null {
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as SavedGameState;
+    const parsed = JSON.parse(raw) as SavedGameState;
+    // Ensure completedElections exists for backward compatibility
+    if (!parsed.completedElections) parsed.completedElections = [];
+    return parsed;
   } catch {
     return null;
   }
