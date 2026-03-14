@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
 import { EmojiImg } from '@/components/EmojiImg';
+import { useAuth } from '@/hooks/useAuth';
+import { submitScore } from '@/lib/leaderboard';
 
 import defeatHalk from '@/assets/defeat-halk.jpg';
 import defeatYatirimcilar from '@/assets/defeat-yatirimcilar.jpg';
@@ -27,13 +30,35 @@ interface GameOverScreenProps {
   turn: number;
   highScore: number;
   money: number;
+  electionsWon: number;
+  maxMoney: number;
+  maxElectionPct: number;
+  maxLaundered: number;
+  deathReason: string;
   onRestart: () => void;
   onMainMenu: () => void;
 }
 
-export function GameOverScreen({ title, description, emoji, image, turn, highScore, money, onRestart, onMainMenu }: GameOverScreenProps) {
-  const { t } = useLanguage();
+export function GameOverScreen({ title, description, emoji, image, turn, highScore, money, electionsWon, maxMoney, maxElectionPct, maxLaundered, deathReason, onRestart, onMainMenu }: GameOverScreenProps) {
+  const { lang, t } = useLanguage();
+  const { user, signInWithGoogle } = useAuth();
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const bgImage = image ? defeatImages[image] : null;
+
+  const handleSubmitScore = async () => {
+    setSubmitting(true);
+    const ok = await submitScore({
+      score: turn,
+      elections_won: electionsWon,
+      max_money: maxMoney,
+      max_election_pct: maxElectionPct,
+      max_laundered: maxLaundered,
+      death_reason: deathReason,
+    });
+    if (ok) setSubmitted(true);
+    setSubmitting(false);
+  };
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-end w-full overflow-hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
@@ -66,7 +91,39 @@ export function GameOverScreen({ title, description, emoji, image, turn, highSco
           </div>
         </div>
 
-        <div className="flex gap-3 mt-3 w-full">
+        {/* Score submission */}
+        <div className="w-full mt-1">
+          {submitted ? (
+            <div className="text-xs font-bold text-green-400 flex items-center justify-center gap-1">
+              <EmojiImg emoji="✅" size={14} />
+              {lang === 'tr' ? 'Skor kaydedildi!' : 'Score submitted!'}
+            </div>
+          ) : user ? (
+            <Button
+              size="sm"
+              onClick={() => { playClickSound(); handleSubmitScore(); }}
+              disabled={submitting}
+              className="w-full text-xs font-bold bg-amber-500/80 hover:bg-amber-500 text-black border-0"
+            >
+              <EmojiImg emoji="🏆" size={14} className="mr-1" />
+              {submitting
+                ? (lang === 'tr' ? 'Gönderiliyor...' : 'Submitting...')
+                : (lang === 'tr' ? 'Skoru Kaydet' : 'Submit Score')
+              }
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => { playClickSound(); signInWithGoogle(); }}
+              className="w-full text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20"
+            >
+              <EmojiImg emoji="🔑" size={14} className="mr-1" />
+              {lang === 'tr' ? 'Giriş yap & Skoru Kaydet' : 'Sign in & Submit Score'}
+            </Button>
+          )}
+        </div>
+
+        <div className="flex gap-3 mt-2 w-full">
           <Button size="lg" onClick={() => { playClickSound(); onRestart(); }} className="flex-1 text-sm px-4 py-4 font-bold bg-white/10 backdrop-blur-sm border border-white/20 text-white hover:bg-white/20">
             {t('gameover.restart')}
           </Button>
