@@ -2803,4 +2803,4 @@ export const darkModeCard: EventCard = normalizeCard({
   ],
   leftMoney: 0,
   rightMoney: 0,
-};
+});
