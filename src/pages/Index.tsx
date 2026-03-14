@@ -181,10 +181,7 @@ const Index = () => {
           highScore={highScore}
           money={money}
           electionsWon={completedElections.length}
-          maxMoney={maxMoney}
-          maxElectionPct={maxElectionPct}
-          maxLaundered={peakLaundered}
-          deathReason={gameOverInfo.title}
+          earnedAP={lastEarnedAP}
           onRestart={startGame}
           onMainMenu={handleGoToMenu}
         />

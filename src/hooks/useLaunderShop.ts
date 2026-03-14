@@ -33,7 +33,7 @@ export function useLaunderShop(params: UseLaunderShopParams) {
   const [totalLaundered, setTotalLaundered] = useState(0);
   const [peakLaundered, setPeakLaundered] = useState(0);
   const [propagandaCount, setPropagandaCount] = useState(0);
-  const [investmentCount, setInvestmentCount] = useState(0);
+  const [, setInvestmentCount] = useState(0);
   const [allianceCount, setAllianceCount] = useState(0);
   const [lastShopResult, setLastShopResult] = useState<string | null>(null);
 
