@@ -27,16 +27,13 @@ function record(type: string, payload: unknown) {
 }
 
 function enqueue(type: string, name: string, properties: Record<string, unknown> = {}) {
-  // Sanitize properties to JSON-compatible values
   const safe: Record<string, string | number | boolean | null> = {};
   for (const [k, v] of Object.entries(properties)) {
-    if (v === null) {
-      safe[k] = v;
-    } else if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
-      safe[k] = v;
-    } else {
-      safe[k] = String(v);
-    }
+    if (typeof v === 'string') safe[k] = v;
+    else if (typeof v === 'number') safe[k] = v;
+    else if (typeof v === 'boolean') safe[k] = v;
+    else if (v === null || v === undefined) safe[k] = null;
+    else safe[k] = String(v);
   }
   batchQueue.push({ event_type: type, event_name: name, properties: safe });
   
