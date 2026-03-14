@@ -44,4 +44,9 @@ export const ACHIEVEMENTS: Achievement[] = [
   { id: 'perfect_balance', titleTR: 'Denge Ustası', titleEN: 'Master of Balance', descTR: 'Aynı anda tüm zümreleri 50±5 aralığında tut', descEN: 'Keep all factions within 50±5 at once', emoji: '⚖️', hidden: true, apReward: 60 },
   { id: 'speed_death', titleTR: 'Ani Çöküş', titleEN: 'Speed Run', descTR: '5 turdan önce düş', descEN: 'Fall before turn 5', emoji: '💨', hidden: true, apReward: 20 },
   { id: 'propaganda_master', titleTR: 'Propaganda Ustası', titleEN: 'Propaganda Master', descTR: '3 kez propaganda yap', descEN: 'Use propaganda 3 times', emoji: '📢', hidden: true, apReward: 30 },
+
+  // === OHAL ACHIEVEMENTS ===
+  { id: 'ohal_1', titleTR: 'Ateşle Oynayan', titleEN: 'Playing with Fire', descTR: 'Oyunu OHAL Seviye 1 aktifken bitir', descEN: 'Finish a game with OHAL Level 1 active', emoji: '🔥', hidden: false, apReward: 30 },
+  { id: 'ohal_2', titleTR: 'Karanlık Dönem', titleEN: 'Dark Era', descTR: 'Oyunu OHAL Seviye 2 aktifken bitir', descEN: 'Finish a game with OHAL Level 2 active', emoji: '🌑', hidden: false, apReward: 60 },
+  { id: 'ohal_5', titleTR: 'Mazoşist Diktatör', titleEN: 'Masochist Dictator', descTR: 'Oyunu OHAL Seviye 5 aktifken bitir', descEN: 'Finish a game with OHAL Level 5 active', emoji: '👹', hidden: false, apReward: 200 },
 ];

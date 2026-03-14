@@ -1,7 +1,7 @@
 import { PowerType } from './game';
 import { Language } from '@/contexts/LanguageContext';
 
-export type SkillCategory = 'defense' | 'media' | 'economy' | 'strategy';
+export type SkillCategory = 'defense' | 'media' | 'economy' | 'strategy' | 'ohal';
 
 export interface SkillDef {
   id: string;
@@ -33,6 +33,14 @@ export const DARK_CONN_REDUCTION = [0.03, 0.05, 0.08, 0.10, 0.15];
 export const LUCKY_BONUS = [0.05, 0.10, 0.15];
 export const PRO_LAUNDER_OUTPUT = [25, 30]; // base is 20
 export const OFFSHORE_RATE = [0.01, 0.02, 0.03];
+
+// OHAL effect values per level (5 levels)
+export const OHAL_NEGATIVE_EXTRA = [1, 2, 3, 4, 5]; // extra negative faction damage
+export const OHAL_POSITIVE_REDUCTION = [1, 1, 2, 2, 3]; // reduced positive faction gains
+export const OHAL_LAUNDER_OUTPUT = [15, 12, 10, 7, 5]; // launder output override (base 20)
+export const OHAL_ELECTION_COST_MULT = [1.15, 1.25, 1.40, 1.55, 1.75]; // election cost multiplier
+export const OHAL_MONEY_VOLATILITY = [1.3, 1.5, 1.8, 2.0, 2.5]; // money effect multiplier for both gain/loss
+export const OHAL_AP_MULTIPLIER = [1.5, 2.0, 2.5, 3.0, 4.0]; // AP score multiplier
 
 export const SKILL_DEFS: SkillDef[] = [
   // ── Defense: Faction Shields ──
@@ -74,6 +82,12 @@ export const SKILL_DEFS: SkillDef[] = [
     titleTR: 'Şanslı Tesadüfler', titleEN: 'Lucky Encounters', descTR: 'Nadir kart şansını artırır (+5…+15%)', descEN: 'Increases rare card chance (+5…+15%)' },
   { id: 'crisis_management', maxLevel: 1, costs: [100], emoji: '🚨', tier: 3, category: 'strategy',
     titleTR: 'Kriz Yönetimi', titleEN: 'Crisis Management', descTR: 'Oyun başına 1 kez ölümden kurtul', descEN: 'Survive death once per game' },
+  { id: 'emergency_fund', maxLevel: 1, costs: [100], emoji: '💉', tier: 3, category: 'strategy',
+    titleTR: 'Acil Fon Enjeksiyonu', titleEN: 'Emergency Fund Injection', descTR: 'İflas ettiğinde 25B enjekte et (oyun başına 1)', descEN: 'Inject 25B when bankrupt (once per game)' },
+
+  // ── OHAL (State of Emergency) ──
+  { id: 'ohal', maxLevel: 5, costs: [0, 0, 0, 0, 0], emoji: '⚠️', tier: 3, category: 'ohal',
+    titleTR: 'OHAL Modu', titleEN: 'State of Emergency', descTR: 'Oyunu zorlaştır, AP çarpanı kazan', descEN: 'Make the game harder, earn AP multiplier' },
 ];
 
 // Computed active modifiers from skill levels
@@ -86,6 +100,15 @@ export interface ActiveModifiers {
   offshoreRate: number;
   rareCardBonus: number;
   hasCrisisManagement: boolean;
+  hasEmergencyFund: boolean;
+  // OHAL modifiers
+  ohalLevel: number;
+  ohalNegativeExtra: number;
+  ohalPositiveReduction: number;
+  ohalLaunderOutput: number; // overrides launderOutput if active
+  ohalElectionCostMult: number;
+  ohalMoneyVolatility: number;
+  ohalAPMultiplier: number;
 }
 
 export function computeModifiers(skillLevels: Record<string, number>): ActiveModifiers {
@@ -106,16 +129,35 @@ export function computeModifiers(skillLevels: Record<string, number>): ActiveMod
   const osLvl = skillLevels['offshore'] || 0;
   const lcLvl = skillLevels['lucky_cards'] || 0;
   const cmLvl = skillLevels['crisis_management'] || 0;
+  const efLvl = skillLevels['emergency_fund'] || 0;
+  const ohLvl = skillLevels['ohal'] || 0;
+
+  // Base launder output from pro_launderer
+  let launderOutput = plLvl > 0 ? PRO_LAUNDER_OUTPUT[plLvl - 1] : 20;
+  // OHAL overrides launder output downward
+  const ohalLaunderOut = ohLvl > 0 ? OHAL_LAUNDER_OUTPUT[ohLvl - 1] : 20;
+  if (ohLvl > 0) {
+    launderOutput = Math.min(launderOutput, ohalLaunderOut);
+  }
 
   return {
     factionShields: shields,
     factionBonuses: bonuses,
     electionCostReduction: elLvl > 0 ? ELECTION_REDUCTION[elLvl - 1] : 0,
     darkConnectionsReduction: dcLvl > 0 ? DARK_CONN_REDUCTION[dcLvl - 1] : 0,
-    launderOutput: plLvl > 0 ? PRO_LAUNDER_OUTPUT[plLvl - 1] : 20,
+    launderOutput,
     offshoreRate: osLvl > 0 ? OFFSHORE_RATE[osLvl - 1] : 0,
     rareCardBonus: lcLvl > 0 ? LUCKY_BONUS[lcLvl - 1] : 0,
     hasCrisisManagement: cmLvl > 0,
+    hasEmergencyFund: efLvl > 0,
+    // OHAL
+    ohalLevel: ohLvl,
+    ohalNegativeExtra: ohLvl > 0 ? OHAL_NEGATIVE_EXTRA[ohLvl - 1] : 0,
+    ohalPositiveReduction: ohLvl > 0 ? OHAL_POSITIVE_REDUCTION[ohLvl - 1] : 0,
+    ohalLaunderOutput: ohalLaunderOut,
+    ohalElectionCostMult: ohLvl > 0 ? OHAL_ELECTION_COST_MULT[ohLvl - 1] : 1,
+    ohalMoneyVolatility: ohLvl > 0 ? OHAL_MONEY_VOLATILITY[ohLvl - 1] : 1,
+    ohalAPMultiplier: ohLvl > 0 ? OHAL_AP_MULTIPLIER[ohLvl - 1] : 1,
   };
 }
 
@@ -123,6 +165,7 @@ export function computeModifiers(skillLevels: Record<string, number>): ActiveMod
 export const AP_TURN_MULTIPLIER = 2;
 export const AP_LAUNDER_MULTIPLIER = 0.5;
 
-export function calculateAP(turns: number, totalLaundered: number): number {
-  return Math.floor(turns * AP_TURN_MULTIPLIER + totalLaundered * AP_LAUNDER_MULTIPLIER);
+export function calculateAP(turns: number, totalLaundered: number, ohalMultiplier: number = 1): number {
+  const base = Math.floor(turns * AP_TURN_MULTIPLIER + totalLaundered * AP_LAUNDER_MULTIPLIER);
+  return Math.floor(base * ohalMultiplier);
 }

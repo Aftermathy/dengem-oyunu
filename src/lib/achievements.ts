@@ -88,6 +88,16 @@ export function checkElectionAchievements(completedCount: number, isFinalBoss: b
   return newlyUnlocked;
 }
 
+// --- OHAL achievement checks ---
+
+export function checkOhalAchievements(ohalLevel: number): string[] {
+  const newlyUnlocked: string[] = [];
+  if (ohalLevel >= 1 && unlockAchievement('ohal_1')) newlyUnlocked.push('ohal_1');
+  if (ohalLevel >= 2 && unlockAchievement('ohal_2')) newlyUnlocked.push('ohal_2');
+  if (ohalLevel >= 5 && unlockAchievement('ohal_5')) newlyUnlocked.push('ohal_5');
+  return newlyUnlocked;
+}
+
 // --- Death tracking ---
 
 export function trackDeath(faction: string): string[] {
