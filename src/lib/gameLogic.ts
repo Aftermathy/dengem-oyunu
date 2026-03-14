@@ -1,4 +1,29 @@
-import { PowerState, PowerType, PowerEffect, BRIBE_COSTS, BRIBE_REP_GAIN } from '@/types/game';
+import { PowerState, PowerType, PowerEffect, EventCard, BRIBE_COSTS, BRIBE_REP_GAIN } from '@/types/game';
+
+const ALL_POWERS: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
+
+/** Ensure an effects array contains all 5 factions, adding amount: 0 for missing ones */
+export function normalizeEffects(effects: PowerEffect[]): PowerEffect[] {
+  const existing = new Set(effects.map(e => e.power));
+  return [
+    ...effects,
+    ...ALL_POWERS.filter(p => !existing.has(p)).map(p => ({ power: p as PowerType, amount: 0 })),
+  ];
+}
+
+/** Normalize a card so both leftEffects and rightEffects contain all 5 factions */
+export function normalizeCard(card: EventCard): EventCard {
+  return {
+    ...card,
+    leftEffects: normalizeEffects(card.leftEffects),
+    rightEffects: normalizeEffects(card.rightEffects),
+  };
+}
+
+/** Normalize an array of cards */
+export function normalizeCards(cards: EventCard[]): EventCard[] {
+  return cards.map(normalizeCard);
+}
 import { BribeState } from '@/hooks/useGame';
 import { GAME_CONFIG } from '@/constants/gameConfig';
 
