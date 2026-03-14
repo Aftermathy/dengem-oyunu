@@ -142,6 +142,21 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, round]);
 
+  // Award AP on loss detection (once)
+  const lossHandledRef = useRef(false);
+  useEffect(() => {
+    if (phase !== 'result' || won || lossHandledRef.current) return;
+    lossHandledRef.current = true;
+    // Trigger AP award immediately when loss is detected
+    onComplete({
+      won: false,
+      playerVote: displayPlayerVote,
+      opponentVote: displayOpponentVote,
+      remainingBudget: budget,
+      remainingLaundered: laundered,
+    });
+  }, [phase, won]);
+
   // Victory transition
   useEffect(() => {
     if (phase !== 'result' || !won) return;
