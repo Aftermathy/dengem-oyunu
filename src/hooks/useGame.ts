@@ -110,6 +110,9 @@ export function useGame(lang: Language) {
   const [currentElectionIndex, setCurrentElectionIndex] = useState<number | null>(null);
   const [currentCardFirstSeen, setCurrentCardFirstSeen] = useState(() => false);
   const [pendingAchievements, setPendingAchievements] = useState<string[]>([]);
+  const [maxMoney, setMaxMoney] = useState(GAME_CONFIG.INITIAL_MONEY);
+  const [maxElectionPct, setMaxElectionPct] = useState(0);
+  const [peakLaundered, setPeakLaundered] = useState(0);
 
   const currentCard = deck[cardIndex] || null;
 
