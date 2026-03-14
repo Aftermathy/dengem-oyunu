@@ -1,14 +1,14 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { SKILL_DEFS, getSkillTitle, type SkillDef } from '@/types/metaGame';
+import { SKILL_DEFS, getSkillTitle, type SkillDef, OHAL_AP_MULTIPLIER, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, OHAL_ELECTION_COST_MULT, OHAL_MONEY_VOLATILITY } from '@/types/metaGame';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
 import {
   Megaphone, Swords, Eye, TrendingUp, Skull,
   Vote, Glasses, Sparkles, Landmark, Clover,
   AlertTriangle, Shield, Tv, Coins, Target, X,
-  Star, ChevronUp, Lock
+  Star, ChevronUp, Lock, RotateCcw, Syringe, Flame
 } from 'lucide-react';
 
 // Icon mapping for each skill
@@ -30,6 +30,8 @@ const SKILL_ICONS: Record<string, any> = {
   offshore: Landmark,
   lucky_cards: Clover,
   crisis_management: AlertTriangle,
+  emergency_fund: Syringe,
+  ohal: Flame,
 };
 
 // Category hub icons and colors
@@ -46,6 +48,7 @@ const CATEGORY_CONFIG: Record<string, {
   media: { icon: Tv, labelTR: 'Medya Kontrolü', labelEN: 'Media Control', hue: '280', color: 'hsl(280 70% 60%)', glowColor: 'hsl(280 70% 60% / 0.4)' },
   economy: { icon: Coins, labelTR: 'Ekonomi', labelEN: 'Economy', hue: '45', color: 'hsl(45 90% 55%)', glowColor: 'hsl(45 90% 55% / 0.4)' },
   strategy: { icon: Target, labelTR: 'Strateji', labelEN: 'Strategy', hue: '0', color: 'hsl(0 75% 55%)', glowColor: 'hsl(0 75% 55% / 0.4)' },
+  ohal: { icon: Flame, labelTR: 'OHAL Modu', labelEN: 'State of Emergency', hue: '15', color: 'hsl(15 90% 50%)', glowColor: 'hsl(15 90% 50% / 0.4)' },
 };
 
 // Skill effect descriptions per level
@@ -60,7 +63,18 @@ function getEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en'): strin
   if (id === 'offshore') { const pcts = [1,2,3]; return lang === 'en' ? `${pcts[level-1]}% interest per turn` : `Tur başı %${pcts[level-1]} faiz`; }
   if (id === 'lucky_cards') { const pcts = [5,10,15]; return lang === 'en' ? `+${pcts[level-1]}% rare card chance` : `+%${pcts[level-1]} nadir kart şansı`; }
   if (id === 'crisis_management') return lang === 'en' ? 'Survive death once per game' : 'Oyun başına 1 kez ölümden kurtul';
+  if (id === 'emergency_fund') return lang === 'en' ? 'Inject 25B when bankrupt (once/game)' : 'İflas ettiğinde 25B enjekte et (oyun başına 1)';
+  if (id === 'ohal') return getOhalEffectText(level, lang);
   return '';
+}
+
+function getOhalEffectText(level: number, lang: 'tr' | 'en'): string {
+  const neg = OHAL_NEGATIVE_EXTRA[level-1];
+  const pos = OHAL_POSITIVE_REDUCTION[level-1];
+  const laund = OHAL_LAUNDER_OUTPUT[level-1];
+  const mult = OHAL_AP_MULTIPLIER[level-1];
+  if (lang === 'en') return `Neg+${neg}, Pos-${pos}, Launder→${laund}B, AP×${mult}`;
+  return `Eksi+${neg}, Artı-${pos}, Aklama→${laund}B, AP×${mult}`;
 }
 
 function getNextEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en'): string {
@@ -75,14 +89,17 @@ function getNextEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en'): s
   if (id === 'offshore') { const pcts = [1,2,3]; return lang === 'en' ? `${pcts[nextLevel-1]}% interest per turn` : `Tur başı %${pcts[nextLevel-1]} faiz`; }
   if (id === 'lucky_cards') { const pcts = [5,10,15]; return lang === 'en' ? `+${pcts[nextLevel-1]}% rare card chance` : `+%${pcts[nextLevel-1]} nadir kart şansı`; }
   if (id === 'crisis_management') return lang === 'en' ? 'Survive death once per game' : 'Oyun başına 1 kez ölümden kurtul';
+  if (id === 'emergency_fund') return lang === 'en' ? 'Inject 25B when bankrupt (once/game)' : 'İflas ettiğinde 25B enjekte et (oyun başına 1)';
+  if (id === 'ohal') return getOhalEffectText(nextLevel, lang);
   return '';
 }
 
 export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
   const { lang } = useLanguage();
-  const { authorityPoints, purchaseSkill, getSkillLevel } = useMetaGame();
+  const { authorityPoints, purchaseSkill, getSkillLevel, resetAllSkills } = useMetaGame();
   const [selectedSkill, setSelectedSkill] = useState<SkillDef | null>(null);
   const [justPurchasedId, setJustPurchasedId] = useState<string | null>(null);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const handleBubbleClick = useCallback((skill: SkillDef) => {
     playClickSound();
@@ -101,8 +118,28 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
     }
   }, [selectedSkill, purchaseSkill]);
 
+  const handleReset = useCallback(() => {
+    playClickSound();
+    hapticMedium();
+    resetAllSkills();
+    setShowResetConfirm(false);
+    setSelectedSkill(null);
+  }, [resetAllSkills]);
+
+  // Calculate total spent AP for reset button
+  const totalSpent = useMemo(() => {
+    let total = 0;
+    for (const def of SKILL_DEFS) {
+      const level = getSkillLevel(def.id);
+      for (let i = 0; i < level; i++) {
+        total += def.costs[i];
+      }
+    }
+    return total;
+  }, [getSkillLevel]);
+
   const categories = useMemo(() => {
-    return ['defense', 'media', 'economy', 'strategy'].map(cat => ({
+    return ['defense', 'media', 'economy', 'strategy', 'ohal'].map(cat => ({
       key: cat,
       config: CATEGORY_CONFIG[cat],
       skills: SKILL_DEFS.filter(s => s.category === cat),
@@ -116,7 +153,23 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
         <h2 className="text-base font-black tracking-wide" style={{ color: 'hsl(0 0% 85%)' }}>
           {lang === 'en' ? 'SKILL TREE' : 'YETENEK AĞACI'}
         </h2>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* Reset button */}
+          {totalSpent > 0 && (
+            <button
+              onClick={() => { playClickSound(); setShowResetConfirm(true); }}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full active:scale-90 transition-transform"
+              style={{
+                background: 'hsl(0 70% 50% / 0.15)',
+                border: '1px solid hsl(0 70% 50% / 0.4)',
+              }}
+            >
+              <RotateCcw size={12} style={{ color: 'hsl(0 70% 60%)' }} />
+              <span className="text-[10px] font-bold" style={{ color: 'hsl(0 70% 60%)' }}>
+                {lang === 'en' ? 'Reset' : 'Sıfırla'}
+              </span>
+            </button>
+          )}
           {/* AP Badge */}
           <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full"
             style={{
@@ -167,13 +220,65 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
           onClose={() => setSelectedSkill(null)}
         />
       )}
+
+      {/* Reset Confirmation Modal */}
+      {showResetConfirm && (
+        <>
+          <div className="fixed inset-0 z-[130]" style={{ background: 'hsl(0 0% 0% / 0.7)', backdropFilter: 'blur(4px)' }} onClick={() => setShowResetConfirm(false)} />
+          <div className="fixed inset-0 z-[140] flex items-center justify-center px-8">
+            <div className="rounded-2xl p-6 max-w-sm w-full"
+              style={{
+                background: 'linear-gradient(180deg, hsl(0 30% 18%), hsl(0 25% 12%))',
+                border: '1px solid hsl(0 60% 40% / 0.4)',
+                boxShadow: '0 20px 60px hsl(0 0% 0% / 0.5)',
+              }}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center"
+                  style={{ background: 'hsl(0 70% 50% / 0.2)', border: '1px solid hsl(0 70% 50% / 0.4)' }}
+                >
+                  <RotateCcw size={20} style={{ color: 'hsl(0 70% 60%)' }} />
+                </div>
+                <h3 className="text-base font-black" style={{ color: 'hsl(0 0% 90%)' }}>
+                  {lang === 'en' ? 'Reset All Skills?' : 'Tüm Yetenekleri Sıfırla?'}
+                </h3>
+              </div>
+              <p className="text-sm mb-2" style={{ color: 'hsl(0 0% 65%)' }}>
+                {lang === 'en'
+                  ? `All skills will be reset and ${totalSpent} AP will be refunded.`
+                  : `Tüm yetenekler sıfırlanacak ve ${totalSpent} AP iade edilecek.`}
+              </p>
+              <div className="flex gap-3 mt-5">
+                <button
+                  onClick={() => setShowResetConfirm(false)}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold active:scale-95 transition-transform"
+                  style={{ background: 'hsl(0 0% 100% / 0.08)', color: 'hsl(0 0% 60%)', border: '1px solid hsl(0 0% 100% / 0.1)' }}
+                >
+                  {lang === 'en' ? 'Cancel' : 'İptal'}
+                </button>
+                <button
+                  onClick={handleReset}
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold active:scale-95 transition-transform"
+                  style={{
+                    background: 'linear-gradient(135deg, hsl(0 70% 50%), hsl(0 60% 40%))',
+                    color: 'white',
+                    boxShadow: '0 4px 20px hsl(0 70% 50% / 0.3)',
+                  }}
+                >
+                  {lang === 'en' ? 'Reset' : 'Sıfırla'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
 // ── Category Cluster with hub + child bubbles + SVG lines ──
 function CategoryCluster({
-  config, skills, lang, getSkillLevel, justPurchasedId, onBubbleClick,
+  config, skills, lang, getSkillLevel, justPurchasedId, onBubbleClick, categoryKey,
 }: {
   categoryKey: string;
   config: typeof CATEGORY_CONFIG[string];
@@ -184,9 +289,12 @@ function CategoryCluster({
   onBubbleClick: (s: SkillDef) => void;
 }) {
   const HubIcon = config.icon;
+  const isOhal = categoryKey === 'ohal';
 
   return (
-    <div className="mb-8 relative">
+    <div className={`mb-8 relative ${isOhal ? 'mt-4 pt-4' : ''}`}
+      style={isOhal ? { borderTop: '1px solid hsl(15 90% 50% / 0.2)' } : {}}
+    >
       {/* Category label */}
       <div className="flex items-center justify-center gap-2 mb-4">
         <div className="h-px flex-1 max-w-[60px]" style={{ background: `linear-gradient(to right, transparent, ${config.color})` }} />
@@ -201,6 +309,15 @@ function CategoryCluster({
         <div className="h-px flex-1 max-w-[60px]" style={{ background: `linear-gradient(to left, transparent, ${config.color})` }} />
       </div>
 
+      {/* OHAL warning */}
+      {isOhal && (
+        <p className="text-center text-[10px] mb-3 px-4" style={{ color: 'hsl(15 60% 55%)' }}>
+          {lang === 'en'
+            ? '⚠️ Makes the game harder but multiplies your AP rewards!'
+            : '⚠️ Oyunu zorlaştırır ama AP ödüllerini katlar!'}
+        </p>
+      )}
+
       {/* Bubbles in organic layout */}
       <div className="relative">
         {/* SVG connection lines */}
@@ -209,8 +326,9 @@ function CategoryCluster({
             const total = skills.length;
             const hubX = 50;
             const hubY = 0;
-            // Distribute children in a curve
-            const childX = total <= 2
+            const childX = total <= 1
+              ? 50
+              : total <= 2
               ? (i === 0 ? 35 : 65)
               : total <= 4
               ? 15 + (i * 70 / (total - 1))
@@ -386,6 +504,8 @@ function SkillDetailPanel({
   const cost = maxed ? 0 : skill.costs[level];
   const canAfford = !maxed && ap >= cost;
   const catConfig = CATEGORY_CONFIG[skill.category];
+  const isOhal = skill.id === 'ohal';
+  const isFree = isOhal; // OHAL costs 0 AP
 
   return (
     <>
@@ -400,7 +520,9 @@ function SkillDetailPanel({
       <div
         className="fixed bottom-0 left-0 right-0 z-[120] rounded-t-3xl px-6 pt-6 pb-[calc(env(safe-area-inset-bottom,16px)+20px)] animate-fade-in"
         style={{
-          background: 'linear-gradient(180deg, hsl(220 25% 16%), hsl(220 30% 10%))',
+          background: isOhal
+            ? 'linear-gradient(180deg, hsl(15 30% 16%), hsl(15 25% 10%))'
+            : 'linear-gradient(180deg, hsl(220 25% 16%), hsl(220 30% 10%))',
           border: '1px solid hsl(0 0% 100% / 0.1)',
           borderBottom: 'none',
           boxShadow: `0 -10px 40px hsl(0 0% 0% / 0.5), 0 0 60px ${catConfig.glowColor}`,
@@ -441,8 +563,25 @@ function SkillDetailPanel({
           </p>
         </div>
 
-        {/* Next Level */}
-        {!maxed && (
+        {/* OHAL detailed breakdown for next level */}
+        {isOhal && !maxed && (
+          <div className="rounded-xl p-3.5 mb-3" style={{ background: 'hsl(15 90% 50% / 0.08)', border: '1px solid hsl(15 90% 50% / 0.2)' }}>
+            <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: 'hsl(15 90% 50%)' }}>
+              {lang === 'en' ? 'Level Details' : 'Seviye Detayları'}
+            </p>
+            <div className="space-y-1 text-xs" style={{ color: 'hsl(0 0% 75%)' }}>
+              <p>⬇️ {lang === 'en' ? 'Extra negative effects' : 'Ekstra negatif etki'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>-{OHAL_NEGATIVE_EXTRA[level]}</span></p>
+              <p>⬇️ {lang === 'en' ? 'Reduced positive effects' : 'Azaltılmış pozitif etki'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>-{OHAL_POSITIVE_REDUCTION[level]}</span></p>
+              <p>⬇️ {lang === 'en' ? 'Launder output' : 'Aklama verimi'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>{OHAL_LAUNDER_OUTPUT[level]}B</span></p>
+              <p>⬇️ {lang === 'en' ? 'Election cost multiplier' : 'Seçim maliyet çarpanı'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>×{OHAL_ELECTION_COST_MULT[level]}</span></p>
+              <p>📈 {lang === 'en' ? 'Money volatility' : 'Para volatilitesi'}: <span className="font-bold" style={{ color: 'hsl(45 80% 55%)' }}>×{OHAL_MONEY_VOLATILITY[level]}</span></p>
+              <p>⭐ {lang === 'en' ? 'AP Multiplier' : 'AP Çarpanı'}: <span className="font-black" style={{ color: 'hsl(45 90% 55%)' }}>×{OHAL_AP_MULTIPLIER[level]}</span></p>
+            </div>
+          </div>
+        )}
+
+        {/* Next Level (non-OHAL) */}
+        {!maxed && !isOhal && (
           <div className="rounded-xl p-3.5 mb-5" style={{ background: `${catConfig.color.replace(')', ' / 0.08)')}`, border: `1px solid ${catConfig.color.replace(')', ' / 0.2)')}` }}>
             <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: catConfig.color }}>
               {lang === 'en' ? 'After Upgrade' : 'Yükseltme Sonucu'}
@@ -455,7 +594,7 @@ function SkillDetailPanel({
 
         {/* Purchase Button */}
         {maxed ? (
-          <div className="text-center py-3 rounded-xl font-bold text-sm"
+          <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
             style={{ background: 'hsl(145 70% 42% / 0.15)', color: 'hsl(145 70% 55%)', border: '1px solid hsl(145 70% 42% / 0.3)' }}
           >
             {lang === 'en' ? '✓ MAXIMUM LEVEL' : '✓ MAKSİMUM SEVİYE'}
@@ -463,12 +602,14 @@ function SkillDetailPanel({
         ) : (
           <button
             onClick={onPurchase}
-            disabled={!canAfford}
-            className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.97] ${
-              !canAfford ? 'cursor-not-allowed' : ''
+            disabled={!canAfford && !isFree}
+            className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.97] mt-3 ${
+              !canAfford && !isFree ? 'cursor-not-allowed' : ''
             }`}
-            style={canAfford ? {
-              background: `linear-gradient(135deg, ${catConfig.color}, ${catConfig.color.replace(')', ' / 0.7)')})`,
+            style={(canAfford || isFree) ? {
+              background: isOhal
+                ? 'linear-gradient(135deg, hsl(15 90% 50%), hsl(0 70% 40%))'
+                : `linear-gradient(135deg, ${catConfig.color}, ${catConfig.color.replace(')', ' / 0.7)')})`,
               color: 'white',
               boxShadow: `0 4px 20px ${catConfig.glowColor}, 0 0 40px ${catConfig.glowColor}`,
             } : {
@@ -477,8 +618,17 @@ function SkillDetailPanel({
               border: '1px solid hsl(0 0% 100% / 0.08)',
             }}
           >
-            <Star size={14} fill={canAfford ? 'white' : 'hsl(0 0% 35%)'} />
-            {lang === 'en' ? `Upgrade for ${cost} AP` : `${cost} AP ile Yükselt`}
+            {isFree ? (
+              <>
+                <Flame size={14} fill="white" />
+                {lang === 'en' ? `Activate Level ${level + 1}` : `Seviye ${level + 1} Aktifleştir`}
+              </>
+            ) : (
+              <>
+                <Star size={14} fill={canAfford ? 'white' : 'hsl(0 0% 35%)'} />
+                {lang === 'en' ? `Upgrade for ${cost} AP` : `${cost} AP ile Yükselt`}
+              </>
+            )}
           </button>
         )}
       </div>

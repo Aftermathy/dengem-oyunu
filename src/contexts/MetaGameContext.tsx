@@ -16,8 +16,11 @@ interface MetaGameContextValue {
   isAchievementClaimed: (id: string) => boolean;
   purchaseSkill: (skillId: string) => boolean;
   getSkillLevel: (skillId: string) => number;
+  resetAllSkills: () => void;
   crisisAvailableThisGame: boolean;
   useCrisisJoker: () => void;
+  emergencyFundAvailableThisGame: boolean;
+  useEmergencyFund: () => void;
   resetGameSession: () => void;
 }
 
@@ -28,6 +31,7 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
   const [skills, setSkills] = useState(loadSkillLevels);
   const [claimed, setClaimed] = useState(loadClaimedAchievements);
   const [crisisUsed, setCrisisUsed] = useState(false);
+  const [emergencyFundUsed, setEmergencyFundUsed] = useState(false);
 
   const modifiers = useMemo(() => computeModifiers(skills), [skills]);
 
@@ -75,8 +79,35 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
 
   const getSkillLevel = useCallback((skillId: string) => skills[skillId] || 0, [skills]);
 
+  // Reset all skills and refund all spent AP (exploit-safe: recalculate from skill defs)
+  const resetAllSkills = useCallback(() => {
+    let totalRefund = 0;
+    for (const def of SKILL_DEFS) {
+      const level = skills[def.id] || 0;
+      for (let i = 0; i < level; i++) {
+        totalRefund += def.costs[i];
+      }
+    }
+    setSkills(() => {
+      const empty: Record<string, number> = {};
+      saveSkillLevels(empty);
+      return empty;
+    });
+    if (totalRefund > 0) {
+      setAP(prev => {
+        const next = prev + totalRefund;
+        saveAP(next);
+        return next;
+      });
+    }
+  }, [skills]);
+
   const useCrisisJoker = useCallback(() => setCrisisUsed(true), []);
-  const resetGameSession = useCallback(() => setCrisisUsed(false), []);
+  const useEmergencyFund = useCallback(() => setEmergencyFundUsed(true), []);
+  const resetGameSession = useCallback(() => {
+    setCrisisUsed(false);
+    setEmergencyFundUsed(false);
+  }, []);
 
   const value = useMemo<MetaGameContextValue>(() => ({
     authorityPoints: ap,
@@ -88,10 +119,13 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
     isAchievementClaimed,
     purchaseSkill,
     getSkillLevel,
+    resetAllSkills,
     crisisAvailableThisGame: modifiers.hasCrisisManagement && !crisisUsed,
     useCrisisJoker,
+    emergencyFundAvailableThisGame: modifiers.hasEmergencyFund && !emergencyFundUsed,
+    useEmergencyFund,
     resetGameSession,
-  }), [ap, skills, claimed, modifiers, earnAP, claimAchievement, isAchievementClaimed, purchaseSkill, getSkillLevel, crisisUsed, useCrisisJoker, resetGameSession]);
+  }), [ap, skills, claimed, modifiers, earnAP, claimAchievement, isAchievementClaimed, purchaseSkill, getSkillLevel, resetAllSkills, crisisUsed, useCrisisJoker, emergencyFundUsed, useEmergencyFund, resetGameSession]);
 
   return <MetaGameContext.Provider value={value}>{children}</MetaGameContext.Provider>;
 }
