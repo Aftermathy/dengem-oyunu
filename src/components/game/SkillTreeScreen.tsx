@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { SKILL_DEFS, getSkillTitle, type SkillDef, OHAL_AP_MULTIPLIER, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, OHAL_ELECTION_COST_MULT, OHAL_MONEY_VOLATILITY } from '@/types/metaGame';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
+import { isUnlocked as isAchievementUnlocked } from '@/lib/achievements';
 import {
   Megaphone, Swords, Eye, TrendingUp, Skull,
   Vote, Glasses, Sparkles, Landmark, Clover,
@@ -51,6 +52,33 @@ const CATEGORY_CONFIG: Record<string, {
   strategy: { icon: Target, labelTR: 'Strateji', labelEN: 'Strategy', hue: '0', color: 'hsl(0 75% 55%)', glowColor: 'hsl(0 75% 55% / 0.4)' },
   ohal: { icon: Flame, labelTR: 'OHAL Modu', labelEN: 'State of Emergency', hue: '15', color: 'hsl(15 90% 50%)', glowColor: 'hsl(15 90% 50% / 0.4)' },
 };
+
+// OHAL level requirements: level 1 = free, level 2 = ohal_1 achievement, level 3 = ohal_2 achievement
+const OHAL_LEVEL_REQUIREMENTS: Record<number, string | null> = {
+  0: null,        // To get level 1, no achievement needed
+  1: 'ohal_1',    // To get level 2, need ohal_1 achievement
+  2: 'ohal_2',    // To get level 3, need ohal_2 achievement
+};
+
+function isOhalLevelUnlockable(currentLevel: number): boolean {
+  const requiredAchievement = OHAL_LEVEL_REQUIREMENTS[currentLevel];
+  if (!requiredAchievement) return true;
+  return isAchievementUnlocked(requiredAchievement);
+}
+
+function getOhalLockMessage(currentLevel: number, lang: 'tr' | 'en'): string {
+  if (currentLevel === 1) {
+    return lang === 'en'
+      ? 'Complete the game with OHAL Level 1 to unlock Level 2'
+      : 'Seviye 2 için OHAL Seviye 1 ile oyunu bitirin';
+  }
+  if (currentLevel === 2) {
+    return lang === 'en'
+      ? 'Complete the game with OHAL Level 2 to unlock Level 3'
+      : 'Seviye 3 için OHAL Seviye 2 ile oyunu bitirin';
+  }
+  return '';
+}
 
 // Skill effect descriptions per level
 function getEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en'): string {
@@ -101,12 +129,36 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
   const [selectedSkill, setSelectedSkill] = useState<SkillDef | null>(null);
   const [justPurchasedId, setJustPurchasedId] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [bubbleWarning, setBubbleWarning] = useState<{ skillId: string; message: string } | null>(null);
 
   const handleBubbleClick = useCallback((skill: SkillDef) => {
     playClickSound();
     hapticMedium();
+    
+    // Check lock reason - show bubble warning instead of opening panel
+    const lockReason = getSkillLockReason(skill.id);
+    if (lockReason) {
+      const msg = lockReason === 'ohal_blocks_others'
+        ? (lang === 'en' ? 'OHAL is active! Reset skills first.' : 'OHAL aktif! Önce yetenekleri sıfırlayın.')
+        : (lang === 'en' ? 'Other skills are active! Reset first.' : 'Başka yetenekler aktif! Önce sıfırlayın.');
+      setBubbleWarning({ skillId: skill.id, message: msg });
+      setTimeout(() => setBubbleWarning(null), 2500);
+      return;
+    }
+    
+    // Check OHAL achievement gate
+    if (skill.id === 'ohal') {
+      const currentLevel = getSkillLevel('ohal');
+      if (!isOhalLevelUnlockable(currentLevel)) {
+        const msg = getOhalLockMessage(currentLevel, lang);
+        setBubbleWarning({ skillId: skill.id, message: msg });
+        setTimeout(() => setBubbleWarning(null), 2500);
+        return;
+      }
+    }
+    
     setSelectedSkill(skill);
-  }, []);
+  }, [getSkillLockReason, getSkillLevel, lang]);
 
   const handlePurchase = useCallback(() => {
     if (!selectedSkill) return;
@@ -127,7 +179,12 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
     setSelectedSkill(null);
   }, [resetAllSkills]);
 
-  // Calculate total spent AP for reset button
+  // Calculate if any skills are active (including OHAL with 0 cost)
+  const hasAnySkills = useMemo(() => {
+    return SKILL_DEFS.some(def => getSkillLevel(def.id) > 0);
+  }, [getSkillLevel]);
+
+  // Calculate total AP spent (for display)
   const totalSpent = useMemo(() => {
     let total = 0;
     for (const def of SKILL_DEFS) {
@@ -155,15 +212,15 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
           {lang === 'en' ? 'SKILL TREE' : 'YETENEK AĞACI'}
         </h2>
         <div className="flex items-center gap-2">
-          {/* Reset button - always visible */}
+          {/* Reset button - enabled when ANY skill is active (including free OHAL) */}
           <button
-            onClick={() => { if (totalSpent > 0) { playClickSound(); setShowResetConfirm(true); } }}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full transition-transform ${totalSpent > 0 ? 'active:scale-90' : 'opacity-40'}`}
+            onClick={() => { if (hasAnySkills) { playClickSound(); setShowResetConfirm(true); } }}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full transition-transform ${hasAnySkills ? 'active:scale-90' : 'opacity-40'}`}
             style={{
               background: 'hsl(0 70% 50% / 0.15)',
               border: '1px solid hsl(0 70% 50% / 0.4)',
             }}
-            disabled={totalSpent <= 0}
+            disabled={!hasAnySkills}
           >
             <RotateCcw size={12} style={{ color: 'hsl(0 70% 60%)' }} />
             <span className="text-[10px] font-bold" style={{ color: 'hsl(0 70% 60%)' }}>
@@ -204,6 +261,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
             getSkillLevel={getSkillLevel}
             justPurchasedId={justPurchasedId}
             onBubbleClick={handleBubbleClick}
+            bubbleWarning={bubbleWarning}
           />
         ))}
       </div>
@@ -246,8 +304,8 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
               </div>
               <p className="text-sm mb-2" style={{ color: 'hsl(0 0% 65%)' }}>
                 {lang === 'en'
-                  ? `All skills will be reset and ${totalSpent} AP will be refunded.`
-                  : `Tüm yetenekler sıfırlanacak ve ${totalSpent} AP iade edilecek.`}
+                  ? `All skills (including OHAL) will be reset${totalSpent > 0 ? ` and ${totalSpent} AP will be refunded` : ''}.`
+                  : `Tüm yetenekler (OHAL dahil) sıfırlanacak${totalSpent > 0 ? ` ve ${totalSpent} AP iade edilecek` : ''}.`}
               </p>
               <div className="flex gap-3 mt-5">
                 <button
@@ -279,7 +337,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
 
 // ── Category Cluster with hub + child bubbles + SVG lines ──
 function CategoryCluster({
-  config, skills, lang, getSkillLevel, justPurchasedId, onBubbleClick, categoryKey,
+  config, skills, lang, getSkillLevel, justPurchasedId, onBubbleClick, categoryKey, bubbleWarning,
 }: {
   categoryKey: string;
   config: typeof CATEGORY_CONFIG[string];
@@ -288,6 +346,7 @@ function CategoryCluster({
   getSkillLevel: (id: string) => number;
   justPurchasedId: string | null;
   onBubbleClick: (s: SkillDef) => void;
+  bubbleWarning: { skillId: string; message: string } | null;
 }) {
   const HubIcon = config.icon;
   const isOhal = categoryKey === 'ohal';
@@ -360,6 +419,7 @@ function CategoryCluster({
               categoryGlow={config.glowColor}
               justPurchased={justPurchasedId === skill.id}
               onClick={() => onBubbleClick(skill)}
+              warningMessage={bubbleWarning?.skillId === skill.id ? bubbleWarning.message : null}
             />
           ))}
         </div>
@@ -370,7 +430,7 @@ function CategoryCluster({
 
 // ── 3D Bubble with segmented ring ──
 function SkillBubble({
-  skill, level, categoryColor, categoryGlow, justPurchased, onClick,
+  skill, level, categoryColor, categoryGlow, justPurchased, onClick, warningMessage,
 }: {
   skill: SkillDef;
   level: number;
@@ -378,6 +438,7 @@ function SkillBubble({
   categoryGlow: string;
   justPurchased: boolean;
   onClick: () => void;
+  warningMessage: string | null;
 }) {
   const Icon = SKILL_ICONS[skill.id] || Shield;
   const maxed = level >= skill.maxLevel;
@@ -398,93 +459,116 @@ function SkillBubble({
   });
 
   return (
-    <button
-      onClick={onClick}
-      className={`relative flex items-center justify-center transition-all duration-500 active:scale-90 ${
-        justPurchased ? 'scale-110' : ''
-      }`}
-      style={{
-        width: bubbleSize,
-        height: bubbleSize,
-      }}
-    >
-      {/* Outer glow */}
-      {isActive && (
-        <div className="absolute inset-0 rounded-full animate-pulse"
-          style={{
-            background: `radial-gradient(circle, ${categoryGlow}, transparent 70%)`,
-            transform: 'scale(1.4)',
-          }}
-        />
-      )}
-
-      {/* 3D Sphere */}
-      <div
-        className="absolute inset-1 rounded-full"
+    <div className="relative">
+      <button
+        onClick={onClick}
+        className={`relative flex items-center justify-center transition-all duration-500 active:scale-90 ${
+          justPurchased ? 'scale-110' : ''
+        }`}
         style={{
-          background: isActive
-            ? `radial-gradient(circle at 35% 30%, hsl(0 0% 100% / 0.15), ${categoryColor.replace(')', ' / 0.25)')} 40%, hsl(220 30% 12%) 100%)`
-            : 'radial-gradient(circle at 35% 30%, hsl(0 0% 100% / 0.08), hsl(220 20% 20%) 60%, hsl(220 30% 10%) 100%)',
-          boxShadow: isActive
-            ? `0 4px 20px ${categoryGlow}, inset 0 -4px 8px hsl(0 0% 0% / 0.4), inset 0 2px 4px hsl(0 0% 100% / 0.1)`
-            : 'inset 0 -4px 8px hsl(0 0% 0% / 0.4), inset 0 2px 4px hsl(0 0% 100% / 0.05)',
-          border: `1px solid ${isActive ? categoryColor.replace(')', ' / 0.4)') : 'hsl(0 0% 100% / 0.08)'}`,
+          width: bubbleSize,
+          height: bubbleSize,
         }}
-      />
-
-      {/* Segmented ring SVG */}
-      <svg className="absolute inset-0" width={bubbleSize} height={bubbleSize} viewBox={`0 0 ${bubbleSize} ${bubbleSize}`}>
-        {segments.map((seg, i) => (
-          <circle
-            key={i}
-            cx={bubbleSize / 2}
-            cy={bubbleSize / 2}
-            r={ringRadius}
-            fill="none"
-            stroke={seg.filled ? categoryColor : 'hsl(0 0% 100% / 0.1)'}
-            strokeWidth={ringStroke}
-            strokeDasharray={`${seg.dashLength} ${circumference - seg.dashLength}`}
-            strokeDashoffset={seg.offset}
-            strokeLinecap="round"
+      >
+        {/* Outer glow */}
+        {isActive && (
+          <div className="absolute inset-0 rounded-full animate-pulse"
             style={{
-              filter: seg.filled ? `drop-shadow(0 0 3px ${categoryGlow})` : 'none',
-              transition: 'stroke 0.5s, filter 0.5s',
+              background: `radial-gradient(circle, ${categoryGlow}, transparent 70%)`,
+              transform: 'scale(1.4)',
             }}
           />
-        ))}
-      </svg>
+        )}
 
-      {/* Icon */}
-      <Icon
-        size={22}
-        className="relative z-10 transition-all duration-300"
-        style={{
-          color: isActive ? categoryColor : 'hsl(0 0% 40%)',
-          filter: isActive ? `drop-shadow(0 0 6px ${categoryGlow})` : 'none',
-        }}
-      />
-
-      {/* Maxed indicator */}
-      {maxed && (
-        <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center z-20"
+        {/* 3D Sphere */}
+        <div
+          className="absolute inset-1 rounded-full"
           style={{
-            background: 'linear-gradient(135deg, hsl(145 70% 45%), hsl(160 70% 40%))',
-            boxShadow: '0 0 8px hsl(145 70% 45% / 0.5)',
+            background: isActive
+              ? `radial-gradient(circle at 35% 30%, hsl(0 0% 100% / 0.15), ${categoryColor.replace(')', ' / 0.25)')} 40%, hsl(220 30% 12%) 100%)`
+              : 'radial-gradient(circle at 35% 30%, hsl(0 0% 100% / 0.08), hsl(220 20% 20%) 60%, hsl(220 30% 10%) 100%)',
+            boxShadow: isActive
+              ? `0 4px 20px ${categoryGlow}, inset 0 -4px 8px hsl(0 0% 0% / 0.4), inset 0 2px 4px hsl(0 0% 100% / 0.1)`
+              : 'inset 0 -4px 8px hsl(0 0% 0% / 0.4), inset 0 2px 4px hsl(0 0% 100% / 0.05)',
+            border: `1px solid ${isActive ? categoryColor.replace(')', ' / 0.4)') : 'hsl(0 0% 100% / 0.08)'}`,
+          }}
+        />
+
+        {/* Segmented ring SVG */}
+        <svg className="absolute inset-0" width={bubbleSize} height={bubbleSize} viewBox={`0 0 ${bubbleSize} ${bubbleSize}`}>
+          {segments.map((seg, i) => (
+            <circle
+              key={i}
+              cx={bubbleSize / 2}
+              cy={bubbleSize / 2}
+              r={ringRadius}
+              fill="none"
+              stroke={seg.filled ? categoryColor : 'hsl(0 0% 100% / 0.1)'}
+              strokeWidth={ringStroke}
+              strokeDasharray={`${seg.dashLength} ${circumference - seg.dashLength}`}
+              strokeDashoffset={seg.offset}
+              strokeLinecap="round"
+              style={{
+                filter: seg.filled ? `drop-shadow(0 0 3px ${categoryGlow})` : 'none',
+                transition: 'stroke 0.5s, filter 0.5s',
+              }}
+            />
+          ))}
+        </svg>
+
+        {/* Icon */}
+        <Icon
+          size={22}
+          className="relative z-10 transition-all duration-300"
+          style={{
+            color: isActive ? categoryColor : 'hsl(0 0% 40%)',
+            filter: isActive ? `drop-shadow(0 0 6px ${categoryGlow})` : 'none',
+          }}
+        />
+
+        {/* Maxed indicator */}
+        {maxed && (
+          <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center z-20"
+            style={{
+              background: 'linear-gradient(135deg, hsl(145 70% 45%), hsl(160 70% 40%))',
+              boxShadow: '0 0 8px hsl(145 70% 45% / 0.5)',
+            }}
+          >
+            <ChevronUp size={10} style={{ color: 'white' }} />
+          </div>
+        )}
+
+        {/* Locked overlay */}
+        {!isActive && (
+          <div className="absolute inset-1 rounded-full flex items-center justify-center z-10"
+            style={{ background: 'hsl(0 0% 0% / 0.3)' }}
+          >
+            <Lock size={10} style={{ color: 'hsl(0 0% 35%)' }} className="absolute bottom-1 right-1" />
+          </div>
+        )}
+      </button>
+
+      {/* Bubble warning tooltip */}
+      {warningMessage && (
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-50 animate-fade-in whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-bold"
+          style={{
+            background: 'hsl(0 70% 45%)',
+            color: 'white',
+            boxShadow: '0 4px 16px hsl(0 0% 0% / 0.5)',
+            animation: 'fade-in 0.2s ease-out',
           }}
         >
-          <ChevronUp size={10} style={{ color: 'white' }} />
+          {warningMessage}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0"
+            style={{
+              borderLeft: '5px solid transparent',
+              borderRight: '5px solid transparent',
+              borderTop: '5px solid hsl(0 70% 45%)',
+            }}
+          />
         </div>
       )}
-
-      {/* Locked overlay */}
-      {!isActive && (
-        <div className="absolute inset-1 rounded-full flex items-center justify-center z-10"
-          style={{ background: 'hsl(0 0% 0% / 0.3)' }}
-        >
-          <Lock size={10} style={{ color: 'hsl(0 0% 35%)' }} className="absolute bottom-1 right-1" />
-        </div>
-      )}
-    </button>
+    </div>
   );
 }
 
@@ -508,6 +592,9 @@ function SkillDetailPanel({
   const catConfig = CATEGORY_CONFIG[skill.category];
   const isOhal = skill.id === 'ohal';
   const isFree = isOhal; // OHAL costs 0 AP
+
+  // OHAL achievement gate check
+  const ohalLevelLocked = isOhal && !maxed && !isOhalLevelUnlockable(level);
 
   return (
     <>
@@ -566,7 +653,7 @@ function SkillDetailPanel({
         </div>
 
         {/* OHAL detailed breakdown for next level */}
-        {isOhal && !maxed && (
+        {isOhal && !maxed && !ohalLevelLocked && (
           <div className="rounded-xl p-3.5 mb-3" style={{ background: 'hsl(15 90% 50% / 0.08)', border: '1px solid hsl(15 90% 50% / 0.2)' }}>
             <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: 'hsl(15 90% 50%)' }}>
               {lang === 'en' ? 'Level Details' : 'Seviye Detayları'}
@@ -582,6 +669,18 @@ function SkillDetailPanel({
           </div>
         )}
 
+        {/* OHAL achievement gate warning */}
+        {isOhal && ohalLevelLocked && (
+          <div className="rounded-xl p-3.5 mb-3 flex items-center gap-2"
+            style={{ background: 'hsl(45 80% 50% / 0.08)', border: '1px solid hsl(45 80% 50% / 0.3)' }}
+          >
+            <Lock size={14} style={{ color: 'hsl(45 80% 55%)' }} />
+            <p className="text-xs font-semibold" style={{ color: 'hsl(45 80% 55%)' }}>
+              {getOhalLockMessage(level, lang)}
+            </p>
+          </div>
+        )}
+
         {/* Next Level (non-OHAL) */}
         {!maxed && !isOhal && (
           <div className="rounded-xl p-3.5 mb-5" style={{ background: `${catConfig.color.replace(')', ' / 0.08)')}`, border: `1px solid ${catConfig.color.replace(')', ' / 0.2)')}` }}>
@@ -590,20 +689,6 @@ function SkillDetailPanel({
             </p>
             <p className="text-sm font-semibold" style={{ color: 'hsl(0 0% 85%)' }}>
               {getNextEffectText(skill, level, lang)}
-            </p>
-          </div>
-        )}
-
-        {/* Lock Warning */}
-        {lockReason && !maxed && (
-          <div className="rounded-xl p-3 mb-3 flex items-center gap-2 mt-3"
-            style={{ background: 'hsl(0 70% 50% / 0.1)', border: '1px solid hsl(0 70% 50% / 0.3)' }}
-          >
-            <Lock size={14} style={{ color: 'hsl(0 70% 60%)' }} />
-            <p className="text-xs font-semibold" style={{ color: 'hsl(0 70% 60%)' }}>
-              {lockReason === 'ohal_blocks_others'
-                ? (lang === 'en' ? 'OHAL is active! Reset skills first to purchase this.' : 'OHAL aktif! Bunu almak için önce yetenekleri sıfırlayın.')
-                : (lang === 'en' ? 'Other skills are active! Reset skills first to activate OHAL.' : 'Başka yetenekler aktif! OHAL için önce yetenekleri sıfırlayın.')}
             </p>
           </div>
         )}
@@ -621,6 +706,13 @@ function SkillDetailPanel({
           >
             <Lock size={14} className="inline mr-1" style={{ color: 'hsl(0 0% 35%)' }} />
             {lang === 'en' ? 'Locked' : 'Kilitli'}
+          </div>
+        ) : ohalLevelLocked ? (
+          <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
+            style={{ background: 'hsl(45 80% 50% / 0.08)', color: 'hsl(45 80% 55%)', border: '1px solid hsl(45 80% 50% / 0.2)' }}
+          >
+            <Lock size={14} className="inline mr-1" style={{ color: 'hsl(45 80% 55%)' }} />
+            {lang === 'en' ? 'Achievement Required' : 'Başarım Gerekli'}
           </div>
         ) : (
           <button

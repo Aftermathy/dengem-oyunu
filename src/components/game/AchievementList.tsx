@@ -6,6 +6,13 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
+import { Flame } from 'lucide-react';
+
+// Map OHAL achievements to what they unlock
+const OHAL_UNLOCK_MAP: Record<string, { nextLevel: number; labelTR: string; labelEN: string }> = {
+  ohal_1: { nextLevel: 2, labelTR: 'OHAL Seviye 2 Açılır', labelEN: 'Unlocks OHAL Level 2' },
+  ohal_2: { nextLevel: 3, labelTR: 'OHAL Seviye 3 Açılır', labelEN: 'Unlocks OHAL Level 3' },
+};
 
 interface AchievementListProps {
   onClose: () => void;
@@ -141,6 +148,7 @@ function AchievementRow({
 }) {
   const showDetails = isUnlocked || !isSecret;
   const canClaim = isUnlocked && !isClaimed;
+  const ohalUnlock = OHAL_UNLOCK_MAP[achievement.id];
 
   return (
     <div
@@ -168,6 +176,20 @@ function AchievementRow({
         <div className="text-[11px] text-muted-foreground">
           {showDetails ? getAchievementDesc(achievement, lang) : '???'}
         </div>
+        {/* OHAL unlock badge */}
+        {ohalUnlock && showDetails && (
+          <div className="flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-md w-fit"
+            style={{
+              background: 'hsl(15 90% 50% / 0.1)',
+              border: '1px solid hsl(15 90% 50% / 0.3)',
+            }}
+          >
+            <Flame size={10} style={{ color: 'hsl(15 90% 55%)' }} />
+            <span className="text-[9px] font-bold" style={{ color: 'hsl(15 90% 55%)' }}>
+              {lang === 'en' ? ohalUnlock.labelEN : ohalUnlock.labelTR}
+            </span>
+          </div>
+        )}
       </div>
 
       {canClaim ? (
@@ -175,8 +197,18 @@ function AchievementRow({
           onClick={onClaim}
           className="shrink-0 bg-game-gold/20 border border-game-gold/40 text-game-gold text-[11px] font-bold px-2.5 py-1.5 rounded-lg active:scale-90 transition-all hover:bg-game-gold/30"
         >
-          <EmojiImg emoji="⭐" size={11} className="mr-0.5" />
-          +{achievement.apReward}
+          <div className="flex items-center gap-1">
+            <EmojiImg emoji="⭐" size={11} />
+            <span>+{achievement.apReward}</span>
+          </div>
+          {ohalUnlock && (
+            <div className="flex items-center gap-0.5 mt-0.5">
+              <Flame size={9} style={{ color: 'hsl(15 90% 55%)' }} />
+              <span className="text-[8px]" style={{ color: 'hsl(15 90% 55%)' }}>
+                +OHAL {ohalUnlock.nextLevel}
+              </span>
+            </div>
+          )}
         </button>
       ) : isClaimed ? (
         <div className="text-xs font-bold text-game-success shrink-0 flex items-center gap-1">
