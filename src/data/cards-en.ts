@@ -1104,9 +1104,9 @@ export const catConsultantCardEn: EventCard = normalizeCard({
     { power: 'ordu', amount: 0 },
   ],
   leftMoney: -3, rightMoney: 0,
-};
+});
 
-export const milestoneCard50En: EventCard = {
+export const milestoneCard50En: EventCard = normalizeCard({
   id: 9002,
   character: 'Exile Postman',
   characterEmoji: '✉️',
