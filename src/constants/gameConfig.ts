@@ -4,10 +4,10 @@ export const GAME_CONFIG = {
   INITIAL_POWER: 50,
 
   // Launder mechanic
-  LAUNDER_COST: 50,
-  LAUNDER_AMOUNT: 25,
+  LAUNDER_COST: 30,
+  LAUNDER_AMOUNT: 20,
   LAUNDER_HALK_PENALTY: -10,
-  LAUNDER_SELECTED_BONUS: 5,
+  LAUNDER_SELECTED_BONUS: 10,
   LAUNDER_OTHER_PENALTY: -5,
 
   // Shop costs
@@ -20,8 +20,8 @@ export const GAME_CONFIG = {
   PROPAGANDA_GAIN: 10,
 
   // Faction income
-  INCOME_PER_MAXED_FACTION: 2,
-  MAX_FACTION_INCOME: 6, // cap: at most 3 maxed factions count (6B/turn)
+  INCOME_PER_MAXED_FACTION: 5,
+  MAX_FACTION_INCOME: 25, // cap: at most 5 maxed factions count (25B/turn)
 
   // Tutorial
   TUTORIAL_TRIGGER_THRESHOLD: 30, // show when any faction drops to or below this

@@ -10,7 +10,7 @@ import { Moon, Sun } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
-import { LeaderboardScreen } from '@/components/game/LeaderboardScreen';
+// import { LeaderboardScreen } from '@/components/game/LeaderboardScreen'; // DISABLED
 import { getUnlockedIds } from '@/lib/achievements';
 
 // Multilingual "I MUST STAY" variants — bold word marked with *word*
@@ -51,7 +51,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [showDarkWarning, setShowDarkWarning] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  // const [showLeaderboard, setShowLeaderboard] = useState(false); // DISABLED
 
   const currentTitle = TITLE_VARIANTS[titleIndex];
 
@@ -211,6 +211,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
               <span className="text-xs text-primary/70">({getUnlockedIds().length})</span>
             </button>
 
+            {/* Leaderboard button — DISABLED for now
             <button
               onClick={() => { playClickSound(); hapticLight(); setShowLeaderboard(true); }}
               className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
@@ -218,6 +219,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
               <EmojiImg emoji="🏆" size={16} />
               {lang === 'tr' ? 'Skor Tablosu' : 'Leaderboard'}
             </button>
+            */}
           </div>
         </div>
 
@@ -270,9 +272,11 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
         <AchievementList onClose={() => setShowAchievements(false)} />
       )}
 
+      {/* Leaderboard modal — DISABLED
       {showLeaderboard && (
         <LeaderboardScreen onClose={() => setShowLeaderboard(false)} />
       )}
+      */}
     </div>
   );
 }

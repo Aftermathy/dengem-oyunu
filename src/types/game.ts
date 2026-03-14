@@ -38,5 +38,16 @@ export interface GameOverScenario {
 }
 
 // Bribe cost tiers: each successive bribe to the same faction costs more
-export const BRIBE_COSTS = [1, 3, 5, 10, 25, 50, 100] as const;
+export const BRIBE_COSTS = [3, 5, 10, 15, 25, 25, 25] as const;
 export const BRIBE_REP_GAIN = 10;
+
+export type GamePhase = 'start' | 'playing' | 'gameover' | 'election';
+
+export interface BribeState {
+  [key: string]: number;
+  halk: number;
+  yatirimcilar: number;
+  mafya: number;
+  tarikat: number;
+  ordu: number;
+}

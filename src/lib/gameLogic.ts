@@ -24,7 +24,7 @@ export function normalizeCard(card: EventCard): EventCard {
 export function normalizeCards(cards: EventCard[]): EventCard[] {
   return cards.map(normalizeCard);
 }
-import { BribeState } from '@/hooks/useGame';
+import { BribeState } from '@/types/game';
 import { GAME_CONFIG } from '@/constants/gameConfig';
 
 export function shuffleArray<T>(arr: T[]): T[] {
