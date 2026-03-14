@@ -155,7 +155,7 @@ export function useGame(lang: Language) {
     setTutorialFaction(null);
     setPendingAdvance(null);
     setLastShopResult(null);
-    setCompletedElections([]);
+    // completedElections preserved from state (loaded from save)
     setCurrentElectionIndex(null);
     setPhase('playing');
   }, [lang]);
