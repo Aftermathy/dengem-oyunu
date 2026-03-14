@@ -40,9 +40,11 @@ interface StartScreenProps {
   highScore: number;
   onStart: () => void;
   onContinue?: () => void;
+  onShowProfile?: () => void;
+  userProfile?: UserProfile;
 }
 
-export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps) {
+export function StartScreen({ highScore, onStart, onContinue, onShowProfile, userProfile }: StartScreenProps) {
   const { lang, setLang, t } = useLanguage();
   const { authorityPoints } = useMetaGame();
   const [titleIndex, setTitleIndex] = useState(0);
