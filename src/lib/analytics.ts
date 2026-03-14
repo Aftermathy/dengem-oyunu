@@ -15,9 +15,10 @@ const MAX_BUFFER = 50;
 const eventBuffer: { ts: number; type: string; payload: unknown }[] = [];
 
 // Batch queue for DB writes
-const batchQueue: { event_type: string; event_name: string; properties: Record<string, unknown> }[] = [];
+type EventRow = { event_type: string; event_name: string; properties: Record<string, string | number | boolean | null> };
+const batchQueue: EventRow[] = [];
 let flushTimer: ReturnType<typeof setTimeout> | null = null;
-const FLUSH_INTERVAL = 5000; // 5 seconds
+const FLUSH_INTERVAL = 5000;
 const MAX_BATCH_SIZE = 20;
 
 function record(type: string, payload: unknown) {
@@ -26,7 +27,16 @@ function record(type: string, payload: unknown) {
 }
 
 function enqueue(type: string, name: string, properties: Record<string, unknown> = {}) {
-  batchQueue.push({ event_type: type, event_name: name, properties: properties as Record<string, string | number | boolean | null> });
+  // Sanitize properties to JSON-compatible values
+  const safe: Record<string, string | number | boolean | null> = {};
+  for (const [k, v] of Object.entries(properties)) {
+    if (v === null || typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
+      safe[k] = v;
+    } else {
+      safe[k] = String(v);
+    }
+  }
+  batchQueue.push({ event_type: type, event_name: name, properties: safe });
   
   if (batchQueue.length >= MAX_BATCH_SIZE) {
     flush();
@@ -48,11 +58,11 @@ async function flush() {
     session_id: SESSION_ID,
     event_type: e.event_type,
     event_name: e.event_name,
-    properties: e.properties,
+    properties: e.properties as Record<string, string | number | boolean | null>,
   }));
 
   try {
-    const { error } = await supabase.from('game_events').insert(rows);
+    const { error } = await supabase.from('game_events').insert(rows as any);
     if (error && isDev) {
       console.warn('[Analytics] Flush error:', error.message);
     }
