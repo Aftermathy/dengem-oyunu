@@ -97,7 +97,11 @@ export function useGame(lang: Language) {
   const [investmentCount, setInvestmentCount] = useState(0);
   const [allianceCount, setAllianceCount] = useState(0);
   const [lastShopResult, setLastShopResult] = useState<string | null>(null);
-  const [completedElections, setCompletedElections] = useState<number[]>([]);
+  const [completedElections, setCompletedElections] = useState<number[]>(() => {
+    const saved = loadGame();
+    if (saved && saved.completedElections) return saved.completedElections;
+    return [];
+  });
   const [currentElectionIndex, setCurrentElectionIndex] = useState<number | null>(null);
   const [currentCardFirstSeen, setCurrentCardFirstSeen] = useState(() => false);
 
