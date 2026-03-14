@@ -33,6 +33,7 @@ const Index = () => {
     currentElectionIndex, completedElections, handleElectionComplete,
     pendingAchievements, clearPendingAchievement,
     maxMoney, maxElectionPct, peakLaundered,
+    lastEarnedAP,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
