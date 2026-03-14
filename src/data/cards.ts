@@ -1,7 +1,7 @@
 import { EventCard } from "@/types/game";
 import { normalizeCards, normalizeCard } from "@/lib/gameLogic";
 
-export const eventCards: EventCard[] = [
+export const eventCards: EventCard[] = normalizeCards([
   // === EKONOMİ (10 kart) ===
   {
     id: 1,
