@@ -3,16 +3,10 @@ const SKILLS_KEY = 'ims_skill_levels';
 const CLAIMS_KEY = 'ims_claimed_achievements';
 
 export function loadAP(): number {
-  // TEST: Always start with at least 1000 AP
   try {
-    const stored = parseInt(localStorage.getItem(AP_KEY) || '0', 10);
-    if (stored < 1000) {
-      localStorage.setItem(AP_KEY, '1000');
-      return 1000;
-    }
-    return stored;
+    return parseInt(localStorage.getItem(AP_KEY) || '0', 10);
   } catch {
-    return 1000;
+    return 0;
   }
 }
 
