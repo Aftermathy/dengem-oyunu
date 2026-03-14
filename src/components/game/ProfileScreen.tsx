@@ -18,7 +18,7 @@ interface ProfileScreenProps {
 
 export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScreenProps) {
   const { lang } = useLanguage();
-  const { authorityPoints, claimedAchievements } = useMetaGame();
+  const { claimedAchievements } = useMetaGame();
   const [showGallery, setShowGallery] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState(profile.nickname);
