@@ -215,6 +215,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
           ap={authorityPoints}
           lang={lang}
           justPurchased={justPurchasedId === selectedSkill.id}
+          lockReason={getSkillLockReason(selectedSkill.id)}
           onPurchase={handlePurchase}
           onClose={() => setSelectedSkill(null)}
         />
