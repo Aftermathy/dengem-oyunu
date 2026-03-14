@@ -92,7 +92,7 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
                     <img src={FACTION_IMAGES[faction]} alt={t(`power.${faction}`)} className="w-full h-full object-cover" />
                   </div>
                   <span className="text-sm font-bold text-foreground">{t(`power.${faction}`)}</span>
-                  <span className="text-xs text-emerald-500">+5 rep, +25B</span>
+                  <span className="text-xs text-emerald-500">+10 rep</span>
                 </button>
               ))}
             </div>

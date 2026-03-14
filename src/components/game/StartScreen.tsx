@@ -272,9 +272,11 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
         <AchievementList onClose={() => setShowAchievements(false)} />
       )}
 
+      {/* Leaderboard modal — DISABLED
       {showLeaderboard && (
         <LeaderboardScreen onClose={() => setShowLeaderboard(false)} />
       )}
+      */}
     </div>
   );
 }
