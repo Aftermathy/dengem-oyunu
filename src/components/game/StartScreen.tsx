@@ -253,6 +253,10 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
           </div>
         </div>
       )}
+
+      {showAchievements && (
+        <AchievementList onClose={() => setShowAchievements(false)} />
+      )}
     </div>
   );
 }
