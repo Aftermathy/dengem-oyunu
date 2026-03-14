@@ -160,15 +160,8 @@ export function useGame(lang: Language) {
       earnAP(earned);
       setLastEarnedAP(earned);
     }
-    // Check OHAL achievements on game end
-    if (modifiers.ohalLevel > 0) {
-      const ohalAch = checkOhalAchievements(modifiers.ohalLevel);
-      if (ohalAch.length > 0) {
-        setPendingAchievements(prev => [...prev, ...ohalAch]);
-      }
-    }
     return earned;
-  }, [earnAP, modifiers.ohalAPMultiplier, modifiers.ohalLevel]);
+  }, [earnAP, modifiers.ohalAPMultiplier]);
 
   // ── Start new game ──
   const startGame = useCallback(() => {
