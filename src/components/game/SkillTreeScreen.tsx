@@ -1,10 +1,10 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { SKILL_DEFS, getSkillTitle, getSkillDesc, type SkillDef } from '@/types/metaGame';
-import { EmojiImg } from '@/components/EmojiImg';
+import { SKILL_DEFS, getSkillTitle, type SkillDef } from '@/types/metaGame';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
+import type { LucideIcon } from 'lucide-react';
 import {
   Megaphone, Swords, Eye, TrendingUp, Skull,
   Vote, Glasses, Sparkles, Landmark, Clover,
