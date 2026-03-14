@@ -6,13 +6,14 @@ import { EmojiImg } from '@/components/EmojiImg';
 import throneIcon from '@/assets/throne-icon.png';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 import { Switch } from '@/components/ui/switch';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, User } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
 import { SkillTreeScreen } from '@/components/game/SkillTreeScreen';
 import { getUnlockedIds } from '@/lib/achievements';
 import { useMetaGame } from '@/contexts/MetaGameContext';
+import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 
 const TITLE_VARIANTS = [
   { text: 'I *MUST* STAY' },
@@ -39,9 +40,11 @@ interface StartScreenProps {
   highScore: number;
   onStart: () => void;
   onContinue?: () => void;
+  onShowProfile?: () => void;
+  userProfile?: UserProfile;
 }
 
-export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps) {
+export function StartScreen({ highScore, onStart, onContinue, onShowProfile, userProfile }: StartScreenProps) {
   const { lang, setLang, t } = useLanguage();
   const { authorityPoints } = useMetaGame();
   const [titleIndex, setTitleIndex] = useState(0);
@@ -205,7 +208,22 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
           )}
 
           {/* Meta-game navigation */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 flex-wrap justify-center">
+            {userProfile?.hasCompletedOnboarding && onShowProfile && (
+              <>
+                <button
+                  onClick={() => { playClickSound(); hapticLight(); onShowProfile(); }}
+                  className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+                >
+                  {(() => {
+                    const av = AVATAR_DEFS.find(a => a.id === userProfile.avatarId);
+                    return av ? <EmojiImg emoji={av.emoji} size={16} /> : <User size={16} />;
+                  })()}
+                  {lang === 'tr' ? 'Profil' : 'Profile'}
+                </button>
+                <span className="text-muted-foreground/30">|</span>
+              </>
+            )}
             <button
               onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
               className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"

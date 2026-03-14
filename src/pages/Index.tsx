@@ -18,8 +18,11 @@ import { CardKnowledgeAnnouncement } from '@/components/game/CardKnowledgeAnnoun
 import { TutorialAskScreen } from '@/components/game/TutorialAskScreen';
 import { TutorialOverlay } from '@/components/game/TutorialOverlay';
 import { AchievementPopup } from '@/components/game/AchievementPopup';
+import { OnboardingScreen } from '@/components/game/OnboardingScreen';
+import { ProfileScreen } from '@/components/game/ProfileScreen';
 import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
 import { STORAGE_KEYS } from '@/constants/storage';
+import { loadUserProfile, saveUserProfile, type UserProfile } from '@/lib/userProfile';
 import { AlertTriangle } from 'lucide-react';
 
 const Index = () => {
@@ -45,6 +48,9 @@ const Index = () => {
   const [showKnowledgeAnnouncement, setShowKnowledgeAnnouncement] = useState(false);
   const [showTutorialAsk, setShowTutorialAsk] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile>(loadUserProfile);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
   const nextElectionInfo = getNextElectionInfo(turn, completedElections);
   const electionDefeatRef = useRef(false);
@@ -86,7 +92,7 @@ const Index = () => {
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
-        <StartScreen highScore={highScore} onStart={handleStartGame} onContinue={continueGame} />
+        <StartScreen highScore={highScore} onStart={handleStartGame} onContinue={continueGame} onShowProfile={() => setShowProfile(true)} userProfile={userProfile} />
       )}
 
       {phase === 'playing' && currentCard && (
@@ -188,7 +194,7 @@ const Index = () => {
         />
       )}
 
-      {phase === 'gameover' && gameOverInfo && (
+      {phase === 'gameover' && gameOverInfo && !showOnboarding && (
         <GameOverScreen
           title={gameOverInfo.title}
           description={gameOverInfo.description}
@@ -199,8 +205,63 @@ const Index = () => {
           money={money}
           electionsWon={completedElections.length}
           earnedAP={lastEarnedAP}
-          onRestart={startGame}
-          onMainMenu={handleGoToMenu}
+          onRestart={() => {
+            // Update profile stats on game end
+            const updated = {
+              ...userProfile,
+              totalTurns: userProfile.totalTurns + turn,
+              totalAP: userProfile.totalAP + lastEarnedAP,
+              gamesPlayed: userProfile.gamesPlayed + 1,
+            };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+            // Trigger onboarding on first game over if not completed
+            if (!userProfile.hasCompletedOnboarding) {
+              setShowOnboarding(true);
+              return;
+            }
+            startGame();
+          }}
+          onMainMenu={() => {
+            // Update profile stats
+            const updated = {
+              ...userProfile,
+              totalTurns: userProfile.totalTurns + turn,
+              totalAP: userProfile.totalAP + lastEarnedAP,
+              gamesPlayed: userProfile.gamesPlayed + 1,
+            };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+            if (!userProfile.hasCompletedOnboarding) {
+              setShowOnboarding(true);
+              return;
+            }
+            handleGoToMenu();
+          }}
+        />
+      )}
+
+      {showOnboarding && (
+        <OnboardingScreen
+          onComplete={(nickname, avatarId) => {
+            const updated = { ...userProfile, nickname, avatarId, hasCompletedOnboarding: true };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+            setShowOnboarding(false);
+            handleGoToMenu();
+          }}
+        />
+      )}
+
+      {showProfile && (
+        <ProfileScreen
+          profile={userProfile}
+          onUpdateProfile={(updates) => {
+            const updated = { ...userProfile, ...updates };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+          }}
+          onClose={() => setShowProfile(false)}
         />
       )}
 
