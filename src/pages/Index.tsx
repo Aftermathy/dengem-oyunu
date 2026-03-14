@@ -48,6 +48,9 @@ const Index = () => {
   const [showKnowledgeAnnouncement, setShowKnowledgeAnnouncement] = useState(false);
   const [showTutorialAsk, setShowTutorialAsk] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile>(loadUserProfile);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
   const nextElectionInfo = getNextElectionInfo(turn, completedElections);
   const electionDefeatRef = useRef(false);
