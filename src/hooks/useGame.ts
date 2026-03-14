@@ -468,7 +468,11 @@ export function useGame(lang: Language) {
   const launder = useCallback((faction: PowerType) => {
     if (money < GAME_CONFIG.LAUNDER_COST) return;
     setMoney(m => m - GAME_CONFIG.LAUNDER_COST);
-    setTotalLaundered(prev => prev + GAME_CONFIG.LAUNDER_AMOUNT);
+    setTotalLaundered(prev => {
+      const next = prev + GAME_CONFIG.LAUNDER_AMOUNT;
+      if (next > peakLaundered) setPeakLaundered(next);
+      return next;
+    });
     setLastMoneyChange(-GAME_CONFIG.LAUNDER_COST);
     trackLaunderAchievement();
 
