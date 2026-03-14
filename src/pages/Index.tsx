@@ -32,7 +32,7 @@ const Index = () => {
     currentCardFirstSeen,
     currentElectionIndex, completedElections, handleElectionComplete,
     pendingAchievements, clearPendingAchievement,
-    maxMoney, maxElectionPct, peakLaundered,
+    maxMoney: _maxMoney, maxElectionPct: _maxElectionPct, peakLaundered: _peakLaundered,
     lastEarnedAP,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
