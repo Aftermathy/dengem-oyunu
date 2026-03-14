@@ -198,6 +198,15 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
               {lang === 'tr' ? 'Devam Et' : 'Continue'}
             </Button>
           )}
+
+          <button
+            onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
+            className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+          >
+            <EmojiImg emoji="🏅" size={16} />
+            {lang === 'tr' ? 'Başarımlar' : 'Achievements'}
+            <span className="text-xs text-primary/70">({getUnlockedIds().length})</span>
+          </button>
         </div>
 
         <a
