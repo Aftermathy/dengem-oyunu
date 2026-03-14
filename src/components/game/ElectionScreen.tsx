@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { ElectionConfig, ElectionResult, ElectionCard, ElectionSpecialPower } from '@/types/election';
 import { Language } from '@/contexts/LanguageContext';
 import { playClickSound, playElectionCardSound, playAiCardSound, playSpecialPowerSound, playRerollSound, playBudgetWarningSound } from '@/hooks/useSound';
