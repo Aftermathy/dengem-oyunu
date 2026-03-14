@@ -51,6 +51,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [showDarkWarning, setShowDarkWarning] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   const currentTitle = TITLE_VARIANTS[titleIndex];
 
