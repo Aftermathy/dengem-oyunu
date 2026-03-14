@@ -364,6 +364,7 @@ export function useGame(lang: Language) {
         cardIndex,
         bribeCounts,
         reputation: 0,
+        completedElections,
         savedAt: Date.now(),
       });
     }
