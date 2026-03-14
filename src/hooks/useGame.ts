@@ -464,6 +464,7 @@ export function useGame(lang: Language) {
     setMoney(m => m - GAME_CONFIG.LAUNDER_COST);
     setTotalLaundered(prev => prev + GAME_CONFIG.LAUNDER_AMOUNT);
     setLastMoneyChange(-GAME_CONFIG.LAUNDER_COST);
+    trackLaunderAchievement();
 
     const otherFactions: PowerType[] = ['yatirimcilar', 'mafya', 'tarikat', 'ordu'].filter(f => f !== faction) as PowerType[];
 
