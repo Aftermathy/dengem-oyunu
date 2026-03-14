@@ -10,7 +10,7 @@ import { Moon, Sun } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
-import { LeaderboardScreen } from '@/components/game/LeaderboardScreen';
+// import { LeaderboardScreen } from '@/components/game/LeaderboardScreen'; // DISABLED
 import { getUnlockedIds } from '@/lib/achievements';
 
 // Multilingual "I MUST STAY" variants — bold word marked with *word*
