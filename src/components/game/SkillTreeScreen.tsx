@@ -154,22 +154,21 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
           {lang === 'en' ? 'SKILL TREE' : 'YETENEK AĞACI'}
         </h2>
         <div className="flex items-center gap-2">
-          {/* Reset button */}
-          {totalSpent > 0 && (
-            <button
-              onClick={() => { playClickSound(); setShowResetConfirm(true); }}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full active:scale-90 transition-transform"
-              style={{
-                background: 'hsl(0 70% 50% / 0.15)',
-                border: '1px solid hsl(0 70% 50% / 0.4)',
-              }}
-            >
-              <RotateCcw size={12} style={{ color: 'hsl(0 70% 60%)' }} />
-              <span className="text-[10px] font-bold" style={{ color: 'hsl(0 70% 60%)' }}>
-                {lang === 'en' ? 'Reset' : 'Sıfırla'}
-              </span>
-            </button>
-          )}
+          {/* Reset button - always visible */}
+          <button
+            onClick={() => { if (totalSpent > 0) { playClickSound(); setShowResetConfirm(true); } }}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full transition-transform ${totalSpent > 0 ? 'active:scale-90' : 'opacity-40'}`}
+            style={{
+              background: 'hsl(0 70% 50% / 0.15)',
+              border: '1px solid hsl(0 70% 50% / 0.4)',
+            }}
+            disabled={totalSpent <= 0}
+          >
+            <RotateCcw size={12} style={{ color: 'hsl(0 70% 60%)' }} />
+            <span className="text-[10px] font-bold" style={{ color: 'hsl(0 70% 60%)' }}>
+              {lang === 'en' ? 'Reset' : 'Sıfırla'}
+            </span>
+          </button>
           {/* AP Badge */}
           <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full"
             style={{
