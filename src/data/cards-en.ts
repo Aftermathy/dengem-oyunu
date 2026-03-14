@@ -1,7 +1,7 @@
 import { EventCard } from '@/types/game';
 import { normalizeCards, normalizeCard } from '@/lib/gameLogic';
 
-export const eventCardsEn: EventCard[] = [
+export const eventCardsEn: EventCard[] = normalizeCards([
   {
     id: 1, character: 'Central Bank Governor', characterEmoji: '🏦', category: 'Economy',
     description: 'Sir, exchange rates are skyrocketing. We need to raise interest rates or inflation will explode.',
