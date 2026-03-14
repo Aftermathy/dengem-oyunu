@@ -161,12 +161,9 @@ const Index = () => {
           halkPower={power.halk}
           lang={lang}
           onComplete={handleElectionComplete}
-          onRestart={() => {
-            handleElectionLoss();
-            startGame();
-          }}
+          onLossDetected={handleElectionLoss}
+          onRestart={startGame}
           onMainMenu={() => {
-            handleElectionLoss();
             electionDefeatRef.current = true;
             handleGoToMenu();
           }}
