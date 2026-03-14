@@ -6,13 +6,14 @@ import { EmojiImg } from '@/components/EmojiImg';
 import throneIcon from '@/assets/throne-icon.png';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 import { Switch } from '@/components/ui/switch';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, User } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
 import { SkillTreeScreen } from '@/components/game/SkillTreeScreen';
 import { getUnlockedIds } from '@/lib/achievements';
 import { useMetaGame } from '@/contexts/MetaGameContext';
+import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 
 const TITLE_VARIANTS = [
   { text: 'I *MUST* STAY' },
