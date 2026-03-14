@@ -2776,10 +2776,10 @@ export const prologueCard: EventCard = normalizeCard({
   ],
   leftMoney: 0,
   rightMoney: -2,
-};
+});
 
 // Dark mode easter egg card
-export const darkModeCard: EventCard = {
+export const darkModeCard: EventCard = normalizeCard({
   id: 9999,
   character: "Gölge Danışman",
   characterEmoji: "🌑",
