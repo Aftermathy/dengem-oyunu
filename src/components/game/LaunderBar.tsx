@@ -53,7 +53,7 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
               : "bg-muted text-muted-foreground cursor-not-allowed"
           )}
         >
-          <EmojiImg emoji="🧼" size={15} /> {lang === 'tr' ? 'Akla' : 'Launder'} (-50B)
+          <EmojiImg emoji="🧼" size={15} /> {lang === 'tr' ? 'Akla' : 'Launder'} (-30B)
         </button>
 
         <div className="flex-1 h-7 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
