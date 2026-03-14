@@ -240,6 +240,11 @@ export function useGame(lang: Language) {
     const over = checkGameOver(newPower);
     if (over) {
       trackEvent('game_over', { reason: over.title, turn: newTurn });
+      // Track death achievements
+      const scenarios = getScenarios(lang);
+      const deathFaction = scenarios.find(s => s.title === over.title)?.power;
+      if (deathFaction) trackDeath(deathFaction);
+      trackSpeedDeath(newTurn);
       setGameOverInfo(over);
       if (newTurn > highScore) {
         setHighScore(newTurn);
@@ -253,6 +258,8 @@ export function useGame(lang: Language) {
     // Check money game over
     if (newMoney <= 0) {
       const bankruptScenario = { title: t('gameover.bankruptcy.title'), description: t('gameover.bankruptcy.desc'), emoji: '💸', image: 'defeat-iflas' };
+      trackBankruptcy();
+      trackSpeedDeath(newTurn);
       setGameOverInfo(bankruptScenario);
       if (newTurn > highScore) {
         setHighScore(newTurn);
@@ -261,6 +268,16 @@ export function useGame(lang: Language) {
       clearSave();
       setPhase('gameover');
       return;
+    }
+
+    // Check achievements
+    const achQueue: string[] = [];
+    achQueue.push(...checkTurnAchievements(newTurn));
+    achQueue.push(...checkMoneyAchievements(newMoney));
+    achQueue.push(...checkPowerAchievements(newPower));
+    achQueue.push(...checkCardAchievement(currentCard.id));
+    if (achQueue.length > 0) {
+      setPendingAchievements(prev => [...prev, ...achQueue]);
     }
 
     // Inject milestone card at MILESTONE_TURN
