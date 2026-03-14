@@ -34,13 +34,13 @@ export const LUCKY_BONUS = [0.05, 0.10, 0.15];
 export const PRO_LAUNDER_OUTPUT = [25, 30]; // base is 20
 export const OFFSHORE_RATE = [0.01, 0.02, 0.03];
 
-// OHAL effect values per level (5 levels)
-export const OHAL_NEGATIVE_EXTRA = [1, 2, 3, 4, 5]; // extra negative faction damage
-export const OHAL_POSITIVE_REDUCTION = [1, 1, 2, 2, 3]; // reduced positive faction gains
-export const OHAL_LAUNDER_OUTPUT = [15, 12, 10, 7, 5]; // launder output override (base 20)
-export const OHAL_ELECTION_COST_MULT = [1.15, 1.25, 1.40, 1.55, 1.75]; // election cost multiplier
-export const OHAL_MONEY_VOLATILITY = [1.3, 1.5, 1.8, 2.0, 2.5]; // money effect multiplier for both gain/loss
-export const OHAL_AP_MULTIPLIER = [1.5, 2.0, 2.5, 3.0, 4.0]; // AP score multiplier
+// OHAL effect values per level (3 levels)
+export const OHAL_NEGATIVE_EXTRA = [1, 2, 3]; // extra negative faction damage
+export const OHAL_POSITIVE_REDUCTION = [1, 2, 3]; // reduced positive faction gains
+export const OHAL_LAUNDER_OUTPUT = [15, 10, 5]; // launder output override (base 20)
+export const OHAL_ELECTION_COST_MULT = [1.25, 1.50, 1.75]; // election cost multiplier
+export const OHAL_MONEY_VOLATILITY = [1.5, 2.0, 2.5]; // money effect multiplier for both gain/loss
+export const OHAL_AP_MULTIPLIER = [1.5, 2.0, 2.5]; // AP score multiplier
 
 export const SKILL_DEFS: SkillDef[] = [
   // ── Defense: Faction Shields ──
@@ -85,10 +85,20 @@ export const SKILL_DEFS: SkillDef[] = [
   { id: 'emergency_fund', maxLevel: 1, costs: [100], emoji: '💉', tier: 3, category: 'strategy',
     titleTR: 'Acil Fon Enjeksiyonu', titleEN: 'Emergency Fund Injection', descTR: 'İflas ettiğinde 25B enjekte et (oyun başına 1)', descEN: 'Inject 25B when bankrupt (once per game)' },
 
-  // ── OHAL (State of Emergency) ──
-  { id: 'ohal', maxLevel: 5, costs: [0, 0, 0, 0, 0], emoji: '⚠️', tier: 3, category: 'ohal',
+  // ── OHAL (State of Emergency) - 3 levels ──
+  { id: 'ohal', maxLevel: 3, costs: [0, 0, 0], emoji: '⚠️', tier: 3, category: 'ohal',
     titleTR: 'OHAL Modu', titleEN: 'State of Emergency', descTR: 'Oyunu zorlaştır, AP çarpanı kazan', descEN: 'Make the game harder, earn AP multiplier' },
 ];
+
+// Helper: check if any non-OHAL skill has levels
+export function hasAnyNonOhalSkill(skillLevels: Record<string, number>): boolean {
+  return SKILL_DEFS.some(s => s.category !== 'ohal' && (skillLevels[s.id] || 0) > 0);
+}
+
+// Helper: check if OHAL is active
+export function hasOhalActive(skillLevels: Record<string, number>): boolean {
+  return (skillLevels['ohal'] || 0) > 0;
+}
 
 // Computed active modifiers from skill levels
 export interface ActiveModifiers {
@@ -105,7 +115,7 @@ export interface ActiveModifiers {
   ohalLevel: number;
   ohalNegativeExtra: number;
   ohalPositiveReduction: number;
-  ohalLaunderOutput: number; // overrides launderOutput if active
+  ohalLaunderOutput: number;
   ohalElectionCostMult: number;
   ohalMoneyVolatility: number;
   ohalAPMultiplier: number;
@@ -162,8 +172,8 @@ export function computeModifiers(skillLevels: Record<string, number>): ActiveMod
 }
 
 // Authority Points formula
-export const AP_TURN_MULTIPLIER = 2;
-export const AP_LAUNDER_MULTIPLIER = 0.5;
+export const AP_TURN_MULTIPLIER = 1.5;
+export const AP_LAUNDER_MULTIPLIER = 0.1;
 
 export function calculateAP(turns: number, totalLaundered: number, ohalMultiplier: number = 1): number {
   const base = Math.floor(turns * AP_TURN_MULTIPLIER + totalLaundered * AP_LAUNDER_MULTIPLIER);
