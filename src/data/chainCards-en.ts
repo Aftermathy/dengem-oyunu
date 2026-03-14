@@ -158,4 +158,4 @@ export const chainCardsB_EN: EventCard[] = normalizeCards([
     ],
     leftMoney: 10, rightMoney: -20,
   },
-];
+]);
