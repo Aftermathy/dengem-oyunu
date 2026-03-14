@@ -506,6 +506,7 @@ export function useGame(lang: Language) {
     invest, canInvest, getInvestmentCost,
     alliance, canAlliance, getAllianceCost,
     currentElectionIndex, completedElections, handleElectionComplete,
+    handleElectionLoss,
     pendingAchievements, clearPendingAchievement: () => setPendingAchievements(prev => prev.slice(1)),
   };
 }
