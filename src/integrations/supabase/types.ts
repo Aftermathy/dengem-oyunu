@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      game_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          event_type: string
+          id: string
+          properties: Json | null
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          event_type: string
+          id?: string
+          properties?: Json | null
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          event_type?: string
+          id?: string
+          properties?: Json | null
+          session_id?: string
+        }
+        Relationships: []
+      }
       leaderboard_scores: {
         Row: {
           created_at: string
