@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { ElectionConfig, ElectionResult, ElectionCard, ElectionSpecialPower } from '@/types/election';
 import { Language } from '@/contexts/LanguageContext';
 import { playClickSound, playElectionCardSound, playAiCardSound, playSpecialPowerSound, playRerollSound, playBudgetWarningSound } from '@/hooks/useSound';
@@ -18,9 +18,11 @@ interface ElectionScreenProps {
   onComplete: (result: ElectionResult) => void;
   onRestart: () => void;
   onMainMenu: () => void;
+  onLossDetected?: () => void;
+  earnedAP?: number;
 }
 
-export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu }: ElectionScreenProps) => {
+export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu, onLossDetected, earnedAP = 0 }: ElectionScreenProps) => {
   const [playerVote, setPlayerVote] = useState(() => config.startingPlayerVote);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result' | 'victory'>('intro');
@@ -141,6 +143,14 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, round]);
 
+  // Award AP on loss detection (once)
+  const lossHandledRef = useRef(false);
+  useEffect(() => {
+    if (phase !== 'result' || won || lossHandledRef.current) return;
+    lossHandledRef.current = true;
+    onLossDetected?.();
+  }, [phase, won, onLossDetected]);
+
   // Victory transition
   useEffect(() => {
     if (phase !== 'result' || !won) return;
@@ -202,6 +212,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
         <ElectionResultScreen
           won={won} playerVote={playerVote}
           labels={labels} lang={lang}
+          earnedAP={earnedAP}
           onRestart={onRestart} onMainMenu={onMainMenu}
         />
       )}

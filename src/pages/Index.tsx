@@ -31,6 +31,7 @@ const Index = () => {
     totalLaundered, canLaunder, launder,
     currentCardFirstSeen,
     currentElectionIndex, completedElections, handleElectionComplete,
+    handleElectionLoss,
     pendingAchievements, clearPendingAchievement,
     maxMoney: _maxMoney, maxElectionPct: _maxElectionPct, peakLaundered: _peakLaundered,
     lastEarnedAP,
@@ -160,14 +161,13 @@ const Index = () => {
           halkPower={power.halk}
           lang={lang}
           onComplete={handleElectionComplete}
+          onLossDetected={handleElectionLoss}
           onRestart={startGame}
           onMainMenu={() => {
-            // Mark as election defeat so knowledge announcement fires correctly.
-            // ElectionScreen's defeat screen calls onMainMenu directly (bypassing onComplete),
-            // so phase stays 'election' — we need this ref to know it was a loss.
             electionDefeatRef.current = true;
             handleGoToMenu();
           }}
+          earnedAP={lastEarnedAP}
         />
       )}
 

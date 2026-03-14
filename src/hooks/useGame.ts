@@ -419,6 +419,16 @@ export function useGame(lang: Language) {
     setGameOverInfo(null);
   }, [phase, power, money, turn, cardIndex, bribeCounts, completedElections]);
 
+  // ── Election loss handler (awards AP without changing phase) ──
+  const handleElectionLoss = useCallback(() => {
+    awardAP(turn, totalLaundered);
+    if (turn > highScore) {
+      setHighScore(turn);
+      localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(turn));
+    }
+    clearSave();
+  }, [turn, totalLaundered, highScore, awardAP]);
+
   // ── Election completion ──
   const handleElectionComplete = useCallback((result: ElectionResult) => {
     if (!result.won) {
@@ -496,6 +506,7 @@ export function useGame(lang: Language) {
     invest, canInvest, getInvestmentCost,
     alliance, canAlliance, getAllianceCost,
     currentElectionIndex, completedElections, handleElectionComplete,
+    handleElectionLoss,
     pendingAchievements, clearPendingAchievement: () => setPendingAchievements(prev => prev.slice(1)),
   };
 }
