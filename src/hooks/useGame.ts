@@ -110,6 +110,9 @@ export function useGame(lang: Language) {
   const [currentElectionIndex, setCurrentElectionIndex] = useState<number | null>(null);
   const [currentCardFirstSeen, setCurrentCardFirstSeen] = useState(() => false);
   const [pendingAchievements, setPendingAchievements] = useState<string[]>([]);
+  const [maxMoney, setMaxMoney] = useState<number>(GAME_CONFIG.INITIAL_MONEY);
+  const [maxElectionPct, setMaxElectionPct] = useState<number>(0);
+  const [peakLaundered, setPeakLaundered] = useState<number>(0);
 
   const currentCard = deck[cardIndex] || null;
 
@@ -144,6 +147,9 @@ export function useGame(lang: Language) {
     setLastShopResult(null);
     setCompletedElections([]);
     setCurrentElectionIndex(null);
+    setMaxMoney(GAME_CONFIG.INITIAL_MONEY);
+    setMaxElectionPct(0);
+    setPeakLaundered(0);
     setPhase('playing');
   }, [lang]);
 
@@ -229,6 +235,7 @@ export function useGame(lang: Language) {
 
     const newMoney = money + moneyEffect + maxIncome;
     setMoney(newMoney);
+    if (newMoney > maxMoney) setMaxMoney(newMoney);
     const totalMoneyChange = moneyEffect + maxIncome;
     if (totalMoneyChange !== 0) setLastMoneyChange(totalMoneyChange);
 
@@ -461,7 +468,11 @@ export function useGame(lang: Language) {
   const launder = useCallback((faction: PowerType) => {
     if (money < GAME_CONFIG.LAUNDER_COST) return;
     setMoney(m => m - GAME_CONFIG.LAUNDER_COST);
-    setTotalLaundered(prev => prev + GAME_CONFIG.LAUNDER_AMOUNT);
+    setTotalLaundered(prev => {
+      const next = prev + GAME_CONFIG.LAUNDER_AMOUNT;
+      if (next > peakLaundered) setPeakLaundered(next);
+      return next;
+    });
     setLastMoneyChange(-GAME_CONFIG.LAUNDER_COST);
     trackLaunderAchievement();
 
@@ -549,6 +560,9 @@ export function useGame(lang: Language) {
     bribeCounts,
     tutorialFaction,
     totalLaundered,
+    maxMoney,
+    maxElectionPct,
+    peakLaundered,
     canLaunder,
     lastShopResult,
     currentCardFirstSeen,

@@ -10,6 +10,7 @@ import { Moon, Sun } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
+import { LeaderboardScreen } from '@/components/game/LeaderboardScreen';
 import { getUnlockedIds } from '@/lib/achievements';
 
 // Multilingual "I MUST STAY" variants — bold word marked with *word*
@@ -50,6 +51,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [showDarkWarning, setShowDarkWarning] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   const currentTitle = TITLE_VARIANTS[titleIndex];
 
@@ -199,14 +201,24 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
             </Button>
           )}
 
-          <button
-            onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
-            className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
-          >
-            <EmojiImg emoji="🏅" size={16} />
-            {lang === 'tr' ? 'Başarımlar' : 'Achievements'}
-            <span className="text-xs text-primary/70">({getUnlockedIds().length})</span>
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
+              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+            >
+              <EmojiImg emoji="🏅" size={16} />
+              {lang === 'tr' ? 'Başarımlar' : 'Achievements'}
+              <span className="text-xs text-primary/70">({getUnlockedIds().length})</span>
+            </button>
+
+            <button
+              onClick={() => { playClickSound(); hapticLight(); setShowLeaderboard(true); }}
+              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+            >
+              <EmojiImg emoji="🏆" size={16} />
+              {lang === 'tr' ? 'Skor Tablosu' : 'Leaderboard'}
+            </button>
+          </div>
         </div>
 
         <a
@@ -256,6 +268,10 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
 
       {showAchievements && (
         <AchievementList onClose={() => setShowAchievements(false)} />
+      )}
+
+      {showLeaderboard && (
+        <LeaderboardScreen onClose={() => setShowLeaderboard(false)} />
       )}
     </div>
   );
