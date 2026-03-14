@@ -6,6 +6,12 @@ import { STORAGE_KEYS } from '@/constants/storage';
 import { GAME_CONFIG } from '@/constants/gameConfig';
 import { shuffleArray, applyCardEffects, calculateMaxIncome, getBribeCostForFaction, canBribeFaction, findLowFaction } from '@/lib/gameLogic';
 import { trackEvent } from '@/lib/analytics';
+import {
+  checkTurnAchievements, checkMoneyAchievements, checkPowerAchievements,
+  checkElectionAchievements, checkCardAchievement, trackDeath, trackBankruptcy,
+  trackSpeedDeath, trackBribe as trackBribeAchievement, trackLaunder as trackLaunderAchievement,
+  checkPropagandaAchievement,
+} from '@/lib/achievements';
 import { markCardSeen, isCardSeen } from '@/lib/cardMemory';
 import { eventCards, catConsultantCard, milestoneCard50, darkModeCard } from '@/data/cards';
 import { eventCardsEn, catConsultantCardEn, milestoneCard50En, darkModeCardEn } from '@/data/cards-en';
