@@ -4,13 +4,15 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { SKILL_DEFS, getSkillTitle, type SkillDef } from '@/types/metaGame';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
-import type { LucideIcon } from 'lucide-react';
 import {
   Megaphone, Swords, Eye, TrendingUp, Skull,
   Vote, Glasses, Sparkles, Landmark, Clover,
   AlertTriangle, Shield, Tv, Coins, Target, X,
   Star, ChevronUp, Lock
 } from 'lucide-react';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyIcon = any;
 
 interface SkillTreeScreenProps {
   onClose: () => void;
