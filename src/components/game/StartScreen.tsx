@@ -13,7 +13,6 @@ import { AchievementList } from '@/components/game/AchievementList';
 // import { LeaderboardScreen } from '@/components/game/LeaderboardScreen'; // DISABLED
 import { getUnlockedIds } from '@/lib/achievements';
 
-// Multilingual "I MUST STAY" variants — bold word marked with *word*
 const TITLE_VARIANTS = [
   { text: 'I *MUST* STAY' },
   { text: '*ASLA* GİTMEM' },
@@ -27,7 +26,6 @@ const TITLE_VARIANTS = [
   { text: 'JAG *MÅSTE* STANNA' },
 ];
 
-// Shake directions cycle
 const SHAKE_CLASSES = [
   'animate-shake-right',
   'animate-shake-left',
@@ -51,7 +49,6 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [showDarkWarning, setShowDarkWarning] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
-  // const [showLeaderboard, setShowLeaderboard] = useState(false); // DISABLED
 
   const currentTitle = TITLE_VARIANTS[titleIndex];
 
@@ -86,7 +83,6 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
   const toggleDarkMode = useCallback(() => {
     const next = !isDark;
     if (next) {
-      // Show easter egg warning before enabling
       setShowDarkWarning(true);
     } else {
       document.documentElement.classList.remove('dark');
@@ -110,13 +106,12 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
     }
   }, []);
 
-  // Render title with bold word
   const renderTitle = () => {
     const parts = currentTitle.text.split(/\*([^*]+)\*/);
     return parts.map((part, i) => {
       if (i % 2 === 1) {
         return (
-          <span key={i} className="text-red-800 dark:text-red-500 underline decoration-2 underline-offset-4 font-black">
+          <span key={i} className="text-destructive underline decoration-2 underline-offset-4 font-black">
             {part}
           </span>
         );
@@ -127,7 +122,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
 
   return (
     <div className="flex flex-col items-center p-4 text-center animate-fade-in h-[100dvh] overflow-hidden pt-safe-plus-1 pb-safe">
-      {/* Top bar: Language toggle + Dark mode */}
+      {/* Top bar */}
       <div className="flex items-center justify-between w-full shrink-0 mb-1">
         <div className="flex gap-1 bg-muted rounded-full p-1">
           <button
@@ -174,7 +169,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
         {t('start.subtitle')}
       </p>
 
-      {/* Center section: buttons between subtitle and studio branding */}
+      {/* Center section */}
       <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-3">
         {highScore > 0 &&
           <div className="bg-muted/50 border border-border rounded-xl px-4 py-1.5 shrink-0">
@@ -210,16 +205,6 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
               {lang === 'tr' ? 'Başarımlar' : 'Achievements'}
               <span className="text-xs text-primary/70">({getUnlockedIds().length})</span>
             </button>
-
-            {/* Leaderboard button — DISABLED for now
-            <button
-              onClick={() => { playClickSound(); hapticLight(); setShowLeaderboard(true); }}
-              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
-            >
-              <EmojiImg emoji="🏆" size={16} />
-              {lang === 'tr' ? 'Skor Tablosu' : 'Leaderboard'}
-            </button>
-            */}
           </div>
         </div>
 
@@ -239,7 +224,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
 
       {/* Dark mode easter egg warning */}
       {showDarkWarning && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 animate-fade-in p-6" onClick={() => setShowDarkWarning(false)}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-game-overlay/80 animate-fade-in p-6" onClick={() => setShowDarkWarning(false)}>
           <div className="bg-card border-2 border-destructive rounded-2xl p-6 max-w-sm text-center shadow-2xl" onClick={e => e.stopPropagation()}>
             <EmojiImg emoji="⚠️" size={48} className="mx-auto mb-3" />
             <h3 className="text-xl font-black text-destructive mb-2">
@@ -271,12 +256,6 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
       {showAchievements && (
         <AchievementList onClose={() => setShowAchievements(false)} />
       )}
-
-      {/* Leaderboard modal — DISABLED
-      {showLeaderboard && (
-        <LeaderboardScreen onClose={() => setShowLeaderboard(false)} />
-      )}
-      */}
     </div>
   );
 }

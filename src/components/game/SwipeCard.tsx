@@ -28,7 +28,6 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
 
   useEffect(() => {
     if (direction === 'right') {
-      // Always pass effects so PowerBars can show white glow on first-seen
       onHoverEffects(card.rightEffects);
       onHoverMoney(isFirstSeen ? null : (card.rightMoney || null));
     } else if (direction === 'left') {
@@ -93,7 +92,6 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
 
   return (
     <div className="relative w-full max-w-md h-full flex items-center">
-      {/* Left arrow — far left edge */}
       <img
         src={arrowLeft}
         alt="swipe left"
@@ -103,7 +101,6 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
         )}
       />
 
-      {/* Right arrow — far right edge */}
       <img
         src={arrowRight}
         alt="swipe right"
@@ -113,14 +110,13 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
         )}
       />
 
-      {/* Swipeable card */}
       <div
         ref={cardRef}
         className={cn(
           "relative w-full h-full cursor-grab select-none touch-none",
           isDragging && "cursor-grabbing",
-          leftActive && "ring-2 ring-red-400 rounded-2xl",
-          rightActive && "ring-2 ring-emerald-400 rounded-2xl",
+          leftActive && "ring-2 ring-game-danger-light rounded-2xl",
+          rightActive && "ring-2 ring-game-success-light rounded-2xl",
         )}
         style={{
           transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
@@ -163,31 +159,31 @@ function CardContent({ card, direction, t: _t, isFirstSeen }: {
         </p>
       </div>
 
-      {/* Section A — Choices row (2× taller) */}
+      {/* Section A — Choices row */}
       <div className="grid grid-cols-2 border-t border-border flex-shrink-0">
         <div className={cn(
           "flex items-center gap-2 px-3 py-4 text-sm transition-colors border-r border-border min-h-[72px]",
-          direction === 'left' ? 'bg-red-500/15 text-red-600 font-bold' : 'text-muted-foreground'
+          direction === 'left' ? 'bg-game-danger/15 text-game-danger font-bold' : 'text-muted-foreground'
         )}>
           <span className="text-base shrink-0">←</span>
           <span className="leading-tight">{card.leftChoice}</span>
         </div>
         <div className={cn(
           "flex items-center justify-end gap-2 px-3 py-4 text-sm transition-colors min-h-[72px]",
-          direction === 'right' ? 'bg-emerald-500/15 text-emerald-600 font-bold' : 'text-muted-foreground'
+          direction === 'right' ? 'bg-game-success/15 text-game-success font-bold' : 'text-muted-foreground'
         )}>
           <span className="text-right leading-tight">{card.rightChoice}</span>
           <span className="text-base shrink-0">→</span>
         </div>
       </div>
 
-      {/* Section B — Money row (2× taller) */}
+      {/* Section B — Money row */}
       <div className="grid grid-cols-2 border-t border-border/60 bg-muted/20 flex-shrink-0">
         <div className="flex items-center justify-center text-sm font-bold py-3 min-h-[52px] border-r border-border/60">
           {isFirstSeen ? (
             <span className="text-muted-foreground/60 tracking-widest">? 💰</span>
           ) : leftMoney !== 0 ? (
-            <span className={leftMoney > 0 ? 'text-emerald-600' : 'text-red-500'}>
+            <span className={leftMoney > 0 ? 'text-game-success' : 'text-game-danger'}>
               {leftMoney > 0 ? '+' : ''}{leftMoney}B 💰
             </span>
           ) : (
@@ -198,7 +194,7 @@ function CardContent({ card, direction, t: _t, isFirstSeen }: {
           {isFirstSeen ? (
             <span className="text-muted-foreground/60 tracking-widest">? 💰</span>
           ) : rightMoney !== 0 ? (
-            <span className={rightMoney > 0 ? 'text-emerald-600' : 'text-red-500'}>
+            <span className={rightMoney > 0 ? 'text-game-success' : 'text-game-danger'}>
               {rightMoney > 0 ? '+' : ''}{rightMoney}B 💰
             </span>
           ) : (
