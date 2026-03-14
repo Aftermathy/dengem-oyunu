@@ -147,6 +147,9 @@ export function useGame(lang: Language) {
     setLastShopResult(null);
     setCompletedElections([]);
     setCurrentElectionIndex(null);
+    setMaxMoney(GAME_CONFIG.INITIAL_MONEY);
+    setMaxElectionPct(0);
+    setPeakLaundered(0);
     setPhase('playing');
   }, [lang]);
 
