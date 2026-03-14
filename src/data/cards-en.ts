@@ -1180,4 +1180,4 @@ export const darkModeCardEn: EventCard = normalizeCard({
     { power: 'ordu', amount: 0 },
   ],
   leftMoney: 0, rightMoney: 0,
-};
+});
