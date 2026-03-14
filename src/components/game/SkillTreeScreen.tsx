@@ -594,12 +594,33 @@ function SkillDetailPanel({
           </div>
         )}
 
+        {/* Lock Warning */}
+        {lockReason && !maxed && (
+          <div className="rounded-xl p-3 mb-3 flex items-center gap-2 mt-3"
+            style={{ background: 'hsl(0 70% 50% / 0.1)', border: '1px solid hsl(0 70% 50% / 0.3)' }}
+          >
+            <Lock size={14} style={{ color: 'hsl(0 70% 60%)' }} />
+            <p className="text-xs font-semibold" style={{ color: 'hsl(0 70% 60%)' }}>
+              {lockReason === 'ohal_blocks_others'
+                ? (lang === 'en' ? 'OHAL is active! Reset skills first to purchase this.' : 'OHAL aktif! Bunu almak için önce yetenekleri sıfırlayın.')
+                : (lang === 'en' ? 'Other skills are active! Reset skills first to activate OHAL.' : 'Başka yetenekler aktif! OHAL için önce yetenekleri sıfırlayın.')}
+            </p>
+          </div>
+        )}
+
         {/* Purchase Button */}
         {maxed ? (
           <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
             style={{ background: 'hsl(145 70% 42% / 0.15)', color: 'hsl(145 70% 55%)', border: '1px solid hsl(145 70% 42% / 0.3)' }}
           >
             {lang === 'en' ? '✓ MAXIMUM LEVEL' : '✓ MAKSİMUM SEVİYE'}
+          </div>
+        ) : lockReason ? (
+          <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
+            style={{ background: 'hsl(0 0% 100% / 0.05)', color: 'hsl(0 0% 35%)', border: '1px solid hsl(0 0% 100% / 0.08)' }}
+          >
+            <Lock size={14} className="inline mr-1" style={{ color: 'hsl(0 0% 35%)' }} />
+            {lang === 'en' ? 'Locked' : 'Kilitli'}
           </div>
         ) : (
           <button
