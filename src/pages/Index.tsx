@@ -161,14 +161,16 @@ const Index = () => {
           halkPower={power.halk}
           lang={lang}
           onComplete={handleElectionComplete}
-          onRestart={startGame}
+          onRestart={() => {
+            handleElectionLoss();
+            startGame();
+          }}
           onMainMenu={() => {
-            // Mark as election defeat so knowledge announcement fires correctly.
-            // ElectionScreen's defeat screen calls onMainMenu directly (bypassing onComplete),
-            // so phase stays 'election' — we need this ref to know it was a loss.
+            handleElectionLoss();
             electionDefeatRef.current = true;
             handleGoToMenu();
           }}
+          earnedAP={lastEarnedAP}
         />
       )}
 
