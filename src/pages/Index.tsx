@@ -92,7 +92,7 @@ const Index = () => {
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
-        <StartScreen highScore={highScore} onStart={handleStartGame} onContinue={continueGame} />
+        <StartScreen highScore={highScore} onStart={handleStartGame} onContinue={continueGame} onShowProfile={() => setShowProfile(true)} userProfile={userProfile} />
       )}
 
       {phase === 'playing' && currentCard && (
