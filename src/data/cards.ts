@@ -1,6 +1,7 @@
 import { EventCard } from "@/types/game";
+import { normalizeCards, normalizeCard } from "@/lib/gameLogic";
 
-export const eventCards: EventCard[] = [
+export const eventCards: EventCard[] = normalizeCards([
   // === EKONOMİ (10 kart) ===
   {
     id: 1,
@@ -2696,10 +2697,10 @@ export const eventCards: EventCard[] = [
     leftMoney: -10,
     rightMoney: -25,
   },
-];
+]);
 
 // === EASTER EGG KARTLARI ===
-export const catConsultantCard: EventCard = {
+export const catConsultantCard: EventCard = normalizeCard({
   id: 9001,
   character: 'Saray Kedisi Miyav Paşa',
   characterEmoji: '🐱',
@@ -2723,9 +2724,9 @@ export const catConsultantCard: EventCard = {
   ],
   leftMoney: -3,
   rightMoney: 0,
-};
+});
 
-export const milestoneCard50: EventCard = {
+export const milestoneCard50: EventCard = normalizeCard({
   id: 9002,
   character: 'Sürgün Postacısı',
   characterEmoji: '✉️',
@@ -2749,9 +2750,9 @@ export const milestoneCard50: EventCard = {
   ],
   leftMoney: 50,
   rightMoney: -10,
-};
+});
 
-export const prologueCard: EventCard = {
+export const prologueCard: EventCard = normalizeCard({
   id: 9003,
   character: "Gizemli Ziyaretçi",
   characterEmoji: "🕵️",
@@ -2775,10 +2776,10 @@ export const prologueCard: EventCard = {
   ],
   leftMoney: 0,
   rightMoney: -2,
-};
+});
 
 // Dark mode easter egg card
-export const darkModeCard: EventCard = {
+export const darkModeCard: EventCard = normalizeCard({
   id: 9999,
   character: "Gölge Danışman",
   characterEmoji: "🌑",
@@ -2802,4 +2803,4 @@ export const darkModeCard: EventCard = {
   ],
   leftMoney: 0,
   rightMoney: 0,
-};
+});

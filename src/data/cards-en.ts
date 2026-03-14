@@ -1,6 +1,7 @@
 import { EventCard } from '@/types/game';
+import { normalizeCards, normalizeCard } from '@/lib/gameLogic';
 
-export const eventCardsEn: EventCard[] = [
+export const eventCardsEn: EventCard[] = normalizeCards([
   {
     id: 1, character: 'Central Bank Governor', characterEmoji: '🏦', category: 'Economy',
     description: 'Sir, exchange rates are skyrocketing. We need to raise interest rates or inflation will explode.',
@@ -1077,10 +1078,10 @@ export const eventCardsEn: EventCard[] = [
     rightEffects: [{ power: 'halk', amount: -25 }, { power: 'ordu', amount: -10 }, { power: 'mafya', amount: 10 }],
     leftMoney: -10, rightMoney: -25,
   },
-];
+]);
 
 // === EASTER EGG CARDS ===
-export const catConsultantCardEn: EventCard = {
+export const catConsultantCardEn: EventCard = normalizeCard({
   id: 9001,
   character: 'Palace Cat Lord Whiskers',
   characterEmoji: '🐱',
@@ -1103,9 +1104,9 @@ export const catConsultantCardEn: EventCard = {
     { power: 'ordu', amount: 0 },
   ],
   leftMoney: -3, rightMoney: 0,
-};
+});
 
-export const milestoneCard50En: EventCard = {
+export const milestoneCard50En: EventCard = normalizeCard({
   id: 9002,
   character: 'Exile Postman',
   characterEmoji: '✉️',
@@ -1128,9 +1129,9 @@ export const milestoneCard50En: EventCard = {
     { power: 'ordu', amount: 0 },
   ],
   leftMoney: 50, rightMoney: -10,
-};
+});
 
-export const prologueCardEn: EventCard = {
+export const prologueCardEn: EventCard = normalizeCard({
   id: 9003,
   character: "Mysterious Visitor",
   characterEmoji: "🕵️",
@@ -1153,10 +1154,10 @@ export const prologueCardEn: EventCard = {
     { power: "ordu", amount: 0 },
   ],
   leftMoney: 0, rightMoney: -2,
-};
+});
 
 // Dark mode easter egg card
-export const darkModeCardEn: EventCard = {
+export const darkModeCardEn: EventCard = normalizeCard({
   id: 9999,
   character: 'Shadow Advisor',
   characterEmoji: '🌑',
@@ -1179,4 +1180,4 @@ export const darkModeCardEn: EventCard = {
     { power: 'ordu', amount: 0 },
   ],
   leftMoney: 0, rightMoney: 0,
-};
+});
