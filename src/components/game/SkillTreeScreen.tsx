@@ -173,7 +173,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
 
 // ── Category Cluster with hub + child bubbles + SVG lines ──
 function CategoryCluster({
-  _categoryKey, config, skills, lang, getSkillLevel, justPurchasedId, onBubbleClick,
+  config, skills, lang, getSkillLevel, justPurchasedId, onBubbleClick,
 }: {
   categoryKey: string;
   config: typeof CATEGORY_CONFIG[string];
