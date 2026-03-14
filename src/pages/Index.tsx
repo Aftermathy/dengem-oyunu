@@ -31,6 +31,7 @@ const Index = () => {
     totalLaundered, canLaunder, launder,
     currentCardFirstSeen,
     currentElectionIndex, completedElections, handleElectionComplete,
+    pendingAchievements, clearPendingAchievement,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
