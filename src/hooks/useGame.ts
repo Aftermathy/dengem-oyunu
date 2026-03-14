@@ -121,7 +121,7 @@ export function useGame(lang: Language) {
 
   // ── Sub-hooks ──
   const {
-    bribeCounts, setBribeCounts, bribe, canBribe, getBribeCost, resetBribeCounts,
+    bribeCounts, bribe, canBribe, getBribeCost, resetBribeCounts,
   } = useBribe({ power, money, setPower, setMoney, setLastMoneyChange });
 
   const {
