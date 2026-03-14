@@ -11,15 +11,9 @@ import {
   Star, ChevronUp, Lock
 } from 'lucide-react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyIcon = any;
-
-interface SkillTreeScreenProps {
-  onClose: () => void;
-}
-
 // Icon mapping for each skill
-const SKILL_ICONS: Record<string, React.FC<{ size?: number; className?: string }>> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const SKILL_ICONS: Record<string, any> = {
   shield_halk: Megaphone,
   shield_ordu: Swords,
   shield_tarikat: Eye,
@@ -39,11 +33,12 @@ const SKILL_ICONS: Record<string, React.FC<{ size?: number; className?: string }
 };
 
 // Category hub icons and colors
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CATEGORY_CONFIG: Record<string, {
-  icon: React.FC<{ size?: number; className?: string }>;
+  icon: any;
   labelTR: string;
   labelEN: string;
-  hue: string; // HSL hue for the glow color
+  hue: string;
   color: string;
   glowColor: string;
 }> = {
