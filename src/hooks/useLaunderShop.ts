@@ -4,6 +4,7 @@ import { GAME_CONFIG } from '@/constants/gameConfig';
 import { trackLaunder as trackLaunderAchievement } from '@/lib/achievements';
 import { clearSave } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
+import { useMetaGame } from '@/contexts/MetaGameContext';
 
 interface UseLaunderShopParams {
   power: PowerState;
@@ -27,10 +28,12 @@ export function useLaunderShop(params: UseLaunderShopParams) {
     checkGameOver, setGameOverInfo, setHighScore, setPhase,
   } = params;
 
+  const { modifiers } = useMetaGame();
+
   const [totalLaundered, setTotalLaundered] = useState(0);
   const [peakLaundered, setPeakLaundered] = useState(0);
   const [propagandaCount, setPropagandaCount] = useState(0);
-  const [investmentCount, setInvestmentCount] = useState(0);
+  const [, setInvestmentCount] = useState(0);
   const [allianceCount, setAllianceCount] = useState(0);
   const [lastShopResult, setLastShopResult] = useState<string | null>(null);
 
@@ -39,8 +42,11 @@ export function useLaunderShop(params: UseLaunderShopParams) {
   const launder = useCallback((faction: PowerType) => {
     if (money < GAME_CONFIG.LAUNDER_COST) return;
     setMoney(m => m - GAME_CONFIG.LAUNDER_COST);
+
+    // Pro launderer: skill increases output (base 20, skill gives 25 or 30)
+    const launderOutput = modifiers.launderOutput;
     setTotalLaundered(prev => {
-      const next = prev + GAME_CONFIG.LAUNDER_AMOUNT;
+      const next = prev + launderOutput;
       if (next > peakLaundered) setPeakLaundered(next);
       return next;
     });
@@ -66,12 +72,27 @@ export function useLaunderShop(params: UseLaunderShopParams) {
       clearSave();
       setPhase('gameover');
     }
-  }, [money, power, checkGameOver, turn, highScore, peakLaundered, setPower, setMoney, setLastMoneyChange, setGameOverInfo, setHighScore, setPhase]);
+  }, [money, power, checkGameOver, turn, highScore, peakLaundered, modifiers.launderOutput, setPower, setMoney, setLastMoneyChange, setGameOverInfo, setHighScore, setPhase]);
 
-  // Shop functions
-  const getPropagandaCost = () => GAME_CONFIG.PROPAGANDA_COSTS[Math.min(propagandaCount, GAME_CONFIG.PROPAGANDA_COSTS.length - 1)];
-  const getInvestmentCost = () => GAME_CONFIG.INVESTMENT_COST;
-  const getAllianceCost = () => GAME_CONFIG.ALLIANCE_COSTS[Math.min(allianceCount, GAME_CONFIG.ALLIANCE_COSTS.length - 1)];
+  // Dark connections: reduces shop costs
+  const applyDiscount = useCallback((baseCost: number): number => {
+    const reduction = modifiers.darkConnectionsReduction;
+    return reduction > 0 ? Math.max(1, Math.round(baseCost * (1 - reduction))) : baseCost;
+  }, [modifiers.darkConnectionsReduction]);
+
+  const getPropagandaCost = useCallback(() => {
+    const base = GAME_CONFIG.PROPAGANDA_COSTS[Math.min(propagandaCount, GAME_CONFIG.PROPAGANDA_COSTS.length - 1)];
+    return applyDiscount(base);
+  }, [propagandaCount, applyDiscount]);
+
+  const getInvestmentCost = useCallback(() => {
+    return applyDiscount(GAME_CONFIG.INVESTMENT_COST);
+  }, [applyDiscount]);
+
+  const getAllianceCost = useCallback(() => {
+    const base = GAME_CONFIG.ALLIANCE_COSTS[Math.min(allianceCount, GAME_CONFIG.ALLIANCE_COSTS.length - 1)];
+    return applyDiscount(base);
+  }, [allianceCount, applyDiscount]);
 
   const canPropaganda = totalLaundered >= getPropagandaCost() && phase === 'playing';
   const canInvest = totalLaundered >= getInvestmentCost() && phase === 'playing';
@@ -86,7 +107,7 @@ export function useLaunderShop(params: UseLaunderShopParams) {
     newPower.halk = Math.min(100, newPower.halk + GAME_CONFIG.PROPAGANDA_GAIN);
     setPower(newPower);
     setLastShopResult(null);
-  }, [totalLaundered, power, propagandaCount, setPower]);
+  }, [totalLaundered, power, getPropagandaCost, setPower]);
 
   const invest = useCallback(() => {
     const cost = getInvestmentCost();
@@ -101,7 +122,7 @@ export function useLaunderShop(params: UseLaunderShopParams) {
     } else {
       setLastShopResult('lose');
     }
-  }, [totalLaundered, investmentCount, setMoney, setLastMoneyChange]);
+  }, [totalLaundered, getInvestmentCost, setMoney, setLastMoneyChange]);
 
   const alliance = useCallback((f1: PowerType, f2: PowerType) => {
     const cost = getAllianceCost();
@@ -113,7 +134,7 @@ export function useLaunderShop(params: UseLaunderShopParams) {
     newPower[f2] = Math.min(100, newPower[f2] + GAME_CONFIG.ALLIANCE_GAIN);
     setPower(newPower);
     setLastShopResult(null);
-  }, [totalLaundered, power, allianceCount, setPower]);
+  }, [totalLaundered, power, getAllianceCost, setPower]);
 
   const resetShop = useCallback(() => {
     setTotalLaundered(0);

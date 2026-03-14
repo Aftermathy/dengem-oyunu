@@ -23,6 +23,8 @@ import { chainCardsA_TR, chainCardsB_TR } from '@/data/chainCards';
 import { chainCardsA_EN, chainCardsB_EN } from '@/data/chainCards-en';
 import { useBribe } from '@/hooks/useBribe';
 import { useLaunderShop } from '@/hooks/useLaunderShop';
+import { useMetaGame } from '@/contexts/MetaGameContext';
+import { calculateAP } from '@/types/metaGame';
 
 const INITIAL_POWER: PowerState = {
   halk: GAME_CONFIG.INITIAL_POWER,
@@ -32,11 +34,11 @@ const INITIAL_POWER: PowerState = {
   ordu: GAME_CONFIG.INITIAL_POWER,
 };
 
-function getCards(lang: Language) {
+function getCards(lang: Language, rareBonus: number = 0) {
   const base = lang === 'en' ? eventCardsEn : eventCards;
   const cards = [...base];
   const cat = lang === 'en' ? catConsultantCardEn : catConsultantCard;
-  if (Math.random() < GAME_CONFIG.CAT_CARD_CHANCE) {
+  if (Math.random() < GAME_CONFIG.CAT_CARD_CHANCE + rareBonus) {
     const pos = Math.floor(Math.random() * Math.min(GAME_CONFIG.CAT_MAX_POSITION, cards.length));
     cards.splice(pos, 0, cat);
   }
@@ -53,6 +55,9 @@ function getScenarios(lang: Language) {
 
 export function useGame(lang: Language) {
   const { t } = useLanguage();
+  const {
+    modifiers, earnAP, crisisAvailableThisGame, useCrisisJoker, resetGameSession,
+  } = useMetaGame();
 
   // ── Core state ──
   const [phase, setPhase] = useState<GamePhase>('start');
@@ -105,6 +110,9 @@ export function useGame(lang: Language) {
   const [maxMoney, setMaxMoney] = useState<number>(GAME_CONFIG.INITIAL_MONEY);
   const [maxElectionPct, setMaxElectionPct] = useState<number>(0);
 
+  // ── Meta-game AP ──
+  const [lastEarnedAP, setLastEarnedAP] = useState<number>(0);
+
   const currentCard = deck[cardIndex] || null;
 
   // ── Game over check ──
@@ -139,6 +147,16 @@ export function useGame(lang: Language) {
     checkGameOver, setGameOverInfo, setHighScore, setPhase,
   });
 
+  // ── Helper: earn AP and set display ──
+  const awardAP = useCallback((turns: number, laundered: number) => {
+    const earned = calculateAP(turns, laundered);
+    if (earned > 0) {
+      earnAP(earned);
+      setLastEarnedAP(earned);
+    }
+    return earned;
+  }, [earnAP]);
+
   // ── Start new game ──
   const startGame = useCallback(() => {
     if (!isAdFree()) showInterstitialAd(1);
@@ -149,7 +167,7 @@ export function useGame(lang: Language) {
     resetBribeCounts();
     const isDarkMode = localStorage.getItem(STORAGE_KEYS.DARK_MODE) === 'true';
     const shadowCard = lang === 'en' ? darkModeCardEn : darkModeCard;
-    const shuffled = shuffleArray(getCards(lang));
+    const shuffled = shuffleArray(getCards(lang, modifiers.rareCardBonus));
     const finalDeck = isDarkMode ? [shadowCard, ...shuffled] : shuffled;
     setDeck(finalDeck);
     setCardIndex(0);
@@ -166,12 +184,14 @@ export function useGame(lang: Language) {
     setMaxMoney(GAME_CONFIG.INITIAL_MONEY);
     setMaxElectionPct(0);
     setUsedCardIdsInGame(new Set());
+    setLastEarnedAP(0);
+    resetGameSession(); // reset crisis joker for new game
     setPhase('playing');
-  }, [lang, resetBribeCounts, resetShop]);
+  }, [lang, resetBribeCounts, resetShop, modifiers.rareCardBonus, resetGameSession]);
 
   // ── Continue saved game ──
   const continueGame = useCallback(() => {
-    const shuffled = shuffleArray(getCards(lang));
+    const shuffled = shuffleArray(getCards(lang, modifiers.rareCardBonus));
     setDeck(shuffled);
     const firstCard = shuffled[0];
     setCardIndex(0);
@@ -183,8 +203,10 @@ export function useGame(lang: Language) {
     setPendingAdvance(null);
     setLastShopResult(null);
     setCurrentElectionIndex(null);
+    setLastEarnedAP(0);
+    resetGameSession();
     setPhase('playing');
-  }, [lang, setLastShopResult]);
+  }, [lang, setLastShopResult, modifiers.rareCardBonus, resetGameSession]);
 
   // ── Swipe handler ──
   const swipe = useCallback((direction: 'left' | 'right') => {
@@ -193,8 +215,6 @@ export function useGame(lang: Language) {
     // Track card memory
     const firstSeen = !isCardSeen(currentCard.id);
     if (firstSeen) markCardSeen(currentCard.id);
-
-    // Track used cards to prevent repeats
     setUsedCardIdsInGame(prev => new Set([...prev, currentCard.id]));
 
     // Track dark mode card choice
@@ -202,37 +222,74 @@ export function useGame(lang: Language) {
       localStorage.setItem(STORAGE_KEYS.CHAIN_CHOICE, direction);
     }
 
-    const effects = direction === 'left' ? currentCard.leftEffects : currentCard.rightEffects;
+    const rawEffects = direction === 'left' ? currentCard.leftEffects : currentCard.rightEffects;
     const moneyEffect = direction === 'left' ? (currentCard.leftMoney || 0) : (currentCard.rightMoney || 0);
 
-    const newPower = applyCardEffects(power, effects);
+    // Apply skill modifiers: shields reduce damage, media boosts gains
+    const modifiedEffects = rawEffects.map(e => {
+      let amount = e.amount;
+      const faction = e.power as PowerType;
+      if (amount < 0) {
+        const shield = modifiers.factionShields[faction] || 0;
+        amount = Math.min(0, amount + shield);
+      } else if (amount > 0) {
+        const bonus = modifiers.factionBonuses[faction] || 0;
+        amount += bonus;
+      }
+      return { ...e, amount };
+    });
+
+    let newPower = applyCardEffects(power, modifiedEffects);
     const maxIncome = calculateMaxIncome(newPower);
-    const newMoney = money + moneyEffect + maxIncome;
+
+    // Offshore interest: earn % of laundered money per turn
+    const offshoreIncome = modifiers.offshoreRate > 0
+      ? Math.floor(totalLaundered * modifiers.offshoreRate)
+      : 0;
+
+    const newMoney = money + moneyEffect + maxIncome + offshoreIncome;
     setMoney(newMoney);
     if (newMoney > maxMoney) setMaxMoney(newMoney);
-    const totalMoneyChange = moneyEffect + maxIncome;
+    const totalMoneyChange = moneyEffect + maxIncome + offshoreIncome;
     if (totalMoneyChange !== 0) setLastMoneyChange(totalMoneyChange);
 
-    setPower(newPower);
     const newTurn = turn + 1;
     setTurn(newTurn);
 
     // Check faction death
     const over = checkGameOver(newPower);
     if (over) {
-      trackEvent('game_over', { reason: over.title, turn: newTurn });
-      const scenarios = getScenarios(lang);
-      const deathFaction = scenarios.find(s => s.title === over.title)?.power;
-      if (deathFaction) trackDeath(deathFaction);
-      trackSpeedDeath(newTurn);
-      setGameOverInfo(over);
-      if (newTurn > highScore) {
-        setHighScore(newTurn);
-        localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(newTurn));
+      // Crisis management: one-time save from death
+      if (crisisAvailableThisGame) {
+        const fixedPower = { ...newPower };
+        for (const key of Object.keys(fixedPower) as PowerType[]) {
+          if (fixedPower[key] <= 0) fixedPower[key] = 20;
+        }
+        newPower = fixedPower;
+        useCrisisJoker();
+        setPower(newPower);
+        // Show a visual cue via achievement queue
+        setPendingAchievements(prev => [...prev, '__crisis_saved__']);
+        // Fall through - continue playing
+      } else {
+        setPower(newPower);
+        trackEvent('game_over', { reason: over.title, turn: newTurn });
+        const scenarios = getScenarios(lang);
+        const deathFaction = scenarios.find(s => s.title === over.title)?.power;
+        if (deathFaction) trackDeath(deathFaction);
+        trackSpeedDeath(newTurn);
+        setGameOverInfo(over);
+        if (newTurn > highScore) {
+          setHighScore(newTurn);
+          localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(newTurn));
+        }
+        awardAP(newTurn, totalLaundered);
+        clearSave();
+        setPhase('gameover');
+        return;
       }
-      clearSave();
-      setPhase('gameover');
-      return;
+    } else {
+      setPower(newPower);
     }
 
     // Check bankruptcy
@@ -245,6 +302,7 @@ export function useGame(lang: Language) {
         setHighScore(newTurn);
         localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(newTurn));
       }
+      awardAP(newTurn, totalLaundered);
       clearSave();
       setPhase('gameover');
       return;
@@ -273,13 +331,11 @@ export function useGame(lang: Language) {
     let nextIndex = cardIndex + 1;
     let nextDeck = deck;
     if (nextIndex >= deck.length) {
-      // Reshuffle — filter out already-used cards to prevent repeats
-      const allCards = getCards(lang);
+      const allCards = getCards(lang, modifiers.rareCardBonus);
       const available = allCards.filter(c => !usedCardIdsInGame.has(c.id));
       if (available.length >= 5) {
         nextDeck = shuffleArray(available);
       } else {
-        // Pool exhausted — allow repeats, reset tracker
         nextDeck = shuffleArray(allCards);
         setUsedCardIdsInGame(new Set());
       }
@@ -287,7 +343,6 @@ export function useGame(lang: Language) {
       nextIndex = 0;
     }
 
-    // Update first-seen state for next card
     const nextCard = nextDeck[nextIndex];
     if (nextCard) {
       setCurrentCardFirstSeen(!isCardSeen(nextCard.id));
@@ -327,7 +382,7 @@ export function useGame(lang: Language) {
       bribeCounts, reputation: 0, completedElections, savedAt: Date.now(),
     });
     setCardIndex(nextIndex);
-  }, [currentCard, phase, power, money, turn, cardIndex, deck, highScore, checkGameOver, lang, tutorialShown, completedElections, bribeCounts, usedCardIdsInGame, maxMoney, t]);
+  }, [currentCard, phase, power, money, turn, cardIndex, deck, highScore, checkGameOver, lang, tutorialShown, completedElections, bribeCounts, usedCardIdsInGame, maxMoney, t, modifiers, totalLaundered, crisisAvailableThisGame, useCrisisJoker, awardAP]);
 
   // ── Tutorial handlers ──
   const completeTutorialBribe = useCallback(() => {
@@ -373,6 +428,7 @@ export function useGame(lang: Language) {
         setHighScore(turn);
         localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(turn));
       }
+      awardAP(turn, totalLaundered);
       clearSave();
       setPhase('gameover');
       return;
@@ -385,6 +441,7 @@ export function useGame(lang: Language) {
         setHighScore(turn);
         localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(turn));
       }
+      awardAP(turn, totalLaundered);
       clearSave();
       setPhase('gameover');
       return;
@@ -422,13 +479,14 @@ export function useGame(lang: Language) {
     }
     if (result.playerVote > maxElectionPct) setMaxElectionPct(result.playerVote);
     setPhase('playing');
-  }, [lang, turn, highScore, currentElectionIndex, pendingAdvance, completedElections, setTotalLaundered, maxElectionPct, t]);
+  }, [lang, turn, highScore, currentElectionIndex, pendingAdvance, completedElections, setTotalLaundered, maxElectionPct, t, totalLaundered, awardAP]);
 
   return {
     phase, power, money, currentCard, turn, highScore,
     gameOverInfo, lastMoneyChange, bribeCounts,
     tutorialFaction, currentCardFirstSeen,
     maxMoney, maxElectionPct, peakLaundered,
+    lastEarnedAP,
     startGame, continueGame, swipe,
     bribe, canBribe, getBribeCost,
     completeTutorialBribe, skipTutorial, goToMenu,

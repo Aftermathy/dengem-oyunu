@@ -10,8 +10,9 @@ import { Moon, Sun } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
-// import { LeaderboardScreen } from '@/components/game/LeaderboardScreen'; // DISABLED
+import { SkillTreeScreen } from '@/components/game/SkillTreeScreen';
 import { getUnlockedIds } from '@/lib/achievements';
+import { useMetaGame } from '@/contexts/MetaGameContext';
 
 const TITLE_VARIANTS = [
   { text: 'I *MUST* STAY' },
@@ -42,6 +43,7 @@ interface StartScreenProps {
 
 export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps) {
   const { lang, setLang, t } = useLanguage();
+  const { authorityPoints } = useMetaGame();
   const [titleIndex, setTitleIndex] = useState(0);
   const [shakeClass, setShakeClass] = useState('');
   const [throneClicks, setThroneClicks] = useState(0);
@@ -49,6 +51,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [showDarkWarning, setShowDarkWarning] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showSkillTree, setShowSkillTree] = useState(false);
 
   const currentTitle = TITLE_VARIANTS[titleIndex];
 
@@ -142,6 +145,11 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
         </div>
 
         <div className="flex items-center gap-2">
+          {/* AP balance pill */}
+          <div className="bg-game-gold/15 border border-game-gold/30 rounded-full px-2.5 py-1 flex items-center gap-1">
+            <EmojiImg emoji="⭐" size={13} />
+            <span className="text-xs font-bold text-game-gold">{authorityPoints}</span>
+          </div>
           <Sun className="w-4 h-4 text-muted-foreground" />
           <Switch checked={isDark} onCheckedChange={toggleDarkMode} />
           <Moon className="w-4 h-4 text-muted-foreground" />
@@ -196,6 +204,7 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
             </Button>
           )}
 
+          {/* Meta-game navigation */}
           <div className="flex items-center gap-4">
             <button
               onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
@@ -204,6 +213,14 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
               <EmojiImg emoji="🏅" size={16} />
               {lang === 'tr' ? 'Başarımlar' : 'Achievements'}
               <span className="text-xs text-primary/70">({getUnlockedIds().length})</span>
+            </button>
+            <span className="text-muted-foreground/30">|</span>
+            <button
+              onClick={() => { playClickSound(); hapticLight(); setShowSkillTree(true); }}
+              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+            >
+              <EmojiImg emoji="⚡" size={16} />
+              {lang === 'tr' ? 'Yetenekler' : 'Skills'}
             </button>
           </div>
         </div>
@@ -255,6 +272,10 @@ export function StartScreen({ highScore, onStart, onContinue }: StartScreenProps
 
       {showAchievements && (
         <AchievementList onClose={() => setShowAchievements(false)} />
+      )}
+
+      {showSkillTree && (
+        <SkillTreeScreen onClose={() => setShowSkillTree(false)} />
       )}
     </div>
   );

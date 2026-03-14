@@ -32,7 +32,8 @@ const Index = () => {
     currentCardFirstSeen,
     currentElectionIndex, completedElections, handleElectionComplete,
     pendingAchievements, clearPendingAchievement,
-    maxMoney, maxElectionPct, peakLaundered,
+    maxMoney: _maxMoney, maxElectionPct: _maxElectionPct, peakLaundered: _peakLaundered,
+    lastEarnedAP,
   } = useGame(lang);
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
@@ -180,10 +181,7 @@ const Index = () => {
           highScore={highScore}
           money={money}
           electionsWon={completedElections.length}
-          maxMoney={maxMoney}
-          maxElectionPct={maxElectionPct}
-          maxLaundered={peakLaundered}
-          deathReason={gameOverInfo.title}
+          earnedAP={lastEarnedAP}
           onRestart={startGame}
           onMainMenu={handleGoToMenu}
         />
