@@ -203,6 +203,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
         <ElectionResultScreen
           won={won} playerVote={playerVote}
           labels={labels} lang={lang}
+          earnedAP={earnedAP}
           onRestart={onRestart} onMainMenu={onMainMenu}
         />
       )}
