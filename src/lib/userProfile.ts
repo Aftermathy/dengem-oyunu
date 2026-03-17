@@ -7,6 +7,7 @@ export interface UserProfile {
   totalAP: number;
   gamesPlayed: number;
   hasCompletedOnboarding: boolean;
+  isAppleLinked: boolean;
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -16,6 +17,7 @@ const DEFAULT_PROFILE: UserProfile = {
   totalAP: 0,
   gamesPlayed: 0,
   hasCompletedOnboarding: false,
+  isAppleLinked: false,
 };
 
 export function loadUserProfile(): UserProfile {
