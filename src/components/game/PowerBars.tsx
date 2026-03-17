@@ -212,7 +212,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 {affected && (
                   <div className={cn(
                     "absolute inset-0 rounded-full animate-pulse",
-                    isFirstSeenCard ? 'bg-game-special/20' : dir === 'up' ? 'bg-game-success-light/30' : 'bg-game-danger-light/30'
+                    isFirstSeenCard ? 'bg-foreground/15' : dir === 'up' ? 'bg-game-success-light/30' : 'bg-game-danger-light/30'
                   )} />
                 )}
                 {repChanges[p] !== null && (
