@@ -129,53 +129,46 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, use
   return (
     <div className="flex flex-col items-center p-4 text-center animate-fade-in h-[100dvh] overflow-hidden pt-safe-plus-1 pb-safe">
       {/* Top bar */}
-        <div className="flex flex-col items-start gap-1.5 shrink-0 mb-1">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex gap-1 bg-muted rounded-full p-1">
-              <button
-                onClick={() => {playClickSound();setLang('tr');}}
-                className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
-                lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
-                }>
-                TR
-              </button>
-              <button
-                onClick={() => {playClickSound();setLang('en');}}
-                className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
-                lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
-                }>
-                EN
-              </button>
-            </div>
+      <div className="flex items-center justify-between w-full shrink-0 mb-1">
+        <div className="flex gap-1 bg-muted rounded-full p-1">
+          <button
+            onClick={() => {playClickSound();setLang('tr');}}
+            className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
+            lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+            }>
+            TR
+          </button>
+          <button
+            onClick={() => {playClickSound();setLang('en');}}
+            className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
+            lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+            }>
+            EN
+          </button>
+        </div>
 
-            <div className="flex items-center gap-2">
-              <div className="bg-game-gold/15 border border-game-gold/30 rounded-full px-2.5 py-1 flex items-center gap-1">
-                <EmojiImg emoji="⭐" size={13} />
-                <span className="text-xs font-bold text-game-gold">{authorityPoints}</span>
-              </div>
-              <Sun className="w-4 h-4 text-muted-foreground" />
-              <Switch checked={isDark} onCheckedChange={toggleDarkMode} />
-              <Moon className="w-4 h-4 text-muted-foreground" />
-            </div>
-          </div>
-
+        <div className="flex items-center gap-2">
           {userProfile?.hasCompletedOnboarding && onShowProfile && (() => {
             const av = AVATAR_DEFS.find(a => a.id === userProfile.avatarId);
             return (
               <button
                 onClick={() => { playClickSound(); hapticLight(); onShowProfile(); }}
-                className="rounded-full flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors"
-                style={{
-                  background: av?.color || 'hsl(var(--muted))',
-                  width: '34px',
-                  height: '34px',
-                }}
+                className="w-9 h-9 rounded-full flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors"
+                style={{ background: av?.color || 'hsl(var(--muted))' }}
               >
                 <EmojiImg emoji={av?.emoji || '👤'} size={20} />
               </button>
             );
           })()}
+          <div className="bg-game-gold/15 border border-game-gold/30 rounded-full px-2.5 py-1 flex items-center gap-1">
+            <EmojiImg emoji="⭐" size={13} />
+            <span className="text-xs font-bold text-game-gold">{authorityPoints}</span>
+          </div>
+          <Sun className="w-4 h-4 text-muted-foreground" />
+          <Switch checked={isDark} onCheckedChange={toggleDarkMode} />
+          <Moon className="w-4 h-4 text-muted-foreground" />
         </div>
+      </div>
 
       {/* Throne */}
       <div className="flex-1 min-h-0 flex items-end justify-center">
