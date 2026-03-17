@@ -6,7 +6,7 @@ import { EmojiImg } from '@/components/EmojiImg';
 import throneIcon from '@/assets/throne-icon.png';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 import { Switch } from '@/components/ui/switch';
-import { Moon, Sun, User } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
