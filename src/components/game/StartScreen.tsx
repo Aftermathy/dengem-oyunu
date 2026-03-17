@@ -223,21 +223,6 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, use
 
           {/* Meta-game navigation */}
           <div className="flex items-center gap-3 flex-wrap justify-center">
-            {userProfile?.hasCompletedOnboarding && onShowProfile && (
-              <>
-                <button
-                  onClick={() => { playClickSound(); hapticLight(); onShowProfile(); }}
-                  className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
-                >
-                  {(() => {
-                    const av = AVATAR_DEFS.find(a => a.id === userProfile.avatarId);
-                    return av ? <EmojiImg emoji={av.emoji} size={16} /> : <User size={16} />;
-                  })()}
-                  {lang === 'tr' ? 'Profil' : 'Profile'}
-                </button>
-                <span className="text-muted-foreground/30">|</span>
-              </>
-            )}
             <button
               onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
               className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
