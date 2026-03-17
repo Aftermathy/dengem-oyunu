@@ -6,7 +6,6 @@ import { hapticMedium } from '@/hooks/useHaptics';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { toast } from '@/hooks/use-toast';
 
 interface MockPlayer {
   id: string;
