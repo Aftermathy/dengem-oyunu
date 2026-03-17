@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
 import { EmojiImg } from '@/components/EmojiImg';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
-import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
-import { AVATAR_DEFS, loadUserProfile, saveUserProfile, type UserProfile } from '@/lib/userProfile';
+import { hapticMedium } from '@/hooks/useHaptics';
+import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { X } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 import { toast } from '@/hooks/use-toast';
 
 interface MockPlayer {
