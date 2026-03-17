@@ -183,10 +183,51 @@ const Index = () => {
           launderedMoney={totalLaundered}
           halkPower={power.halk}
           lang={lang}
-          onComplete={handleElectionComplete}
+          onComplete={(result) => {
+            // Update profile stats on election completion (victory)
+            const updated = {
+              ...userProfile,
+              totalTurns: userProfile.totalTurns + turn,
+              totalAP: userProfile.totalAP + lastEarnedAP,
+              gamesPlayed: userProfile.gamesPlayed + 1,
+            };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+            if (!userProfile.hasCompletedOnboarding) {
+              setShowOnboarding(true);
+              return;
+            }
+            handleElectionComplete(result);
+          }}
           onLossDetected={handleElectionLoss}
-          onRestart={startGame}
+          onRestart={() => {
+            const updated = {
+              ...userProfile,
+              totalTurns: userProfile.totalTurns + turn,
+              totalAP: userProfile.totalAP + lastEarnedAP,
+              gamesPlayed: userProfile.gamesPlayed + 1,
+            };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+            if (!userProfile.hasCompletedOnboarding) {
+              setShowOnboarding(true);
+              return;
+            }
+            startGame();
+          }}
           onMainMenu={() => {
+            const updated = {
+              ...userProfile,
+              totalTurns: userProfile.totalTurns + turn,
+              totalAP: userProfile.totalAP + lastEarnedAP,
+              gamesPlayed: userProfile.gamesPlayed + 1,
+            };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+            if (!userProfile.hasCompletedOnboarding) {
+              setShowOnboarding(true);
+              return;
+            }
             electionDefeatRef.current = true;
             handleGoToMenu();
           }}
