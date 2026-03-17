@@ -20,6 +20,7 @@ import { TutorialOverlay } from '@/components/game/TutorialOverlay';
 import { AchievementPopup } from '@/components/game/AchievementPopup';
 import { OnboardingScreen } from '@/components/game/OnboardingScreen';
 import { ProfileScreen } from '@/components/game/ProfileScreen';
+import { LeaderboardScreen } from '@/components/game/LeaderboardScreen';
 import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { loadUserProfile, saveUserProfile, type UserProfile } from '@/lib/userProfile';
