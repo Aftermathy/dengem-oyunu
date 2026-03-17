@@ -155,6 +155,7 @@ function AchievementRow({
   const showDetails = isUnlocked || !isSecret;
   const canClaim = isUnlocked && !isClaimed;
   const ohalUnlock = OHAL_UNLOCK_MAP[achievement.id];
+  const avatarReward = ACHIEVEMENT_AVATAR_MAP.get(achievement.id);
 
   return (
     <div
@@ -182,20 +183,38 @@ function AchievementRow({
         <div className="text-[11px] text-muted-foreground">
           {showDetails ? getAchievementDesc(achievement, lang) : '???'}
         </div>
-        {/* OHAL unlock badge */}
-        {ohalUnlock && showDetails && (
-          <div className="flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-md w-fit"
-            style={{
-              background: 'hsl(15 90% 50% / 0.1)',
-              border: '1px solid hsl(15 90% 50% / 0.3)',
-            }}
-          >
-            <Flame size={10} style={{ color: 'hsl(15 90% 55%)' }} />
-            <span className="text-[9px] font-bold" style={{ color: 'hsl(15 90% 55%)' }}>
-              {lang === 'en' ? ohalUnlock.labelEN : ohalUnlock.labelTR}
-            </span>
-          </div>
-        )}
+        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+          {/* OHAL unlock badge */}
+          {ohalUnlock && showDetails && (
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md w-fit"
+              style={{
+                background: 'hsl(15 90% 50% / 0.1)',
+                border: '1px solid hsl(15 90% 50% / 0.3)',
+              }}
+            >
+              <Flame size={10} style={{ color: 'hsl(15 90% 55%)' }} />
+              <span className="text-[9px] font-bold" style={{ color: 'hsl(15 90% 55%)' }}>
+                {lang === 'en' ? ohalUnlock.labelEN : ohalUnlock.labelTR}
+              </span>
+            </div>
+          )}
+          {/* Avatar reward badge */}
+          {avatarReward && showDetails && (
+            <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-md w-fit"
+              style={{
+                background: 'hsl(270 60% 50% / 0.1)',
+                border: '1px solid hsl(270 60% 50% / 0.3)',
+              }}
+            >
+              <div className="w-4 h-4 rounded-full flex items-center justify-center" style={{ background: avatarReward.color }}>
+                <EmojiImg emoji={avatarReward.emoji} size={10} />
+              </div>
+              <span className="text-[9px] font-bold" style={{ color: 'hsl(270 60% 60%)' }}>
+                {lang === 'en' ? avatarReward.nameEN : avatarReward.nameTR}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {canClaim ? (
@@ -212,6 +231,14 @@ function AchievementRow({
               <Flame size={9} style={{ color: 'hsl(15 90% 55%)' }} />
               <span className="text-[8px]" style={{ color: 'hsl(15 90% 55%)' }}>
                 +OHAL {ohalUnlock.nextLevel}
+              </span>
+            </div>
+          )}
+          {avatarReward && (
+            <div className="flex items-center gap-0.5 mt-0.5">
+              <EmojiImg emoji={avatarReward.emoji} size={9} />
+              <span className="text-[8px]" style={{ color: 'hsl(270 60% 60%)' }}>
+                +Avatar
               </span>
             </div>
           )}
