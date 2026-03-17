@@ -237,6 +237,14 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
               <EmojiImg emoji="⚡" size={16} />
               {lang === 'tr' ? 'Yetenekler' : 'Skills'}
             </button>
+            <span className="text-muted-foreground/30">|</span>
+            <button
+              onClick={() => { playClickSound(); hapticLight(); onShowLeaderboard?.(); }}
+              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+            >
+              <EmojiImg emoji="🏆" size={16} />
+              {lang === 'tr' ? 'Sıralama' : 'Leaderboard'}
+            </button>
           </div>
         </div>
 
