@@ -307,6 +307,18 @@ const Index = () => {
         />
       )}
 
+      {showLeaderboard && (
+        <LeaderboardScreen
+          userProfile={userProfile}
+          onUpdateProfile={(updates) => {
+            const updated = { ...userProfile, ...updates };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+          }}
+          onClose={() => setShowLeaderboard(false)}
+        />
+      )}
+
       {showKnowledgeAnnouncement && (
         <CardKnowledgeAnnouncement seenCount={getSeenCards().size} onDismiss={() => { markKnowledgeAnnouncementShown(); setShowKnowledgeAnnouncement(false); }} />
       )}
