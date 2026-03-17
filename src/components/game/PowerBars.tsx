@@ -154,7 +154,13 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 onClick={() => handleDirectBribe(p)}
                 className={cn(
                   "w-14 h-14 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
-                  affected && isFirstSeenCard ? "scale-110 border-foreground/40" : affected ? "scale-110 border-primary" : "border-border/50",
+                  affected
+                    ? isFirstSeenCard
+                      ? "scale-110 border-foreground/40"
+                      : dir === 'up'
+                        ? "scale-110 border-game-success/70"
+                        : "scale-110 border-game-danger/70"
+                    : "border-border/50",
                   canDo ? "hover:scale-110 hover:border-primary cursor-pointer active:scale-95" : "opacity-60",
                 )}
               >
