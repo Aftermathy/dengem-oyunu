@@ -154,7 +154,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 onClick={() => handleDirectBribe(p)}
                 className={cn(
                   "w-14 h-14 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
-                  affected && isFirstSeenCard ? "scale-110 border-primary-foreground/70" : affected ? "scale-110 border-primary" : "border-border/50",
+                  affected && isFirstSeenCard ? "scale-110 border-game-special/70" : affected ? "scale-110 border-primary" : "border-border/50",
                   canDo ? "hover:scale-110 hover:border-primary cursor-pointer active:scale-95" : "opacity-60",
                 )}
               >
@@ -212,7 +212,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 {affected && (
                   <div className={cn(
                     "absolute inset-0 rounded-full animate-pulse",
-                    isFirstSeenCard ? 'bg-primary-foreground/20' : dir === 'up' ? 'bg-game-success-light/30' : 'bg-game-danger-light/30'
+                    isFirstSeenCard ? 'bg-game-special/20' : dir === 'up' ? 'bg-game-success-light/30' : 'bg-game-danger-light/30'
                   )} />
                 )}
                 {repChanges[p] !== null && (

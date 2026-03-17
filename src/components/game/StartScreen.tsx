@@ -6,7 +6,7 @@ import { EmojiImg } from '@/components/EmojiImg';
 import throneIcon from '@/assets/throne-icon.png';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 import { Switch } from '@/components/ui/switch';
-import { Moon, Sun, User } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
@@ -130,21 +130,35 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, use
     <div className="flex flex-col items-center p-4 text-center animate-fade-in h-[100dvh] overflow-hidden pt-safe-plus-1 pb-safe">
       {/* Top bar */}
       <div className="flex items-center justify-between w-full shrink-0 mb-1">
-        <div className="flex gap-1 bg-muted rounded-full p-1">
-          <button
-            onClick={() => {playClickSound();setLang('tr');}}
-            className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
-            lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
-            }>
-            TR
-          </button>
-          <button
-            onClick={() => {playClickSound();setLang('en');}}
-            className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
-            lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
-            }>
-            EN
-          </button>
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1 bg-muted rounded-full p-1">
+            <button
+              onClick={() => {playClickSound();setLang('tr');}}
+              className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
+              lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+              }>
+              TR
+            </button>
+            <button
+              onClick={() => {playClickSound();setLang('en');}}
+              className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
+              lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+              }>
+              EN
+            </button>
+          </div>
+          {userProfile?.hasCompletedOnboarding && onShowProfile && (() => {
+            const av = AVATAR_DEFS.find(a => a.id === userProfile.avatarId);
+            return (
+              <button
+                onClick={() => { playClickSound(); hapticLight(); onShowProfile(); }}
+                className="w-9 h-9 rounded-full flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors"
+                style={{ background: av?.color || 'hsl(var(--muted))' }}
+              >
+                <EmojiImg emoji={av?.emoji || '👤'} size={20} />
+              </button>
+            );
+          })()}
         </div>
 
         <div className="flex items-center gap-2">
@@ -209,21 +223,6 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, use
 
           {/* Meta-game navigation */}
           <div className="flex items-center gap-3 flex-wrap justify-center">
-            {userProfile?.hasCompletedOnboarding && onShowProfile && (
-              <>
-                <button
-                  onClick={() => { playClickSound(); hapticLight(); onShowProfile(); }}
-                  className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
-                >
-                  {(() => {
-                    const av = AVATAR_DEFS.find(a => a.id === userProfile.avatarId);
-                    return av ? <EmojiImg emoji={av.emoji} size={16} /> : <User size={16} />;
-                  })()}
-                  {lang === 'tr' ? 'Profil' : 'Profile'}
-                </button>
-                <span className="text-muted-foreground/30">|</span>
-              </>
-            )}
             <button
               onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
               className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
