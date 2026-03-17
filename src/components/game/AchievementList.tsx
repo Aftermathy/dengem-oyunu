@@ -7,6 +7,12 @@ import { useMetaGame } from '@/contexts/MetaGameContext';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
 import { Flame } from 'lucide-react';
+import { AVATAR_DEFS } from '@/lib/userProfile';
+
+// Build reverse map: achievementId -> avatar def
+const ACHIEVEMENT_AVATAR_MAP = new Map(
+  AVATAR_DEFS.filter(a => a.unlockAchievement).map(a => [a.unlockAchievement!, a])
+);
 
 // Map OHAL achievements to what they unlock
 const OHAL_UNLOCK_MAP: Record<string, { nextLevel: number; labelTR: string; labelEN: string }> = {
