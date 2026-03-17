@@ -7,6 +7,7 @@ export interface UserProfile {
   totalAP: number;
   gamesPlayed: number;
   hasCompletedOnboarding: boolean;
+  isAppleLinked: boolean;
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -16,6 +17,7 @@ const DEFAULT_PROFILE: UserProfile = {
   totalAP: 0,
   gamesPlayed: 0,
   hasCompletedOnboarding: false,
+  isAppleLinked: false,
 };
 
 export function loadUserProfile(): UserProfile {
@@ -51,21 +53,21 @@ export const AVATAR_DEFS: AvatarDef[] = [
   { id: 'avatar_3', emoji: '👳', nameTR: 'Sultan', nameEN: 'Sultan', color: 'hsl(35 70% 45%)' },
   // 15 locked - tied to achievements
   { id: 'avatar_4', emoji: '🧛', nameTR: 'Vampir Diktatör', nameEN: 'Vampire Dictator', color: 'hsl(0 60% 30%)',
-    unlockAchievement: 'survivor_10', unlockTextTR: '10 Tur Hayatta Kal', unlockTextEN: 'Survive 10 Turns' },
+    unlockAchievement: 'survive_10', unlockTextTR: '10 Tur Hayatta Kal', unlockTextEN: 'Survive 10 Turns' },
   { id: 'avatar_5', emoji: '🤡', nameTR: 'Palyaço Reis', nameEN: 'Clown Leader', color: 'hsl(45 90% 55%)',
-    unlockAchievement: 'survivor_25', unlockTextTR: '25 Tur Hayatta Kal', unlockTextEN: 'Survive 25 Turns' },
+    unlockAchievement: 'survive_25', unlockTextTR: '25 Tur Hayatta Kal', unlockTextEN: 'Survive 25 Turns' },
   { id: 'avatar_6', emoji: '🧟', nameTR: 'Zombi Başkan', nameEN: 'Zombie President', color: 'hsl(120 30% 35%)',
-    unlockAchievement: 'survivor_50', unlockTextTR: '50 Tur Hayatta Kal', unlockTextEN: 'Survive 50 Turns' },
+    unlockAchievement: 'survive_50', unlockTextTR: '50 Tur Hayatta Kal', unlockTextEN: 'Survive 50 Turns' },
   { id: 'avatar_7', emoji: '👽', nameTR: 'Uzaylı Lider', nameEN: 'Alien Leader', color: 'hsl(160 50% 40%)',
-    unlockAchievement: 'money_50', unlockTextTR: '50B Para Biriktir', unlockTextEN: 'Accumulate 50B Money' },
+    unlockAchievement: 'rich_100', unlockTextTR: '100B Hazineye Ulaş', unlockTextEN: 'Reach 100B Treasury' },
   { id: 'avatar_8', emoji: '🤖', nameTR: 'Robot Diktatör', nameEN: 'Robot Dictator', color: 'hsl(210 20% 50%)',
-    unlockAchievement: 'money_100', unlockTextTR: '100B Para Biriktir', unlockTextEN: 'Accumulate 100B Money' },
+    unlockAchievement: 'rich_500', unlockTextTR: '500B Hazineye Ulaş', unlockTextEN: 'Reach 500B Treasury' },
   { id: 'avatar_9', emoji: '🦹', nameTR: 'Süper Villain', nameEN: 'Super Villain', color: 'hsl(280 60% 40%)',
-    unlockAchievement: 'election_winner', unlockTextTR: 'İlk Seçimi Kazan', unlockTextEN: 'Win First Election' },
+    unlockAchievement: 'win_election_1', unlockTextTR: 'İlk Seçimi Kazan', unlockTextEN: 'Win First Election' },
   { id: 'avatar_10', emoji: '🧙', nameTR: 'Büyücü Başkan', nameEN: 'Wizard President', color: 'hsl(260 50% 35%)',
-    unlockAchievement: 'launder_100', unlockTextTR: '100B Akla', unlockTextEN: 'Launder 100B' },
+    unlockAchievement: 'launder_5', unlockTextTR: '5 Kez Para Akla', unlockTextEN: 'Launder Money 5 Times' },
   { id: 'avatar_11', emoji: '🎃', nameTR: 'Balkabağı Reis', nameEN: 'Pumpkin Leader', color: 'hsl(25 80% 50%)',
-    unlockAchievement: 'launder_500', unlockTextTR: '500B Akla', unlockTextEN: 'Launder 500B' },
+    unlockAchievement: 'bribe_10', unlockTextTR: '10 Kez Rüşvet Ver', unlockTextEN: 'Bribe 10 Times' },
   { id: 'avatar_12', emoji: '💀', nameTR: 'İskelet Kral', nameEN: 'Skeleton King', color: 'hsl(0 0% 15%)',
     unlockAchievement: 'ohal_1', unlockTextTR: 'OHAL 1 ile Kazan', unlockTextEN: 'Win with OHAL 1' },
   { id: 'avatar_13', emoji: '👹', nameTR: 'Oni Başkan', nameEN: 'Oni President', color: 'hsl(0 70% 45%)',
@@ -73,13 +75,13 @@ export const AVATAR_DEFS: AvatarDef[] = [
   { id: 'avatar_14', emoji: '🐉', nameTR: 'Ejderha Lord', nameEN: 'Dragon Lord', color: 'hsl(15 80% 40%)',
     unlockAchievement: 'ohal_3', unlockTextTR: 'OHAL 3 ile Kazan', unlockTextEN: 'Win with OHAL 3' },
   { id: 'avatar_15', emoji: '🦊', nameTR: 'Tilki Politikacı', nameEN: 'Fox Politician', color: 'hsl(20 70% 50%)',
-    unlockAchievement: 'bribe_master', unlockTextTR: '50 Rüşvet Ver', unlockTextEN: 'Bribe 50 Times' },
+    unlockAchievement: 'all_deaths', unlockTextTR: 'Her Zümreden Düş', unlockTextEN: 'Fall to Every Faction' },
   { id: 'avatar_16', emoji: '🐸', nameTR: 'Kurbağa Kral', nameEN: 'Frog King', color: 'hsl(100 50% 40%)',
-    unlockAchievement: 'cat_consultant', unlockTextTR: 'Kedi Danışmanı Bul', unlockTextEN: 'Find Cat Consultant' },
+    unlockAchievement: 'cat_encounter', unlockTextTR: 'Miyav Paşa ile Tanış', unlockTextEN: 'Meet Lord Whiskers' },
   { id: 'avatar_17', emoji: '🎭', nameTR: 'Maske Başkan', nameEN: 'Masked Leader', color: 'hsl(270 40% 50%)',
-    unlockAchievement: 'survivor_100', unlockTextTR: '100 Tur Hayatta Kal', unlockTextEN: 'Survive 100 Turns' },
+    unlockAchievement: 'survive_100', unlockTextTR: '100 Tur Hayatta Kal', unlockTextEN: 'Survive 100 Turns' },
   { id: 'avatar_18', emoji: '👑', nameTR: 'Altın Kral', nameEN: 'Golden King', color: 'hsl(45 80% 50%)',
-    unlockAchievement: 'money_200', unlockTextTR: '200B Para Biriktir', unlockTextEN: 'Accumulate 200B Money' },
+    unlockAchievement: 'final_boss', unlockTextTR: 'Final Seçimini Kazan', unlockTextEN: 'Win the Final Election' },
 ];
 
 export function isAvatarUnlocked(avatarId: string, claimedAchievements: string[]): boolean {

@@ -20,6 +20,7 @@ import { TutorialOverlay } from '@/components/game/TutorialOverlay';
 import { AchievementPopup } from '@/components/game/AchievementPopup';
 import { OnboardingScreen } from '@/components/game/OnboardingScreen';
 import { ProfileScreen } from '@/components/game/ProfileScreen';
+import { LeaderboardScreen } from '@/components/game/LeaderboardScreen';
 import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { loadUserProfile, saveUserProfile, type UserProfile } from '@/lib/userProfile';
@@ -51,6 +52,7 @@ const Index = () => {
   const [userProfile, setUserProfile] = useState<UserProfile>(loadUserProfile);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
   const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
   const nextElectionInfo = getNextElectionInfo(turn, completedElections);
   const electionDefeatRef = useRef(false);
@@ -92,7 +94,7 @@ const Index = () => {
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
-        <StartScreen highScore={highScore} onStart={handleStartGame} onContinue={continueGame} onShowProfile={() => setShowProfile(true)} userProfile={userProfile} />
+        <StartScreen highScore={highScore} onStart={handleStartGame} onContinue={continueGame} onShowProfile={() => setShowProfile(true)} onShowLeaderboard={() => setShowLeaderboard(true)} userProfile={userProfile} />
       )}
 
       {phase === 'playing' && currentCard && (
@@ -303,6 +305,18 @@ const Index = () => {
             saveUserProfile(updated);
           }}
           onClose={() => setShowProfile(false)}
+        />
+      )}
+
+      {showLeaderboard && (
+        <LeaderboardScreen
+          userProfile={userProfile}
+          onUpdateProfile={(updates) => {
+            const updated = { ...userProfile, ...updates };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+          }}
+          onClose={() => setShowLeaderboard(false)}
         />
       )}
 

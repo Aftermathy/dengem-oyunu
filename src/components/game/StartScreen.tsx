@@ -41,10 +41,11 @@ interface StartScreenProps {
   onStart: () => void;
   onContinue?: () => void;
   onShowProfile?: () => void;
+  onShowLeaderboard?: () => void;
   userProfile?: UserProfile;
 }
 
-export function StartScreen({ highScore, onStart, onContinue, onShowProfile, userProfile }: StartScreenProps) {
+export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onShowLeaderboard, userProfile }: StartScreenProps) {
   const { lang, setLang, t } = useLanguage();
   const { authorityPoints } = useMetaGame();
   const [titleIndex, setTitleIndex] = useState(0);
@@ -235,6 +236,14 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, use
             >
               <EmojiImg emoji="⚡" size={16} />
               {lang === 'tr' ? 'Yetenekler' : 'Skills'}
+            </button>
+            <span className="text-muted-foreground/30">|</span>
+            <button
+              onClick={() => { playClickSound(); hapticLight(); onShowLeaderboard?.(); }}
+              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+            >
+              <EmojiImg emoji="🏆" size={16} />
+              {lang === 'tr' ? 'Sıralama' : 'Leaderboard'}
             </button>
           </div>
         </div>
