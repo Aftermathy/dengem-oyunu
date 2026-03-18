@@ -25,15 +25,26 @@ export interface SubmitScoreData {
 }
 
 /**
- * Submit or update a score in the leaderboard.
- * Uses device UUID as user_id (will migrate to auth.uid() when Apple Auth is added).
+ * Get the effective user_id: auth user if signed in, otherwise device UUID.
+ */
+async function getEffectiveUserId(): Promise<string> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.id) return user.id;
+  } catch {}
+  return getDeviceId();
+}
+
+/**
+ * Submit a score to the leaderboard.
+ * Uses auth user_id if signed in, otherwise device UUID.
  */
 export async function submitScore(data: SubmitScoreData): Promise<boolean> {
-  const deviceId = getDeviceId();
+  const userId = await getEffectiveUserId();
 
   try {
     const { error } = await supabase.from('leaderboard_scores').insert({
-      user_id: deviceId,
+      user_id: userId,
       nickname: data.nickname || 'Player',
       score: data.score,
       elections_won: data.elections_won ?? 0,
@@ -47,7 +58,7 @@ export async function submitScore(data: SubmitScoreData): Promise<boolean> {
       console.error('[Leaderboard] Submit error:', error.message);
       return false;
     }
-    console.log('[Leaderboard] Score submitted:', data.score);
+    console.log('[Leaderboard] Score submitted:', data.score, 'uid:', userId.slice(0, 8));
     return true;
   } catch (err) {
     console.error('[Leaderboard] Submit exception:', err);
@@ -56,7 +67,7 @@ export async function submitScore(data: SubmitScoreData): Promise<boolean> {
 }
 
 /**
- * Fetch top scores from all time.
+ * Fetch top scores.
  */
 export async function fetchLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
   try {
