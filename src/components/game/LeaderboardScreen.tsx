@@ -6,27 +6,8 @@ import { hapticMedium } from '@/hooks/useHaptics';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { GameIcon } from '@/components/GameIcon';
 import { useAppleSignIn } from '@/hooks/useAppleSignIn';
-
-interface MockPlayer {
-  id: string;
-  nickname: string;
-  avatarId: string;
-  totalAP: number;
-  isPlayer?: boolean;
-}
-
-const MOCK_PLAYERS: MockPlayer[] = [
-  { id: 'm1', nickname: 'DarkLord42', avatarId: 'avatar_14', totalAP: 1250 },
-  { id: 'm2', nickname: 'SultanOfChaos', avatarId: 'avatar_3', totalAP: 980 },
-  { id: 'm3', nickname: 'GeneralMayhem', avatarId: 'avatar_1', totalAP: 870 },
-  { id: 'm4', nickname: 'ClownKing', avatarId: 'avatar_5', totalAP: 720 },
-  { id: 'm5', nickname: 'ZombiePrez', avatarId: 'avatar_6', totalAP: 650 },
-  { id: 'm6', nickname: 'FoxTaktik', avatarId: 'avatar_15', totalAP: 540 },
-  { id: 'm7', nickname: 'VampirBey', avatarId: 'avatar_4', totalAP: 430 },
-  { id: 'm8', nickname: 'RoboDikta', avatarId: 'avatar_8', totalAP: 310 },
-  { id: 'm9', nickname: 'PumpkinBoss', avatarId: 'avatar_11', totalAP: 220 },
-  { id: 'm10', nickname: 'FrogRuler', avatarId: 'avatar_16', totalAP: 150 },
-];
+import { fetchLeaderboard, type LeaderboardEntry } from '@/lib/leaderboard';
+import { getDeviceId } from '@/lib/deviceId';
 
 interface LeaderboardScreenProps {
   onClose: () => void;
@@ -38,21 +19,45 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
   const { lang } = useLanguage();
   const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked } = useAppleSignIn();
   const [loading, setLoading] = useState(true);
-  const [entries, setEntries] = useState<MockPlayer[]>([]);
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [showLinkedModal, setShowLinkedModal] = useState(false);
 
+  const deviceId = getDeviceId();
+
   useEffect(() => {
-    const playerEntry: MockPlayer = {
-      id: 'player',
-      nickname: userProfile.nickname || (lang === 'tr' ? 'Oyuncu' : 'Player'),
-      avatarId: userProfile.avatarId,
-      totalAP: userProfile.totalAP,
-      isPlayer: true,
-    };
-    const all = [...MOCK_PLAYERS, playerEntry].sort((a, b) => b.totalAP - a.totalAP);
-    setEntries(all);
-    setLoading(false);
-  }, [userProfile, lang]);
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      const data = await fetchLeaderboard(50);
+      if (cancelled) return;
+
+      // Check if player already has an entry in the fetched data
+      const hasPlayerEntry = data.some(e => e.user_id === deviceId);
+
+      if (!hasPlayerEntry) {
+        // Add local player as a virtual entry for display
+        const virtualEntry: LeaderboardEntry = {
+          id: 'local-player',
+          nickname: userProfile.nickname || (lang === 'tr' ? 'Oyuncu' : 'Player'),
+          score: userProfile.totalAP,
+          elections_won: 0,
+          max_money: 0,
+          max_election_pct: 0,
+          max_laundered: 0,
+          death_reason: null,
+          created_at: new Date().toISOString(),
+          user_id: deviceId,
+        };
+        data.push(virtualEntry);
+        data.sort((a, b) => b.score - a.score);
+      }
+
+      setEntries(data);
+      setLoading(false);
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [userProfile.totalAP, userProfile.nickname, deviceId, lang]);
 
   const getMedal = (i: number) => {
     if (i === 0) return '🥇';
@@ -61,7 +66,14 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     return '';
   };
 
-  const getAvatarDef = (avatarId: string) => AVATAR_DEFS.find(a => a.id === avatarId) || AVATAR_DEFS[0];
+  const getAvatarDef = (nickname: string) => {
+    // Try to find avatar by matching nickname to known entries
+    // For real entries, use a hash-based approach to assign consistent avatars
+    const hash = nickname.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return AVATAR_DEFS[hash % AVATAR_DEFS.length];
+  };
+
+  const getPlayerAvatar = () => AVATAR_DEFS.find(a => a.id === userProfile.avatarId) || AVATAR_DEFS[0];
 
   const handleAppleSignIn = async () => {
     playClickSound();
@@ -73,7 +85,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     }
   };
 
-  const playerRank = entries.findIndex(e => e.isPlayer) + 1;
+  const playerRank = entries.findIndex(e => e.user_id === deviceId) + 1;
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 animate-fade-in p-4">
@@ -157,15 +169,22 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
               <EmojiImg emoji="⏳" size={24} className="animate-spin mr-2" />
               {lang === 'tr' ? 'Yükleniyor...' : 'Loading...'}
             </div>
+          ) : entries.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
+              <EmojiImg emoji="🏜️" size={32} className="mb-2" />
+              <p className="text-sm">{lang === 'tr' ? 'Henüz skor yok' : 'No scores yet'}</p>
+              <p className="text-xs mt-1">{lang === 'tr' ? 'İlk sen ol!' : 'Be the first!'}</p>
+            </div>
           ) : (
             <div className="space-y-1.5">
               {entries.map((entry, i) => {
-                const av = getAvatarDef(entry.avatarId);
+                const isPlayer = entry.user_id === deviceId;
+                const av = isPlayer ? getPlayerAvatar() : getAvatarDef(entry.nickname);
                 return (
                   <div
                     key={entry.id}
                     className={`flex items-center gap-2.5 p-2.5 rounded-xl transition-colors ${
-                      entry.isPlayer ? 'bg-primary/10 border-2 border-primary/30 shadow-md' : 'bg-muted/30'
+                      isPlayer ? 'bg-primary/10 border-2 border-primary/30 shadow-md' : 'bg-muted/30'
                     } ${i < 3 ? 'border border-game-gold/20' : ''}`}
                   >
                     {/* Rank */}
@@ -189,7 +208,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
                         <span className="text-sm font-bold truncate text-foreground">{entry.nickname}</span>
-                        {entry.isPlayer && (
+                        {isPlayer && (
                           <span className="text-[10px] bg-primary/20 text-primary rounded px-1 font-bold shrink-0">
                             {lang === 'tr' ? 'SEN' : 'YOU'}
                           </span>
@@ -201,7 +220,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
                     <div className="text-right shrink-0">
                       <div className="flex items-center gap-1">
                         <EmojiImg emoji="⭐" size={14} />
-                        <span className="text-lg font-black text-game-gold">{entry.totalAP}</span>
+                        <span className="text-lg font-black text-game-gold">{entry.score}</span>
                       </div>
                       <div className="text-[10px] text-muted-foreground">AP</div>
                     </div>
