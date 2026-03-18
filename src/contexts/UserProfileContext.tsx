@@ -64,7 +64,6 @@ async function fetchProfileFromSupabase(): Promise<Partial<UserProfile> | null> 
 }
 
 export function UserProfileProvider({ children }: { children: ReactNode }) {
-  const [profile, setProfile] = useState<UserProfile>(loadUserProfile);
   const [hasSynced, setHasSynced] = useState(false);
 
   // On mount: fetch from Supabase and merge (cloud wins if newer)
