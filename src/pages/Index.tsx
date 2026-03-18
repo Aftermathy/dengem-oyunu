@@ -27,6 +27,7 @@ import { useUserProfile } from '@/contexts/UserProfileContext';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { hasSavedGame, loadGame } from '@/lib/gameSave';
 import { GameIcon } from '@/components/GameIcon';
+import { submitScore } from '@/lib/leaderboard';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
