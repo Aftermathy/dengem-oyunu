@@ -15,16 +15,15 @@ const UserProfileContext = createContext<UserProfileContextValue | null>(null);
 async function syncProfileToSupabase(profile: UserProfile): Promise<void> {
   const deviceId = getDeviceId();
   try {
-    // Upsert: insert or update based on user_id
     const { error } = await supabase
       .from('profiles')
       .upsert({
         user_id: deviceId,
         nickname: profile.nickname || 'Player',
-        avatar_url: profile.avatarId, // Store avatar_id in avatar_url for now
+        avatar_url: profile.avatarId,
         total_ap: profile.totalAP,
         avatar_id: profile.avatarId,
-      }, { onConflict: 'user_id' });
+      } as any, { onConflict: 'user_id' });
 
     if (error) {
       console.error('[Profile] Sync error:', error.message);
@@ -64,35 +63,33 @@ async function fetchProfileFromSupabase(): Promise<Partial<UserProfile> | null> 
 }
 
 export function UserProfileProvider({ children }: { children: ReactNode }) {
-  const [hasSynced, setHasSynced] = useState(false);
+  const [profile, setProfile] = useState<UserProfile>(loadUserProfile);
 
-  // On mount: fetch from Supabase and merge (cloud wins if newer)
+  // On mount: fetch from Supabase and merge (take higher AP)
   useEffect(() => {
+    let cancelled = false;
     async function initialSync() {
       const remote = await fetchProfileFromSupabase();
-      if (remote) {
-        setProfile(prev => {
-          // Take the higher totalAP (in case local has more progress)
-          const merged: UserProfile = {
-            ...prev,
-            nickname: remote.nickname || prev.nickname,
-            avatarId: remote.avatarId || prev.avatarId,
-            totalAP: Math.max(prev.totalAP, remote.totalAP ?? 0),
-          };
-          saveUserProfile(merged);
-          return merged;
-        });
-      }
-      setHasSynced(true);
+      if (cancelled || !remote) return;
+      setProfile(prev => {
+        const merged: UserProfile = {
+          ...prev,
+          nickname: remote.nickname || prev.nickname,
+          avatarId: remote.avatarId || prev.avatarId,
+          totalAP: Math.max(prev.totalAP, remote.totalAP ?? 0),
+        };
+        saveUserProfile(merged);
+        return merged;
+      });
     }
     initialSync();
+    return () => { cancelled = true; };
   }, []);
 
   const updateProfile = useCallback((updates: Partial<UserProfile>) => {
     setProfile(prev => {
       const next = { ...prev, ...updates };
       saveUserProfile(next);
-      // Fire-and-forget sync to Supabase
       syncProfileToSupabase(next);
       return next;
     });
@@ -103,7 +100,6 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
     setProfile(prev => {
       const next = { ...prev, totalAP: prev.totalAP + amount };
       saveUserProfile(next);
-      // Fire-and-forget sync
       syncProfileToSupabase(next);
       return next;
     });
