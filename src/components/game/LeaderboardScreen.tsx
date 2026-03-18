@@ -18,7 +18,7 @@ interface LeaderboardScreenProps {
 
 export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: LeaderboardScreenProps) {
   const { lang } = useLanguage();
-  const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked, error: appleError } = useAppleSignIn();
+  const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked } = useAppleSignIn();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
