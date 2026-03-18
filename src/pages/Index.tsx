@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { EmojiImg } from '@/components/EmojiImg';
 import { useGame } from '@/hooks/useGame';
 import { PowerBars } from '@/components/game/PowerBars';
@@ -45,10 +45,10 @@ const Index = () => {
     lastEarnedAP,
     crisisAlertType, clearCrisisAlert,
     ohalLevel,
-    electionCostFactor,
-    offshoreRate,
   } = useGame(lang);
   const { modifiers } = useMetaGame();
+  const electionCostFactor = modifiers.electionCostMult ?? 1;
+  const offshoreRate = modifiers.offshoreRate ?? 0;
 
 
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);

@@ -9,4 +9,5 @@ export const STORAGE_KEYS = {
   CARDS_KNOWLEDGE_SHOWN: 'ims_knowledge_shown',
   TUTORIAL_DECLINED: 'ims_tutorial_declined',
   CHAIN_CHOICE: 'ims_chain_choice',
+  ELECTION_TUTORIAL_DONE: 'ims_election_tutorial_done',
 } as const;

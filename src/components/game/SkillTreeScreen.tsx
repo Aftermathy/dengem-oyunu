@@ -9,6 +9,7 @@ import { isUnlocked as isAchievementUnlocked } from '@/lib/achievements';
 import { GameIcon } from '@/components/GameIcon';
 import { GameIcons } from '@/config/assets';
 import type { LucideIcon } from 'lucide-react';
+import { Shield, Lock } from 'lucide-react';
 
 // Icon mapping for each skill — references GameIcons so swapping is centralised
 const SKILL_ICONS: Record<string, LucideIcon> = {
