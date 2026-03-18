@@ -52,7 +52,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     const all = [...MOCK_PLAYERS, playerEntry].sort((a, b) => b.totalAP - a.totalAP);
     setEntries(all);
     setLoading(false);
-  }, [userProfile, lang, totalEarnedAP]);
+  }, [userProfile, lang]);
 
   const getMedal = (i: number) => {
     if (i === 0) return '🥇';
