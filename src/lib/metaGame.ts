@@ -1,18 +1,5 @@
-const AP_KEY = 'ims_authority_points';
 const SKILLS_KEY = 'ims_skill_levels';
 const CLAIMS_KEY = 'ims_claimed_achievements';
-
-export function loadAP(): number {
-  try {
-    return parseInt(localStorage.getItem(AP_KEY) || '0', 10);
-  } catch {
-    return 0;
-  }
-}
-
-export function saveAP(ap: number): void {
-  localStorage.setItem(AP_KEY, String(ap));
-}
 
 export function loadSkillLevels(): Record<string, number> {
   try {
