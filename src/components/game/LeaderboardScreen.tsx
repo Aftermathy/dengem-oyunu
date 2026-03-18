@@ -7,7 +7,7 @@ import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { GameIcon } from '@/components/GameIcon';
 import { useAppleSignIn } from '@/hooks/useAppleSignIn';
 import { fetchLeaderboard, type LeaderboardEntry } from '@/lib/leaderboard';
-import { getDeviceId } from '@/lib/myUserId';
+import { getDeviceId } from '@/lib/deviceId';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface LeaderboardScreenProps {
