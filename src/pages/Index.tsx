@@ -27,6 +27,7 @@ import { useUserProfile } from '@/contexts/UserProfileContext';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { hasSavedGame, loadGame } from '@/lib/gameSave';
 import { GameIcon } from '@/components/GameIcon';
+import { submitScore } from '@/lib/leaderboard';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -80,13 +81,19 @@ const Index = () => {
     }
   }, [phase, goToMenu]);
 
-  /** Update profile stats at end of game (turns + games count). AP is handled by earnAP in useGame. */
+  /** Update profile stats at end of game and submit score to leaderboard. */
   const recordGameEnd = useCallback(() => {
     updateProfile({
       totalTurns: userProfile.totalTurns + turn,
       gamesPlayed: userProfile.gamesPlayed + 1,
     });
-  }, [updateProfile, userProfile.totalTurns, userProfile.gamesPlayed, turn]);
+    // Submit score to Supabase leaderboard (fire-and-forget)
+    submitScore({
+      nickname: userProfile.nickname || 'Player',
+      score: userProfile.totalAP + lastEarnedAP,
+      elections_won: completedElections.length,
+    });
+  }, [updateProfile, userProfile.totalTurns, userProfile.gamesPlayed, userProfile.totalAP, userProfile.nickname, turn, lastEarnedAP, completedElections]);
 
   const handleStartGame = useCallback(() => {
     // If there's an abandoned saved game, update profile stats

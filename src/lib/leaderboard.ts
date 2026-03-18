@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { getDeviceId } from '@/lib/deviceId';
 
 export interface LeaderboardEntry {
   id: string;
@@ -14,56 +15,64 @@ export interface LeaderboardEntry {
 }
 
 export interface SubmitScoreData {
+  nickname: string;
   score: number;
-  elections_won: number;
-  max_money: number;
-  max_election_pct: number;
-  max_laundered: number;
+  elections_won?: number;
+  max_money?: number;
+  max_election_pct?: number;
+  max_laundered?: number;
   death_reason?: string;
 }
 
+/**
+ * Submit or update a score in the leaderboard.
+ * Uses device UUID as user_id (will migrate to auth.uid() when Apple Auth is added).
+ */
 export async function submitScore(data: SubmitScoreData): Promise<boolean> {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return false;
+  const deviceId = getDeviceId();
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('nickname')
-    .eq('user_id', user.id)
-    .single();
+  try {
+    const { error } = await supabase.from('leaderboard_scores').insert({
+      user_id: deviceId,
+      nickname: data.nickname || 'Player',
+      score: data.score,
+      elections_won: data.elections_won ?? 0,
+      max_money: data.max_money ?? 0,
+      max_election_pct: data.max_election_pct ?? 0,
+      max_laundered: data.max_laundered ?? 0,
+      death_reason: data.death_reason || null,
+    });
 
-  const { error } = await supabase.from('leaderboard_scores').insert({
-    user_id: user.id,
-    nickname: profile?.nickname || 'Player',
-    score: data.score,
-    elections_won: data.elections_won,
-    max_money: data.max_money,
-    max_election_pct: data.max_election_pct,
-    max_laundered: data.max_laundered,
-    death_reason: data.death_reason || null,
-  });
-
-  return !error;
+    if (error) {
+      console.error('[Leaderboard] Submit error:', error.message);
+      return false;
+    }
+    console.log('[Leaderboard] Score submitted:', data.score);
+    return true;
+  } catch (err) {
+    console.error('[Leaderboard] Submit exception:', err);
+    return false;
+  }
 }
 
-export async function fetchAllTimeLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
-  const { data } = await supabase
-    .from('leaderboard_scores')
-    .select('*')
-    .order('score', { ascending: false })
-    .limit(limit);
-  return (data as LeaderboardEntry[]) || [];
-}
+/**
+ * Fetch top scores from all time.
+ */
+export async function fetchLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
+  try {
+    const { data, error } = await supabase
+      .from('leaderboard_scores')
+      .select('*')
+      .order('score', { ascending: false })
+      .limit(limit);
 
-export async function fetchWeeklyLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-  const { data } = await supabase
-    .from('leaderboard_scores')
-    .select('*')
-    .gte('created_at', oneWeekAgo.toISOString())
-    .order('score', { ascending: false })
-    .limit(limit);
-  return (data as LeaderboardEntry[]) || [];
+    if (error) {
+      console.error('[Leaderboard] Fetch error:', error.message);
+      return [];
+    }
+    return (data as LeaderboardEntry[]) || [];
+  } catch (err) {
+    console.error('[Leaderboard] Fetch exception:', err);
+    return [];
+  }
 }
