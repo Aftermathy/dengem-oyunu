@@ -18,12 +18,14 @@ interface LeaderboardScreenProps {
 
 export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: LeaderboardScreenProps) {
   const { lang } = useLanguage();
-  const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked } = useAppleSignIn();
+  const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked, error: appleError } = useAppleSignIn();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [showLinkedModal, setShowLinkedModal] = useState(false);
 
-  const deviceId = getDeviceId();
+  // Use auth user_id if signed in, otherwise device UUID
+  const myUserId = user?.id || getDeviceId();
 
   useEffect(() => {
     let cancelled = false;
