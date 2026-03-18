@@ -1,30 +1,39 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 /**
- * Placeholder hook for Apple Sign In.
- * Currently simulates linking — will be replaced with real auth later.
+ * Hook for Apple Sign In — wraps AuthContext's signInWithApple.
+ * Provides backward-compatible API for LeaderboardScreen and other consumers.
  */
 export function useAppleSignIn() {
+  const { isAuthenticated, signInWithApple, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [isLinked, setIsLinked] = useState(() => {
-    try {
-      return localStorage.getItem('ims_apple_linked') === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [error, setError] = useState<string | null>(null);
 
-  const signIn = async () => {
+  const signIn = useCallback(async () => {
     setIsLoading(true);
-    // Simulate network delay
-    await new Promise(r => setTimeout(r, 1200));
-    setIsLinked(true);
+    setError(null);
     try {
-      localStorage.setItem('ims_apple_linked', 'true');
-    } catch {}
-    setIsLoading(false);
-    return { linked: true };
-  };
+      const result = await signInWithApple();
+      if (!result.success) {
+        setError(result.error || 'Sign in failed');
+        setIsLoading(false);
+        return null;
+      }
+      setIsLoading(false);
+      return { linked: true };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error';
+      setError(msg);
+      setIsLoading(false);
+      return null;
+    }
+  }, [signInWithApple]);
 
-  return { signIn, isLoading, isLinked };
+  return {
+    signIn,
+    isLoading: isLoading || authLoading,
+    isLinked: isAuthenticated,
+    error,
+  };
 }

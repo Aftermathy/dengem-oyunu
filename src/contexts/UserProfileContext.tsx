@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useMemo, useEffect, t
 import { loadUserProfile, saveUserProfile, type UserProfile } from '@/lib/userProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { getDeviceId } from '@/lib/deviceId';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface UserProfileContextValue {
   userProfile: UserProfile;
@@ -11,14 +12,18 @@ interface UserProfileContextValue {
 
 const UserProfileContext = createContext<UserProfileContextValue | null>(null);
 
+/** Get the effective user_id: auth user if signed in, otherwise device UUID */
+function getEffectiveUserId(authUserId: string | undefined): string {
+  return authUserId || getDeviceId();
+}
+
 /** Sync local profile to Supabase profiles table */
-async function syncProfileToSupabase(profile: UserProfile): Promise<void> {
-  const deviceId = getDeviceId();
+async function syncProfileToSupabase(profile: UserProfile, userId: string): Promise<void> {
   try {
     const { error } = await supabase
       .from('profiles')
       .upsert({
-        user_id: deviceId,
+        user_id: userId,
         nickname: profile.nickname || 'Player',
         avatar_url: profile.avatarId,
         total_ap: profile.totalAP,
@@ -28,21 +33,20 @@ async function syncProfileToSupabase(profile: UserProfile): Promise<void> {
     if (error) {
       console.error('[Profile] Sync error:', error.message);
     } else {
-      console.log('[Profile] Synced to cloud:', profile.nickname, 'AP:', profile.totalAP);
+      console.log('[Profile] Synced to cloud:', profile.nickname, 'AP:', profile.totalAP, 'uid:', userId.slice(0, 8));
     }
   } catch (err) {
     console.error('[Profile] Sync exception:', err);
   }
 }
 
-/** Fetch profile from Supabase and merge with local */
-async function fetchProfileFromSupabase(): Promise<Partial<UserProfile> | null> {
-  const deviceId = getDeviceId();
+/** Fetch profile from Supabase */
+async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserProfile> | null> {
   try {
     const { data, error } = await supabase
       .from('profiles')
       .select('nickname, avatar_url, total_ap, avatar_id')
-      .eq('user_id', deviceId)
+      .eq('user_id', userId)
       .maybeSingle();
 
     if (error) {
@@ -63,13 +67,16 @@ async function fetchProfileFromSupabase(): Promise<Partial<UserProfile> | null> 
 }
 
 export function UserProfileProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile>(loadUserProfile);
 
-  // On mount: fetch from Supabase and merge (take higher AP)
+  const effectiveUserId = getEffectiveUserId(user?.id);
+
+  // Sync on mount and when auth user changes (e.g. after Apple sign-in)
   useEffect(() => {
     let cancelled = false;
     async function initialSync() {
-      const remote = await fetchProfileFromSupabase();
+      const remote = await fetchProfileFromSupabase(effectiveUserId);
       if (cancelled || !remote) return;
       setProfile(prev => {
         const merged: UserProfile = {
@@ -77,6 +84,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
           nickname: remote.nickname || prev.nickname,
           avatarId: remote.avatarId || prev.avatarId,
           totalAP: Math.max(prev.totalAP, remote.totalAP ?? 0),
+          isAppleLinked: !!user, // real auth linked
         };
         saveUserProfile(merged);
         return merged;
@@ -84,26 +92,26 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
     }
     initialSync();
     return () => { cancelled = true; };
-  }, []);
+  }, [effectiveUserId, user]);
 
   const updateProfile = useCallback((updates: Partial<UserProfile>) => {
     setProfile(prev => {
       const next = { ...prev, ...updates };
       saveUserProfile(next);
-      syncProfileToSupabase(next);
+      syncProfileToSupabase(next, effectiveUserId);
       return next;
     });
-  }, []);
+  }, [effectiveUserId]);
 
   const addAP = useCallback((amount: number) => {
     if (amount <= 0) return;
     setProfile(prev => {
       const next = { ...prev, totalAP: prev.totalAP + amount };
       saveUserProfile(next);
-      syncProfileToSupabase(next);
+      syncProfileToSupabase(next, effectiveUserId);
       return next;
     });
-  }, []);
+  }, [effectiveUserId]);
 
   const value = useMemo(() => ({ userProfile: profile, updateProfile, addAP }), [profile, updateProfile, addAP]);
 

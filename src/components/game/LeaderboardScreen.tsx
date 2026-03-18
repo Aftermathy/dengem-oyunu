@@ -8,6 +8,7 @@ import { GameIcon } from '@/components/GameIcon';
 import { useAppleSignIn } from '@/hooks/useAppleSignIn';
 import { fetchLeaderboard, type LeaderboardEntry } from '@/lib/leaderboard';
 import { getDeviceId } from '@/lib/deviceId';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LeaderboardScreenProps {
   onClose: () => void;
@@ -18,11 +19,13 @@ interface LeaderboardScreenProps {
 export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: LeaderboardScreenProps) {
   const { lang } = useLanguage();
   const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked } = useAppleSignIn();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [showLinkedModal, setShowLinkedModal] = useState(false);
 
-  const deviceId = getDeviceId();
+  // Use auth user_id if signed in, otherwise device UUID
+  const myUserId = user?.id || getDeviceId();
 
   useEffect(() => {
     let cancelled = false;
@@ -32,7 +35,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
       if (cancelled) return;
 
       // Check if player already has an entry in the fetched data
-      const hasPlayerEntry = data.some(e => e.user_id === deviceId);
+      const hasPlayerEntry = data.some(e => e.user_id === myUserId);
 
       if (!hasPlayerEntry) {
         // Add local player as a virtual entry for display
@@ -46,7 +49,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
           max_laundered: 0,
           death_reason: null,
           created_at: new Date().toISOString(),
-          user_id: deviceId,
+          user_id: myUserId,
         };
         data.push(virtualEntry);
         data.sort((a, b) => b.score - a.score);
@@ -57,7 +60,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     }
     load();
     return () => { cancelled = true; };
-  }, [userProfile.totalAP, userProfile.nickname, deviceId, lang]);
+  }, [userProfile.totalAP, userProfile.nickname, myUserId, lang]);
 
   const getMedal = (i: number) => {
     if (i === 0) return '🥇';
@@ -85,7 +88,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     }
   };
 
-  const playerRank = entries.findIndex(e => e.user_id === deviceId) + 1;
+  const playerRank = entries.findIndex(e => e.user_id === myUserId) + 1;
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 animate-fade-in p-4">
@@ -178,7 +181,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
           ) : (
             <div className="space-y-1.5">
               {entries.map((entry, i) => {
-                const isPlayer = entry.user_id === deviceId;
+                const isPlayer = entry.user_id === myUserId;
                 const av = isPlayer ? getPlayerAvatar() : getAvatarDef(entry.nickname);
                 return (
                   <div
