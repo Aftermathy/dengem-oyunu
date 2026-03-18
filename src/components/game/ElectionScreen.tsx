@@ -8,6 +8,8 @@ import { ElectionIntro } from './election/ElectionIntro';
 import { ElectionBattle } from './election/ElectionBattle';
 import { ElectionResultScreen } from './election/ElectionResult';
 import { VictoryBalcony } from './election/VictoryBalcony';
+import { ElectionTutorialOverlay } from './election/ElectionTutorialOverlay';
+import { STORAGE_KEYS } from '@/constants/storage';
 
 interface ElectionScreenProps {
   config: ElectionConfig;
@@ -20,9 +22,10 @@ interface ElectionScreenProps {
   onMainMenu: () => void;
   onLossDetected?: () => void;
   earnedAP?: number;
+  costFactor?: number;
 }
 
-export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu, onLossDetected, earnedAP = 0 }: ElectionScreenProps) => {
+export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu, onLossDetected, earnedAP = 0, costFactor = 1 }: ElectionScreenProps) => {
   const [playerVote, setPlayerVote] = useState(() => config.startingPlayerVote);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result' | 'victory'>('intro');
@@ -39,8 +42,11 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
   const [showAiFlash, setShowAiFlash] = useState(false);
   const [rerollsLeft, setRerollsLeft] = useState(MAX_REROLLS);
   const [budgetWarning, setBudgetWarning] = useState<number | string | null>(null);
+  const [showTutorial, setShowTutorial] = useState(() =>
+    localStorage.getItem(STORAGE_KEYS.ELECTION_TUTORIAL_DONE) !== 'true'
+  );
 
-  const displayPlayerVote = playerVote === 50 ? 49.9 : playerVote;
+  const displayPlayerVote = playerVote === 50 ? 50.1 : playerVote;
   const displayOpponentVote = +(100 - displayPlayerVote).toFixed(1);
   const won = displayPlayerVote > 50;
 
@@ -63,19 +69,20 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
   }, [phase, config.playerCards]);
 
   const playCard = useCallback((card: ElectionCard) => {
-    if (budget < card.cost) return;
+    const effectiveCost = Math.max(1, Math.round(card.cost * costFactor));
+    if (budget < effectiveCost) return;
     playElectionCardSound();
     hapticMedium();
     setSelectedCardId(card.id);
     setTimeout(() => {
-      setBudget(b => b - card.cost);
+      setBudget(b => b - effectiveCost);
       setPlayerVote(v => Math.max(0, Math.min(100, v + card.voterEffect)));
       setBarGlowKey(k => k + 1);
       setUsedCardIds(prev => [...prev, card.id]);
       setSelectedCardId(null);
       setPhase('ai');
     }, 400);
-  }, [budget]);
+  }, [budget, costFactor]);
 
   const skipTurn = useCallback(() => {
     playClickSound();
@@ -85,29 +92,31 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
   }, []);
 
   const handleReroll = useCallback(() => {
-    if (rerollsLeft <= 0 || budget < REROLL_COST) {
-      if (budget < REROLL_COST) showBudgetWarningFor('reroll');
+    const effectiveRerollCost = Math.max(1, Math.round(REROLL_COST * costFactor));
+    if (rerollsLeft <= 0 || budget < effectiveRerollCost) {
+      if (budget < effectiveRerollCost) showBudgetWarningFor('reroll');
       return;
     }
     playRerollSound();
-    setBudget(b => b - REROLL_COST);
+    setBudget(b => b - effectiveRerollCost);
     setRerollsLeft(r => r - 1);
     setCards(drawCards(config.playerCards, 3, usedCardIds));
-  }, [rerollsLeft, budget, config.playerCards, usedCardIds, showBudgetWarningFor]);
+  }, [rerollsLeft, budget, config.playerCards, usedCardIds, showBudgetWarningFor, costFactor]);
 
   const useSpecialPower = useCallback((power: ElectionSpecialPower) => {
     if (usedPowers.includes(power.id)) return;
-    if (laundered < power.launderedCost) {
+    const effectiveCost = Math.max(1, Math.round(power.launderedCost * costFactor));
+    if (laundered < effectiveCost) {
       showBudgetWarningFor(power.id);
       return;
     }
     playSpecialPowerSound();
     hapticMedium();
-    setLaundered(l => l - power.launderedCost);
+    setLaundered(l => l - effectiveCost);
     setPlayerVote(v => Math.max(0, Math.min(100, v + power.voterEffect)));
     setBarGlowKey(k => k + 1);
     setUsedPowers(prev => [...prev, power.id]);
-  }, [laundered, usedPowers, showBudgetWarningFor]);
+  }, [laundered, usedPowers, showBudgetWarningFor, costFactor]);
 
   // AI turn
   useEffect(() => {
@@ -192,6 +201,16 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
 
       {phase === 'intro' && <ElectionIntro config={config} lang={lang} />}
 
+      {showTutorial && phase === 'player' && (
+        <ElectionTutorialOverlay
+          lang={lang}
+          onComplete={() => {
+            setShowTutorial(false);
+            try { localStorage.setItem(STORAGE_KEYS.ELECTION_TUTORIAL_DONE, 'true'); } catch {}
+          }}
+        />
+      )}
+
       {(phase === 'player' || phase === 'ai') && (
         <ElectionBattle
           config={config} lang={lang} phase={phase}
@@ -201,7 +220,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
           selectedCardId={selectedCardId} barGlowKey={barGlowKey}
           rerollsLeft={rerollsLeft} budgetWarning={budgetWarning}
           usedPowers={usedPowers} aiLegendaryShake={aiLegendaryShake}
-          labels={labels}
+          labels={labels} costFactor={costFactor}
           onPlayCard={playCard} onSkipTurn={skipTurn}
           onReroll={handleReroll} onUseSpecialPower={useSpecialPower}
           onShowBudgetWarning={showBudgetWarningFor} onMainMenu={onMainMenu}

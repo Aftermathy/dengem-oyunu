@@ -1,7 +1,7 @@
 import { ElectionConfig, ElectionCard, ElectionSpecialPower } from '@/types/election';
 import { EmojiImg } from '@/components/EmojiImg';
 import { SettingsMenu } from '@/components/game/SettingsMenu';
-import { RARITY_STYLES, ElectionLabels } from './electionUtils';
+import { RARITY_STYLES, REROLL_COST, ElectionLabels } from './electionUtils';
 
 interface ElectionBattleProps {
   config: ElectionConfig;
@@ -21,6 +21,7 @@ interface ElectionBattleProps {
   usedPowers: string[];
   aiLegendaryShake: boolean;
   labels: ElectionLabels;
+  costFactor?: number;
   onPlayCard: (card: ElectionCard) => void;
   onSkipTurn: () => void;
   onReroll: () => void;
@@ -34,10 +35,12 @@ export function ElectionBattle({
   displayPlayerVote, displayOpponentVote, round,
   cards, aiCardPlayed, selectedCardId, barGlowKey,
   rerollsLeft, budgetWarning, usedPowers,
-  aiLegendaryShake, labels,
+  aiLegendaryShake, labels, costFactor = 1,
   onPlayCard, onSkipTurn, onReroll, onUseSpecialPower,
   onShowBudgetWarning, onMainMenu,
 }: ElectionBattleProps) {
+  const effectiveCost = (base: number) => Math.max(1, Math.round(base * costFactor));
+  const effectiveRerollCost = effectiveCost(REROLL_COST);
   return (
     <div className="flex-1 flex flex-col overflow-y-auto relative z-10">
       {/* Title bar */}
@@ -88,7 +91,7 @@ export function ElectionBattle({
       </div>
 
       {/* Card area */}
-      <div className="flex flex-col px-3 py-2">
+      <div className={`px-3 py-2 ${phase === 'ai' ? 'flex-1 flex flex-col justify-center' : 'flex flex-col'}`}>
         {phase === 'player' && (
           <>
             <div className="flex justify-between items-center mb-2 px-1">
@@ -97,13 +100,13 @@ export function ElectionBattle({
                 disabled={rerollsLeft <= 0}
                 onClick={onReroll}
                 className={`relative flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-black transition-all active:scale-95 disabled:opacity-30 border-2 border-game-gold-dark/60 bg-game-gold-dark/20 text-game-gold hover:bg-game-gold-dark/30 hover:border-game-gold/80 ${
-                  budget < 3 && rerollsLeft > 0 ? 'opacity-40' : ''
+                  budget < effectiveRerollCost && rerollsLeft > 0 ? 'opacity-40' : ''
                 }`}
                 style={{ boxShadow: '0 0 12px hsl(var(--game-gold) / 0.2)' }}
               >
                 {budgetWarning === 'reroll' && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-game-overlay/80 rounded-xl z-10 animate-fade-in">
-                    <span className="text-game-danger text-[10px] font-black">{labels.insufficientBudget}</span>
+                  <div className="absolute inset-0 flex items-center justify-center bg-red-600/90 rounded-xl z-10 animate-fade-in">
+                    <span className="text-white text-[10px] font-black">{labels.insufficientBudget}</span>
                   </div>
                 )}
                 <EmojiImg emoji="🎲" size={16} /> {labels.reroll} ({rerollsLeft}) <span className="text-game-gold font-black">-{labels.rerollCost}</span>
@@ -113,27 +116,28 @@ export function ElectionBattle({
               {cards.map((card, i) => {
                 const style = RARITY_STYLES[card.rarity];
                 const isLegendary = card.rarity === 'legendary';
-                const cantAfford = budget < card.cost;
+                const cardCost = effectiveCost(card.cost);
+                const cantAfford = budget < cardCost;
                 return (
                   <button key={card.id} disabled={selectedCardId !== null}
                     onClick={() => { if (cantAfford) { onShowBudgetWarning(card.id); return; } onPlayCard(card); }}
                     onTouchStart={() => { if (cantAfford) onShowBudgetWarning(card.id); }}
                     onMouseDown={() => { if (cantAfford) onShowBudgetWarning(card.id); }}
-                    className={`relative border-2 rounded-xl p-3.5 text-left hover:brightness-110 active:scale-95 transition-all election-card-enter overflow-hidden ${style.border} ${style.bg} ${style.glow} ${cantAfford ? 'opacity-40' : ''} ${selectedCardId === card.id ? 'election-card-select' : ''} ${isLegendary ? 'legendary-card-flame' : ''}`}
+                    className={`relative border-2 rounded-xl p-3.5 text-left active:scale-95 transition-all election-card-enter overflow-hidden ${style.border} ${style.bg} ${style.glow} ${cantAfford ? 'brightness-50 saturate-0 cursor-not-allowed' : 'hover:brightness-110'} ${selectedCardId === card.id ? 'election-card-select' : ''} ${isLegendary ? 'legendary-card-flame' : ''}`}
                     style={{ animationDelay: `${i * 0.1}s` }}
                   >
                     {budgetWarning === card.id && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-game-overlay/70 rounded-xl z-10 animate-fade-in">
-                        <span className="text-game-danger text-xs font-black text-center px-2">{labels.insufficientBudget}</span>
+                      <div className="absolute inset-0 flex items-center justify-center bg-red-600/90 rounded-xl z-10 animate-fade-in">
+                        <span className="text-white text-xs font-black text-center px-2">{labels.insufficientBudget}</span>
                       </div>
                     )}
                     <div className="flex justify-between items-center mb-1.5">
                       <span className={`text-xs font-black ${style.labelColor}`}>{style.label}</span>
-                      <span className={`text-base font-black ${cantAfford ? 'text-game-danger' : 'text-game-gold'}`}>{card.cost}B</span>
+                      <span className={`text-base font-black ${cantAfford ? 'text-game-danger' : 'text-game-gold'}`}>{cardCost}B</span>
                     </div>
                     <div className="flex items-center gap-2 mb-1.5">
                       <EmojiImg emoji={card.emoji} size={28} />
-                      <p className="text-primary-foreground text-sm font-bold leading-tight flex-1">{card.text}</p>
+                      <p className="text-white text-sm font-bold leading-tight flex-1">{card.text}</p>
                     </div>
                     <p className="text-game-success-light text-base font-black">+{card.voterEffect}%</p>
                   </button>
@@ -170,7 +174,7 @@ export function ElectionBattle({
                   </div>
                   <div className="flex items-center gap-3 mb-2">
                     <EmojiImg emoji={aiCardPlayed.emoji} size={36} />
-                    <p className="text-primary-foreground text-sm font-bold leading-tight flex-1">{aiCardPlayed.text}</p>
+                    <p className="text-white text-sm font-bold leading-tight flex-1">{aiCardPlayed.text}</p>
                   </div>
                   <p className="text-game-danger-light text-base font-black">-{aiCardPlayed.voterEffect}%</p>
                 </div>
@@ -205,8 +209,8 @@ export function ElectionBattle({
                   }`}
                 >
                   {budgetWarning === power.id && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-game-overlay/80 rounded-xl z-10 animate-fade-in">
-                      <span className="text-game-danger text-[10px] font-black text-center px-1">{labels.insufficientLaundered}</span>
+                    <div className="absolute inset-0 flex items-center justify-center bg-red-600/90 rounded-xl z-10 animate-fade-in">
+                      <span className="text-white text-[10px] font-black text-center px-1">{labels.insufficientLaundered}</span>
                     </div>
                   )}
                   <EmojiImg emoji={power.emoji} size={20} className="shrink-0" />

@@ -3,20 +3,18 @@ import { EmojiImg } from '@/components/EmojiImg';
 import { PowerType } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
+import { playClickSound } from '@/hooks/useSound';
 
-import factionYatirimcilar from '@/assets/faction-yatirimcilar.jpg';
-import factionMafya from '@/assets/faction-mafya.jpg';
-import factionTarikat from '@/assets/faction-tarikat.jpg';
-import factionOrdu from '@/assets/faction-ordu.jpg';
+import { GameImages } from '@/config/assets';
 
 const LAUNDER_FACTIONS: PowerType[] = ['yatirimcilar', 'mafya', 'tarikat', 'ordu'];
 
 const FACTION_IMAGES: Record<PowerType, string> = {
-  yatirimcilar: factionYatirimcilar,
-  mafya: factionMafya,
-  tarikat: factionTarikat,
-  ordu: factionOrdu,
-  halk: '',
+  yatirimcilar: GameImages.faction_yatirimcilar,
+  mafya:        GameImages.faction_mafya,
+  tarikat:      GameImages.faction_tarikat,
+  ordu:         GameImages.faction_ordu,
+  halk:         '',
 };
 
 interface LaunderBarProps {
@@ -24,18 +22,22 @@ interface LaunderBarProps {
   money: number;
   onLaunder: (faction: PowerType) => void;
   canLaunder: boolean;
+  offshoreRate?: number;
+  launderOutput?: number;
 }
 
-export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunder }: LaunderBarProps) {
+export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunder, offshoreRate = 0, launderOutput = 20 }: LaunderBarProps) {
   const { t, lang } = useLanguage();
   const [showPicker, setShowPicker] = useState(false);
 
   const handleClick = () => {
     if (!canLaunder) return;
+    playClickSound();
     setShowPicker(true);
   };
 
   const handleSelect = (faction: PowerType) => {
+    playClickSound();
     onLaunder(faction);
     setShowPicker(false);
   };
@@ -61,8 +63,13 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
             className="h-full bg-gradient-to-r from-game-success to-game-success-light rounded-full transition-all duration-500"
             style={{ width: `${Math.min(totalLaundered, 100)}%` }}
           />
-          <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-foreground">
+          <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-foreground gap-1">
             <EmojiImg emoji="💸" size={12} /> {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
+            {offshoreRate > 0 && Math.floor(totalLaundered * offshoreRate) > 0 && (
+              <span className="text-game-success-light text-[10px]">
+                (+{Math.floor(totalLaundered * offshoreRate)}/t)
+              </span>
+            )}
           </span>
         </div>
       </div>
@@ -77,8 +84,8 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
             </h3>
             <p className="text-xs text-muted-foreground mb-4">
               {lang === 'tr'
-                ? '20B aklanır. Seçtiğin zümre +10 rep, diğer 3 grup -5 rep, Halk -10 rep.'
-                : '20B laundered. Selected faction +10 rep, other 3 get -5 rep, Public -10 rep.'}
+                ? `${launderOutput}B aklanır. Seçtiğin zümre +10 rep, diğer 3 grup -5 rep, Halk -10 rep.`
+                : `${launderOutput}B laundered. Selected faction +10 rep, other 3 get -5 rep, Public -10 rep.`}
             </p>
 
             <div className="grid grid-cols-2 gap-3">
@@ -98,7 +105,7 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
             </div>
 
             <button
-              onClick={() => setShowPicker(false)}
+              onClick={() => { playClickSound(); setShowPicker(false); }}
               className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
             >
               {lang === 'tr' ? 'Vazgeç' : 'Cancel'}

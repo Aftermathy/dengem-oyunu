@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { AlertTriangle, Syringe } from 'lucide-react';
+import { GameIcon } from '@/components/GameIcon';
 
 interface CrisisAlertProps {
   type: 'crisis' | 'emergency_fund';
@@ -64,11 +64,11 @@ export function CrisisAlert({ type, onDone }: CrisisAlertProps) {
             boxShadow: '0 0 30px hsl(0 80% 50% / 0.5)',
           }}
         >
-          {isCrisis ? (
-            <AlertTriangle size={32} style={{ color: 'white' }} />
-          ) : (
-            <Syringe size={32} style={{ color: 'white' }} />
-          )}
+          <GameIcon
+            name={isCrisis ? 'alert_triangle' : 'syringe'}
+            size={32}
+            style={{ color: 'white' }}
+          />
         </div>
         <h3 className="text-lg font-black text-center" style={{ color: 'hsl(0 80% 70%)' }}>
           {title}

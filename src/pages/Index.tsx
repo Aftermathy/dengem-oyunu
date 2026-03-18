@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { EmojiImg } from '@/components/EmojiImg';
 import { useGame } from '@/hooks/useGame';
 import { PowerBars } from '@/components/game/PowerBars';
@@ -22,9 +22,11 @@ import { OnboardingScreen } from '@/components/game/OnboardingScreen';
 import { ProfileScreen } from '@/components/game/ProfileScreen';
 import { LeaderboardScreen } from '@/components/game/LeaderboardScreen';
 import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
+import { useMetaGame } from '@/contexts/MetaGameContext';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { loadUserProfile, saveUserProfile, type UserProfile } from '@/lib/userProfile';
-import { AlertTriangle } from 'lucide-react';
+import { hasSavedGame, loadGame } from '@/lib/gameSave';
+import { GameIcon } from '@/components/GameIcon';
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -43,7 +45,12 @@ const Index = () => {
     lastEarnedAP,
     crisisAlertType, clearCrisisAlert,
     ohalLevel,
+    electionCostFactor,
+    offshoreRate,
   } = useGame(lang);
+  const { modifiers } = useMetaGame();
+
+
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
   const [showKnowledgeAnnouncement, setShowKnowledgeAnnouncement] = useState(false);
@@ -75,13 +82,26 @@ const Index = () => {
   }, [phase, goToMenu]);
 
   const handleStartGame = useCallback(() => {
+    // If there's an abandoned saved game, award its AP to profile before clearing
+    if (hasSavedGame()) {
+      const abandoned = loadGame();
+      if (abandoned && abandoned.turn > 0) {
+        const updated = {
+          ...userProfile,
+          totalTurns: userProfile.totalTurns + abandoned.turn,
+          gamesPlayed: userProfile.gamesPlayed + 1,
+        };
+        setUserProfile(updated);
+        saveUserProfile(updated);
+      }
+    }
     startGame();
     const neverDeclined = localStorage.getItem(STORAGE_KEYS.TUTORIAL_DECLINED) !== 'true';
     const firstTimer = !hasSeenAnyCard();
     if (neverDeclined && firstTimer) {
       setShowTutorialAsk(true);
     }
-  }, [startGame]);
+  }, [startGame, userProfile]);
 
   return (
     <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none overscroll-none pt-safe" onContextMenu={e => e.preventDefault()}>
@@ -94,7 +114,19 @@ const Index = () => {
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
 
       {phase === 'start' && (
-        <StartScreen highScore={highScore} onStart={handleStartGame} onContinue={continueGame} onShowProfile={() => setShowProfile(true)} onShowLeaderboard={() => setShowLeaderboard(true)} userProfile={userProfile} />
+        <StartScreen
+          highScore={highScore}
+          onStart={handleStartGame}
+          onContinue={continueGame}
+          onShowProfile={() => setShowProfile(true)}
+          onShowLeaderboard={() => setShowLeaderboard(true)}
+          onEquipAvatar={(avatarId) => {
+            const updated = { ...userProfile, avatarId };
+            setUserProfile(updated);
+            saveUserProfile(updated);
+          }}
+          userProfile={userProfile}
+        />
       )}
 
       {phase === 'playing' && currentCard && (
@@ -141,7 +173,7 @@ const Index = () => {
                     border: '1px solid hsl(0 80% 50% / 0.4)',
                   }}
                 >
-                  <AlertTriangle size={9} />
+                  <GameIcon name="alert_triangle" size={9} />
                   OHAL {ohalLevel}
                 </span>
               )}
@@ -154,6 +186,8 @@ const Index = () => {
               money={money}
               onLaunder={launder}
               canLaunder={canLaunder}
+              offshoreRate={offshoreRate}
+              launderOutput={modifiers.launderOutput}
             />
           </div>
 
@@ -185,6 +219,7 @@ const Index = () => {
           launderedMoney={totalLaundered}
           halkPower={power.halk}
           lang={lang}
+          costFactor={electionCostFactor}
           onComplete={(result) => {
             // Update profile stats on election completion (victory)
             const updated = {

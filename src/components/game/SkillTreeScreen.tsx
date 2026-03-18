@@ -6,52 +6,48 @@ import { SKILL_DEFS, getSkillTitle, type SkillDef, OHAL_AP_MULTIPLIER, OHAL_NEGA
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
 import { isUnlocked as isAchievementUnlocked } from '@/lib/achievements';
-import {
-  Megaphone, Swords, Eye, TrendingUp, Skull,
-  Vote, Glasses, Sparkles, Landmark, Clover,
-  AlertTriangle, Shield, Tv, Coins, Target, X,
-  Star, ChevronUp, Lock, RotateCcw, Syringe, Flame
-} from 'lucide-react';
+import { GameIcon } from '@/components/GameIcon';
+import { GameIcons } from '@/config/assets';
+import type { LucideIcon } from 'lucide-react';
 
-// Icon mapping for each skill
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const SKILL_ICONS: Record<string, any> = {
-  shield_halk: Megaphone,
-  shield_ordu: Swords,
-  shield_tarikat: Eye,
-  shield_yatirimcilar: TrendingUp,
-  shield_mafya: Skull,
-  media_halk: Megaphone,
-  media_ordu: Swords,
-  media_tarikat: Eye,
-  media_yatirimcilar: TrendingUp,
-  media_mafya: Skull,
-  election_master: Vote,
-  dark_connections: Glasses,
-  pro_launderer: Sparkles,
-  offshore: Landmark,
-  lucky_cards: Clover,
-  crisis_management: AlertTriangle,
-  emergency_fund: Syringe,
-  ohal: Flame,
+// Icon mapping for each skill — references GameIcons so swapping is centralised
+const SKILL_ICONS: Record<string, LucideIcon> = {
+  shield_halk:         GameIcons.megaphone,
+  shield_ordu:         GameIcons.swords,
+  shield_tarikat:      GameIcons.eye,
+  shield_yatirimcilar: GameIcons.trending_up,
+  shield_mafya:        GameIcons.skull,
+  media_halk:          GameIcons.megaphone,
+  media_ordu:          GameIcons.swords,
+  media_tarikat:       GameIcons.eye,
+  media_yatirimcilar:  GameIcons.trending_up,
+  media_mafya:         GameIcons.skull,
+  election_master:     GameIcons.vote,
+  dark_connections:    GameIcons.glasses,
+  pro_launderer:       GameIcons.sparkles,
+  offshore:            GameIcons.landmark,
+  lucky_cards:         GameIcons.clover,
+  crisis_management:   GameIcons.alert_triangle,
+  emergency_fund:      GameIcons.syringe,
+  ohal:                GameIcons.flame,
 };
 
-// Category hub icons and colors
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// Category hub config — icon values come from GameIcons
 const CATEGORY_CONFIG: Record<string, {
-  icon: any;
+  icon: LucideIcon;
   labelTR: string;
   labelEN: string;
   hue: string;
   color: string;
   glowColor: string;
 }> = {
-  defense: { icon: Shield, labelTR: 'Zümre Kalkanları', labelEN: 'Faction Shields', hue: '200', color: 'hsl(200 80% 55%)', glowColor: 'hsl(200 80% 55% / 0.4)' },
-  media: { icon: Tv, labelTR: 'Medya Kontrolü', labelEN: 'Media Control', hue: '280', color: 'hsl(280 70% 60%)', glowColor: 'hsl(280 70% 60% / 0.4)' },
-  economy: { icon: Coins, labelTR: 'Ekonomi', labelEN: 'Economy', hue: '45', color: 'hsl(45 90% 55%)', glowColor: 'hsl(45 90% 55% / 0.4)' },
-  strategy: { icon: Target, labelTR: 'Strateji', labelEN: 'Strategy', hue: '0', color: 'hsl(0 75% 55%)', glowColor: 'hsl(0 75% 55% / 0.4)' },
-  ohal: { icon: Flame, labelTR: 'OHAL Modu', labelEN: 'State of Emergency', hue: '15', color: 'hsl(15 90% 50%)', glowColor: 'hsl(15 90% 50% / 0.4)' },
+  defense:  { icon: GameIcons.shield,   labelTR: 'Zümre Kalkanları',    labelEN: 'Faction Shields',      hue: '200', color: 'hsl(200 80% 55%)', glowColor: 'hsl(200 80% 55% / 0.4)' },
+  media:    { icon: GameIcons.tv,       labelTR: 'Medya Kontrolü',       labelEN: 'Media Control',        hue: '280', color: 'hsl(280 70% 60%)', glowColor: 'hsl(280 70% 60% / 0.4)' },
+  economy:  { icon: GameIcons.coins,    labelTR: 'Ekonomi',              labelEN: 'Economy',              hue: '45',  color: 'hsl(45 90% 55%)',  glowColor: 'hsl(45 90% 55% / 0.4)'  },
+  strategy: { icon: GameIcons.target,   labelTR: 'Strateji',             labelEN: 'Strategy',             hue: '0',   color: 'hsl(0 75% 55%)',   glowColor: 'hsl(0 75% 55% / 0.4)'   },
+  ohal:     { icon: GameIcons.flame,    labelTR: 'OHAL Modu',            labelEN: 'State of Emergency',   hue: '15',  color: 'hsl(15 90% 50%)',  glowColor: 'hsl(15 90% 50% / 0.4)'  },
 };
+
 
 // OHAL level requirements: level 1 = free, level 2 = ohal_1 achievement, level 3 = ohal_2 achievement
 const OHAL_LEVEL_REQUIREMENTS: Record<number, string | null> = {
@@ -222,7 +218,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
             }}
             disabled={!hasAnySkills}
           >
-            <RotateCcw size={12} style={{ color: 'hsl(0 70% 60%)' }} />
+            <GameIcon name="rotate_ccw" size={12} style={{ color: 'hsl(0 70% 60%)' }} />
             <span className="text-[10px] font-bold" style={{ color: 'hsl(0 70% 60%)' }}>
               {lang === 'en' ? 'Reset' : 'Sıfırla'}
             </span>
@@ -230,21 +226,21 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
           {/* AP Badge */}
           <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full"
             style={{
-              background: 'linear-gradient(135deg, hsl(45 80% 50% / 0.2), hsl(35 90% 40% / 0.15))',
-              border: '1px solid hsl(45 80% 50% / 0.5)',
-              boxShadow: '0 0 20px hsl(45 90% 50% / 0.2), inset 0 1px 0 hsl(45 80% 80% / 0.2)',
+              background: 'linear-gradient(135deg, rgb(168 85 247 / 0.2), rgb(139 92 246 / 0.15))',
+              border: '1px solid rgb(168 85 247 / 0.5)',
+              boxShadow: '0 0 20px rgb(168 85 247 / 0.2), inset 0 1px 0 rgb(216 180 254 / 0.2)',
             }}
           >
-            <Star size={15} className="text-game-gold" fill="hsl(45 93% 58%)" />
-            <span className="font-black text-sm text-game-gold">{authorityPoints}</span>
-            <span className="text-[10px] font-bold" style={{ color: 'hsl(45 60% 50% / 0.7)' }}>AP</span>
+            <GameIcon name="star" size={15} className="text-purple-400" fill="rgb(192 132 252)" />
+            <span className="font-black text-sm text-purple-400">{authorityPoints}</span>
+            <span className="text-[10px] font-bold text-purple-400/70">AP</span>
           </div>
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform"
             style={{ background: 'hsl(0 0% 100% / 0.1)', border: '1px solid hsl(0 0% 100% / 0.15)' }}
           >
-            <X size={16} style={{ color: 'hsl(0 0% 70%)' }} />
+            <GameIcon name="close" size={16} style={{ color: 'hsl(0 0% 70%)' }} />
           </button>
         </div>
       </div>
@@ -296,7 +292,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
                 <div className="w-10 h-10 rounded-full flex items-center justify-center"
                   style={{ background: 'hsl(0 70% 50% / 0.2)', border: '1px solid hsl(0 70% 50% / 0.4)' }}
                 >
-                  <RotateCcw size={20} style={{ color: 'hsl(0 70% 60%)' }} />
+                  <GameIcon name="rotate_ccw" size={20} style={{ color: 'hsl(0 70% 60%)' }} />
                 </div>
                 <h3 className="text-base font-black" style={{ color: 'hsl(0 0% 90%)' }}>
                   {lang === 'en' ? 'Reset All Skills?' : 'Tüm Yetenekleri Sıfırla?'}
@@ -534,7 +530,7 @@ function SkillBubble({
               boxShadow: '0 0 8px hsl(145 70% 45% / 0.5)',
             }}
           >
-            <ChevronUp size={10} style={{ color: 'white' }} />
+            <GameIcon name="chevron_up" size={10} style={{ color: 'white' }} />
           </div>
         )}
 
@@ -543,7 +539,7 @@ function SkillBubble({
           <div className="absolute inset-1 rounded-full flex items-center justify-center z-10"
             style={{ background: 'hsl(0 0% 0% / 0.3)' }}
           >
-            <Lock size={10} style={{ color: 'hsl(0 0% 35%)' }} className="absolute bottom-1 right-1" />
+            <GameIcon name="lock" size={10} style={{ color: 'hsl(0 0% 35%)' }} className="absolute bottom-1 right-1" />
           </div>
         )}
       </button>
@@ -674,7 +670,7 @@ function SkillDetailPanel({
           <div className="rounded-xl p-3.5 mb-3 flex items-center gap-2"
             style={{ background: 'hsl(45 80% 50% / 0.08)', border: '1px solid hsl(45 80% 50% / 0.3)' }}
           >
-            <Lock size={14} style={{ color: 'hsl(45 80% 55%)' }} />
+            <GameIcon name="lock" size={14} style={{ color: 'hsl(45 80% 55%)' }} />
             <p className="text-xs font-semibold" style={{ color: 'hsl(45 80% 55%)' }}>
               {getOhalLockMessage(level, lang)}
             </p>
@@ -704,7 +700,7 @@ function SkillDetailPanel({
           <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
             style={{ background: 'hsl(0 0% 100% / 0.05)', color: 'hsl(0 0% 35%)', border: '1px solid hsl(0 0% 100% / 0.08)' }}
           >
-            <Lock size={14} className="inline mr-1" style={{ color: 'hsl(0 0% 35%)' }} />
+            <GameIcon name="lock" size={14} className="inline mr-1" style={{ color: 'hsl(0 0% 35%)' }} />
             {lang === 'en' ? 'Locked' : 'Kilitli'}
           </div>
         ) : ohalLevelLocked ? (
@@ -735,12 +731,12 @@ function SkillDetailPanel({
           >
             {isFree ? (
               <>
-                <Flame size={14} fill="white" />
+                <GameIcon name="flame" size={14} fill="white" />
                 {lang === 'en' ? `Activate Level ${level + 1}` : `Seviye ${level + 1} Aktifleştir`}
               </>
             ) : (
               <>
-                <Star size={14} fill={canAfford ? 'white' : 'hsl(0 0% 35%)'} />
+                <GameIcon name="star" size={14} fill={canAfford ? 'white' : 'hsl(0 0% 35%)'} />
                 {lang === 'en' ? `Upgrade for ${cost} AP` : `${cost} AP ile Yükselt`}
               </>
             )}

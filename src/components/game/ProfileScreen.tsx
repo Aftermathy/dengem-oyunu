@@ -7,8 +7,9 @@ import { useMetaGame } from '@/contexts/MetaGameContext';
 import { AVATAR_DEFS, isAvatarUnlocked, getFunnyStats, type UserProfile } from '@/lib/userProfile';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
-import { X, Lock, Pencil, Check } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { GameIcon } from '@/components/GameIcon';
+import { getSeenCards } from '@/lib/cardMemory';
+import { eventCards } from '@/data/cards';
 
 interface ProfileScreenProps {
   profile: UserProfile;
@@ -28,17 +29,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
 
   const handleAvatarSelect = (avatarId: string) => {
     const unlocked = isAvatarUnlocked(avatarId, claimedAchievements);
-    if (!unlocked) {
-      const def = AVATAR_DEFS.find(a => a.id === avatarId);
-      toast({
-        title: lang === 'tr' ? '🔒 Kilitli Avatar' : '🔒 Locked Avatar',
-        description: lang === 'tr'
-          ? `Bu avatarı açmak için: ${def?.unlockTextTR || 'başarım tamamla'}`
-          : `To unlock: ${def?.unlockTextEN || 'complete achievement'}`,
-        variant: 'destructive',
-      });
-      return;
-    }
+    if (!unlocked) return;
     playClickSound();
     hapticMedium();
     onUpdateProfile({ avatarId });
@@ -56,13 +47,13 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
 
   if (showGallery) {
     return (
-      <div className="fixed inset-0 z-[80] flex flex-col bg-background animate-fade-in overflow-auto">
+      <div className="fixed inset-0 z-[80] flex flex-col bg-background animate-fade-in overflow-auto" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
           <h2 className="text-xl font-black text-foreground">
             {lang === 'tr' ? 'Avatar Galerisi' : 'Avatar Gallery'}
           </h2>
           <button onClick={() => { playClickSound(); setShowGallery(false); }} className="p-2 rounded-full hover:bg-muted">
-            <X size={20} className="text-foreground" />
+            <GameIcon name="close" size={20} className="text-foreground" />
           </button>
         </div>
         <div className="grid grid-cols-3 gap-3 p-4">
@@ -81,14 +72,14 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
               >
                 <div
                   className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-md relative ${
-                    !unlocked ? 'grayscale' : ''
+                    !unlocked ? 'brightness-0 opacity-50' : ''
                   }`}
-                  style={{ background: unlocked ? avatar.color : 'hsl(var(--muted))' }}
+                  style={{ background: avatar.color }}
                 >
                   <EmojiImg emoji={avatar.emoji} size={32} />
                   {!unlocked && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full">
-                      <Lock size={20} className="text-white" />
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full">
+                      <GameIcon name="lock" size={20} className="text-white/80" />
                     </div>
                   )}
                 </div>
@@ -97,7 +88,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
                 </span>
                 {isSelected && (
                   <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-                    <Check size={12} className="text-primary-foreground" />
+                    <GameIcon name="check" size={12} className="text-primary-foreground" />
                   </div>
                 )}
               </button>
@@ -109,13 +100,13 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
   }
 
   return (
-    <div className="fixed inset-0 z-[80] flex flex-col bg-background animate-fade-in overflow-auto">
+    <div className="fixed inset-0 z-[80] flex flex-col bg-background animate-fade-in overflow-auto" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
       <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
         <h2 className="text-xl font-black text-foreground">
           {lang === 'tr' ? 'Profil' : 'Profile'}
         </h2>
         <button onClick={() => { playClickSound(); onClose(); }} className="p-2 rounded-full hover:bg-muted">
-          <X size={20} className="text-foreground" />
+          <GameIcon name="close" size={20} className="text-foreground" />
         </button>
       </div>
 
@@ -132,7 +123,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
             <EmojiImg emoji={currentAvatar.emoji} size={56} />
           </div>
           <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-md">
-            <Pencil size={14} className="text-primary-foreground" />
+            <GameIcon name="pencil" size={14} className="text-primary-foreground" />
           </div>
         </button>
 
@@ -149,7 +140,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
                 onKeyDown={e => e.key === 'Enter' && handleSaveName()}
               />
               <button onClick={handleSaveName} className="p-1.5 rounded-full bg-primary">
-                <Check size={14} className="text-primary-foreground" />
+                <GameIcon name="check" size={14} className="text-primary-foreground" />
               </button>
             </div>
           ) : (
@@ -159,7 +150,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
                 onClick={() => { setTempName(profile.nickname); setEditingName(true); }}
                 className="p-1 rounded-full hover:bg-muted"
               >
-                <Pencil size={14} className="text-muted-foreground" />
+                <GameIcon name="pencil" size={14} className="text-muted-foreground" />
               </button>
             </>
           )}
@@ -184,6 +175,11 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
             emoji="🎮"
             label={lang === 'tr' ? 'Oyun Sayısı' : 'Games Played'}
             value={String(profile.gamesPlayed)}
+          />
+          <StatRow
+            emoji="📖"
+            label={lang === 'tr' ? 'Keşfedilen Kart' : 'Cards Discovered'}
+            value={`${getSeenCards().size} / ${eventCards.length}`}
           />
         </div>
 

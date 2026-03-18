@@ -6,19 +6,15 @@ import { useState, useEffect, useRef } from 'react';
 import { playBribeSound } from '@/hooks/useSound';
 import { EmojiImg, EmojiText } from '@/components/EmojiImg';
 
-import factionHalk from '@/assets/faction-halk.jpg';
-import factionYatirimcilar from '@/assets/faction-yatirimcilar.jpg';
-import factionMafya from '@/assets/faction-mafya.jpg';
-import factionTarikat from '@/assets/faction-tarikat.jpg';
-import factionOrdu from '@/assets/faction-ordu.jpg';
+import { GameImages } from '@/config/assets';
 import { getRandomBribeText } from '@/data/bribeTexts';
 
 const FACTION_IMAGES: Record<PowerType, string> = {
-  halk: factionHalk,
-  yatirimcilar: factionYatirimcilar,
-  mafya: factionMafya,
-  tarikat: factionTarikat,
-  ordu: factionOrdu,
+  halk:         GameImages.faction_halk,
+  yatirimcilar: GameImages.faction_yatirimcilar,
+  mafya:        GameImages.faction_mafya,
+  tarikat:      GameImages.faction_tarikat,
+  ordu:         GameImages.faction_ordu,
 };
 
 interface PowerBarsProps {
@@ -84,7 +80,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
     return 'hsl(199 89% 48%)';
   };
 
-  const isAffected = (p: PowerType) => activeEffects.some(e => e.power === p);
+  const isAffected = (p: PowerType) => activeEffects.some(e => e.power === p && e.amount !== 0);
   const getEffectDirection = (p: PowerType) => {
     const effect = activeEffects.find(e => e.power === p);
     if (!effect) return null;
@@ -125,7 +121,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         {projectedMoney != null && (
           <span className={cn(
             "text-xs font-bold italic transition-opacity",
-            projectedMoney > 0 ? 'text-game-success-light' : 'text-game-danger-light'
+            projectedMoney > 0 ? 'text-emerald-700 dark:text-game-success-light' : 'text-red-600 dark:text-game-danger-light'
           )}>
             → {money + projectedMoney}B ({projectedMoney > 0 ? '+' : ''}{projectedMoney})
           </span>
@@ -133,7 +129,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         {projectedMoney == null && lastMoneyChange !== null && lastMoneyChange !== undefined && (
           <span className={cn(
             "text-xs font-bold animate-bounce",
-            lastMoneyChange > 0 ? 'text-game-success' : 'text-game-danger'
+            lastMoneyChange > 0 ? 'text-emerald-700 dark:text-game-success' : 'text-red-600 dark:text-game-danger'
           )}>
             {lastMoneyChange > 0 ? '+' : ''}{lastMoneyChange}B
           </span>

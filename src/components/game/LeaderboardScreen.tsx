@@ -4,8 +4,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
-import { X } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { GameIcon } from '@/components/GameIcon';
+import { useMetaGame } from '@/contexts/MetaGameContext';
+import { useAppleSignIn } from '@/hooks/useAppleSignIn';
 
 interface MockPlayer {
   id: string;
@@ -36,24 +37,24 @@ interface LeaderboardScreenProps {
 
 export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: LeaderboardScreenProps) {
   const { lang } = useLanguage();
+  const { totalEarnedAP } = useMetaGame();
+  const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked } = useAppleSignIn();
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState<MockPlayer[]>([]);
+  const [showLinkedModal, setShowLinkedModal] = useState(false);
 
   useEffect(() => {
-    // Build combined list with player
     const playerEntry: MockPlayer = {
       id: 'player',
       nickname: userProfile.nickname || (lang === 'tr' ? 'Oyuncu' : 'Player'),
       avatarId: userProfile.avatarId,
-      totalAP: userProfile.totalAP,
+      totalAP: totalEarnedAP,
       isPlayer: true,
     };
     const all = [...MOCK_PLAYERS, playerEntry].sort((a, b) => b.totalAP - a.totalAP);
-    setTimeout(() => {
-      setEntries(all);
-      setLoading(false);
-    }, 400);
-  }, [userProfile, lang]);
+    setEntries(all);
+    setLoading(false);
+  }, [userProfile, lang, totalEarnedAP]);
 
   const getMedal = (i: number) => {
     if (i === 0) return '🥇';
@@ -64,20 +65,39 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
 
   const getAvatarDef = (avatarId: string) => AVATAR_DEFS.find(a => a.id === avatarId) || AVATAR_DEFS[0];
 
-  const handleAppleSignIn = () => {
+  const handleAppleSignIn = async () => {
     playClickSound();
     hapticMedium();
-    onUpdateProfile({ isAppleLinked: true } as any);
-    toast({
-      title: lang === 'tr' ? '✅ Hesap Bağlandı' : '✅ Account Linked',
-      description: lang === 'tr' ? 'Apple hesabınız başarıyla bağlandı!' : 'Your Apple account has been linked successfully!',
-    });
+    const data = await appleSignIn();
+    if (data) {
+      onUpdateProfile({ isAppleLinked: true } as any);
+      setShowLinkedModal(true);
+    }
   };
 
   const playerRank = entries.findIndex(e => e.isPlayer) + 1;
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 animate-fade-in p-4">
+      {showLinkedModal && (
+        <div
+          className="fixed inset-0 z-[110] flex items-center justify-center"
+          onClick={() => setShowLinkedModal(false)}
+        >
+          <div className="bg-card border-2 border-green-500/50 rounded-2xl p-8 mx-6 max-w-sm w-full shadow-2xl text-center animate-in zoom-in-95 duration-200">
+            <div className="text-5xl mb-3">✅</div>
+            <h3 className="text-lg font-black text-foreground mb-1">
+              {lang === 'tr' ? 'Hesap Bağlandı!' : 'Account Linked!'}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {lang === 'tr' ? 'Apple hesabınız başarıyla bağlandı.' : 'Your Apple account has been linked successfully.'}
+            </p>
+            <p className="text-xs text-muted-foreground/50 mt-4">
+              {lang === 'tr' ? 'Kapatmak için dokun' : 'Tap to close'}
+            </p>
+          </div>
+        </div>
+      )}
       <div className="bg-card border-2 border-border rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="p-4 border-b border-border flex items-center justify-between shrink-0">
@@ -86,13 +106,13 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
             {lang === 'tr' ? 'Liderlik Tablosu' : 'Leaderboard'}
           </h2>
           <button onClick={() => { playClickSound(); onClose(); }} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-foreground active:scale-90 transition-transform">
-            <X size={16} />
+            <GameIcon name="close" size={16} />
           </button>
         </div>
 
         {/* Apple Sign In / Status */}
         <div className="px-4 py-2.5 border-b border-border shrink-0">
-          {(userProfile as any).isAppleLinked ? (
+          {appleLinked ? (
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-full bg-foreground flex items-center justify-center">
                 <svg viewBox="0 0 24 24" className="w-3 h-3 text-background" fill="currentColor">
@@ -107,12 +127,15 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
           ) : (
             <button
               onClick={handleAppleSignIn}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95 bg-foreground text-background"
+              disabled={appleLoading}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95 bg-foreground text-background disabled:opacity-60"
             >
               <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
                 <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
               </svg>
-              {lang === 'tr' ? 'Apple ile Giriş Yap' : 'Sign in with Apple'}
+              {appleLoading
+                ? (lang === 'tr' ? 'Bağlanıyor...' : 'Connecting...')
+                : (lang === 'tr' ? 'Apple ile Giriş Yap' : 'Sign in with Apple')}
             </button>
           )}
         </div>

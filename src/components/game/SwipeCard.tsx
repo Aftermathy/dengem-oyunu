@@ -4,8 +4,9 @@ import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { EmojiImg } from '@/components/EmojiImg';
 import { playSwipeSound } from '@/hooks/useSound';
-import arrowLeft from '@/assets/arrow-left.svg';
-import arrowRight from '@/assets/arrow-right.svg';
+import { GameImages } from '@/config/assets';
+const arrowLeft = GameImages.arrow_left;
+const arrowRight = GameImages.arrow_right;
 
 interface SwipeCardProps {
   card: EventCard;

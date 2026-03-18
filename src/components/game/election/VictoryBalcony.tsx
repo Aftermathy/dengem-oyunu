@@ -1,7 +1,8 @@
 import { EmojiImg } from '@/components/EmojiImg';
 import { ElectionLabels, ConfettiOverlay } from './electionUtils';
 import { playClickSound } from '@/hooks/useSound';
-import victoryBalconyImg from '@/assets/victory-balcony.jpg';
+import { GameImages } from '@/config/assets';
+const victoryBalconyImg = GameImages.victory_balcony;
 
 interface VictoryBalconyProps {
   displayPlayerVote: number;

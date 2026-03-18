@@ -1,20 +1,16 @@
 import { useEffect } from 'react';
 import { PowerType } from '@/types/game';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { playWarningSound } from '@/hooks/useSound';
+import { playWarningSound, playClickSound } from '@/hooks/useSound';
 import { EmojiImg } from '@/components/EmojiImg';
-import factionHalk from '@/assets/faction-halk.jpg';
-import factionYatirimcilar from '@/assets/faction-yatirimcilar.jpg';
-import factionMafya from '@/assets/faction-mafya.jpg';
-import factionTarikat from '@/assets/faction-tarikat.jpg';
-import factionOrdu from '@/assets/faction-ordu.jpg';
+import { GameImages } from '@/config/assets';
 
 const factionImages: Record<PowerType, string> = {
-  halk: factionHalk,
-  yatirimcilar: factionYatirimcilar,
-  mafya: factionMafya,
-  tarikat: factionTarikat,
-  ordu: factionOrdu,
+  halk:         GameImages.faction_halk,
+  yatirimcilar: GameImages.faction_yatirimcilar,
+  mafya:        GameImages.faction_mafya,
+  tarikat:      GameImages.faction_tarikat,
+  ordu:         GameImages.faction_ordu,
 };
 
 interface BribeTutorialProps {
@@ -45,13 +41,13 @@ export function BribeTutorial({ faction, onBribe, onSkip }: BribeTutorialProps) 
         
         <div className="flex flex-col gap-2">
           <button
-            onClick={onBribe}
+            onClick={() => { playClickSound(); onBribe(); }}
             className="w-full py-2.5 px-4 rounded-lg bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-colors"
           >
             {t('tutorial.bribe')}
           </button>
           <button
-            onClick={onSkip}
+            onClick={() => { playClickSound(); onSkip(); }}
             className="w-full py-2 px-4 rounded-lg bg-secondary text-secondary-foreground text-sm hover:bg-secondary/80 transition-colors"
           >
             {t('tutorial.skip')}

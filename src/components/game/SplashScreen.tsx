@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import splashBg from '@/assets/splash-bg.jpg';
+import { GameImages } from '@/config/assets';
+const splashBg = GameImages.splash_bg;
 import { EmojiImg } from '@/components/EmojiImg';
 
 interface SplashScreenProps {

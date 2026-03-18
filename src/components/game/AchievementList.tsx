@@ -6,8 +6,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
-import { Flame } from 'lucide-react';
+import { GameIcon } from '@/components/GameIcon';
 import { AVATAR_DEFS } from '@/lib/userProfile';
+import { AvatarRewardModal } from '@/components/game/AvatarRewardModal';
 
 // Build reverse map: achievementId -> avatar def
 const ACHIEVEMENT_AVATAR_MAP = new Map(
@@ -22,13 +23,15 @@ const OHAL_UNLOCK_MAP: Record<string, { nextLevel: number; labelTR: string; labe
 
 interface AchievementListProps {
   onClose: () => void;
+  onEquipAvatar?: (avatarId: string) => void;
 }
 
-export function AchievementList({ onClose }: AchievementListProps) {
+export function AchievementList({ onClose, onEquipAvatar }: AchievementListProps) {
   const { lang } = useLanguage();
   const { claimAchievement, isAchievementClaimed, authorityPoints } = useMetaGame();
   const unlocked = getUnlockedIds();
   const [claimingId, setClaimingId] = useState<string | null>(null);
+  const [pendingRewardAvatarId, setPendingRewardAvatarId] = useState<string | null>(null);
 
   const unlockedCount = unlocked.length;
   const totalCount = ACHIEVEMENTS.length;
@@ -43,6 +46,10 @@ export function AchievementList({ onClose }: AchievementListProps) {
     setClaimingId(a.id);
     claimAchievement(a.id, a.apReward);
     setTimeout(() => setClaimingId(null), 700);
+    const avatarReward = ACHIEVEMENT_AVATAR_MAP.get(a.id);
+    if (avatarReward) {
+      setPendingRewardAvatarId(avatarReward.id);
+    }
   };
 
   return (
@@ -87,6 +94,17 @@ export function AchievementList({ onClose }: AchievementListProps) {
           />
         </div>
       </div>
+
+      {pendingRewardAvatarId && (
+        <AvatarRewardModal
+          avatarId={pendingRewardAvatarId}
+          onEquip={() => {
+            onEquipAvatar?.(pendingRewardAvatarId);
+            setPendingRewardAvatarId(null);
+          }}
+          onClose={() => setPendingRewardAvatarId(null)}
+        />
+      )}
 
       {/* Achievement list */}
       <div className="flex-1 overflow-y-auto px-4 pb-[env(safe-area-inset-bottom,16px)]">
@@ -192,7 +210,7 @@ function AchievementRow({
                 border: '1px solid hsl(15 90% 50% / 0.3)',
               }}
             >
-              <Flame size={10} style={{ color: 'hsl(15 90% 55%)' }} />
+              <GameIcon name="flame" size={10} style={{ color: 'hsl(15 90% 55%)' }} />
               <span className="text-[9px] font-bold" style={{ color: 'hsl(15 90% 55%)' }}>
                 {lang === 'en' ? ohalUnlock.labelEN : ohalUnlock.labelTR}
               </span>
@@ -220,26 +238,28 @@ function AchievementRow({
       {canClaim ? (
         <button
           onClick={onClaim}
-          className="shrink-0 bg-game-gold/20 border border-game-gold/40 text-game-gold text-[11px] font-bold px-2.5 py-1.5 rounded-lg active:scale-90 transition-all hover:bg-game-gold/30"
+          className="shrink-0 rounded-xl active:scale-90 transition-all animate-pulse"
+          style={{
+            background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+            boxShadow: '0 0 14px rgba(251,191,36,0.6)',
+            padding: '7px 10px',
+          }}
         >
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 text-black font-black text-[11px]">
             <EmojiImg emoji="⭐" size={11} />
-            <span>+{achievement.apReward}</span>
+            <span>{lang === 'tr' ? 'Al!' : 'Claim!'}</span>
+            <span className="text-[10px] font-bold">+{achievement.apReward}</span>
           </div>
-          {ohalUnlock && (
-            <div className="flex items-center gap-0.5 mt-0.5">
-              <Flame size={9} style={{ color: 'hsl(15 90% 55%)' }} />
-              <span className="text-[8px]" style={{ color: 'hsl(15 90% 55%)' }}>
-                +OHAL {ohalUnlock.nextLevel}
-              </span>
-            </div>
-          )}
           {avatarReward && (
             <div className="flex items-center gap-0.5 mt-0.5">
               <EmojiImg emoji={avatarReward.emoji} size={9} />
-              <span className="text-[8px]" style={{ color: 'hsl(270 60% 60%)' }}>
-                +Avatar
-              </span>
+              <span className="text-[8px] font-bold text-black/70">+Avatar</span>
+            </div>
+          )}
+          {ohalUnlock && (
+            <div className="flex items-center gap-0.5 mt-0.5">
+              <GameIcon name="flame" size={9} className="text-black/70" />
+              <span className="text-[8px] font-bold text-black/70">+OHAL {ohalUnlock.nextLevel}</span>
             </div>
           )}
         </button>

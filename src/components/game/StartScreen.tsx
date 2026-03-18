@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound, playWarStartSound } from '@/hooks/useSound';
 import { EmojiImg } from '@/components/EmojiImg';
-import throneIcon from '@/assets/throne-icon.png';
+import { GameImages } from '@/config/assets';
+const throneIcon = GameImages.throne_icon;
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 import { Switch } from '@/components/ui/switch';
-import { Moon, Sun } from 'lucide-react';
+import { GameIcon } from '@/components/GameIcon';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
@@ -42,10 +43,11 @@ interface StartScreenProps {
   onContinue?: () => void;
   onShowProfile?: () => void;
   onShowLeaderboard?: () => void;
+  onEquipAvatar?: (avatarId: string) => void;
   userProfile?: UserProfile;
 }
 
-export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onShowLeaderboard, userProfile }: StartScreenProps) {
+export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onShowLeaderboard, onEquipAvatar, userProfile }: StartScreenProps) {
   const { lang, setLang, t } = useLanguage();
   const { authorityPoints } = useMetaGame();
   const [titleIndex, setTitleIndex] = useState(0);
@@ -54,6 +56,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
   const [throneAnim, setThroneAnim] = useState('');
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
   const [showDarkWarning, setShowDarkWarning] = useState(false);
+  const [showNewGameConfirm, setShowNewGameConfirm] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showSkillTree, setShowSkillTree] = useState(false);
 
@@ -130,44 +133,47 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
   return (
     <div className="flex flex-col items-center p-4 text-center animate-fade-in h-[100dvh] overflow-hidden pt-safe-plus-1 pb-safe">
       {/* Top bar */}
-      <div className="flex items-center justify-between w-full shrink-0 mb-1">
-        <div className="flex gap-1 bg-muted rounded-full p-1">
-          <button
-            onClick={() => {playClickSound();setLang('tr');}}
-            className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
-            lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
-            }>
-            TR
-          </button>
-          <button
-            onClick={() => {playClickSound();setLang('en');}}
-            className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
-            lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
-            }>
-            EN
-          </button>
-        </div>
+      <div className="flex items-start justify-between w-full shrink-0 mb-1">
+        <div className="flex flex-col items-start gap-2">
+          <div className="flex gap-1 bg-muted rounded-full p-1">
+            <button
+              onClick={() => {playClickSound();setLang('tr');}}
+              className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
+              lang === 'tr' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+              }>
+              TR
+            </button>
+            <button
+              onClick={() => {playClickSound();setLang('en');}}
+              className={`px-3 py-1 rounded-full text-sm font-bold transition-colors ${
+              lang === 'en' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+              }>
+              EN
+            </button>
+          </div>
 
-        <div className="flex items-center gap-2">
           {userProfile?.hasCompletedOnboarding && onShowProfile && (() => {
             const av = AVATAR_DEFS.find(a => a.id === userProfile.avatarId);
             return (
               <button
                 onClick={() => { playClickSound(); hapticLight(); onShowProfile(); }}
-                className="w-9 h-9 rounded-full flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors"
-                style={{ background: av?.color || 'hsl(var(--muted))' }}
+                className="w-18 h-18 rounded-full flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors"
+                style={{ width: 72, height: 72, background: av?.color || 'hsl(var(--muted))' }}
               >
-                <EmojiImg emoji={av?.emoji || '👤'} size={20} />
+                <EmojiImg emoji={av?.emoji || '👤'} size={40} />
               </button>
             );
           })()}
-          <div className="bg-game-gold/15 border border-game-gold/30 rounded-full px-2.5 py-1 flex items-center gap-1">
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="bg-purple-500/15 border border-purple-500/30 rounded-full px-2.5 py-1 flex items-center gap-1">
             <EmojiImg emoji="⭐" size={13} />
-            <span className="text-xs font-bold text-game-gold">{authorityPoints}</span>
+            <span className="text-xs font-bold text-purple-400">{authorityPoints}</span>
           </div>
-          <Sun className="w-4 h-4 text-muted-foreground" />
+          <GameIcon name="sun" size={16} className="text-muted-foreground" />
           <Switch checked={isDark} onCheckedChange={toggleDarkMode} />
-          <Moon className="w-4 h-4 text-muted-foreground" />
+          <GameIcon name="moon" size={16} className="text-muted-foreground" />
         </div>
       </div>
 
@@ -204,7 +210,15 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
         <div className="flex flex-col items-center gap-3 w-full max-w-[240px]">
           <Button
             size="lg"
-            onClick={() => {playWarStartSound();onStart();}}
+            onClick={() => {
+              if (hasSavedGame()) {
+                playClickSound();
+                setShowNewGameConfirm(true);
+              } else {
+                playWarStartSound();
+                onStart();
+              }
+            }}
             className="w-full text-lg py-5 font-bold shadow-lg hover:shadow-xl transition-shadow justify-center">
             {t('start.play')}
           </Button>
@@ -238,13 +252,15 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
               {lang === 'tr' ? 'Yetenekler' : 'Skills'}
             </button>
             <span className="text-muted-foreground/30">|</span>
-            <button
-              onClick={() => { playClickSound(); hapticLight(); onShowLeaderboard?.(); }}
-              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
-            >
-              <EmojiImg emoji="🏆" size={16} />
-              {lang === 'tr' ? 'Sıralama' : 'Leaderboard'}
-            </button>
+            {userProfile?.hasCompletedOnboarding && (
+              <button
+                onClick={() => { playClickSound(); hapticLight(); onShowLeaderboard?.(); }}
+                className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+              >
+                <EmojiImg emoji="🏆" size={16} />
+                {lang === 'tr' ? 'Sıralama' : 'Leaderboard'}
+              </button>
+            )}
           </div>
         </div>
 
@@ -293,8 +309,38 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
         </div>
       )}
 
+      {showNewGameConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-game-overlay/80 animate-fade-in p-6" onClick={() => setShowNewGameConfirm(false)}>
+          <div className="bg-card border-2 border-destructive/50 rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl" onClick={e => e.stopPropagation()}>
+            <EmojiImg emoji="⚠️" size={44} className="mx-auto mb-3" />
+            <h3 className="text-lg font-black text-foreground mb-2">
+              {lang === 'tr' ? 'Mevcut Oyun Sona Erer' : 'Current Game Will End'}
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+              {lang === 'tr'
+                ? 'Yeni oyun başlatırsan mevcut oyunun sona erer. Kazandığın AP ve kart tecrübelerin profiline eklenir.'
+                : 'Starting a new game ends your current run. Earned AP and card knowledge will be saved to your profile.'}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowNewGameConfirm(false)}
+                className="flex-1 py-2.5 rounded-xl font-bold text-sm bg-muted text-foreground active:scale-95 transition-all"
+              >
+                {lang === 'tr' ? 'İptal' : 'Cancel'}
+              </button>
+              <button
+                onClick={() => { setShowNewGameConfirm(false); playWarStartSound(); onStart(); }}
+                className="flex-1 py-2.5 rounded-xl font-bold text-sm bg-destructive text-destructive-foreground active:scale-95 transition-all"
+              >
+                {lang === 'tr' ? 'Yeni Oyun' : 'New Game'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showAchievements && (
-        <AchievementList onClose={() => setShowAchievements(false)} />
+        <AchievementList onClose={() => setShowAchievements(false)} onEquipAvatar={onEquipAvatar} />
       )}
 
       {showSkillTree && (

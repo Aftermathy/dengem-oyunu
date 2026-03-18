@@ -1,8 +1,9 @@
 import { EmojiImg } from '@/components/EmojiImg';
 import { ElectionLabels, ConfettiOverlay, AnimatedVote } from './electionUtils';
 import { playClickSound } from '@/hooks/useSound';
-import defeatElectionImg from '@/assets/defeat-election.jpg';
-import { Star } from 'lucide-react';
+import { GameImages } from '@/config/assets';
+import { GameIcon } from '@/components/GameIcon';
+const defeatElectionImg = GameImages.defeat_election;
 
 interface ElectionResultProps {
   won: boolean;
@@ -59,7 +60,7 @@ export function ElectionResultScreen({ won, playerVote, labels, lang, earnedAP =
                 boxShadow: '0 0 15px hsl(45 90% 50% / 0.15)',
               }}
             >
-              <Star size={16} style={{ color: 'hsl(45 93% 58%)', fill: 'hsl(45 93% 58%)' }} />
+              <GameIcon name="star" size={16} style={{ color: 'hsl(45 93% 58%)', fill: 'hsl(45 93% 58%)' }} />
               <div>
                 <span className="font-black text-sm" style={{ color: 'hsl(45 93% 58%)' }}>+{earnedAP} AP</span>
                 <span className="text-[10px] ml-1.5" style={{ color: 'hsl(45 60% 50% / 0.7)' }}>
