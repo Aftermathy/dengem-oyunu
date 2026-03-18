@@ -5,7 +5,6 @@ import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { GameIcon } from '@/components/GameIcon';
-import { useMetaGame } from '@/contexts/MetaGameContext';
 import { useAppleSignIn } from '@/hooks/useAppleSignIn';
 
 interface MockPlayer {
@@ -37,7 +36,6 @@ interface LeaderboardScreenProps {
 
 export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: LeaderboardScreenProps) {
   const { lang } = useLanguage();
-  const { authorityPoints: totalEarnedAP } = useMetaGame();
   const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked } = useAppleSignIn();
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState<MockPlayer[]>([]);
@@ -48,13 +46,13 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
       id: 'player',
       nickname: userProfile.nickname || (lang === 'tr' ? 'Oyuncu' : 'Player'),
       avatarId: userProfile.avatarId,
-      totalAP: totalEarnedAP,
+      totalAP: userProfile.totalAP,
       isPlayer: true,
     };
     const all = [...MOCK_PLAYERS, playerEntry].sort((a, b) => b.totalAP - a.totalAP);
     setEntries(all);
     setLoading(false);
-  }, [userProfile, lang, totalEarnedAP]);
+  }, [userProfile, lang]);
 
   const getMedal = (i: number) => {
     if (i === 0) return '🥇';

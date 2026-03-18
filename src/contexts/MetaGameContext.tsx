@@ -1,14 +1,15 @@
 import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
 import { ActiveModifiers, computeModifiers, SKILL_DEFS, hasAnyNonOhalSkill, hasOhalActive } from '@/types/metaGame';
 import {
-  loadAP, saveAP,
   loadSkillLevels, saveSkillLevels,
   loadClaimedAchievements, saveClaimedAchievements,
 } from '@/lib/metaGame';
+import { useUserProfile } from '@/contexts/UserProfileContext';
 
 export type SkillLockReason = 'ohal_blocks_others' | 'others_block_ohal' | null;
 
 interface MetaGameContextValue {
+  /** Spendable AP = userProfile.totalAP - totalSpentOnSkills */
   authorityPoints: number;
   skillLevels: Record<string, number>;
   claimedAchievements: string[];
@@ -29,8 +30,20 @@ interface MetaGameContextValue {
 
 const MetaGameContext = createContext<MetaGameContextValue | null>(null);
 
+/** Calculate total AP spent on skills */
+function calcTotalSpent(skills: Record<string, number>): number {
+  let total = 0;
+  for (const def of SKILL_DEFS) {
+    const level = skills[def.id] || 0;
+    for (let i = 0; i < level; i++) {
+      total += def.costs[i];
+    }
+  }
+  return total;
+}
+
 export function MetaGameProvider({ children }: { children: ReactNode }) {
-  const [ap, setAP] = useState(loadAP);
+  const { userProfile, addAP } = useUserProfile();
   const [skills, setSkills] = useState(loadSkillLevels);
   const [claimed, setClaimed] = useState(loadClaimedAchievements);
   const [crisisUsed, setCrisisUsed] = useState(false);
@@ -38,14 +51,16 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
 
   const modifiers = useMemo(() => computeModifiers(skills), [skills]);
 
+  // Spendable AP derived from single source of truth
+  const authorityPoints = useMemo(
+    () => userProfile.totalAP - calcTotalSpent(skills),
+    [userProfile.totalAP, skills]
+  );
+
+  // earnAP now delegates to UserProfileContext (updates userProfile.totalAP)
   const earnAP = useCallback((amount: number) => {
-    if (amount <= 0) return;
-    setAP(prev => {
-      const next = prev + amount;
-      saveAP(next);
-      return next;
-    });
-  }, []);
+    addAP(amount);
+  }, [addAP]);
 
   const claimAchievement = useCallback((id: string, reward: number) => {
     setClaimed(prev => {
@@ -59,16 +74,12 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
 
   const isAchievementClaimed = useCallback((id: string) => claimed.includes(id), [claimed]);
 
-  // Mutual exclusion: OHAL locks other skills, other skills lock OHAL
   const getSkillLockReason = useCallback((skillId: string): SkillLockReason => {
     const def = SKILL_DEFS.find(s => s.id === skillId);
     if (!def) return null;
-
     if (def.category === 'ohal') {
-      // Can't activate OHAL if any other skill is purchased
       if (hasAnyNonOhalSkill(skills)) return 'others_block_ohal';
     } else {
-      // Can't purchase other skills if OHAL is active
       if (hasOhalActive(skills)) return 'ohal_blocks_others';
     }
     return null;
@@ -80,7 +91,6 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
     const currentLevel = skills[skillId] || 0;
     if (currentLevel >= def.maxLevel) return false;
 
-    // Check mutual exclusion
     if (def.category === 'ohal') {
       if (hasAnyNonOhalSkill(skills)) return false;
     } else {
@@ -88,47 +98,29 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
     }
 
     const cost = def.costs[currentLevel];
-    if (cost > 0 && ap < cost) return false;
+    // Check spendable balance (derived)
+    const spendable = userProfile.totalAP - calcTotalSpent(skills);
+    if (cost > 0 && spendable < cost) return false;
 
-    if (cost > 0) {
-      setAP(prev => {
-        const next = prev - cost;
-        saveAP(next);
-        return next;
-      });
-    }
+    // Just update skill levels — spendable balance is derived automatically
     setSkills(prev => {
       const next = { ...prev, [skillId]: currentLevel + 1 };
       saveSkillLevels(next);
       return next;
     });
     return true;
-  }, [ap, skills]);
+  }, [skills, userProfile.totalAP]);
 
   const getSkillLevel = useCallback((skillId: string) => skills[skillId] || 0, [skills]);
 
-  // Reset all skills and refund all spent AP (reusable, no limit)
   const resetAllSkills = useCallback(() => {
-    let totalRefund = 0;
-    for (const def of SKILL_DEFS) {
-      const level = skills[def.id] || 0;
-      for (let i = 0; i < level; i++) {
-        totalRefund += def.costs[i];
-      }
-    }
+    // No AP refund needed — spendable balance is derived, so resetting skills automatically "refunds"
     setSkills(() => {
       const empty: Record<string, number> = {};
       saveSkillLevels(empty);
       return empty;
     });
-    if (totalRefund > 0) {
-      setAP(prev => {
-        const next = prev + totalRefund;
-        saveAP(next);
-        return next;
-      });
-    }
-  }, [skills]);
+  }, []);
 
   const useCrisisJoker = useCallback(() => setCrisisUsed(true), []);
   const useEmergencyFund = useCallback(() => setEmergencyFundUsed(true), []);
@@ -138,7 +130,7 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<MetaGameContextValue>(() => ({
-    authorityPoints: ap,
+    authorityPoints,
     skillLevels: skills,
     claimedAchievements: claimed,
     modifiers,
@@ -154,7 +146,7 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
     emergencyFundAvailableThisGame: modifiers.hasEmergencyFund && !emergencyFundUsed,
     useEmergencyFund,
     resetGameSession,
-  }), [ap, skills, claimed, modifiers, earnAP, claimAchievement, isAchievementClaimed, purchaseSkill, getSkillLevel, getSkillLockReason, resetAllSkills, crisisUsed, useCrisisJoker, emergencyFundUsed, useEmergencyFund, resetGameSession]);
+  }), [authorityPoints, skills, claimed, modifiers, earnAP, claimAchievement, isAchievementClaimed, purchaseSkill, getSkillLevel, getSkillLockReason, resetAllSkills, crisisUsed, useCrisisJoker, emergencyFundUsed, useEmergencyFund, resetGameSession]);
 
   return <MetaGameContext.Provider value={value}>{children}</MetaGameContext.Provider>;
 }
