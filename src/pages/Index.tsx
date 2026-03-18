@@ -46,7 +46,7 @@ const Index = () => {
     crisisAlertType, clearCrisisAlert,
     ohalLevel,
   } = useGame(lang);
-  const { modifiers, earnAP } = useMetaGame();
+  const { modifiers } = useMetaGame();
   const { userProfile, updateProfile } = useUserProfile();
   const electionCostFactor = modifiers.ohalElectionCostMult ?? 1;
   const offshoreRate = modifiers.offshoreRate ?? 0;
