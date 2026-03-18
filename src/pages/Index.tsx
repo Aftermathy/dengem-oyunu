@@ -23,8 +23,8 @@ import { ProfileScreen } from '@/components/game/ProfileScreen';
 import { LeaderboardScreen } from '@/components/game/LeaderboardScreen';
 import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
 import { useMetaGame } from '@/contexts/MetaGameContext';
+import { useUserProfile } from '@/contexts/UserProfileContext';
 import { STORAGE_KEYS } from '@/constants/storage';
-import { loadUserProfile, saveUserProfile, type UserProfile } from '@/lib/userProfile';
 import { hasSavedGame, loadGame } from '@/lib/gameSave';
 import { GameIcon } from '@/components/GameIcon';
 
@@ -46,17 +46,16 @@ const Index = () => {
     crisisAlertType, clearCrisisAlert,
     ohalLevel,
   } = useGame(lang);
-  const { modifiers } = useMetaGame();
-  const electionCostFactor = modifiers.electionCostMult ?? 1;
+  const { modifiers, earnAP } = useMetaGame();
+  const { userProfile, updateProfile } = useUserProfile();
+  const electionCostFactor = modifiers.ohalElectionCostMult ?? 1;
   const offshoreRate = modifiers.offshoreRate ?? 0;
-
 
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
   const [showKnowledgeAnnouncement, setShowKnowledgeAnnouncement] = useState(false);
   const [showTutorialAsk, setShowTutorialAsk] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile>(loadUserProfile);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
@@ -81,18 +80,23 @@ const Index = () => {
     }
   }, [phase, goToMenu]);
 
+  /** Update profile stats at end of game (turns + games count). AP is handled by earnAP in useGame. */
+  const recordGameEnd = useCallback(() => {
+    updateProfile({
+      totalTurns: userProfile.totalTurns + turn,
+      gamesPlayed: userProfile.gamesPlayed + 1,
+    });
+  }, [updateProfile, userProfile.totalTurns, userProfile.gamesPlayed, turn]);
+
   const handleStartGame = useCallback(() => {
-    // If there's an abandoned saved game, award its AP to profile before clearing
+    // If there's an abandoned saved game, update profile stats
     if (hasSavedGame()) {
       const abandoned = loadGame();
       if (abandoned && abandoned.turn > 0) {
-        const updated = {
-          ...userProfile,
+        updateProfile({
           totalTurns: userProfile.totalTurns + abandoned.turn,
           gamesPlayed: userProfile.gamesPlayed + 1,
-        };
-        setUserProfile(updated);
-        saveUserProfile(updated);
+        });
       }
     }
     startGame();
@@ -101,7 +105,7 @@ const Index = () => {
     if (neverDeclined && firstTimer) {
       setShowTutorialAsk(true);
     }
-  }, [startGame, userProfile]);
+  }, [startGame, userProfile, updateProfile]);
 
   return (
     <div className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none overscroll-none pt-safe" onContextMenu={e => e.preventDefault()}>
@@ -120,11 +124,7 @@ const Index = () => {
           onContinue={continueGame}
           onShowProfile={() => setShowProfile(true)}
           onShowLeaderboard={() => setShowLeaderboard(true)}
-          onEquipAvatar={(avatarId) => {
-            const updated = { ...userProfile, avatarId };
-            setUserProfile(updated);
-            saveUserProfile(updated);
-          }}
+          onEquipAvatar={(avatarId) => updateProfile({ avatarId })}
           userProfile={userProfile}
         />
       )}
@@ -164,7 +164,6 @@ const Index = () => {
                   <EmojiImg emoji="🗳️" size={11} className="mr-0.5" /> {nextElectionInfo.year} {lang === 'en' ? 'Election' : 'Seçimi'}: {nextElectionInfo.turnsLeft} {lang === 'en' ? 'turns' : 'tur'}
                 </span>
               )}
-              {/* OHAL indicator */}
               {ohalLevel > 0 && (
                 <span className="text-[10px] font-black mt-0.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full"
                   style={{
@@ -221,15 +220,7 @@ const Index = () => {
           lang={lang}
           costFactor={electionCostFactor}
           onComplete={(result) => {
-            // Update profile stats on election completion (victory)
-            const updated = {
-              ...userProfile,
-              totalTurns: userProfile.totalTurns + turn,
-              totalAP: userProfile.totalAP + lastEarnedAP,
-              gamesPlayed: userProfile.gamesPlayed + 1,
-            };
-            setUserProfile(updated);
-            saveUserProfile(updated);
+            recordGameEnd();
             if (!userProfile.hasCompletedOnboarding) {
               setShowOnboarding(true);
               return;
@@ -238,14 +229,7 @@ const Index = () => {
           }}
           onLossDetected={handleElectionLoss}
           onRestart={() => {
-            const updated = {
-              ...userProfile,
-              totalTurns: userProfile.totalTurns + turn,
-              totalAP: userProfile.totalAP + lastEarnedAP,
-              gamesPlayed: userProfile.gamesPlayed + 1,
-            };
-            setUserProfile(updated);
-            saveUserProfile(updated);
+            recordGameEnd();
             if (!userProfile.hasCompletedOnboarding) {
               setShowOnboarding(true);
               return;
@@ -253,14 +237,7 @@ const Index = () => {
             startGame();
           }}
           onMainMenu={() => {
-            const updated = {
-              ...userProfile,
-              totalTurns: userProfile.totalTurns + turn,
-              totalAP: userProfile.totalAP + lastEarnedAP,
-              gamesPlayed: userProfile.gamesPlayed + 1,
-            };
-            setUserProfile(updated);
-            saveUserProfile(updated);
+            recordGameEnd();
             if (!userProfile.hasCompletedOnboarding) {
               setShowOnboarding(true);
               return;
@@ -284,16 +261,7 @@ const Index = () => {
           electionsWon={completedElections.length}
           earnedAP={lastEarnedAP}
           onRestart={() => {
-            // Update profile stats on game end
-            const updated = {
-              ...userProfile,
-              totalTurns: userProfile.totalTurns + turn,
-              totalAP: userProfile.totalAP + lastEarnedAP,
-              gamesPlayed: userProfile.gamesPlayed + 1,
-            };
-            setUserProfile(updated);
-            saveUserProfile(updated);
-            // Trigger onboarding on first game over if not completed
+            recordGameEnd();
             if (!userProfile.hasCompletedOnboarding) {
               setShowOnboarding(true);
               return;
@@ -301,15 +269,7 @@ const Index = () => {
             startGame();
           }}
           onMainMenu={() => {
-            // Update profile stats
-            const updated = {
-              ...userProfile,
-              totalTurns: userProfile.totalTurns + turn,
-              totalAP: userProfile.totalAP + lastEarnedAP,
-              gamesPlayed: userProfile.gamesPlayed + 1,
-            };
-            setUserProfile(updated);
-            saveUserProfile(updated);
+            recordGameEnd();
             if (!userProfile.hasCompletedOnboarding) {
               setShowOnboarding(true);
               return;
@@ -322,9 +282,7 @@ const Index = () => {
       {showOnboarding && (
         <OnboardingScreen
           onComplete={(nickname, avatarId) => {
-            const updated = { ...userProfile, nickname, avatarId, hasCompletedOnboarding: true };
-            setUserProfile(updated);
-            saveUserProfile(updated);
+            updateProfile({ nickname, avatarId, hasCompletedOnboarding: true });
             setShowOnboarding(false);
             handleGoToMenu();
           }}
@@ -334,11 +292,7 @@ const Index = () => {
       {showProfile && (
         <ProfileScreen
           profile={userProfile}
-          onUpdateProfile={(updates) => {
-            const updated = { ...userProfile, ...updates };
-            setUserProfile(updated);
-            saveUserProfile(updated);
-          }}
+          onUpdateProfile={updateProfile}
           onClose={() => setShowProfile(false)}
         />
       )}
@@ -346,11 +300,7 @@ const Index = () => {
       {showLeaderboard && (
         <LeaderboardScreen
           userProfile={userProfile}
-          onUpdateProfile={(updates) => {
-            const updated = { ...userProfile, ...updates };
-            setUserProfile(updated);
-            saveUserProfile(updated);
-          }}
+          onUpdateProfile={updateProfile}
           onClose={() => setShowLeaderboard(false)}
         />
       )}
@@ -378,7 +328,6 @@ const Index = () => {
         />
       )}
 
-      {/* Crisis / Emergency Fund Alert */}
       {crisisAlertType && (
         <CrisisAlert
           key={crisisAlertType}
