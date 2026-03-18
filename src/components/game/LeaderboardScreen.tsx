@@ -46,7 +46,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
       id: 'player',
       nickname: userProfile.nickname || (lang === 'tr' ? 'Oyuncu' : 'Player'),
       avatarId: userProfile.avatarId,
-      totalAP: totalEarnedAP,
+      totalAP: userProfile.totalAP,
       isPlayer: true,
     };
     const all = [...MOCK_PLAYERS, playerEntry].sort((a, b) => b.totalAP - a.totalAP);
