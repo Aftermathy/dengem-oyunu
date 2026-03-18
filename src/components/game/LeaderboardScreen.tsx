@@ -4,7 +4,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
-import { GameIcon } from '@/components/GameIcon';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { useAppleSignIn } from '@/hooks/useAppleSignIn';
 
