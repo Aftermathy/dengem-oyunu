@@ -45,10 +45,10 @@ const Index = () => {
     lastEarnedAP,
     crisisAlertType, clearCrisisAlert,
     ohalLevel,
-    electionCostFactor,
-    offshoreRate,
   } = useGame(lang);
   const { modifiers } = useMetaGame();
+  const electionCostFactor = modifiers.electionCostMult ?? 1;
+  const offshoreRate = modifiers.offshoreRate ?? 0;
 
 
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);

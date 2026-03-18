@@ -37,7 +37,7 @@ interface LeaderboardScreenProps {
 
 export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: LeaderboardScreenProps) {
   const { lang } = useLanguage();
-  const { totalEarnedAP } = useMetaGame();
+  const { authorityPoints: totalEarnedAP } = useMetaGame();
   const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked } = useAppleSignIn();
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState<MockPlayer[]>([]);
