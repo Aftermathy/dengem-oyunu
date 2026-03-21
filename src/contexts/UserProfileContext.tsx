@@ -33,7 +33,6 @@ async function syncProfileToSupabase(profile: UserProfile, userId: string): Prom
       avatar_id: profile.avatarId,
       total_ap: profile.totalAP,
       unlocked_avatars: profile.unlockedAvatars || [],
-      claimed_achievements: profile.claimedAchievements || [],
     };
     const { error } = await supabase
       .from('profiles')
