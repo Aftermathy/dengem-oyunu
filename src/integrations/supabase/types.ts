@@ -88,6 +88,7 @@ export type Database = {
           id: string
           nickname: string
           total_ap: number
+          unlocked_avatars: string[]
           updated_at: string
           user_id: string
         }
@@ -98,6 +99,7 @@ export type Database = {
           id?: string
           nickname?: string
           total_ap?: number
+          unlocked_avatars?: string[]
           updated_at?: string
           user_id: string
         }
@@ -108,6 +110,7 @@ export type Database = {
           id?: string
           nickname?: string
           total_ap?: number
+          unlocked_avatars?: string[]
           updated_at?: string
           user_id?: string
         }

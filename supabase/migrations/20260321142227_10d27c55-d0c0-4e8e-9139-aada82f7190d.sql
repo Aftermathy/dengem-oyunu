@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS unlocked_avatars text[] NOT NULL DEFAULT '{}';
