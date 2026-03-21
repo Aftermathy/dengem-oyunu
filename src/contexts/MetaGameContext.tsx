@@ -71,7 +71,12 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
       return next;
     });
     earnAP(reward);
-  }, [earnAP]);
+    // Auto-unlock associated avatar
+    const avatarId = getAvatarForAchievement(id);
+    if (avatarId) {
+      unlockAvatar(avatarId);
+    }
+  }, [earnAP, unlockAvatar]);
 
   const isAchievementClaimed = useCallback((id: string) => claimed.includes(id), [claimed]);
 
