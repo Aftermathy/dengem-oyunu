@@ -5,6 +5,7 @@ import {
   loadClaimedAchievements, saveClaimedAchievements,
 } from '@/lib/metaGame';
 import { useUserProfile } from '@/contexts/UserProfileContext';
+import { getAvatarForAchievement } from '@/lib/userProfile';
 
 export type SkillLockReason = 'ohal_blocks_others' | 'others_block_ohal' | null;
 
