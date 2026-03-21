@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
 type ProfileRow = Pick<
   Database['public']['Tables']['profiles']['Row'],
-  'nickname' | 'avatar_id' | 'total_ap' | 'unlocked_avatars' | 'claimed_achievements'
+  'nickname' | 'avatar_id' | 'total_ap' | 'unlocked_avatars'
 >;
 
 interface UserProfileContextValue {
