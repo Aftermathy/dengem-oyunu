@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { PowerState, PowerType } from '@/types/game';
+import { PowerState } from '@/types/game';
 import {
   checkTurnAchievements, checkMoneyAchievements, checkPowerAchievements,
   checkElectionAchievements, checkCardAchievement, trackDeath, trackBankruptcy,
