@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useMemo, useEffect, type ReactNode } from 'react';
 import { ActiveModifiers, computeModifiers, SKILL_DEFS, hasAnyNonOhalSkill, hasOhalActive } from '@/types/metaGame';
 import {
   loadSkillLevels, saveSkillLevels,
@@ -44,9 +44,21 @@ function calcTotalSpent(skills: Record<string, number>): number {
 }
 
 export function MetaGameProvider({ children }: { children: ReactNode }) {
-  const { userProfile, addAP, unlockAvatar } = useUserProfile();
+  const { userProfile, addAP, unlockAvatar, updateProfile } = useUserProfile();
   const [skills, setSkills] = useState(loadSkillLevels);
   const [claimed, setClaimed] = useState(loadClaimedAchievements);
+
+  // Merge remote claims (from Supabase via UserProfile) into local state when they arrive
+  useEffect(() => {
+    const remote = userProfile.claimedAchievements || [];
+    if (remote.length === 0) return;
+    setClaimed(prev => {
+      const merged = [...new Set([...prev, ...remote])];
+      if (merged.length === prev.length) return prev;
+      saveClaimedAchievements(merged);
+      return merged;
+    });
+  }, [userProfile.claimedAchievements]);
   const [crisisUsed, setCrisisUsed] = useState(false);
   const [emergencyFundUsed, setEmergencyFundUsed] = useState(false);
 
@@ -68,6 +80,8 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
       if (prev.includes(id)) return prev;
       const next = [...prev, id];
       saveClaimedAchievements(next);
+      // Sync claimed achievements to Supabase via UserProfile
+      updateProfile({ claimedAchievements: next });
       return next;
     });
     earnAP(reward);
@@ -76,7 +90,7 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
     if (avatarId) {
       unlockAvatar(avatarId);
     }
-  }, [earnAP, unlockAvatar]);
+  }, [earnAP, unlockAvatar, updateProfile]);
 
   const isAchievementClaimed = useCallback((id: string) => claimed.includes(id), [claimed]);
 

@@ -1,5 +1,5 @@
-import { Lock, Shield } from 'lucide-react';
 import { GameIcon } from '@/components/GameIcon';
+import { GameIcons } from '@/config/assets';
 import type { SkillLockReason } from '@/contexts/MetaGameContext';
 import { getSkillTitle, type SkillDef, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, OHAL_ELECTION_COST_MULT, OHAL_MONEY_VOLATILITY, OHAL_AP_MULTIPLIER } from '@/types/metaGame';
 import { SKILL_ICONS, CATEGORY_CONFIG, getEffectText, getNextEffectText, isOhalLevelUnlockable, getOhalLockMessage } from './skillTreeConstants';
@@ -18,7 +18,7 @@ interface SkillDetailPanelProps {
 export function SkillDetailPanel({
   skill, level, ap, lang, justPurchased, lockReason, onPurchase, onClose,
 }: SkillDetailPanelProps) {
-  const Icon = SKILL_ICONS[skill.id] || Shield;
+  const Icon = SKILL_ICONS[skill.id] || GameIcons.shield;
   const maxed = level >= skill.maxLevel;
   const cost = maxed ? 0 : skill.costs[level];
   const canAfford = !maxed && ap >= cost;
@@ -133,7 +133,7 @@ export function SkillDetailPanel({
           <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
             style={{ background: 'hsl(45 80% 50% / 0.08)', color: 'hsl(45 80% 55%)', border: '1px solid hsl(45 80% 50% / 0.2)' }}
           >
-            <Lock size={14} className="inline mr-1" style={{ color: 'hsl(45 80% 55%)' }} />
+            <GameIcon name="lock" size={14} className="inline mr-1" style={{ color: 'hsl(45 80% 55%)' }} />
             {lang === 'en' ? 'Achievement Required' : 'Başarım Gerekli'}
           </div>
         ) : (

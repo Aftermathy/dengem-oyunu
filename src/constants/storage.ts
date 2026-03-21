@@ -10,4 +10,7 @@ export const STORAGE_KEYS = {
   TUTORIAL_DECLINED: 'ims_tutorial_declined',
   CHAIN_CHOICE: 'ims_chain_choice',
   ELECTION_TUTORIAL_DONE: 'ims_election_tutorial_done',
+  COUNTED_SAVE_TS: 'ims_counted_save_ts',
+  SKILL_LEVELS: 'ims_skill_levels',
+  CLAIMED_ACHIEVEMENTS: 'ims_claimed_achievements',
 } as const;

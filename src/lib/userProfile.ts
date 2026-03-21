@@ -9,6 +9,7 @@ export interface UserProfile {
   hasCompletedOnboarding: boolean;
   isAppleLinked: boolean;
   unlockedAvatars: string[];
+  claimedAchievements: string[];
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -20,6 +21,7 @@ const DEFAULT_PROFILE: UserProfile = {
   hasCompletedOnboarding: false,
   isAppleLinked: false,
   unlockedAvatars: [],
+  claimedAchievements: [],
 };
 
 export function loadUserProfile(): UserProfile {

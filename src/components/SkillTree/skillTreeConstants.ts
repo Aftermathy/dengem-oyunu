@@ -1,7 +1,7 @@
 import { GameIcons } from '@/config/assets';
 import type { LucideIcon } from 'lucide-react';
 import { isUnlocked as isAchievementUnlocked } from '@/lib/achievements';
-import { OHAL_AP_MULTIPLIER, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, type SkillDef } from '@/types/metaGame';
+import { OHAL_AP_MULTIPLIER, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, OHAL_UNLOCK_ACHIEVEMENTS, type SkillDef } from '@/types/metaGame';
 
 // Icon mapping for each skill
 export const SKILL_ICONS: Record<string, LucideIcon> = {
@@ -41,11 +41,11 @@ export const CATEGORY_CONFIG: Record<string, {
   ohal:     { icon: GameIcons.flame,    labelTR: 'OHAL Modu',            labelEN: 'State of Emergency',   hue: '15',  color: 'hsl(15 90% 50%)',  glowColor: 'hsl(15 90% 50% / 0.4)'  },
 };
 
-// OHAL level requirements
+// OHAL level requirements (typed via OHAL_UNLOCK_ACHIEVEMENTS)
 const OHAL_LEVEL_REQUIREMENTS: Record<number, string | null> = {
   0: null,
-  1: 'ohal_1',
-  2: 'ohal_2',
+  1: OHAL_UNLOCK_ACHIEVEMENTS.LEVEL_1,
+  2: OHAL_UNLOCK_ACHIEVEMENTS.LEVEL_2,
 };
 
 export function isOhalLevelUnlockable(currentLevel: number): boolean {
@@ -69,12 +69,17 @@ export function getOhalLockMessage(currentLevel: number, lang: 'tr' | 'en'): str
 }
 
 function getOhalEffectText(level: number, lang: 'tr' | 'en'): string {
-  const neg = OHAL_NEGATIVE_EXTRA[level-1];
-  const pos = OHAL_POSITIVE_REDUCTION[level-1];
-  const laund = OHAL_LAUNDER_OUTPUT[level-1];
-  const mult = OHAL_AP_MULTIPLIER[level-1];
+  const idx = Math.max(0, Math.min(level - 1, OHAL_NEGATIVE_EXTRA.length - 1));
+  const neg = OHAL_NEGATIVE_EXTRA[idx];
+  const pos = OHAL_POSITIVE_REDUCTION[idx];
+  const laund = OHAL_LAUNDER_OUTPUT[idx];
+  const mult = OHAL_AP_MULTIPLIER[idx];
   if (lang === 'en') return `Neg+${neg}, Pos-${pos}, Launder→${laund}B, AP×${mult}`;
   return `Eksi+${neg}, Artı-${pos}, Aklama→${laund}B, AP×${mult}`;
+}
+
+function clamp(idx: number, arr: readonly number[]): number {
+  return arr[Math.max(0, Math.min(idx, arr.length - 1))];
 }
 
 export function getEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en'): string {
@@ -82,11 +87,11 @@ export function getEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en')
   const id = skill.id;
   if (id.startsWith('shield_')) return lang === 'en' ? `Reduces damage by -${level}` : `Hasarı -${level} azaltır`;
   if (id.startsWith('media_')) return lang === 'en' ? `Boosts gains by +${level}` : `Kazancı +${level} artırır`;
-  if (id === 'election_master') { const pcts = [3,5,8,10,15]; return lang === 'en' ? `Reduces election costs by ${pcts[level-1]}%` : `Seçim maliyetini %${pcts[level-1]} düşürür`; }
-  if (id === 'dark_connections') { const pcts = [3,5,8,10,15]; return lang === 'en' ? `Reduces shop costs by ${pcts[level-1]}%` : `Dükkan maliyetini %${pcts[level-1]} düşürür`; }
-  if (id === 'pro_launderer') { const vals = [25,30]; return lang === 'en' ? `Launders ${vals[level-1]}B per 30B` : `30B'ye ${vals[level-1]}B aklar`; }
-  if (id === 'offshore') { const pcts = [1,2,3]; return lang === 'en' ? `${pcts[level-1]}% interest per turn` : `Tur başı %${pcts[level-1]} faiz`; }
-  if (id === 'lucky_cards') { const pcts = [5,10,15]; return lang === 'en' ? `+${pcts[level-1]}% rare card chance` : `+%${pcts[level-1]} nadir kart şansı`; }
+  if (id === 'election_master') { const pcts = [3,5,8,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `Reduces election costs by ${v}%` : `Seçim maliyetini %${v} düşürür`; }
+  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `Reduces shop costs by ${v}%` : `Dükkan maliyetini %${v} düşürür`; }
+  if (id === 'pro_launderer') { const vals = [25,30] as const; const v = clamp(level-1, vals); return lang === 'en' ? `Launders ${v}B per 30B` : `30B'ye ${v}B aklar`; }
+  if (id === 'offshore') { const pcts = [1,2,3] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `${v}% interest per turn` : `Tur başı %${v} faiz`; }
+  if (id === 'lucky_cards') { const pcts = [5,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `+${v}% rare card chance` : `+%${v} nadir kart şansı`; }
   if (id === 'crisis_management') return lang === 'en' ? 'Survive death once per game' : 'Oyun başına 1 kez ölümden kurtul';
   if (id === 'emergency_fund') return lang === 'en' ? 'Inject 25B when bankrupt (once/game)' : 'İflas ettiğinde 25B enjekte et (oyun başına 1)';
   if (id === 'ohal') return getOhalEffectText(level, lang);
@@ -99,11 +104,11 @@ export function getNextEffectText(skill: SkillDef, level: number, lang: 'tr' | '
   const id = skill.id;
   if (id.startsWith('shield_')) return lang === 'en' ? `Will reduce damage by -${nextLevel}` : `Hasarı -${nextLevel} azaltacak`;
   if (id.startsWith('media_')) return lang === 'en' ? `Will boost gains by +${nextLevel}` : `Kazancı +${nextLevel} artıracak`;
-  if (id === 'election_master') { const pcts = [3,5,8,10,15]; return lang === 'en' ? `Will reduce costs by ${pcts[nextLevel-1]}%` : `Maliyeti %${pcts[nextLevel-1]} düşürecek`; }
-  if (id === 'dark_connections') { const pcts = [3,5,8,10,15]; return lang === 'en' ? `Will reduce costs by ${pcts[nextLevel-1]}%` : `Maliyeti %${pcts[nextLevel-1]} düşürecek`; }
-  if (id === 'pro_launderer') { const vals = [25,30]; return lang === 'en' ? `Will launder ${vals[nextLevel-1]}B per 30B` : `30B'ye ${vals[nextLevel-1]}B aklayacak`; }
-  if (id === 'offshore') { const pcts = [1,2,3]; return lang === 'en' ? `${pcts[nextLevel-1]}% interest per turn` : `Tur başı %${pcts[nextLevel-1]} faiz`; }
-  if (id === 'lucky_cards') { const pcts = [5,10,15]; return lang === 'en' ? `+${pcts[nextLevel-1]}% rare card chance` : `+%${pcts[nextLevel-1]} nadir kart şansı`; }
+  if (id === 'election_master') { const pcts = [3,5,8,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `Will reduce costs by ${v}%` : `Maliyeti %${v} düşürecek`; }
+  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `Will reduce costs by ${v}%` : `Maliyeti %${v} düşürecek`; }
+  if (id === 'pro_launderer') { const vals = [25,30] as const; const v = clamp(nextLevel-1, vals); return lang === 'en' ? `Will launder ${v}B per 30B` : `30B'ye ${v}B aklayacak`; }
+  if (id === 'offshore') { const pcts = [1,2,3] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `${v}% interest per turn` : `Tur başı %${v} faiz`; }
+  if (id === 'lucky_cards') { const pcts = [5,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `+${v}% rare card chance` : `+%${v} nadir kart şansı`; }
   if (id === 'crisis_management') return lang === 'en' ? 'Survive death once per game' : 'Oyun başına 1 kez ölümden kurtul';
   if (id === 'emergency_fund') return lang === 'en' ? 'Inject 25B when bankrupt (once/game)' : 'İflas ettiğinde 25B enjekte et (oyun başına 1)';
   if (id === 'ohal') return getOhalEffectText(nextLevel, lang);

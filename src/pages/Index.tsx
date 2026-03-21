@@ -48,7 +48,7 @@ const Index = () => {
     ohalLevel,
   } = useGame(lang);
   const { modifiers } = useMetaGame();
-  const { userProfile, updateProfile } = useUserProfile();
+  const { userProfile, userId, updateProfile } = useUserProfile();
   const electionCostFactor = modifiers.ohalElectionCostMult ?? 1;
   const offshoreRate = modifiers.offshoreRate ?? 0;
 
@@ -63,6 +63,11 @@ const Index = () => {
   const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
   const nextElectionInfo = getNextElectionInfo(turn, completedElections);
   const electionDefeatRef = useRef(false);
+  const pendingGameEndAction = useRef<(() => void) | null>(null);
+
+  // Snapshot fast-changing game values so recordGameEnd doesn't re-create on every turn
+  const gameStateRef = useRef({ turn, completedElections, _maxMoney, _maxElectionPct, _peakLaundered, gameOverInfo });
+  gameStateRef.current = { turn, completedElections, _maxMoney, _maxElectionPct, _peakLaundered, gameOverInfo };
 
   const handleHoverEffects = useCallback((effects: PowerEffect[]) => {
     setActiveEffects(effects);
@@ -73,26 +78,32 @@ const Index = () => {
   }, []);
 
   // ── DRY: Single function for recording game end + leaderboard submit ──
-  const recordGameEnd = useCallback(() => {
+  const recordGameEnd = useCallback(async () => {
+    const gs = gameStateRef.current;
     updateProfile({
-      totalTurns: userProfile.totalTurns + turn,
+      totalTurns: userProfile.totalTurns + gs.turn,
       gamesPlayed: userProfile.gamesPlayed + 1,
     });
-    submitScore({
-      nickname: userProfile.nickname || 'Player',
-      score: userProfile.totalAP + lastEarnedAP,
-      elections_won: completedElections.length,
-      max_money: _maxMoney,
-      max_election_pct: _maxElectionPct,
-      max_laundered: _peakLaundered,
-      death_reason: gameOverInfo?.title || undefined,
-    });
-  }, [updateProfile, userProfile.totalTurns, userProfile.gamesPlayed, userProfile.totalAP, userProfile.nickname, turn, lastEarnedAP, completedElections, _maxMoney, _maxElectionPct, _peakLaundered, gameOverInfo]);
+    try {
+      await submitScore({
+        nickname: userProfile.nickname || 'Player',
+        score: userProfile.totalAP,
+        elections_won: gs.completedElections.length,
+        max_money: gs._maxMoney,
+        max_election_pct: gs._maxElectionPct,
+        max_laundered: gs._peakLaundered,
+        death_reason: gs.gameOverInfo?.title ?? null,
+      }, userId);
+    } catch {
+      // Silent fail — don't block gameplay
+    }
+  }, [updateProfile, userProfile, userId]);
 
   // ── DRY: Wraps an action with recordGameEnd + onboarding gate ──
   const withGameEnd = useCallback((action: () => void) => {
     recordGameEnd();
     if (!userProfile.hasCompletedOnboarding) {
+      pendingGameEndAction.current = action;
       setShowOnboarding(true);
       return;
     }
@@ -112,10 +123,15 @@ const Index = () => {
     if (hasSavedGame()) {
       const abandoned = loadGame();
       if (abandoned && abandoned.turn > 0) {
-        updateProfile({
-          totalTurns: userProfile.totalTurns + abandoned.turn,
-          gamesPlayed: userProfile.gamesPlayed + 1,
-        });
+        // Guard against double-counting the same session if the app crashed mid-start
+        const alreadyCounted = localStorage.getItem(STORAGE_KEYS.COUNTED_SAVE_TS) === String(abandoned.savedAt);
+        if (!alreadyCounted) {
+          localStorage.setItem(STORAGE_KEYS.COUNTED_SAVE_TS, String(abandoned.savedAt));
+          updateProfile({
+            totalTurns: userProfile.totalTurns + abandoned.turn,
+            gamesPlayed: userProfile.gamesPlayed + 1,
+          });
+        }
       }
     }
     startGame();
@@ -270,7 +286,13 @@ const Index = () => {
           onComplete={(nickname, avatarId) => {
             updateProfile({ nickname, avatarId, hasCompletedOnboarding: true });
             setShowOnboarding(false);
-            handleGoToMenu();
+            const pendingAction = pendingGameEndAction.current;
+            pendingGameEndAction.current = null;
+            if (pendingAction) {
+              pendingAction();
+            } else {
+              handleGoToMenu();
+            }
           }}
         />
       )}

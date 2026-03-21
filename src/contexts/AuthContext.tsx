@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef, type ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import type { User, Session } from '@supabase/supabase-js';
@@ -35,17 +35,15 @@ async function migrateDeviceToAuth(authUserId: string): Promise<void> {
       // No profile for auth user yet — update the device row
       await supabase
         .from('profiles')
-        .update({ user_id: authUserId } as any)
+        .update({ user_id: authUserId })
         .eq('user_id', deviceId);
-      console.log('[Auth] Migrated profile from device', deviceId, 'to auth', authUserId);
     }
 
     // Migrate leaderboard rows
     await supabase
       .from('leaderboard_scores')
-      .update({ user_id: authUserId } as any)
+      .update({ user_id: authUserId })
       .eq('user_id', deviceId);
-    console.log('[Auth] Migrated leaderboard scores to auth user');
   } catch (err) {
     console.error('[Auth] Migration error:', err);
   }
@@ -55,23 +53,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Track previous auth user id to detect first-ever sign-in transition (anonymous → authenticated)
+  const prevUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     // Listen for auth state changes FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
 
-      // On sign-in, migrate device data to auth user (deferred to avoid deadlock)
-      if (newSession?.user) {
-        setTimeout(() => migrateDeviceToAuth(newSession.user.id), 0);
+      // Migrate device data only on the first SIGNED_IN from an anonymous state (no setTimeout)
+      if (event === 'SIGNED_IN' && newSession?.user && !prevUserIdRef.current) {
+        migrateDeviceToAuth(newSession.user.id);
       }
+      prevUserIdRef.current = newSession?.user?.id ?? null;
     });
 
-    // Then check existing session
+    // Then check existing session — initialise prevUserIdRef so migration doesn't re-run on refresh
     supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
       setSession(existingSession);
       setUser(existingSession?.user ?? null);
+      prevUserIdRef.current = existingSession?.user?.id ?? null;
       setIsLoading(false);
     });
 
@@ -80,7 +82,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithApple = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
     try {
-      console.log('[Auth] Starting Apple Sign In...');
       const result = await lovable.auth.signInWithOAuth('apple', {
         redirect_uri: window.location.origin,
       });
@@ -96,7 +97,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: true };
       }
 
-      console.log('[Auth] Apple Sign In successful');
       return { success: true };
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
@@ -110,7 +110,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.auth.signOut();
       setUser(null);
       setSession(null);
-      console.log('[Auth] Signed out');
     } catch (err) {
       console.error('[Auth] Sign out error:', err);
     }

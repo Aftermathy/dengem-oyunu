@@ -21,6 +21,8 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
   const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked } = useAppleSignIn();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [showLinkedModal, setShowLinkedModal] = useState(false);
 
@@ -31,36 +33,43 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     let cancelled = false;
     async function load() {
       setLoading(true);
-      const data = await fetchLeaderboard(50);
-      if (cancelled) return;
+      setFetchError(false);
+      try {
+        const data = await fetchLeaderboard(50);
+        if (cancelled) return;
 
-      // Check if player already has an entry in the fetched data
-      const hasPlayerEntry = data.some(e => e.user_id === myUserId);
+        // Check if player already has an entry in the fetched data
+        const hasPlayerEntry = data.some(e => e.user_id === myUserId);
 
-      if (!hasPlayerEntry) {
-        // Add local player as a virtual entry for display
-        const virtualEntry: LeaderboardEntry = {
-          id: 'local-player',
-          nickname: userProfile.nickname || (lang === 'tr' ? 'Oyuncu' : 'Player'),
-          score: userProfile.totalAP,
-          elections_won: 0,
-          max_money: 0,
-          max_election_pct: 0,
-          max_laundered: 0,
-          death_reason: null,
-          created_at: new Date().toISOString(),
-          user_id: myUserId,
-        };
-        data.push(virtualEntry);
-        data.sort((a, b) => b.score - a.score);
+        if (!hasPlayerEntry) {
+          // Add local player as a virtual entry for display
+          const virtualEntry: LeaderboardEntry = {
+            id: 'local-player',
+            nickname: userProfile.nickname || (lang === 'tr' ? 'Oyuncu' : 'Player'),
+            score: userProfile.totalAP,
+            elections_won: 0,
+            max_money: 0,
+            max_election_pct: 0,
+            max_laundered: 0,
+            death_reason: null,
+            created_at: new Date().toISOString(),
+            user_id: myUserId,
+            avatar_id: userProfile.avatarId,
+          };
+          data.push(virtualEntry);
+          data.sort((a, b) => b.score - a.score);
+        }
+
+        setEntries(data);
+      } catch {
+        if (!cancelled) setFetchError(true);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-
-      setEntries(data);
-      setLoading(false);
     }
     load();
     return () => { cancelled = true; };
-  }, [userProfile.totalAP, userProfile.nickname, myUserId, lang]);
+  }, [userProfile.totalAP, userProfile.nickname, userProfile.avatarId, myUserId, lang, retryCount]);
 
   const getMedal = (i: number) => {
     if (i === 0) return '🥇';
@@ -69,11 +78,8 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     return '';
   };
 
-  const getAvatarDef = (nickname: string) => {
-    // Try to find avatar by matching nickname to known entries
-    // For real entries, use a hash-based approach to assign consistent avatars
-    const hash = nickname.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-    return AVATAR_DEFS[hash % AVATAR_DEFS.length];
+  const getAvatarDef = (avatarId: string | undefined) => {
+    return AVATAR_DEFS.find(a => a.id === avatarId) || AVATAR_DEFS[0];
   };
 
   const getPlayerAvatar = () => AVATAR_DEFS.find(a => a.id === userProfile.avatarId) || AVATAR_DEFS[0];
@@ -88,7 +94,8 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     }
   };
 
-  const playerRank = entries.findIndex(e => e.user_id === myUserId) + 1;
+  // findIndex returns -1 when not found — keep as index so >= 0 check is unambiguous
+  const playerRankIndex = entries.findIndex(e => e.user_id === myUserId);
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 animate-fade-in p-4">
@@ -154,13 +161,13 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
         </div>
 
         {/* Player rank highlight */}
-        {!loading && playerRank > 0 && (
+        {!loading && playerRankIndex >= 0 && (
           <div className="px-4 py-2 border-b border-border/50 bg-primary/5 shrink-0">
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
                 {lang === 'tr' ? 'Sıralamanız' : 'Your Rank'}
               </span>
-              <span className="text-sm font-black text-primary">#{playerRank}</span>
+              <span className="text-sm font-black text-primary">#{playerRankIndex + 1}</span>
             </div>
           </div>
         )}
@@ -172,6 +179,19 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
               <EmojiImg emoji="⏳" size={24} className="animate-spin mr-2" />
               {lang === 'tr' ? 'Yükleniyor...' : 'Loading...'}
             </div>
+          ) : fetchError ? (
+            <div className="flex flex-col items-center justify-center py-10 text-muted-foreground gap-3">
+              <EmojiImg emoji="📡" size={32} />
+              <p className="text-sm font-bold text-destructive">
+                {lang === 'tr' ? 'Bağlantı Hatası' : 'Connection Error'}
+              </p>
+              <button
+                onClick={() => { setFetchError(false); setRetryCount(c => c + 1); }}
+                className="px-4 py-2 rounded-xl text-sm font-bold bg-primary text-primary-foreground active:scale-95 transition-all"
+              >
+                {lang === 'tr' ? 'Tekrar Dene' : 'Retry'}
+              </button>
+            </div>
           ) : entries.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
               <EmojiImg emoji="🏜️" size={32} className="mb-2" />
@@ -182,7 +202,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
             <div className="space-y-1.5">
               {entries.map((entry, i) => {
                 const isPlayer = entry.user_id === myUserId;
-                const av = isPlayer ? getPlayerAvatar() : getAvatarDef(entry.nickname);
+                const av = isPlayer ? getPlayerAvatar() : getAvatarDef(entry.avatar_id);
                 return (
                   <div
                     key={entry.id}

@@ -34,6 +34,12 @@ export const LUCKY_BONUS = [0.05, 0.10, 0.15];
 export const PRO_LAUNDER_OUTPUT = [25, 30]; // base is 20
 export const OFFSHORE_RATE = [0.01, 0.02, 0.03];
 
+/** Achievement IDs required to unlock each OHAL skill level */
+export const OHAL_UNLOCK_ACHIEVEMENTS = {
+  LEVEL_1: 'ohal_1',
+  LEVEL_2: 'ohal_2',
+} as const;
+
 // OHAL effect values per level (3 levels)
 export const OHAL_NEGATIVE_EXTRA = [1, 2, 3]; // extra negative faction damage
 export const OHAL_POSITIVE_REDUCTION = [1, 2, 3]; // reduced positive faction gains
