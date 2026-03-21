@@ -44,7 +44,7 @@ function calcTotalSpent(skills: Record<string, number>): number {
 }
 
 export function MetaGameProvider({ children }: { children: ReactNode }) {
-  const { userProfile, addAP } = useUserProfile();
+  const { userProfile, addAP, unlockAvatar } = useUserProfile();
   const [skills, setSkills] = useState(loadSkillLevels);
   const [claimed, setClaimed] = useState(loadClaimedAchievements);
   const [crisisUsed, setCrisisUsed] = useState(false);
