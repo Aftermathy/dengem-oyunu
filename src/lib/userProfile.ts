@@ -8,6 +8,7 @@ export interface UserProfile {
   gamesPlayed: number;
   hasCompletedOnboarding: boolean;
   isAppleLinked: boolean;
+  unlockedAvatars: string[];
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -18,6 +19,7 @@ const DEFAULT_PROFILE: UserProfile = {
   gamesPlayed: 0,
   hasCompletedOnboarding: false,
   isAppleLinked: false,
+  unlockedAvatars: [],
 };
 
 export function loadUserProfile(): UserProfile {
@@ -40,8 +42,8 @@ export interface AvatarDef {
   emoji: string;
   nameTR: string;
   nameEN: string;
-  color: string; // HSL bg color
-  unlockAchievement?: string; // achievement ID required to unlock
+  color: string;
+  unlockAchievement?: string;
   unlockTextTR?: string;
   unlockTextEN?: string;
 }
@@ -89,6 +91,12 @@ export function isAvatarUnlocked(avatarId: string, claimedAchievements: string[]
   if (!def) return false;
   if (!def.unlockAchievement) return true; // default avatars
   return claimedAchievements.includes(def.unlockAchievement);
+}
+
+/** Get avatar ID that would be unlocked by a given achievement, or null */
+export function getAvatarForAchievement(achievementId: string): string | null {
+  const def = AVATAR_DEFS.find(a => a.unlockAchievement === achievementId);
+  return def?.id ?? null;
 }
 
 // Funny stats generators
