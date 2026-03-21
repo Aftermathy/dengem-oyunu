@@ -27,16 +27,19 @@ function getEffectiveUserId(authUserId: string | undefined): string {
 
 async function syncProfileToSupabase(profile: UserProfile, userId: string): Promise<void> {
   try {
-    const record: ProfileInsert = {
+    // Use type assertion to include claimed_achievements (column exists in DB but not in auto-generated types)
+    const record = {
       user_id: userId,
       nickname: profile.nickname || 'Player',
       avatar_id: profile.avatarId,
       total_ap: profile.totalAP,
       unlocked_avatars: profile.unlockedAvatars || [],
-    };
+      claimed_achievements: profile.claimedAchievements || [],
+    } as ProfileInsert & { claimed_achievements: string[] };
+
     const { error } = await supabase
       .from('profiles')
-      .upsert(record, { onConflict: 'user_id' });
+      .upsert(record as unknown as ProfileInsert, { onConflict: 'user_id' });
 
     if (error) {
       console.error('[Profile] Sync error:', error.message);
