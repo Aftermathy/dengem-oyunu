@@ -5,6 +5,7 @@ import {
   loadClaimedAchievements, saveClaimedAchievements,
 } from '@/lib/metaGame';
 import { useUserProfile } from '@/contexts/UserProfileContext';
+import { getAvatarForAchievement } from '@/lib/userProfile';
 
 export type SkillLockReason = 'ohal_blocks_others' | 'others_block_ohal' | null;
 
@@ -43,7 +44,7 @@ function calcTotalSpent(skills: Record<string, number>): number {
 }
 
 export function MetaGameProvider({ children }: { children: ReactNode }) {
-  const { userProfile, addAP } = useUserProfile();
+  const { userProfile, addAP, unlockAvatar } = useUserProfile();
   const [skills, setSkills] = useState(loadSkillLevels);
   const [claimed, setClaimed] = useState(loadClaimedAchievements);
   const [crisisUsed, setCrisisUsed] = useState(false);
@@ -70,7 +71,12 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
       return next;
     });
     earnAP(reward);
-  }, [earnAP]);
+    // Auto-unlock associated avatar
+    const avatarId = getAvatarForAchievement(id);
+    if (avatarId) {
+      unlockAvatar(avatarId);
+    }
+  }, [earnAP, unlockAvatar]);
 
   const isAchievementClaimed = useCallback((id: string) => claimed.includes(id), [claimed]);
 
