@@ -65,7 +65,7 @@ async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserPro
     if (!data) return null;
 
     // Cast to access claimed_achievements which exists in DB
-    const row = data as ProfileRow & { claimed_achievements?: string[] | null };
+    const row = data as unknown as ProfileRow & { claimed_achievements?: string[] | null };
     return {
       nickname: row.nickname || '',
       avatarId: row.avatar_id || 'avatar_1',
