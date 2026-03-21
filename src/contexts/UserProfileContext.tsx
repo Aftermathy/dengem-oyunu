@@ -54,7 +54,7 @@ async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserPro
     // Select all profile fields including claimed_achievements (exists in DB, not in auto-generated types)
     const { data, error } = await supabase
       .from('profiles')
-      .select('nickname, avatar_id, total_ap, unlocked_avatars, claimed_achievements')
+      .select('nickname, avatar_id, total_ap, unlocked_avatars, claimed_achievements' as 'nickname, avatar_id, total_ap, unlocked_avatars')
       .eq('user_id', userId)
       .maybeSingle();
 
