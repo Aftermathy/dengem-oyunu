@@ -97,6 +97,11 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
         const remoteAvatars = remote.unlockedAvatars || [];
         const mergedAvatars = [...new Set([...localAvatars, ...remoteAvatars])];
 
+        // Merge claimed achievements (union of local + remote)
+        const localClaimed = prev.claimedAchievements || [];
+        const remoteClaimed = remote.claimedAchievements || [];
+        const mergedClaimed = [...new Set([...localClaimed, ...remoteClaimed])];
+
         const merged: UserProfile = {
           ...prev,
           nickname: remote.nickname || prev.nickname,
@@ -104,7 +109,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
           totalAP: Math.max(prev.totalAP, remote.totalAP ?? 0),
           isAppleLinked: isAuthenticated,
           unlockedAvatars: mergedAvatars,
-          claimedAchievements: [...new Set([...(prev.claimedAchievements || [])])],
+          claimedAchievements: mergedClaimed,
         };
         saveUserProfile(merged);
         return merged;
