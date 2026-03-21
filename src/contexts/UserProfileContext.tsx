@@ -51,9 +51,10 @@ async function syncProfileToSupabase(profile: UserProfile, userId: string): Prom
 
 async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserProfile> | null> {
   try {
+    // Select all profile fields including claimed_achievements (exists in DB, not in auto-generated types)
     const { data, error } = await supabase
       .from('profiles')
-      .select('nickname, avatar_id, total_ap, unlocked_avatars')
+      .select('nickname, avatar_id, total_ap, unlocked_avatars, claimed_achievements')
       .eq('user_id', userId)
       .maybeSingle();
 
@@ -63,12 +64,14 @@ async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserPro
     }
     if (!data) return null;
 
-    const row = data as ProfileRow;
+    // Cast to access claimed_achievements which exists in DB
+    const row = data as ProfileRow & { claimed_achievements?: string[] | null };
     return {
       nickname: row.nickname || '',
       avatarId: row.avatar_id || 'avatar_1',
       totalAP: row.total_ap ?? 0,
       unlockedAvatars: row.unlocked_avatars ?? [],
+      claimedAchievements: row.claimed_achievements ?? [],
     };
   } catch (err) {
     console.error('[Profile] Fetch exception:', err);
