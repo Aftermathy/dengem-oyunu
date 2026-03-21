@@ -82,8 +82,12 @@ const Index = () => {
       nickname: userProfile.nickname || 'Player',
       score: userProfile.totalAP + lastEarnedAP,
       elections_won: completedElections.length,
+      max_money: _maxMoney,
+      max_election_pct: _maxElectionPct,
+      max_laundered: _peakLaundered,
+      death_reason: gameOverInfo?.title || undefined,
     });
-  }, [updateProfile, userProfile.totalTurns, userProfile.gamesPlayed, userProfile.totalAP, userProfile.nickname, turn, lastEarnedAP, completedElections]);
+  }, [updateProfile, userProfile.totalTurns, userProfile.gamesPlayed, userProfile.totalAP, userProfile.nickname, turn, lastEarnedAP, completedElections, _maxMoney, _maxElectionPct, _peakLaundered, gameOverInfo]);
 
   // ── DRY: Wraps an action with recordGameEnd + onboarding gate ──
   const withGameEnd = useCallback((action: () => void) => {
