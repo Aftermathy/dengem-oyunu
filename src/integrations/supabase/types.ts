@@ -84,7 +84,6 @@ export type Database = {
         Row: {
           avatar_id: string
           avatar_url: string | null
-          claimed_achievements: string[]
           created_at: string
           id: string
           nickname: string
@@ -96,7 +95,6 @@ export type Database = {
         Insert: {
           avatar_id?: string
           avatar_url?: string | null
-          claimed_achievements?: string[]
           created_at?: string
           id?: string
           nickname?: string
@@ -108,7 +106,6 @@ export type Database = {
         Update: {
           avatar_id?: string
           avatar_url?: string | null
-          claimed_achievements?: string[]
           created_at?: string
           id?: string
           nickname?: string

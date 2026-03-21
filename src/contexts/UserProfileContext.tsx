@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
 type ProfileRow = Pick<
   Database['public']['Tables']['profiles']['Row'],
-  'nickname' | 'avatar_id' | 'total_ap' | 'unlocked_avatars' | 'claimed_achievements'
+  'nickname' | 'avatar_id' | 'total_ap' | 'unlocked_avatars'
 >;
 
 interface UserProfileContextValue {
@@ -33,7 +33,6 @@ async function syncProfileToSupabase(profile: UserProfile, userId: string): Prom
       avatar_id: profile.avatarId,
       total_ap: profile.totalAP,
       unlocked_avatars: profile.unlockedAvatars || [],
-      claimed_achievements: profile.claimedAchievements || [],
     };
     const { error } = await supabase
       .from('profiles')
@@ -51,7 +50,7 @@ async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserPro
   try {
     const { data, error } = await supabase
       .from('profiles')
-      .select('nickname, avatar_id, total_ap, unlocked_avatars, claimed_achievements')
+      .select('nickname, avatar_id, total_ap, unlocked_avatars')
       .eq('user_id', userId)
       .maybeSingle();
 
@@ -67,7 +66,6 @@ async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserPro
       avatarId: row.avatar_id || 'avatar_1',
       totalAP: row.total_ap ?? 0,
       unlockedAvatars: row.unlocked_avatars ?? [],
-      claimedAchievements: row.claimed_achievements ?? [],
     };
   } catch (err) {
     console.error('[Profile] Fetch exception:', err);
@@ -93,10 +91,6 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
         const remoteAvatars = remote.unlockedAvatars || [];
         const mergedAvatars = [...new Set([...localAvatars, ...remoteAvatars])];
 
-        const localClaims = prev.claimedAchievements || [];
-        const remoteClaims = remote.claimedAchievements || [];
-        const mergedClaims = [...new Set([...localClaims, ...remoteClaims])];
-
         const merged: UserProfile = {
           ...prev,
           nickname: remote.nickname || prev.nickname,
@@ -104,7 +98,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
           totalAP: Math.max(prev.totalAP, remote.totalAP ?? 0),
           isAppleLinked: isAuthenticated,
           unlockedAvatars: mergedAvatars,
-          claimedAchievements: mergedClaims,
+          claimedAchievements: [...new Set([...(prev.claimedAchievements || [])])],
         };
         saveUserProfile(merged);
         return merged;
