@@ -11,7 +11,7 @@ import { GameIcon } from '@/components/GameIcon';
 import { hasSavedGame } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { AchievementList } from '@/components/game/AchievementList';
-import { SkillTreeScreen } from '@/components/game/SkillTreeScreen';
+import { SkillTreeScreen } from '@/components/SkillTree';
 import { getUnlockedIds } from '@/lib/achievements';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';

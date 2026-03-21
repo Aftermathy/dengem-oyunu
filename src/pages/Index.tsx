@@ -72,6 +72,29 @@ const Index = () => {
     setProjectedMoney(amount);
   }, []);
 
+  // ── DRY: Single function for recording game end + leaderboard submit ──
+  const recordGameEnd = useCallback(() => {
+    updateProfile({
+      totalTurns: userProfile.totalTurns + turn,
+      gamesPlayed: userProfile.gamesPlayed + 1,
+    });
+    submitScore({
+      nickname: userProfile.nickname || 'Player',
+      score: userProfile.totalAP + lastEarnedAP,
+      elections_won: completedElections.length,
+    });
+  }, [updateProfile, userProfile.totalTurns, userProfile.gamesPlayed, userProfile.totalAP, userProfile.nickname, turn, lastEarnedAP, completedElections]);
+
+  // ── DRY: Wraps an action with recordGameEnd + onboarding gate ──
+  const withGameEnd = useCallback((action: () => void) => {
+    recordGameEnd();
+    if (!userProfile.hasCompletedOnboarding) {
+      setShowOnboarding(true);
+      return;
+    }
+    action();
+  }, [recordGameEnd, userProfile.hasCompletedOnboarding]);
+
   const handleGoToMenu = useCallback(() => {
     const wasGameOver = phase === 'gameover' || electionDefeatRef.current;
     electionDefeatRef.current = false;
@@ -81,22 +104,7 @@ const Index = () => {
     }
   }, [phase, goToMenu]);
 
-  /** Update profile stats at end of game and submit score to leaderboard. */
-  const recordGameEnd = useCallback(() => {
-    updateProfile({
-      totalTurns: userProfile.totalTurns + turn,
-      gamesPlayed: userProfile.gamesPlayed + 1,
-    });
-    // Submit score to Supabase leaderboard (fire-and-forget)
-    submitScore({
-      nickname: userProfile.nickname || 'Player',
-      score: userProfile.totalAP + lastEarnedAP,
-      elections_won: completedElections.length,
-    });
-  }, [updateProfile, userProfile.totalTurns, userProfile.gamesPlayed, userProfile.totalAP, userProfile.nickname, turn, lastEarnedAP, completedElections]);
-
   const handleStartGame = useCallback(() => {
-    // If there's an abandoned saved game, update profile stats
     if (hasSavedGame()) {
       const abandoned = loadGame();
       if (abandoned && abandoned.turn > 0) {
@@ -226,32 +234,13 @@ const Index = () => {
           halkPower={power.halk}
           lang={lang}
           costFactor={electionCostFactor}
-          onComplete={(result) => {
-            recordGameEnd();
-            if (!userProfile.hasCompletedOnboarding) {
-              setShowOnboarding(true);
-              return;
-            }
-            handleElectionComplete(result);
-          }}
+          onComplete={(result) => withGameEnd(() => handleElectionComplete(result))}
           onLossDetected={handleElectionLoss}
-          onRestart={() => {
-            recordGameEnd();
-            if (!userProfile.hasCompletedOnboarding) {
-              setShowOnboarding(true);
-              return;
-            }
-            startGame();
-          }}
-          onMainMenu={() => {
-            recordGameEnd();
-            if (!userProfile.hasCompletedOnboarding) {
-              setShowOnboarding(true);
-              return;
-            }
+          onRestart={() => withGameEnd(() => startGame())}
+          onMainMenu={() => withGameEnd(() => {
             electionDefeatRef.current = true;
             handleGoToMenu();
-          }}
+          })}
           earnedAP={lastEarnedAP}
         />
       )}
@@ -267,22 +256,8 @@ const Index = () => {
           money={money}
           electionsWon={completedElections.length}
           earnedAP={lastEarnedAP}
-          onRestart={() => {
-            recordGameEnd();
-            if (!userProfile.hasCompletedOnboarding) {
-              setShowOnboarding(true);
-              return;
-            }
-            startGame();
-          }}
-          onMainMenu={() => {
-            recordGameEnd();
-            if (!userProfile.hasCompletedOnboarding) {
-              setShowOnboarding(true);
-              return;
-            }
-            handleGoToMenu();
-          }}
+          onRestart={() => withGameEnd(() => startGame())}
+          onMainMenu={() => withGameEnd(() => handleGoToMenu())}
         />
       )}
 
