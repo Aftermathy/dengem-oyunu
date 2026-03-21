@@ -6,11 +6,6 @@ import { STORAGE_KEYS } from '@/constants/storage';
 import { GAME_CONFIG } from '@/constants/gameConfig';
 import { shuffleArray, applyCardEffects, calculateMaxIncome, findLowFaction } from '@/lib/gameLogic';
 import { trackEvent } from '@/lib/analytics';
-import {
-  checkTurnAchievements, checkMoneyAchievements, checkPowerAchievements,
-  checkElectionAchievements, checkCardAchievement, trackDeath, trackBankruptcy,
-  trackSpeedDeath, checkOhalAchievements,
-} from '@/lib/achievements';
 import { markCardSeen, isCardSeen } from '@/lib/cardMemory';
 import { eventCards, catConsultantCard, milestoneCard50, darkModeCard } from '@/data/cards';
 import { eventCardsEn, catConsultantCardEn, milestoneCard50En, darkModeCardEn } from '@/data/cards-en';
@@ -24,6 +19,7 @@ import { chainCardsA_EN, chainCardsB_EN } from '@/data/chainCards-en';
 import { useBribe } from '@/hooks/useBribe';
 import { useLaunderShop } from '@/hooks/useLaunderShop';
 import { useMetaGame } from '@/contexts/MetaGameContext';
+import { useAchievements } from '@/hooks/useAchievements';
 import { calculateAP } from '@/types/metaGame';
 
 const INITIAL_POWER: PowerState = {
@@ -61,6 +57,7 @@ export function useGame(lang: Language) {
     modifiers, earnAP, crisisAvailableThisGame, useCrisisJoker,
     emergencyFundAvailableThisGame, useEmergencyFund, resetGameSession,
   } = useMetaGame();
+  const achievements = useAchievements();
 
   // ── Core state ──
   const [phase, setPhase] = useState<GamePhase>('start');
@@ -104,12 +101,11 @@ export function useGame(lang: Language) {
   });
   const [currentElectionIndex, setCurrentElectionIndex] = useState<number | null>(null);
 
-  // ── Card tracking (no-repeat) ──
+  // ── Card tracking ──
   const [currentCardFirstSeen, setCurrentCardFirstSeen] = useState(false);
   const [usedCardIdsInGame, setUsedCardIdsInGame] = useState<Set<number>>(new Set());
 
   // ── Stats ──
-  const [pendingAchievements, setPendingAchievements] = useState<string[]>([]);
   const [maxMoney, setMaxMoney] = useState<number>(GAME_CONFIG.INITIAL_MONEY);
   const [maxElectionPct, setMaxElectionPct] = useState<number>(0);
 
@@ -163,6 +159,14 @@ export function useGame(lang: Language) {
     return earned;
   }, [earnAP, modifiers.ohalAPMultiplier]);
 
+  // ── Helper: update high score ──
+  const updateHighScore = useCallback((newTurn: number) => {
+    if (newTurn > highScore) {
+      setHighScore(newTurn);
+      localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(newTurn));
+    }
+  }, [highScore]);
+
   // ── Start new game ──
   const startGame = useCallback(() => {
     if (!isAdFree()) showInterstitialAd(1);
@@ -192,7 +196,7 @@ export function useGame(lang: Language) {
     setUsedCardIdsInGame(new Set());
     setLastEarnedAP(0);
     setCrisisAlertType(null);
-    resetGameSession(); // reset crisis joker + emergency fund for new game
+    resetGameSession();
     setPhase('playing');
   }, [lang, resetBribeCounts, resetShop, modifiers.rareCardBonus, resetGameSession]);
 
@@ -220,12 +224,10 @@ export function useGame(lang: Language) {
   const swipe = useCallback((direction: 'left' | 'right') => {
     if (!currentCard || phase !== 'playing') return;
 
-    // Track card memory
     const firstSeen = !isCardSeen(currentCard.id);
     if (firstSeen) markCardSeen(currentCard.id);
     setUsedCardIdsInGame(prev => new Set([...prev, currentCard.id]));
 
-    // Track dark mode card choice
     if (currentCard.id === 9999) {
       localStorage.setItem(STORAGE_KEYS.CHAIN_CHOICE, direction);
     }
@@ -233,26 +235,19 @@ export function useGame(lang: Language) {
     const rawEffects = direction === 'left' ? currentCard.leftEffects : currentCard.rightEffects;
     let moneyEffect = direction === 'left' ? (currentCard.leftMoney || 0) : (currentCard.rightMoney || 0);
 
-    // OHAL money volatility: amplify both gains and losses
     if (modifiers.ohalMoneyVolatility > 1 && moneyEffect !== 0) {
       moneyEffect = Math.round(moneyEffect * modifiers.ohalMoneyVolatility);
     }
 
-    // Apply skill modifiers: shields reduce damage, media boosts gains
-    // OHAL: extra negative, reduced positive
     const modifiedEffects = rawEffects.map(e => {
       let amount = e.amount;
       const faction = e.power as PowerType;
       if (amount < 0) {
-        // OHAL: increase negative effects
         amount -= modifiers.ohalNegativeExtra;
-        // Shield: reduce damage
         const shield = modifiers.factionShields[faction] || 0;
         amount = Math.min(0, amount + shield);
       } else if (amount > 0) {
-        // OHAL: reduce positive effects
         amount = Math.max(0, amount - modifiers.ohalPositiveReduction);
-        // Media: boost gains
         const bonus = modifiers.factionBonuses[faction] || 0;
         amount += bonus;
       }
@@ -261,8 +256,6 @@ export function useGame(lang: Language) {
 
     let newPower = applyCardEffects(power, modifiedEffects);
     const maxIncome = calculateMaxIncome(newPower);
-
-    // Offshore interest: earn % of laundered money per turn
     const offshoreIncome = modifiers.offshoreRate > 0
       ? Math.floor(totalLaundered * modifiers.offshoreRate)
       : 0;
@@ -279,7 +272,6 @@ export function useGame(lang: Language) {
     // Check faction death
     const over = checkGameOver(newPower);
     if (over) {
-      // Crisis management: one-time save from death
       if (crisisAvailableThisGame) {
         const fixedPower = { ...newPower };
         for (const key of Object.keys(fixedPower) as PowerType[]) {
@@ -289,19 +281,14 @@ export function useGame(lang: Language) {
         useCrisisJoker();
         setPower(newPower);
         setCrisisAlertType('crisis');
-        // Fall through - continue playing
       } else {
         setPower(newPower);
         trackEvent('game_over', { reason: over.title, turn: newTurn });
         const scenarios = getScenarios(lang);
         const deathFaction = scenarios.find(s => s.title === over.title)?.power;
-        if (deathFaction) trackDeath(deathFaction);
-        trackSpeedDeath(newTurn);
+        achievements.trackDeathAchievements(deathFaction, newTurn);
         setGameOverInfo(over);
-        if (newTurn > highScore) {
-          setHighScore(newTurn);
-          localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(newTurn));
-        }
+        updateHighScore(newTurn);
         awardAP(newTurn, totalLaundered);
         clearSave();
         setPhase('gameover');
@@ -313,22 +300,17 @@ export function useGame(lang: Language) {
 
     // Check bankruptcy
     if (newMoney <= 0) {
-      // Emergency fund: one-time save from bankruptcy
       if (emergencyFundAvailableThisGame) {
         newMoney = 25;
         setMoney(25);
         useEmergencyFund();
         setCrisisAlertType('emergency_fund');
-        // Continue playing
       } else {
         const bankruptScenario = { title: t('gameover.bankruptcy.title'), description: t('gameover.bankruptcy.desc'), emoji: '💸', image: 'defeat-iflas' };
-        trackBankruptcy();
-        trackSpeedDeath(newTurn);
+        achievements.trackBankruptcyAchievement();
+        achievements.trackDeathAchievements(undefined, newTurn);
         setGameOverInfo(bankruptScenario);
-        if (newTurn > highScore) {
-          setHighScore(newTurn);
-          localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(newTurn));
-        }
+        updateHighScore(newTurn);
         awardAP(newTurn, totalLaundered);
         clearSave();
         setPhase('gameover');
@@ -337,14 +319,7 @@ export function useGame(lang: Language) {
     }
 
     // Check achievements
-    const achQueue: string[] = [];
-    achQueue.push(...checkTurnAchievements(newTurn));
-    achQueue.push(...checkMoneyAchievements(newMoney));
-    achQueue.push(...checkPowerAchievements(newPower));
-    achQueue.push(...checkCardAchievement(currentCard.id));
-    if (achQueue.length > 0) {
-      setPendingAchievements(prev => [...prev, ...achQueue]);
-    }
+    achievements.checkAfterSwipe(newTurn, newMoney, newPower, currentCard.id);
 
     // Inject milestone card
     if (newTurn === GAME_CONFIG.MILESTONE_TURN) {
@@ -410,7 +385,7 @@ export function useGame(lang: Language) {
       bribeCounts, reputation: 0, completedElections, savedAt: Date.now(),
     });
     setCardIndex(nextIndex);
-  }, [currentCard, phase, power, money, turn, cardIndex, deck, highScore, checkGameOver, lang, tutorialShown, completedElections, bribeCounts, usedCardIdsInGame, maxMoney, t, modifiers, totalLaundered, crisisAvailableThisGame, useCrisisJoker, emergencyFundAvailableThisGame, useEmergencyFund, awardAP]);
+  }, [currentCard, phase, power, money, turn, cardIndex, deck, checkGameOver, lang, tutorialShown, completedElections, bribeCounts, usedCardIdsInGame, maxMoney, t, modifiers, totalLaundered, crisisAvailableThisGame, useCrisisJoker, emergencyFundAvailableThisGame, useEmergencyFund, awardAP, updateHighScore, achievements]);
 
   // ── Tutorial handlers ──
   const completeTutorialBribe = useCallback(() => {
@@ -447,25 +422,19 @@ export function useGame(lang: Language) {
     setGameOverInfo(null);
   }, [phase, power, money, turn, cardIndex, bribeCounts, completedElections]);
 
-  // ── Election loss handler (awards AP without changing phase) ──
+  // ── Election loss handler ──
   const handleElectionLoss = useCallback(() => {
     awardAP(turn, totalLaundered);
-    if (turn > highScore) {
-      setHighScore(turn);
-      localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(turn));
-    }
+    updateHighScore(turn);
     clearSave();
-  }, [turn, totalLaundered, highScore, awardAP]);
+  }, [turn, totalLaundered, awardAP, updateHighScore]);
 
   // ── Election completion ──
   const handleElectionComplete = useCallback((result: ElectionResult) => {
     if (!result.won) {
       const lostScenario = { title: t('gameover.election_lost.title'), description: t('gameover.election_lost.desc'), emoji: '🗳️', image: 'defeat-halk' };
       setGameOverInfo(lostScenario);
-      if (turn > highScore) {
-        setHighScore(turn);
-        localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(turn));
-      }
+      updateHighScore(turn);
       awardAP(turn, totalLaundered);
       clearSave();
       setPhase('gameover');
@@ -475,17 +444,10 @@ export function useGame(lang: Language) {
     if (electionConfig?.isFinalBoss) {
       const victoryScenario = { title: t('gameover.victory.title'), description: t('gameover.victory.desc'), emoji: '🏆' };
       setGameOverInfo(victoryScenario);
-      if (turn > highScore) {
-        setHighScore(turn);
-        localStorage.setItem(STORAGE_KEYS.HIGH_SCORE, String(turn));
-      }
+      updateHighScore(turn);
       awardAP(turn, totalLaundered);
-      // OHAL achievements only trigger after 2028 final victory
       if (modifiers.ohalLevel > 0) {
-        const ohalAch = checkOhalAchievements(modifiers.ohalLevel);
-        if (ohalAch.length > 0) {
-          setPendingAchievements(prev => [...prev, ...ohalAch]);
-        }
+        achievements.checkOhal(modifiers.ohalLevel);
       }
       clearSave();
       setPhase('gameover');
@@ -495,13 +457,11 @@ export function useGame(lang: Language) {
     setTotalLaundered(result.remainingLaundered);
     const newCompletedElections = currentElectionIndex !== null ? [...completedElections, currentElectionIndex] : completedElections;
     const isFinalBoss = electionConfig?.isFinalBoss ?? false;
-    const electionAch = checkElectionAchievements(newCompletedElections.length, isFinalBoss);
-    if (electionAch.length > 0) setPendingAchievements(prev => [...prev, ...electionAch]);
+    achievements.checkElection(newCompletedElections.length, isFinalBoss);
     if (currentElectionIndex !== null) {
       setCompletedElections(newCompletedElections);
     }
     setCurrentElectionIndex(null);
-    // Inject chain card after election
     const chainChoice = localStorage.getItem(STORAGE_KEYS.CHAIN_CHOICE) as 'left' | 'right' | null;
     if (chainChoice) {
       const electionNum = newCompletedElections.length - 1;
@@ -524,7 +484,7 @@ export function useGame(lang: Language) {
     }
     if (result.playerVote > maxElectionPct) setMaxElectionPct(result.playerVote);
     setPhase('playing');
-  }, [lang, turn, highScore, currentElectionIndex, pendingAdvance, completedElections, setTotalLaundered, maxElectionPct, t, totalLaundered, awardAP]);
+  }, [lang, turn, currentElectionIndex, pendingAdvance, completedElections, setTotalLaundered, maxElectionPct, t, totalLaundered, awardAP, updateHighScore, modifiers.ohalLevel, achievements]);
 
   return {
     phase, power, money, currentCard, turn, highScore,
@@ -544,6 +504,7 @@ export function useGame(lang: Language) {
     alliance, canAlliance, getAllianceCost,
     currentElectionIndex, completedElections, handleElectionComplete,
     handleElectionLoss,
-    pendingAchievements, clearPendingAchievement: () => setPendingAchievements(prev => prev.slice(1)),
+    pendingAchievements: achievements.pendingAchievements,
+    clearPendingAchievement: achievements.clearPendingAchievement,
   };
 }
