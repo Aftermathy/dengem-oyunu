@@ -1,7 +1,7 @@
 import { GameIcons } from '@/config/assets';
 import type { LucideIcon } from 'lucide-react';
 import { isUnlocked as isAchievementUnlocked } from '@/lib/achievements';
-import { OHAL_AP_MULTIPLIER, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, OHAL_ELECTION_COST_MULT, OHAL_MONEY_VOLATILITY, type SkillDef } from '@/types/metaGame';
+import { OHAL_AP_MULTIPLIER, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, type SkillDef } from '@/types/metaGame';
 
 // Icon mapping for each skill
 export const SKILL_ICONS: Record<string, LucideIcon> = {
