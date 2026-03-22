@@ -208,7 +208,6 @@ export function useGame(lang: Language) {
     setTutorialShown(true);
     setTutorialFaction(null);
     setPendingAdvance(null);
-    setLastShopResult(null);
     setCurrentElectionIndex(null);
     setLastEarnedAP(0);
     setCrisisAlertType(null);
