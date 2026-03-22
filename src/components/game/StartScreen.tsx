@@ -278,6 +278,26 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
         </a>
       </div>
 
+      {/* Webhook test button */}
+      <button
+        onClick={async () => {
+          try {
+            const res = await fetch('https://unpropagable-desire-balancingly.ngrok-free.dev/api/webhook', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'test_connection', message: 'Merhaba Direktör, ben Lovable!' }),
+            });
+            if (res.ok) alert('✅ Webhook başarılı!');
+            else alert('❌ Webhook hata: ' + res.status);
+          } catch (e: any) {
+            alert('❌ Bağlantı hatası: ' + e.message);
+          }
+        }}
+        className="text-[10px] px-3 py-1.5 rounded-lg border border-primary/30 text-primary/70 hover:bg-primary/10 transition-all shrink-0"
+      >
+        🔗 Test Webhook
+      </button>
+
       {/* Studio branding */}
       <div className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground pb-1 shrink-0">
         Aftermath Vibe Studios
