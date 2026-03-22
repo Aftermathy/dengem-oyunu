@@ -208,13 +208,12 @@ export function useGame(lang: Language) {
     setTutorialShown(true);
     setTutorialFaction(null);
     setPendingAdvance(null);
-    setLastShopResult(null);
     setCurrentElectionIndex(null);
     setLastEarnedAP(0);
     setCrisisAlertType(null);
     resetGameSession();
     setPhase('playing');
-  }, [lang, setLastShopResult, modifiers.rareCardBonus, resetGameSession]);
+  }, [lang, modifiers.rareCardBonus, resetGameSession]);
 
   // ── Swipe handler ──
   const swipe = useCallback((direction: 'left' | 'right') => {
