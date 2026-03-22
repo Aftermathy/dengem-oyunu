@@ -213,7 +213,7 @@ export function useGame(lang: Language) {
     setCrisisAlertType(null);
     resetGameSession();
     setPhase('playing');
-  }, [lang, setLastShopResult, modifiers.rareCardBonus, resetGameSession]);
+  }, [lang, modifiers.rareCardBonus, resetGameSession]);
 
   // ── Swipe handler ──
   const swipe = useCallback((direction: 'left' | 'right') => {
