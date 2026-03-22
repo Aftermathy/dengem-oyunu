@@ -32,10 +32,6 @@ export function useLaunderShop(params: UseLaunderShopParams) {
 
   const [totalLaundered, setTotalLaundered] = useState(0);
   const [peakLaundered, setPeakLaundered] = useState(0);
-  const [propagandaCount, setPropagandaCount] = useState(0);
-  const [, setInvestmentCount] = useState(0);
-  const [allianceCount, setAllianceCount] = useState(0);
-  const [lastShopResult, setLastShopResult] = useState<string | null>(null);
 
   const canLaunder = money >= GAME_CONFIG.LAUNDER_COST && phase === 'playing';
 
@@ -74,85 +70,15 @@ export function useLaunderShop(params: UseLaunderShopParams) {
     }
   }, [money, power, checkGameOver, turn, highScore, peakLaundered, modifiers.launderOutput, setPower, setMoney, setLastMoneyChange, setGameOverInfo, setHighScore, setPhase]);
 
-  // Dark connections: reduces shop costs
-  const applyDiscount = useCallback((baseCost: number): number => {
-    const reduction = modifiers.darkConnectionsReduction;
-    return reduction > 0 ? Math.max(1, Math.round(baseCost * (1 - reduction))) : baseCost;
-  }, [modifiers.darkConnectionsReduction]);
-
-  const getPropagandaCost = useCallback(() => {
-    const base = GAME_CONFIG.PROPAGANDA_COSTS[Math.min(propagandaCount, GAME_CONFIG.PROPAGANDA_COSTS.length - 1)];
-    return applyDiscount(base);
-  }, [propagandaCount, applyDiscount]);
-
-  const getInvestmentCost = useCallback(() => {
-    return applyDiscount(GAME_CONFIG.INVESTMENT_COST);
-  }, [applyDiscount]);
-
-  const getAllianceCost = useCallback(() => {
-    const base = GAME_CONFIG.ALLIANCE_COSTS[Math.min(allianceCount, GAME_CONFIG.ALLIANCE_COSTS.length - 1)];
-    return applyDiscount(base);
-  }, [allianceCount, applyDiscount]);
-
-  const canPropaganda = totalLaundered >= getPropagandaCost() && phase === 'playing';
-  const canInvest = totalLaundered >= getInvestmentCost() && phase === 'playing';
-  const canAlliance = totalLaundered >= getAllianceCost() && phase === 'playing';
-
-  const propaganda = useCallback(() => {
-    const cost = getPropagandaCost();
-    if (totalLaundered < cost) return;
-    setTotalLaundered(prev => prev - cost);
-    setPropagandaCount(prev => prev + 1);
-    const newPower = { ...power };
-    newPower.halk = Math.min(100, newPower.halk + GAME_CONFIG.PROPAGANDA_GAIN);
-    setPower(newPower);
-    setLastShopResult(null);
-  }, [totalLaundered, power, getPropagandaCost, setPower]);
-
-  const invest = useCallback(() => {
-    const cost = getInvestmentCost();
-    if (totalLaundered < cost) return;
-    setTotalLaundered(prev => prev - cost);
-    setInvestmentCount(prev => prev + 1);
-    const win = Math.random() < 0.5;
-    if (win) {
-      setMoney(m => m + cost * 2);
-      setLastMoneyChange(cost * 2);
-      setLastShopResult('win');
-    } else {
-      setLastShopResult('lose');
-    }
-  }, [totalLaundered, getInvestmentCost, setMoney, setLastMoneyChange]);
-
-  const alliance = useCallback((f1: PowerType, f2: PowerType) => {
-    const cost = getAllianceCost();
-    if (totalLaundered < cost) return;
-    setTotalLaundered(prev => prev - cost);
-    setAllianceCount(prev => prev + 1);
-    const newPower = { ...power };
-    newPower[f1] = Math.min(100, newPower[f1] + GAME_CONFIG.ALLIANCE_GAIN);
-    newPower[f2] = Math.min(100, newPower[f2] + GAME_CONFIG.ALLIANCE_GAIN);
-    setPower(newPower);
-    setLastShopResult(null);
-  }, [totalLaundered, power, getAllianceCost, setPower]);
-
   const resetShop = useCallback(() => {
     setTotalLaundered(0);
     setPeakLaundered(0);
-    setPropagandaCount(0);
-    setInvestmentCount(0);
-    setAllianceCount(0);
-    setLastShopResult(null);
   }, []);
 
   return {
     totalLaundered, setTotalLaundered,
     peakLaundered, setPeakLaundered,
     canLaunder, launder,
-    lastShopResult, setLastShopResult,
-    propaganda, canPropaganda, getPropagandaCost,
-    invest, canInvest, getInvestmentCost,
-    alliance, canAlliance, getAllianceCost,
     resetShop,
   };
 }

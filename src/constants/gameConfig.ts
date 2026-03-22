@@ -10,15 +10,6 @@ export const GAME_CONFIG = {
   LAUNDER_SELECTED_BONUS: 10,
   LAUNDER_OTHER_PENALTY: -5,
 
-  // Shop costs
-  PROPAGANDA_COSTS: [10, 20, 30, 50] as const,
-  INVESTMENT_COST: 15,
-  ALLIANCE_COSTS: [20, 30, 45, 50] as const,
-
-  // Shop gains
-  ALLIANCE_GAIN: 8,
-  PROPAGANDA_GAIN: 10,
-
   // Faction income
   INCOME_PER_MAXED_FACTION: 5,
   MAX_FACTION_INCOME: 25, // cap: at most 5 maxed factions count (25B/turn)

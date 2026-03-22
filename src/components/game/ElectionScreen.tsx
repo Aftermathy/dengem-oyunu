@@ -23,9 +23,10 @@ interface ElectionScreenProps {
   onLossDetected?: () => void;
   earnedAP?: number;
   costFactor?: number;
+  darkConnectionsReduction?: number;
 }
 
-export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu, onLossDetected, earnedAP = 0, costFactor = 1 }: ElectionScreenProps) => {
+export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu, onLossDetected, earnedAP = 0, costFactor = 1, darkConnectionsReduction = 0 }: ElectionScreenProps) => {
   const [playerVote, setPlayerVote] = useState(() => config.startingPlayerVote);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result' | 'victory'>('intro');
@@ -105,7 +106,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
 
   const useSpecialPower = useCallback((power: ElectionSpecialPower) => {
     if (usedPowers.includes(power.id)) return;
-    const effectiveCost = Math.max(1, Math.round(power.launderedCost * costFactor));
+    const effectiveCost = Math.max(1, Math.round(power.launderedCost * costFactor * (1 - darkConnectionsReduction)));
     if (laundered < effectiveCost) {
       showBudgetWarningFor(power.id);
       return;
@@ -116,7 +117,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
     setPlayerVote(v => Math.max(0, Math.min(100, v + power.voterEffect)));
     setBarGlowKey(k => k + 1);
     setUsedPowers(prev => [...prev, power.id]);
-  }, [laundered, usedPowers, showBudgetWarningFor, costFactor]);
+  }, [laundered, usedPowers, showBudgetWarningFor, costFactor, darkConnectionsReduction]);
 
   // AI turn
   useEffect(() => {
@@ -220,7 +221,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
           selectedCardId={selectedCardId} barGlowKey={barGlowKey}
           rerollsLeft={rerollsLeft} budgetWarning={budgetWarning}
           usedPowers={usedPowers} aiLegendaryShake={aiLegendaryShake}
-          labels={labels} costFactor={costFactor}
+          labels={labels} costFactor={costFactor} darkConnectionsReduction={darkConnectionsReduction}
           onPlayCard={playCard} onSkipTurn={skipTurn}
           onReroll={handleReroll} onUseSpecialPower={useSpecialPower}
           onShowBudgetWarning={showBudgetWarningFor} onMainMenu={onMainMenu}

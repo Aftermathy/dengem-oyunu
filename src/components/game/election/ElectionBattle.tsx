@@ -22,6 +22,7 @@ interface ElectionBattleProps {
   aiLegendaryShake: boolean;
   labels: ElectionLabels;
   costFactor?: number;
+  darkConnectionsReduction?: number;
   onPlayCard: (card: ElectionCard) => void;
   onSkipTurn: () => void;
   onReroll: () => void;
@@ -35,11 +36,12 @@ export function ElectionBattle({
   displayPlayerVote, displayOpponentVote, round,
   cards, aiCardPlayed, selectedCardId, barGlowKey,
   rerollsLeft, budgetWarning, usedPowers,
-  aiLegendaryShake, labels, costFactor = 1,
+  aiLegendaryShake, labels, costFactor = 1, darkConnectionsReduction = 0,
   onPlayCard, onSkipTurn, onReroll, onUseSpecialPower,
   onShowBudgetWarning, onMainMenu,
 }: ElectionBattleProps) {
   const effectiveCost = (base: number) => Math.max(1, Math.round(base * costFactor));
+  const effectiveSpecialCost = (base: number) => Math.max(1, Math.round(base * costFactor * (1 - darkConnectionsReduction)));
   const effectiveRerollCost = effectiveCost(REROLL_COST);
   return (
     <div className="flex-1 flex flex-col overflow-y-auto relative z-10">
@@ -137,14 +139,14 @@ export function ElectionBattle({
                     </div>
                     <div className="flex items-center gap-2 mb-1.5">
                       <EmojiImg emoji={card.emoji} size={28} />
-                      <p className="text-white text-sm font-bold leading-tight flex-1">{card.text}</p>
+                      <p className={`text-sm font-bold leading-tight flex-1 ${style.textColor}`}>{card.text}</p>
                     </div>
                     <p className="text-game-success-light text-base font-black">+{card.voterEffect}%</p>
                   </button>
                 );
               })}
               <button onClick={onSkipTurn} disabled={selectedCardId !== null}
-                className="relative border-2 border-muted-foreground/40 bg-muted/60 rounded-xl p-3.5 text-left hover:bg-muted/70 active:scale-95 transition-all election-card-enter disabled:opacity-30"
+                className="relative border-2 border-muted-foreground/40 bg-transparent rounded-xl p-3.5 text-left hover:bg-white/5 active:scale-95 transition-all election-card-enter disabled:opacity-30"
                 style={{ animationDelay: '0.3s' }}
               >
                 <div className="flex justify-between items-center mb-1.5">
@@ -174,7 +176,7 @@ export function ElectionBattle({
                   </div>
                   <div className="flex items-center gap-3 mb-2">
                     <EmojiImg emoji={aiCardPlayed.emoji} size={36} />
-                    <p className="text-white text-sm font-bold leading-tight flex-1">{aiCardPlayed.text}</p>
+                    <p className={`text-sm font-bold leading-tight flex-1 ${aiStyle.textColor}`}>{aiCardPlayed.text}</p>
                   </div>
                   <p className="text-game-danger-light text-base font-black">-{aiCardPlayed.voterEffect}%</p>
                 </div>
@@ -198,7 +200,8 @@ export function ElectionBattle({
           <div className="grid grid-cols-2 gap-2 w-full">
             {config.specialPowers.map(power => {
               const used = usedPowers.includes(power.id);
-              const cantAfford = laundered < power.launderedCost;
+              const displayCost = effectiveSpecialCost(power.launderedCost);
+              const cantAfford = laundered < displayCost;
               return (
                 <button key={power.id} disabled={used}
                   onClick={() => onUseSpecialPower(power)}
@@ -214,9 +217,9 @@ export function ElectionBattle({
                     </div>
                   )}
                   <EmojiImg emoji={power.emoji} size={20} className="shrink-0" />
-                  <span className="text-game-special-light text-xs font-bold leading-tight flex-1 text-left">{power.name}</span>
+                  <span className="text-white text-xs font-bold leading-tight flex-1 text-left">{power.name}</span>
                   <span className="text-game-success-light text-xs font-black shrink-0">+{power.voterEffect}%</span>
-                  <span className={`text-[10px] font-bold shrink-0 ${cantAfford ? 'text-game-danger' : 'text-game-special-light'}`}>{power.launderedCost}B</span>
+                  <span className={`text-[10px] font-bold shrink-0 ${cantAfford ? 'text-game-danger' : 'text-game-special-light'}`}>{displayCost}B</span>
                 </button>
               );
             })}

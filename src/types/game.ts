@@ -9,6 +9,7 @@ export interface EventCard {
   id: number;
   character: string;
   characterEmoji: string;
+  imageId?: string;
   category: string;
   description: string;
   leftChoice: string;

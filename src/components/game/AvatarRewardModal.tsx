@@ -117,78 +117,73 @@ export function AvatarRewardModal({ avatarId, onEquip, onClose }: AvatarRewardMo
         ))}
       </div>
 
-      {/* Title */}
+      {/* Main card */}
       <div
-        className="mb-6 text-center px-4 transition-all duration-500"
-        style={{ opacity: revealed ? 1 : 0, transform: revealed ? 'translateY(0)' : 'translateY(-16px)' }}
+        className="relative w-full max-w-xs mx-6 rounded-3xl flex flex-col items-center px-6 pt-6 pb-5 transition-all duration-500"
+        style={{
+          background: 'rgba(8, 8, 14, 0.92)',
+          border: `2px solid ${avatar.color}`,
+          boxShadow: `0 0 32px ${avatar.color.replace(')', ' / 0.45)')}, 0 8px 48px rgba(0,0,0,0.7)`,
+          backdropFilter: 'blur(12px)',
+          opacity: revealed ? 1 : 0,
+          transform: revealed ? 'translateY(0)' : 'translateY(20px)',
+        }}
       >
-        <p className="text-xs font-black uppercase tracking-[0.3em] text-yellow-400/80 mb-1">
-          {lang === 'tr' ? '✨ Kilit Açıldı! ✨' : '✨ Unlocked! ✨'}
-        </p>
-        <h2
-          className="text-2xl font-black text-yellow-400 leading-tight"
-          style={{ textShadow: '0 0 30px rgba(251,191,36,0.7), 0 0 60px rgba(251,191,36,0.3)' }}
-        >
-          {lang === 'tr' ? 'YENİ LİDER\nKİLİDİ AÇILDI!' : 'NEW LEADER\nUNLOCKED!'}
-        </h2>
-      </div>
-
-      {/* Avatar + glow */}
-      <div className="relative flex items-center justify-center mb-6" style={{ width: 220, height: 220 }}>
-        {/* Rotating rays */}
-        <div
-          className="anim-rays-rot absolute inset-0 rounded-full"
-          style={{
-            background: `conic-gradient(${avatar.color} 0deg,transparent 20deg,${avatar.color} 40deg,transparent 60deg,${avatar.color} 80deg,transparent 100deg,${avatar.color} 120deg,transparent 140deg,${avatar.color} 160deg,transparent 180deg,${avatar.color} 200deg,transparent 220deg,${avatar.color} 240deg,transparent 260deg,${avatar.color} 280deg,transparent 300deg,${avatar.color} 320deg,transparent 340deg)`,
-            opacity: 0.45,
-            filter: 'blur(10px)',
-          }}
-        />
-        {/* Soft glow */}
-        <div
-          className="absolute rounded-full"
-          style={{ width: 150, height: 150, background: avatar.color, opacity: 0.2, filter: 'blur(35px)' }}
-        />
-        {/* Avatar circle */}
-        {revealed && (
-          <div
-            className="anim-avatar-pop relative flex items-center justify-center rounded-full border-4 border-yellow-400/70"
-            style={{
-              width: 148,
-              height: 148,
-              background: avatar.color,
-              boxShadow: `0 0 50px ${avatar.color}, 0 0 100px rgba(251,191,36,0.35)`,
-            }}
+        {/* Title */}
+        <div className="text-center mb-5">
+          <p className="text-xs font-black uppercase tracking-[0.3em] text-yellow-400/80 mb-1">
+            {lang === 'tr' ? '✨ Kilit Açıldı! ✨' : '✨ Unlocked! ✨'}
+          </p>
+          <h2
+            className="text-2xl font-black text-yellow-400 leading-tight"
+            style={{ textShadow: '0 0 30px rgba(251,191,36,0.7), 0 0 60px rgba(251,191,36,0.3)' }}
           >
-            <EmojiImg emoji={avatar.emoji} size={76} />
-          </div>
-        )}
-      </div>
+            {lang === 'tr' ? 'YENİ LİDER\nKİLİDİ AÇILDI!' : 'NEW LEADER\nUNLOCKED!'}
+          </h2>
+        </div>
 
-      {/* Name + quote */}
-      <div
-        className="text-center px-6 mb-8 transition-all duration-500"
-        style={{
-          opacity: revealed ? 1 : 0,
-          transform: revealed ? 'translateY(0)' : 'translateY(16px)',
-          transitionDelay: '300ms',
-        }}
-      >
-        <p className="text-lg font-black text-white mb-2">
-          {lang === 'tr' ? avatar.nameTR : avatar.nameEN}
-        </p>
-        <p className="text-sm text-yellow-200/75 italic max-w-xs">"{quote}"</p>
-      </div>
+        {/* Avatar + glow */}
+        <div className="relative flex items-center justify-center mb-5" style={{ width: 180, height: 180 }}>
+          {/* Rotating rays */}
+          <div
+            className="anim-rays-rot absolute inset-0 rounded-full"
+            style={{
+              background: `conic-gradient(${avatar.color} 0deg,transparent 20deg,${avatar.color} 40deg,transparent 60deg,${avatar.color} 80deg,transparent 100deg,${avatar.color} 120deg,transparent 140deg,${avatar.color} 160deg,transparent 180deg,${avatar.color} 200deg,transparent 220deg,${avatar.color} 240deg,transparent 260deg,${avatar.color} 280deg,transparent 300deg,${avatar.color} 320deg,transparent 340deg)`,
+              opacity: 0.45,
+              filter: 'blur(10px)',
+            }}
+          />
+          {/* Soft glow */}
+          <div
+            className="absolute rounded-full"
+            style={{ width: 120, height: 120, background: avatar.color, opacity: 0.2, filter: 'blur(30px)' }}
+          />
+          {/* Avatar circle */}
+          {revealed && (
+            <div
+              className="anim-avatar-pop relative flex items-center justify-center rounded-full border-4 border-yellow-400/70"
+              style={{
+                width: 128,
+                height: 128,
+                background: avatar.color,
+                boxShadow: `0 0 40px ${avatar.color}, 0 0 80px rgba(251,191,36,0.3)`,
+              }}
+            >
+              <EmojiImg emoji={avatar.emoji} size={64} />
+            </div>
+          )}
+        </div>
 
-      {/* Buttons */}
-      <div
-        className="flex gap-3 px-8 w-full max-w-xs transition-all duration-500"
-        style={{
-          opacity: revealed ? 1 : 0,
-          transform: revealed ? 'translateY(0)' : 'translateY(16px)',
-          transitionDelay: '500ms',
-        }}
-      >
+        {/* Name + quote */}
+        <div className="text-center mb-5">
+          <p className="text-lg font-black text-white mb-1.5">
+            {lang === 'tr' ? avatar.nameTR : avatar.nameEN}
+          </p>
+          <p className="text-sm text-yellow-200/80 italic">"{quote}"</p>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex gap-3 w-full">
         <button
           onClick={() => { playClickSound(); onClose(); }}
           className="flex-1 py-3.5 rounded-2xl font-bold text-sm text-white/70 border border-white/20 active:scale-95 transition-transform"
@@ -206,6 +201,7 @@ export function AvatarRewardModal({ avatarId, onEquip, onClose }: AvatarRewardMo
         >
           {lang === 'tr' ? '⚡ Kuşan' : '⚡ Equip'}
         </button>
+        </div>
       </div>
     </div>
   );

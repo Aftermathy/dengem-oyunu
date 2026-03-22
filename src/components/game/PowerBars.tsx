@@ -187,6 +187,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
               {/* Power bar */}
               <div
                 className="w-full h-20 bg-muted/50 rounded-full relative overflow-hidden border-4 border-game-overlay select-none"
+                style={{ transform: 'translateZ(0)', isolation: 'isolate' }}
                 onMouseEnter={() => setShowPercent(p)}
                 onMouseLeave={() => setShowPercent(null)}
                 onTouchStart={() => {
@@ -198,8 +199,13 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 }}
               >
                 <div
-                  className="absolute bottom-0 w-full rounded-full transition-all duration-500 ease-out"
-                  style={{ height: `${val}%`, background: getBarGradient(val) }}
+                  className="absolute bottom-0 w-full"
+                  style={{
+                    height: `${val}%`,
+                    background: getBarGradient(val),
+                    transition: 'height 667ms cubic-bezier(0.4, 0, 0.2, 1)',
+                    willChange: 'height',
+                  }}
                 />
                 {showPercent === p && (
                   <div className="absolute inset-0 flex items-center justify-center z-10">

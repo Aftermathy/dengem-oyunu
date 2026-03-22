@@ -2,11 +2,11 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { ElectionCard, CardRarity } from '@/types/election';
 
 /* ── Rarity styles ── */
-export const RARITY_STYLES: Record<CardRarity, { border: string; bg: string; glow: string; label: string; labelColor: string }> = {
-  common: { border: 'border-muted-foreground/60', bg: 'bg-muted/80', glow: '', label: '★', labelColor: 'text-muted-foreground' },
-  uncommon: { border: 'border-game-success/70', bg: 'bg-game-success/10', glow: 'shadow-[0_0_12px_hsl(var(--game-success)/0.3)]', label: '★★', labelColor: 'text-game-success-light' },
-  epic: { border: 'border-game-special/70', bg: 'bg-game-special/10', glow: 'shadow-[0_0_18px_hsl(var(--game-special)/0.4)]', label: '★★★', labelColor: 'text-game-special-light' },
-  legendary: { border: 'border-game-danger/80', bg: 'bg-game-danger/10', glow: 'shadow-[0_0_25px_hsl(var(--game-danger)/0.5)]', label: '★★★★', labelColor: 'text-game-danger-light' },
+export const RARITY_STYLES: Record<CardRarity, { border: string; bg: string; glow: string; label: string; labelColor: string; textColor: string }> = {
+  common:    { border: 'border-zinc-500/60',       bg: 'bg-zinc-900/20 backdrop-blur-sm', glow: '',                                                    label: '★',    labelColor: 'text-zinc-400',           textColor: 'text-zinc-300' },
+  uncommon:  { border: 'border-game-success/70',   bg: 'bg-game-success/10',              glow: 'shadow-[0_0_12px_hsl(var(--game-success)/0.3)]',      label: '★★',   labelColor: 'text-game-success-light', textColor: 'text-game-success-light' },
+  epic:      { border: 'border-game-special/70',   bg: 'bg-game-special/10',              glow: 'shadow-[0_0_18px_hsl(var(--game-special)/0.4)]',      label: '★★★',  labelColor: 'text-game-special-light', textColor: 'text-game-special-light' },
+  legendary: { border: 'border-game-danger/80',    bg: 'bg-game-danger/10',               glow: 'shadow-[0_0_25px_hsl(var(--game-danger)/0.5)]',       label: '★★★★', labelColor: 'text-game-danger-light',  textColor: 'text-game-danger-light' },
 };
 
 export const REROLL_COST = 3;

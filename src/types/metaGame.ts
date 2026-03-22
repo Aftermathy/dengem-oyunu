@@ -77,7 +77,7 @@ export const SKILL_DEFS: SkillDef[] = [
   { id: 'election_master', maxLevel: 5, costs: [15, 25, 40, 60, 80], emoji: '🗳️', tier: 2, category: 'economy',
     titleTR: 'Seçim Kampanyası Ustası', titleEN: 'Election Campaign Master', descTR: 'Seçim hamle maliyetini düşürür', descEN: 'Reduces election move costs' },
   { id: 'dark_connections', maxLevel: 5, costs: [15, 25, 40, 60, 80], emoji: '🕶️', tier: 2, category: 'economy',
-    titleTR: 'Karanlık Bağlantılar', titleEN: 'Dark Connections', descTR: 'Aklama dükkanı maliyetini düşürür', descEN: 'Reduces launder shop costs' },
+    titleTR: 'Karanlık Bağlantılar', titleEN: 'Dark Connections', descTR: 'Seçim özel güç maliyetini düşürür', descEN: 'Reduces election special power costs' },
   { id: 'pro_launderer', maxLevel: 2, costs: [30, 60], emoji: '🧹', tier: 2, category: 'economy',
     titleTR: 'Profesyonel Aklayıcı', titleEN: 'Professional Launderer', descTR: 'Aklama verimliliğini artırır (25/30B)', descEN: 'Increases laundering efficiency (25/30B)' },
   { id: 'offshore', maxLevel: 3, costs: [25, 50, 80], emoji: '🏦', tier: 2, category: 'economy',

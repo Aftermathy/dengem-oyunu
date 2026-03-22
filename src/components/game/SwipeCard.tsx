@@ -133,6 +133,31 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
   );
 }
 
+function CharacterVisual({ card }: { card: EventCard }) {
+  const [imgError, setImgError] = useState(false);
+
+  if (card.imageId && !imgError) {
+    return (
+      <div
+        className="rounded-full p-[3px]"
+        style={{
+          background: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))',
+          boxShadow: '0 0 14px hsl(var(--primary) / 0.55), 0 0 28px hsl(var(--primary) / 0.25)',
+        }}
+      >
+        <img
+          src={`/assets/images/characters/${card.imageId}.png`}
+          alt={card.character}
+          onError={() => setImgError(true)}
+          className="w-[135px] h-[135px] object-cover rounded-full block"
+        />
+      </div>
+    );
+  }
+
+  return <EmojiImg emoji={card.characterEmoji} size={90} />;
+}
+
 function CardContent({ card, direction, t: _t, isFirstSeen }: {
   card: EventCard;
   direction: 'left' | 'right' | null;
@@ -146,7 +171,7 @@ function CardContent({ card, direction, t: _t, isFirstSeen }: {
     <div className="bg-card border-2 border-border rounded-2xl shadow-xl overflow-hidden h-full flex flex-col" style={{ transform: 'scale(0.9)', transformOrigin: 'center' }}>
       {/* Character header */}
       <div className="bg-gradient-to-br from-primary/10 to-accent/20 p-3 text-center flex-[2] flex flex-col items-center justify-center min-h-0">
-        <div className="mb-1"><EmojiImg emoji={card.characterEmoji} size={90} /></div>
+        <div className="mb-1"><CharacterVisual card={card} /></div>
         <h3 className="font-bold text-foreground text-2xl">{card.character}</h3>
         <span className="text-sm bg-muted px-3 py-0.5 rounded-full text-muted-foreground mt-0.5">
           {card.category}
@@ -155,7 +180,7 @@ function CardContent({ card, direction, t: _t, isFirstSeen }: {
 
       {/* Description */}
       <div className="px-5 py-2 flex-[2] flex items-center border-t border-border/30 min-h-0">
-        <p className="text-sm text-foreground leading-snug italic w-full">
+        <p className="text-base text-foreground leading-snug italic w-full">
           "{card.description}"
         </p>
       </div>

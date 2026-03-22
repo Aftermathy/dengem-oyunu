@@ -49,8 +49,9 @@ const Index = () => {
   } = useGame(lang);
   const { modifiers } = useMetaGame();
   const { userProfile, userId, updateProfile } = useUserProfile();
-  const electionCostFactor = modifiers.ohalElectionCostMult ?? 1;
+  const electionCostFactor = (1 - (modifiers.electionCostReduction ?? 0)) * (modifiers.ohalElectionCostMult ?? 1);
   const offshoreRate = modifiers.offshoreRate ?? 0;
+  const darkConnectionsReduction = modifiers.darkConnectionsReduction ?? 0;
 
   const [activeEffects, setActiveEffects] = useState<PowerEffect[]>([]);
   const [projectedMoney, setProjectedMoney] = useState<number | null>(null);
@@ -64,6 +65,7 @@ const Index = () => {
   const nextElectionInfo = getNextElectionInfo(turn, completedElections);
   const electionDefeatRef = useRef(false);
   const pendingGameEndAction = useRef<(() => void) | null>(null);
+  const pendingWasGameOver = useRef(false);
 
   // Snapshot fast-changing game values so recordGameEnd doesn't re-create on every turn
   const gameStateRef = useRef({ turn, completedElections, _maxMoney, _maxElectionPct, _peakLaundered, gameOverInfo });
@@ -103,12 +105,13 @@ const Index = () => {
   const withGameEnd = useCallback((action: () => void) => {
     recordGameEnd();
     if (!userProfile.hasCompletedOnboarding) {
+      pendingWasGameOver.current = phase === 'gameover' || electionDefeatRef.current;
       pendingGameEndAction.current = action;
       setShowOnboarding(true);
       return;
     }
     action();
-  }, [recordGameEnd, userProfile.hasCompletedOnboarding]);
+  }, [recordGameEnd, userProfile.hasCompletedOnboarding, phase]);
 
   const handleGoToMenu = useCallback(() => {
     const wasGameOver = phase === 'gameover' || electionDefeatRef.current;
@@ -254,13 +257,14 @@ const Index = () => {
           halkPower={power.halk}
           lang={lang}
           costFactor={electionCostFactor}
-          onComplete={(result) => withGameEnd(() => handleElectionComplete(result))}
+          darkConnectionsReduction={darkConnectionsReduction}
+          onComplete={(result) => handleElectionComplete(result)}
           onLossDetected={handleElectionLoss}
           onRestart={() => withGameEnd(() => startGame())}
-          onMainMenu={() => withGameEnd(() => {
+          onMainMenu={() => {
             electionDefeatRef.current = true;
-            handleGoToMenu();
-          })}
+            withGameEnd(handleGoToMenu);
+          }}
           earnedAP={lastEarnedAP}
         />
       )}
@@ -286,12 +290,12 @@ const Index = () => {
           onComplete={(nickname, avatarId) => {
             updateProfile({ nickname, avatarId, hasCompletedOnboarding: true });
             setShowOnboarding(false);
-            const pendingAction = pendingGameEndAction.current;
             pendingGameEndAction.current = null;
-            if (pendingAction) {
-              pendingAction();
-            } else {
-              handleGoToMenu();
+            const wasGameOver = pendingWasGameOver.current;
+            pendingWasGameOver.current = false;
+            goToMenu();
+            if (wasGameOver && hasSeenAnyCard() && !hasShownKnowledgeAnnouncement()) {
+              setShowKnowledgeAnnouncement(true);
             }
           }}
         />

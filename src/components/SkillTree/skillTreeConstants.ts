@@ -88,7 +88,7 @@ export function getEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en')
   if (id.startsWith('shield_')) return lang === 'en' ? `Reduces damage by -${level}` : `Hasarı -${level} azaltır`;
   if (id.startsWith('media_')) return lang === 'en' ? `Boosts gains by +${level}` : `Kazancı +${level} artırır`;
   if (id === 'election_master') { const pcts = [3,5,8,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `Reduces election costs by ${v}%` : `Seçim maliyetini %${v} düşürür`; }
-  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `Reduces shop costs by ${v}%` : `Dükkan maliyetini %${v} düşürür`; }
+  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `Reduces special power costs by ${v}%` : `Özel güç maliyetini %${v} düşürür`; }
   if (id === 'pro_launderer') { const vals = [25,30] as const; const v = clamp(level-1, vals); return lang === 'en' ? `Launders ${v}B per 30B` : `30B'ye ${v}B aklar`; }
   if (id === 'offshore') { const pcts = [1,2,3] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `${v}% interest per turn` : `Tur başı %${v} faiz`; }
   if (id === 'lucky_cards') { const pcts = [5,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `+${v}% rare card chance` : `+%${v} nadir kart şansı`; }
@@ -105,7 +105,7 @@ export function getNextEffectText(skill: SkillDef, level: number, lang: 'tr' | '
   if (id.startsWith('shield_')) return lang === 'en' ? `Will reduce damage by -${nextLevel}` : `Hasarı -${nextLevel} azaltacak`;
   if (id.startsWith('media_')) return lang === 'en' ? `Will boost gains by +${nextLevel}` : `Kazancı +${nextLevel} artıracak`;
   if (id === 'election_master') { const pcts = [3,5,8,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `Will reduce costs by ${v}%` : `Maliyeti %${v} düşürecek`; }
-  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `Will reduce costs by ${v}%` : `Maliyeti %${v} düşürecek`; }
+  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `Will reduce special power costs by ${v}%` : `Özel güç maliyetini %${v} düşürecek`; }
   if (id === 'pro_launderer') { const vals = [25,30] as const; const v = clamp(nextLevel-1, vals); return lang === 'en' ? `Will launder ${v}B per 30B` : `30B'ye ${v}B aklayacak`; }
   if (id === 'offshore') { const pcts = [1,2,3] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `${v}% interest per turn` : `Tur başı %${v} faiz`; }
   if (id === 'lucky_cards') { const pcts = [5,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `+${v}% rare card chance` : `+%${v} nadir kart şansı`; }

@@ -49,7 +49,8 @@ interface StartScreenProps {
 
 export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onShowLeaderboard, onEquipAvatar, userProfile }: StartScreenProps) {
   const { lang, setLang, t } = useLanguage();
-  const { authorityPoints } = useMetaGame();
+  const { authorityPoints, isAchievementClaimed } = useMetaGame();
+  const unclaimedAchievements = getUnlockedIds().filter(id => !isAchievementClaimed(id)).length;
   const [titleIndex, setTitleIndex] = useState(0);
   const [shakeClass, setShakeClass] = useState('');
   const [throneClicks, setThroneClicks] = useState(0);
@@ -131,7 +132,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
   };
 
   return (
-    <div className="flex flex-col items-center p-4 text-center animate-fade-in h-[100dvh] overflow-hidden pt-safe-plus-1 pb-safe">
+    <div className="flex flex-col items-center p-4 text-center animate-fade-in h-[100dvh] overflow-hidden pb-safe">
       {/* Top bar */}
       <div className="flex items-start justify-between w-full shrink-0 mb-1">
         <div className="flex flex-col items-start gap-2">
@@ -234,25 +235,29 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
           )}
 
           {/* Meta-game navigation */}
-          <div className="flex items-center gap-3 flex-wrap justify-center">
-            <button
-              onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
-              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
-            >
-              <EmojiImg emoji="🏅" size={16} />
-              {lang === 'tr' ? 'Başarımlar' : 'Achievements'}
-              <span className="text-xs text-primary/70">({getUnlockedIds().length})</span>
-            </button>
-            <span className="text-muted-foreground/30">|</span>
-            <button
-              onClick={() => { playClickSound(); hapticLight(); setShowSkillTree(true); }}
-              className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
-            >
-              <EmojiImg emoji="⚡" size={16} />
-              {lang === 'tr' ? 'Yetenekler' : 'Skills'}
-            </button>
-            <span className="text-muted-foreground/30">|</span>
-            {userProfile?.hasCompletedOnboarding && (
+          {userProfile?.hasCompletedOnboarding && (
+            <div className="flex items-center gap-3 flex-wrap justify-center">
+              <button
+                onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
+                className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+              >
+                <EmojiImg emoji="🏅" size={16} />
+                {lang === 'tr' ? 'Başarımlar' : 'Achievements'}
+                {unclaimedAchievements > 0 && (
+                  <span className="text-[10px] font-black bg-red-500 text-white rounded-full px-1.5 py-0.5 leading-none">
+                    {unclaimedAchievements}
+                  </span>
+                )}
+              </button>
+              <span className="text-muted-foreground/30">|</span>
+              <button
+                onClick={() => { playClickSound(); hapticLight(); setShowSkillTree(true); }}
+                className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+              >
+                <EmojiImg emoji="⚡" size={16} />
+                {lang === 'tr' ? 'Yetenekler' : 'Skills'}
+              </button>
+              <span className="text-muted-foreground/30">|</span>
               <button
                 onClick={() => { playClickSound(); hapticLight(); onShowLeaderboard?.(); }}
                 className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
@@ -260,8 +265,8 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
                 <EmojiImg emoji="🏆" size={16} />
                 {lang === 'tr' ? 'Sıralama' : 'Leaderboard'}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <a

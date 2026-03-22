@@ -39,7 +39,7 @@ export function getAchievementById(id: string): Achievement | undefined {
 
 export function checkTurnAchievements(turn: number): string[] {
   const newlyUnlocked: string[] = [];
-  if (turn >= 10 && unlockAchievement('survive_10')) newlyUnlocked.push('survive_10');
+  if (turn >= 15 && unlockAchievement('survive_10')) newlyUnlocked.push('survive_10');
   if (turn >= 25 && unlockAchievement('survive_25')) newlyUnlocked.push('survive_25');
   if (turn >= 50 && unlockAchievement('survive_50')) newlyUnlocked.push('survive_50');
   if (turn >= 100 && unlockAchievement('survive_100')) newlyUnlocked.push('survive_100');
@@ -50,7 +50,7 @@ export function checkTurnAchievements(turn: number): string[] {
 
 export function checkMoneyAchievements(money: number): string[] {
   const newlyUnlocked: string[] = [];
-  if (money >= 100 && unlockAchievement('rich_100')) newlyUnlocked.push('rich_100');
+  if (money >= 200 && unlockAchievement('rich_100')) newlyUnlocked.push('rich_100');
   if (money >= 500 && unlockAchievement('rich_500')) newlyUnlocked.push('rich_500');
   return newlyUnlocked;
 }
@@ -68,7 +68,7 @@ export function checkPowerAchievements(power: PowerState): string[] {
     }
   }
 
-  const allBalanced = factions.every(f => power[f] >= 45 && power[f] <= 55);
+  const allBalanced = factions.every(f => power[f] >= 70 && power[f] <= 90);
   if (allBalanced && unlockAchievement('perfect_balance')) {
     newlyUnlocked.push('perfect_balance');
   }
@@ -122,7 +122,7 @@ export function trackBankruptcy(): string[] {
 
 export function trackSpeedDeath(turn: number): string[] {
   const newlyUnlocked: string[] = [];
-  if (turn < 5 && unlockAchievement('speed_death')) newlyUnlocked.push('speed_death');
+  if (turn < 8 && unlockAchievement('speed_death')) newlyUnlocked.push('speed_death');
   return newlyUnlocked;
 }
 
@@ -133,7 +133,7 @@ export function trackBribe(): string[] {
   try {
     const count = parseInt(localStorage.getItem(BRIBE_TOTAL_KEY) || '0', 10) + 1;
     localStorage.setItem(BRIBE_TOTAL_KEY, String(count));
-    if (count >= 10 && unlockAchievement('bribe_10')) newlyUnlocked.push('bribe_10');
+    if (count >= 20 && unlockAchievement('bribe_10')) newlyUnlocked.push('bribe_10');
   } catch {}
   return newlyUnlocked;
 }
@@ -145,7 +145,7 @@ export function trackLaunder(): string[] {
   try {
     const count = parseInt(localStorage.getItem(LAUNDER_TOTAL_KEY) || '0', 10) + 1;
     localStorage.setItem(LAUNDER_TOTAL_KEY, String(count));
-    if (count >= 5 && unlockAchievement('launder_5')) newlyUnlocked.push('launder_5');
+    if (count >= 20 && unlockAchievement('launder_5')) newlyUnlocked.push('launder_5');
   } catch {}
   return newlyUnlocked;
 }
@@ -178,12 +178,3 @@ export function checkCardAchievement(cardId: number): string[] {
   return newlyUnlocked;
 }
 
-// --- Propaganda tracking ---
-
-export function checkPropagandaAchievement(propagandaCount: number): string[] {
-  const newlyUnlocked: string[] = [];
-  if (propagandaCount >= 3 && unlockAchievement('propaganda_master')) {
-    newlyUnlocked.push('propaganda_master');
-  }
-  return newlyUnlocked;
-}
