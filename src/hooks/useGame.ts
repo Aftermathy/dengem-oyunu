@@ -7,8 +7,9 @@ import { GAME_CONFIG } from '@/constants/gameConfig';
 import { shuffleArray, applyCardEffects, calculateMaxIncome, findLowFaction } from '@/lib/gameLogic';
 import { trackEvent } from '@/lib/analytics';
 import { markCardSeen, isCardSeen } from '@/lib/cardMemory';
-import { eventCards, catConsultantCard, milestoneCard50, darkModeCard } from '@/data/cards';
-import { eventCardsEn, catConsultantCardEn, milestoneCard50En, darkModeCardEn } from '@/data/cards-en';
+import { eventCards, catConsultantCard, milestoneCard50, darkModeCard, dlcCardsTR } from '@/data/cards';
+import { eventCardsEn, catConsultantCardEn, milestoneCard50En, darkModeCardEn, dlcCardsEN } from '@/data/cards-en';
+import { isAdFree } from '@/hooks/useAds';
 import { gameOverScenarios } from '@/data/gameOverScenarios';
 import { gameOverScenariosEn } from '@/data/gameOverScenarios-en';
 import { Language, useLanguage } from '@/contexts/LanguageContext';
@@ -32,7 +33,8 @@ const INITIAL_POWER: PowerState = {
 
 function getCards(lang: Language, rareBonus: number = 0) {
   const base = lang === 'en' ? eventCardsEn : eventCards;
-  const cards = [...base];
+  const dlc = lang === 'en' ? dlcCardsEN : dlcCardsTR;
+  const cards = isAdFree() ? [...base, ...dlc] : [...base];
   const cat = lang === 'en' ? catConsultantCardEn : catConsultantCard;
   if (Math.random() < GAME_CONFIG.CAT_CARD_CHANCE + rareBonus) {
     const pos = Math.floor(Math.random() * Math.min(GAME_CONFIG.CAT_MAX_POSITION, cards.length));

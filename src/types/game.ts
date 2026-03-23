@@ -18,6 +18,7 @@ export interface EventCard {
   rightEffects: PowerEffect[];
   leftMoney?: number;
   rightMoney?: number;
+  dlcPack?: string;
 }
 
 export interface PowerState {

@@ -49,6 +49,7 @@ export interface AvatarDef {
   unlockAchievement?: string;
   unlockTextTR?: string;
   unlockTextEN?: string;
+  dlcPack?: string;
 }
 
 export const AVATAR_DEFS: AvatarDef[] = [
@@ -56,10 +57,10 @@ export const AVATAR_DEFS: AvatarDef[] = [
   { id: 'avatar_1', emoji: '👨‍✈️', nameTR: 'Generalissimo', nameEN: 'Generalissimo', color: 'hsl(200 60% 40%)' },
   { id: 'avatar_2', emoji: '🤵', nameTR: 'Bay Başkan', nameEN: 'Mr. President', color: 'hsl(0 0% 25%)' },
   { id: 'avatar_3', emoji: '👳', nameTR: 'Sultan', nameEN: 'Sultan', color: 'hsl(35 70% 45%)' },
-  // PNG test avatars — default unlocked
-  { id: 'avatar_png_1', emoji: '💰', imageId: 'blonde_trader', nameTR: 'Sarışın Tüccar', nameEN: 'Blonde Trader', color: 'hsl(40 70% 35%)' },
-  { id: 'avatar_png_2', emoji: '🚀', imageId: 'rocket_guy', nameTR: 'Roket Adam', nameEN: 'Rocket Guy', color: 'hsl(220 70% 35%)' },
-  { id: 'avatar_png_3', emoji: '⭐', imageId: 'zionist_leader', nameTR: 'Lider', nameEN: 'The Leader', color: 'hsl(0 60% 30%)' },
+  // Ortadoğu DLC avatarları — premium (ad-free) ile açılır
+  { id: 'avatar_png_1', emoji: '💰', imageId: 'blonde_trader', nameTR: 'Sarışın Tüccar', nameEN: 'Blonde Trader', color: 'hsl(40 70% 35%)', dlcPack: 'ortadogu' },
+  { id: 'avatar_png_2', emoji: '🚀', imageId: 'rocket_guy', nameTR: 'Roket Adam', nameEN: 'Rocket Guy', color: 'hsl(220 70% 35%)', dlcPack: 'ortadogu' },
+  { id: 'avatar_png_3', emoji: '⭐', imageId: 'zionist_leader', nameTR: 'Lider', nameEN: 'The Leader', color: 'hsl(0 60% 30%)', dlcPack: 'ortadogu' },
   // 15 locked - tied to achievements
   { id: 'avatar_4', emoji: '🧛', nameTR: 'Vampir Diktatör', nameEN: 'Vampire Dictator', color: 'hsl(0 60% 30%)',
     unlockAchievement: 'survive_10', unlockTextTR: '10 Tur Hayatta Kal', unlockTextEN: 'Survive 10 Turns' },
@@ -93,9 +94,10 @@ export const AVATAR_DEFS: AvatarDef[] = [
     unlockAchievement: 'final_boss', unlockTextTR: 'Final Seçimini Kazan', unlockTextEN: 'Win the Final Election' },
 ];
 
-export function isAvatarUnlocked(avatarId: string, claimedAchievements: string[]): boolean {
+export function isAvatarUnlocked(avatarId: string, claimedAchievements: string[], isPremium = false): boolean {
   const def = AVATAR_DEFS.find(a => a.id === avatarId);
   if (!def) return false;
+  if (def.dlcPack) return isPremium;
   if (!def.unlockAchievement) return true; // default avatars
   return claimedAchievements.includes(def.unlockAchievement);
 }

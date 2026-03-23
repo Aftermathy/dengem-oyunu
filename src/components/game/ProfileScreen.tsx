@@ -5,6 +5,7 @@ import { EmojiImg } from '@/components/EmojiImg';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { AVATAR_DEFS, isAvatarUnlocked, getFunnyStats, type UserProfile } from '@/lib/userProfile';
+import { isAdFree } from '@/hooks/useAds';
 import { AvatarImg } from '@/components/AvatarImg';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
@@ -59,7 +60,8 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
         </div>
         <div className="grid grid-cols-3 gap-3 p-4">
           {AVATAR_DEFS.map(avatar => {
-            const unlocked = isAvatarUnlocked(avatar.id, claimedAchievements);
+            const unlocked = isAvatarUnlocked(avatar.id, claimedAchievements, isAdFree());
+            const isDlcLocked = !!avatar.dlcPack && !isAdFree();
             const isSelected = avatar.id === profile.avatarId;
             return (
               <button
@@ -79,11 +81,21 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
                 >
                   <AvatarImg avatar={avatar} size={64} />
                   {!unlocked && (
-                    <div className="absolute inset-0 flex items-center justify-center rounded-full">
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40">
                       <GameIcon name="lock" size={20} className="text-white/80" />
                     </div>
                   )}
+                  {isDlcLocked && (
+                    <div className="absolute -bottom-0.5 -right-0.5 bg-yellow-500 rounded-full w-5 h-5 flex items-center justify-center text-[9px] font-black text-black leading-none">
+                      ★
+                    </div>
+                  )}
                 </div>
+                {isDlcLocked && (
+                  <span className="text-[8px] font-black text-yellow-500 leading-tight text-center">
+                    {lang === 'tr' ? 'Premium' : 'Premium'}
+                  </span>
+                )}
                 <span className="text-[10px] font-bold text-foreground leading-tight text-center">
                   {lang === 'tr' ? avatar.nameTR : avatar.nameEN}
                 </span>
