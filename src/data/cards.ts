@@ -14,11 +14,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Faizi artır, piyasayı sakinleştir",
     leftEffects: [
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -15 },
+      { power: "yatirimcilar", amount: -15 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -5 },
-      { power: "yatirimcilar", amount: 15 },
+      { power: "yatirimcilar", amount: 15 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -8,
     rightMoney: 5,
@@ -35,11 +41,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "yatirimcilar", amount: 15 },
       { power: "halk", amount: -10 },
-      { power: "mafya", amount: 10 },
+      { power: "mafya", amount: 10 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: -10 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -25,
     rightMoney: 3,
@@ -55,12 +66,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "IMF ile görüş",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 10 },
       { power: "halk", amount: -5 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 15,
     rightMoney: 20,
@@ -77,11 +93,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "yatirimcilar", amount: -15 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: 10 },
+      { power: "yatirimcilar", amount: 10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -12,
     rightMoney: 0,
@@ -98,11 +119,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "yatirimcilar", amount: -15 },
       { power: "halk", amount: 5 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 10,
     rightMoney: -3,
@@ -118,12 +144,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Düşük göster",
     leftEffects: [
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -10 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 8,
@@ -139,11 +170,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Devlet sübvanse etsin",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: 10 },
+      { power: "yatirimcilar", amount: 10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 12,
     rightMoney: -18,
@@ -160,11 +197,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "yatirimcilar", amount: -10 },
-      { power: "mafya", amount: -5 },
+      { power: "mafya", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -10 },
-      { power: "mafya", amount: 10 },
+      { power: "mafya", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 7,
@@ -181,12 +223,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 15 },
       { power: "mafya", amount: -10 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 15,
     rightMoney: 20,
@@ -202,11 +248,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "NATO müttefikleriyle kal",
     leftEffects: [
       { power: "yatirimcilar", amount: 10 },
-      { power: "ordu", amount: -10 },
+      { power: "ordu", amount: -10 },,
+      { power: "halk", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "halk", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 10,
     rightMoney: -3,
@@ -225,11 +277,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "ordu", amount: -5 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: 10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "halk", amount: 0 },
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -3,
     rightMoney: 0,
@@ -246,11 +303,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -5 },
       { power: "mafya", amount: 5 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: -2,
@@ -267,12 +329,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "ordu", amount: 10 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 15 },
       { power: "yatirimcilar", amount: -10 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -8,
@@ -289,11 +355,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -10 },
       { power: "ordu", amount: -10 },
-      { power: "tarikat", amount: 10 },
+      { power: "tarikat", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -310,11 +381,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "ordu", amount: 5 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 15 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -10,
     rightMoney: 0,
@@ -331,11 +407,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "mafya", amount: 5 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -5 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -4,
     rightMoney: 0,
@@ -352,12 +433,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "halk", amount: -10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "mafya", amount: -15 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -5,
@@ -374,11 +459,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -5 },
       { power: "mafya", amount: 5 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -3,
     rightMoney: 0,
@@ -395,12 +485,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 5 },
       { power: "tarikat", amount: 5 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "halk", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 5 },
       { power: "yatirimcilar", amount: 10 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 5,
@@ -417,12 +511,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: -15 },
       { power: "halk", amount: -10 },
-      { power: "ordu", amount: 10 },
+      { power: "ordu", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: -5 },
       { power: "halk", amount: 5 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: -8,
     rightMoney: -2,
@@ -441,11 +539,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 15 },
       { power: "ordu", amount: -10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: -15 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "halk", amount: 0 },
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: 5,
     rightMoney: 0,
@@ -462,11 +565,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: -15 },
       { power: "ordu", amount: 10 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: 10 },
-      { power: "ordu", amount: -10 },
+      { power: "ordu", amount: -10 },,
+      { power: "halk", amount: 0 },
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 3,
@@ -483,11 +591,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: -15 },
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: 10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 3,
     rightMoney: 0,
@@ -504,11 +617,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 15 },
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: -15 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -8,
     rightMoney: 0,
@@ -525,11 +643,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 10 },
       { power: "halk", amount: -5 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: -10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "halk", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -15,
     rightMoney: 5,
@@ -546,11 +669,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 15 },
       { power: "ordu", amount: -5 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: -10 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 0,
@@ -567,11 +695,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 10 },
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: -10 },
-      { power: "halk", amount: 10 },
+      { power: "halk", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -587,11 +720,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Denetle, şeffaflık iste",
     leftEffects: [
       { power: "tarikat", amount: 10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: -10 },
-      { power: "halk", amount: 10 },
+      { power: "halk", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -8,
     rightMoney: 3,
@@ -608,12 +747,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: -15 },
       { power: "halk", amount: -10 },
-      { power: "ordu", amount: 10 },
+      { power: "ordu", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: -10 },
       { power: "halk", amount: 5 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: -12,
     rightMoney: -3,
@@ -632,12 +775,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 15 },
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: -10 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -20,
     rightMoney: 3,
@@ -654,12 +801,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "yatirimcilar", amount: -15 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -10 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -10,
@@ -676,11 +827,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 10 },
       { power: "yatirimcilar", amount: -15 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 5 },
-      { power: "yatirimcilar", amount: 10 },
+      { power: "yatirimcilar", amount: 10 },,
+      { power: "halk", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -15,
     rightMoney: -20,
@@ -697,12 +853,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 15 },
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: -5 },
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -18,
     rightMoney: 5,
@@ -719,12 +879,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "yatirimcilar", amount: 15 },
       { power: "ordu", amount: 10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 5 },
       { power: "ordu", amount: 5 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 20,
     rightMoney: 8,
@@ -741,12 +905,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 10 },
       { power: "ordu", amount: 5 },
-      { power: "yatirimcilar", amount: -15 },
+      { power: "yatirimcilar", amount: -15 },,
+      { power: "halk", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "yatirimcilar", amount: 15 },
-      { power: "tarikat", amount: -10 },
+      { power: "tarikat", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -5,
@@ -763,12 +931,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "yatirimcilar", amount: 10 },
       { power: "ordu", amount: -10 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 10 },
       { power: "yatirimcilar", amount: -5 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 12,
     rightMoney: -8,
@@ -785,12 +957,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 5 },
       { power: "tarikat", amount: 5 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "halk", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "yatirimcilar", amount: 10 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -3,
@@ -809,12 +985,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "ordu", amount: 10 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 15 },
       { power: "ordu", amount: -5 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: -3,
     rightMoney: -2,
@@ -831,11 +1011,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "ordu", amount: 5 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -851,11 +1036,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Bırak, trolleri gönder",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -5 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -2,
@@ -871,12 +1062,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Grevi yasakla",
     leftEffects: [
       { power: "halk", amount: 15 },
-      { power: "yatirimcilar", amount: -15 },
+      { power: "yatirimcilar", amount: -15 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -15 },
       { power: "yatirimcilar", amount: 10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -12,
     rightMoney: 5,
@@ -893,11 +1089,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -10 },
       { power: "ordu", amount: 5 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -2,
     rightMoney: 0,
@@ -914,11 +1115,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "yatirimcilar", amount: -10 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -15 },
-      { power: "tarikat", amount: 10 },
+      { power: "tarikat", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -20,
     rightMoney: 0,
@@ -934,11 +1140,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Kısmi kapanma, ekonomi dönsün",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: -15 },
+      { power: "yatirimcilar", amount: -15 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -15,
     rightMoney: 5,
@@ -955,11 +1167,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "yatirimcilar", amount: 15 },
       { power: "halk", amount: -15 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 15 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 18,
     rightMoney: -5,
@@ -978,12 +1195,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 15 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: -20 },
       { power: "halk", amount: 10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 15,
     rightMoney: -5,
@@ -1000,12 +1221,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "halk", amount: -10 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: -15 },
       { power: "halk", amount: 5 },
-      { power: "ordu", amount: 10 },
+      { power: "ordu", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 10,
     rightMoney: -8,
@@ -1022,11 +1247,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "yatirimcilar", amount: 10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: -5 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 20,
     rightMoney: 0,
@@ -1043,11 +1273,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "halk", amount: -15 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: -10 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 0,
@@ -1063,12 +1298,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Soruşturma başlat",
     leftEffects: [
       { power: "mafya", amount: 10 },
-      { power: "halk", amount: -15 },
+      { power: "halk", amount: -15 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: -15 },
       { power: "halk", amount: 15 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -5,
@@ -1085,11 +1325,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: -10 },
-      { power: "halk", amount: 10 },
+      { power: "halk", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 12,
     rightMoney: -3,
@@ -1106,11 +1351,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "ordu", amount: -10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 10 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "halk", amount: 0 },
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 8,
     rightMoney: -3,
@@ -1127,11 +1377,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "halk", amount: -5 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: -15 },
-      { power: "halk", amount: 10 },
+      { power: "halk", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 5,
     rightMoney: -5,
@@ -1150,11 +1405,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 15 },
       { power: "ordu", amount: -15 },
-      { power: "tarikat", amount: 10 },
+      { power: "tarikat", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -15 },
-      { power: "ordu", amount: 15 },
+      { power: "ordu", amount: 15 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -10,
     rightMoney: -30,
@@ -1171,11 +1431,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "yatirimcilar", amount: 10 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "mafya", amount: -5 },
+      { power: "mafya", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -20,
     rightMoney: 5,
@@ -1192,11 +1457,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "yatirimcilar", amount: -15 },
       { power: "halk", amount: -10 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 10 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -10,
     rightMoney: 5,
@@ -1217,11 +1487,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 10 },
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -15 },
+      { power: "yatirimcilar", amount: -15 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 3,
@@ -1238,11 +1513,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 15 },
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "tarikat", amount: -10 },
+      { power: "tarikat", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -8,
     rightMoney: 0,
@@ -1260,12 +1540,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "yatirimcilar", amount: -15 },
       { power: "halk", amount: -10 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 15 },
       { power: "halk", amount: 5 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -15,
     rightMoney: 5,
@@ -1283,11 +1567,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Devam et, seçime kadar idare",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: 10 },
+      { power: "yatirimcilar", amount: 10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 10,
     rightMoney: -20,
@@ -1303,12 +1593,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Şeffaf rapor yayınla",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "mafya", amount: -5 },
+      { power: "mafya", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -5,
@@ -1324,11 +1619,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Harcamaları şeffaflaştır",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "mafya", amount: 10 },
+      { power: "mafya", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 15,
     rightMoney: -5,
@@ -1345,12 +1646,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 15 },
       { power: "mafya", amount: -15 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 5,
     rightMoney: -8,
@@ -1366,12 +1671,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Madenleri denetle, güvenliği artır",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "yatirimcilar", amount: -10 },
-      { power: "mafya", amount: -5 },
+      { power: "mafya", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -12,
@@ -1388,11 +1698,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 5 },
       { power: "ordu", amount: 5 },
-      { power: "halk", amount: -15 },
+      { power: "halk", amount: -15 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 3,
     rightMoney: 0,
@@ -1409,12 +1724,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 10 },
       { power: "ordu", amount: -5 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "ordu", amount: 5 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: -8,
     rightMoney: 0,
@@ -1431,12 +1750,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "mafya", amount: 5 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 3,
     rightMoney: -3,
@@ -1452,11 +1775,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Bırak, sansür yapmayalım",
     leftEffects: [
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -1473,11 +1802,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -10 },
       { power: "yatirimcilar", amount: -5 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -1494,12 +1828,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "ordu", amount: 10 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 15 },
       { power: "yatirimcilar", amount: -10 },
-      { power: "mafya", amount: -5 },
+      { power: "mafya", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 5,
     rightMoney: -8,
@@ -1516,12 +1854,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "tarikat", amount: 10 },
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "tarikat", amount: -10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -1537,11 +1879,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Serbest piyasa, karışma",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -10,
     rightMoney: 3,
@@ -1557,11 +1905,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Piyasa belirlesin",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: 10 },
+      { power: "yatirimcilar", amount: 10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -15,
     rightMoney: 5,
@@ -1577,11 +1931,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "İthalatı aç",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -3,
     rightMoney: -8,
@@ -1598,12 +1958,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "mafya", amount: -10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -15,
     rightMoney: 8,
@@ -1620,11 +1984,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 5 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -12,
     rightMoney: 8,
@@ -1641,11 +2010,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 5 },
       { power: "yatirimcilar", amount: -15 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 5,
@@ -1662,12 +2036,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: -10 },
       { power: "halk", amount: -5 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 10 },
       { power: "halk", amount: 5 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: -3,
     rightMoney: 0,
@@ -1684,12 +2062,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "yatirimcilar", amount: 5 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "yatirimcilar", amount: -5 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -25,
     rightMoney: 3,
@@ -1705,12 +2087,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Operasyon düzenle",
     leftEffects: [
       { power: "mafya", amount: 10 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: -15 },
       { power: "halk", amount: 5 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 8,
     rightMoney: -5,
@@ -1726,12 +2113,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Soruşturma aç",
     leftEffects: [
       { power: "mafya", amount: 5 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: -15 },
       { power: "halk", amount: 10 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -5,
@@ -1748,11 +2140,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "ordu", amount: -15 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 15 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: -15,
@@ -1769,11 +2166,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 15 },
       { power: "yatirimcilar", amount: 10 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 5 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "halk", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 15,
     rightMoney: -3,
@@ -1790,12 +2192,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 10 },
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 10 },
       { power: "ordu", amount: -5 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 5,
     rightMoney: 3,
@@ -1812,11 +2218,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 10 },
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 5 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -15,
     rightMoney: 3,
@@ -1833,12 +2244,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 10 },
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 10 },
       { power: "halk", amount: -5 },
-      { power: "ordu", amount: -10 },
+      { power: "ordu", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 5,
@@ -1855,12 +2270,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 15 },
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -15 },
+      { power: "yatirimcilar", amount: -15 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 10 },
       { power: "ordu", amount: -10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -10,
     rightMoney: 5,
@@ -1877,11 +2296,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -10 },
       { power: "yatirimcilar", amount: -15 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: 10 },
+      { power: "yatirimcilar", amount: 10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 15,
     rightMoney: -5,
@@ -1897,9 +2321,16 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Lüksten vazgeç",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
-    rightEffects: [{ power: "halk", amount: 10 }],
+    rightEffects: [{ power: "halk", amount: 10 },
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }],
     leftMoney: -10,
     rightMoney: 3,
   },
@@ -1915,11 +2346,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "tarikat", amount: 5 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -1936,12 +2372,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -10 },
       { power: "ordu", amount: 5 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "tarikat", amount: 5 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 3,
@@ -1958,11 +2398,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -15 },
       { power: "tarikat", amount: 10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -1978,11 +2423,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Denetle, müdahale et",
     leftEffects: [
       { power: "tarikat", amount: 10 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "tarikat", amount: -10 },
-      { power: "halk", amount: 10 },
+      { power: "halk", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -3,
@@ -1999,12 +2450,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "yatirimcilar", amount: 10 },
-      { power: "halk", amount: -15 },
+      { power: "halk", amount: -15 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "mafya", amount: -5 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 10,
     rightMoney: -8,
@@ -2020,12 +2475,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Ekonomiyi açık tut",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: -15 },
+      { power: "yatirimcilar", amount: -15 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -15 },
       { power: "yatirimcilar", amount: 10 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -20,
     rightMoney: 5,
@@ -2042,12 +2502,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -10 },
       { power: "tarikat", amount: -5 },
-      { power: "yatirimcilar", amount: 10 },
+      { power: "yatirimcilar", amount: 10 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 5 },
       { power: "tarikat", amount: 10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -8,
     rightMoney: 0,
@@ -2063,11 +2527,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Acil bütçe ayır, uçak al",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -15,
@@ -2084,11 +2554,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "yatirimcilar", amount: 10 },
       { power: "halk", amount: -15 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 10,
     rightMoney: -5,
@@ -2104,11 +2579,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "İstihdam paketi hazırla",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -12,
@@ -2122,10 +2603,17 @@ export const eventCards: EventCard[] = normalizeCards([
     description: "Emekli maaşları açlık sınırının altında. Bayram ikramiyesi artıralım mı?",
     leftChoice: "Sembolik artır, 500 lira",
     rightChoice: "Ciddi artış yap",
-    leftEffects: [{ power: "halk", amount: -5 }],
+    leftEffects: [{ power: "halk", amount: -5 },
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }],
     rightEffects: [
       { power: "halk", amount: 15 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -3,
     rightMoney: -15,
@@ -2142,12 +2630,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: -10 },
       { power: "yatirimcilar", amount: 10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 10 },
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 15,
     rightMoney: 0,
@@ -2163,11 +2655,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Yabancı hoca getir",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -5 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -3,
     rightMoney: -10,
@@ -2184,12 +2682,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "halk", amount: -10 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "mafya", amount: -10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 5,
     rightMoney: -5,
@@ -2205,11 +2707,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Piyasa fiyatından sat",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -5 },
-      { power: "yatirimcilar", amount: 10 },
+      { power: "yatirimcilar", amount: 10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -15,
     rightMoney: 8,
@@ -2225,11 +2733,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Görmezden gel, ortak vardı",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -15 },
-      { power: "mafya", amount: 10 },
+      { power: "mafya", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -3,
     rightMoney: 0,
@@ -2246,11 +2760,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 5 },
       { power: "ordu", amount: 10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -20,
     rightMoney: 0,
@@ -2266,11 +2785,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Acil bütçe ayır, hazırlan",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -20,
@@ -2287,11 +2812,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "ordu", amount: 5 },
-      { power: "yatirimcilar", amount: -10 },
+      { power: "yatirimcilar", amount: -10 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: 5 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 3,
@@ -2307,12 +2837,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Katıl, yumuşak güç kullan",
     leftEffects: [
       { power: "tarikat", amount: 5 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "tarikat", amount: -5 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -5,
@@ -2331,12 +2866,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "mafya", amount: -15 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: 10 },
       { power: "halk", amount: -10 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 3,
@@ -2352,11 +2891,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Şeffaf ol, kayıtları yayınla",
     leftEffects: [
       { power: "halk", amount: -10 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -3,
@@ -2373,11 +2918,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 15 },
       { power: "mafya", amount: -15 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: 10 },
-      { power: "halk", amount: -15 },
+      { power: "halk", amount: -15 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 5,
@@ -2393,11 +2943,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Tribünlerle anlaş, göz yum",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "mafya", amount: 10 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 0,
@@ -2414,11 +2970,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "mafya", amount: 10 },
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -10,
     rightMoney: 0,
@@ -2434,11 +2995,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Dijital bilet sistemi kur",
     leftEffects: [
       { power: "mafya", amount: 10 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "mafya", amount: -10 },
+      { power: "mafya", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 5,
     rightMoney: -5,
@@ -2455,11 +3022,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -10 },
       { power: "tarikat", amount: 5 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -3,
@@ -2475,11 +3047,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Gösterime al, gurur duy",
     leftEffects: [
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 3,
@@ -2495,11 +3073,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "İfade özgürlüğü, bırak",
     leftEffects: [
       { power: "halk", amount: -15 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "ordu", amount: -5 },
+      { power: "ordu", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -2515,12 +3099,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Güvenliği artır, kaçakçıları yakala",
     leftEffects: [
       { power: "halk", amount: -10 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
       { power: "mafya", amount: -10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 3,
     rightMoney: -8,
@@ -2539,12 +3128,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "ordu", amount: -15 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 15 },
       { power: "halk", amount: -10 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: -15,
@@ -2561,12 +3154,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 5 },
       { power: "tarikat", amount: 5 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 15 },
       { power: "ordu", amount: -10 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: -3,
@@ -2583,11 +3180,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 10 },
       { power: "halk", amount: -15 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "ordu", amount: -10 },
+      { power: "ordu", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -8,
     rightMoney: -3,
@@ -2604,11 +3206,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 15 },
       { power: "ordu", amount: -15 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 15 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: -20,
@@ -2625,12 +3232,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 10 },
       { power: "tarikat", amount: 10 },
-      { power: "halk", amount: -15 },
+      { power: "halk", amount: -15 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 15 },
       { power: "ordu", amount: -5 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -2647,12 +3258,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "ordu", amount: -10 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 10 },
       { power: "halk", amount: -10 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: 0,
     rightMoney: 0,
@@ -2669,11 +3284,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "ordu", amount: 5 },
-      { power: "mafya", amount: -5 },
+      { power: "mafya", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -15 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 0,
@@ -2690,12 +3310,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: 10 },
       { power: "tarikat", amount: -5 },
-      { power: "ordu", amount: -10 },
+      { power: "ordu", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 10 },
       { power: "tarikat", amount: 5 },
-      { power: "halk", amount: -10 },
+      { power: "halk", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: -5,
     rightMoney: 0,
@@ -2712,11 +3336,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "ordu", amount: 15 },
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 10 },
-      { power: "ordu", amount: -10 },
+      { power: "ordu", amount: -10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -15,
     rightMoney: -5,
@@ -2734,12 +3363,15 @@ export const eventCards: EventCard[] = normalizeCards([
       { power: "ordu", amount: 10 },
       { power: "tarikat", amount: 10 },
       { power: "halk", amount: -15 },
-      { power: "yatirimcilar", amount: -5 },
+      { power: "yatirimcilar", amount: -5 },,
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: 15 },
       { power: "ordu", amount: -5 },
-      { power: "tarikat", amount: -5 },
+      { power: "tarikat", amount: -5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     leftMoney: 5,
     rightMoney: -3,
@@ -2757,11 +3389,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Görmezden gel, gündem değiştir",
     leftEffects: [
       { power: "halk", amount: 10 },
-      { power: "ordu", amount: 5 },
+      { power: "ordu", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -10 },
-      { power: "mafya", amount: 5 },
+      { power: "mafya", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: -3,
     rightMoney: 3,
@@ -2777,11 +3415,17 @@ export const eventCards: EventCard[] = normalizeCards([
     rightChoice: "Merkez Bankası altın satsın",
     leftEffects: [
       { power: "halk", amount: -10 },
-      { power: "yatirimcilar", amount: 5 },
+      { power: "yatirimcilar", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     rightEffects: [
       { power: "yatirimcilar", amount: -10 },
-      { power: "halk", amount: 5 },
+      { power: "halk", amount: 5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 },
+      { power: "ordu", amount: 0 }
     ],
     leftMoney: 8,
     rightMoney: 15,
@@ -2798,12 +3442,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "yatirimcilar", amount: 15 },
       { power: "ordu", amount: -10 },
-      { power: "halk", amount: -5 },
+      { power: "halk", amount: -5 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     rightEffects: [
       { power: "ordu", amount: 10 },
       { power: "halk", amount: 5 },
-      { power: "yatirimcilar", amount: -15 },
+      { power: "yatirimcilar", amount: -15 },,
+      { power: "mafya", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: 10,
     rightMoney: -10,
@@ -2820,12 +3468,16 @@ export const eventCards: EventCard[] = normalizeCards([
     leftEffects: [
       { power: "halk", amount: -10 },
       { power: "ordu", amount: 5 },
-      { power: "tarikat", amount: 5 },
+      { power: "tarikat", amount: 5 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "mafya", amount: 0 }
     ],
     rightEffects: [
       { power: "halk", amount: -25 },
       { power: "ordu", amount: -10 },
-      { power: "mafya", amount: 10 },
+      { power: "mafya", amount: 10 },,
+      { power: "yatirimcilar", amount: 0 },
+      { power: "tarikat", amount: 0 }
     ],
     leftMoney: -10,
     rightMoney: -25,
