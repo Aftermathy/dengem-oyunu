@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { PowerState, PowerType, EventCard, GamePhase } from '@/types/game';
-import { showInterstitialAd, isAdFree } from '@/hooks/useAds';
+import { isAdFree, handleAdTrigger, incrementGamesPlayed } from '@/hooks/useAds';
 import { saveGame, loadGame, clearSave } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { GAME_CONFIG } from '@/constants/gameConfig';
@@ -166,7 +166,7 @@ export function useGame(lang: Language) {
 
   // ── Start new game ──
   const startGame = useCallback(() => {
-    if (!isAdFree()) showInterstitialAd(1);
+    incrementGamesPlayed();
     trackEvent('game_start');
     clearSave();
     setPower(INITIAL_POWER);
@@ -287,6 +287,7 @@ export function useGame(lang: Language) {
         updateHighScore(newTurn);
         awardAP(newTurn, totalLaundered);
         clearSave();
+        void handleAdTrigger('gameOver');
         setPhase('gameover');
         return;
       }
@@ -309,6 +310,7 @@ export function useGame(lang: Language) {
         updateHighScore(newTurn);
         awardAP(newTurn, totalLaundered);
         clearSave();
+        void handleAdTrigger('gameOver');
         setPhase('gameover');
         return;
       }
@@ -433,6 +435,7 @@ export function useGame(lang: Language) {
       updateHighScore(turn);
       awardAP(turn, totalLaundered);
       clearSave();
+      void handleAdTrigger('gameOver');
       setPhase('gameover');
       return;
     }
@@ -479,6 +482,7 @@ export function useGame(lang: Language) {
       setPendingAdvance(null);
     }
     if (result.playerVote > maxElectionPct) setMaxElectionPct(result.playerVote);
+    void handleAdTrigger('electionWin');
     setPhase('playing');
   }, [lang, turn, currentElectionIndex, pendingAdvance, completedElections, setTotalLaundered, maxElectionPct, t, totalLaundered, awardAP, updateHighScore, modifiers.ohalLevel, achievements]);
 

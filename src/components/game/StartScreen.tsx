@@ -17,7 +17,7 @@ import { useMetaGame } from '@/contexts/MetaGameContext';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { AvatarImg } from '@/components/AvatarImg';
 import { PremiumModal } from '@/components/game/PremiumModal';
-import { setAdFree } from '@/hooks/useAds';
+import { isAdFree, setAdFree } from '@/hooks/useAds';
 
 const TITLE_VARIANTS = [
   { text: 'I *MUST* STAY' },
@@ -273,32 +273,14 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
           )}
         </div>
 
-        <button
-          onClick={() => { playClickSound(); hapticMedium(); setShowPremiumModal(true); }}
-          className="rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-2 px-5 border-2 shrink-0 text-shadow-glow">
-          <EmojiImg emoji="✨" size={14} /> {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} <EmojiImg emoji="✨" size={14} />
-        </button>
+        {!isAdFree() && (
+          <button
+            onClick={() => { playClickSound(); hapticMedium(); setShowPremiumModal(true); }}
+            className="rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-2 px-5 border-2 shrink-0 text-shadow-glow">
+            <EmojiImg emoji="✨" size={14} /> {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} <EmojiImg emoji="✨" size={14} />
+          </button>
+        )}
       </div>
-
-      {/* Webhook test button */}
-      <button
-        onClick={async () => {
-          try {
-            const res = await fetch('https://unpropagable-desire-balancingly.ngrok-free.dev/api/webhook', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'test_connection', message: 'Merhaba Direktör, ben Lovable!' }),
-            });
-            if (res.ok) alert('✅ Webhook başarılı!');
-            else alert('❌ Webhook hata: ' + res.status);
-          } catch (e: any) {
-            alert('❌ Bağlantı hatası: ' + e.message);
-          }
-        }}
-        className="text-[10px] px-3 py-1.5 rounded-lg border border-primary/30 text-primary/70 hover:bg-primary/10 transition-all shrink-0"
-      >
-        🔗 Test Webhook
-      </button>
 
       {/* Studio branding */}
       <div className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground pb-1 shrink-0">

@@ -1,24 +1,18 @@
 /**
- * Ad integration hook - placeholder for AdMob interstitial ads.
- * 
- * In the native (Capacitor) build, replace the showInterstitial implementation
- * with the actual AdMob plugin call:
- * 
- * import { AdMob, AdOptions } from '@capacitor-community/admob';
- * 
- * const adOptions: AdOptions = {
- *   adId: 'ca-app-pub-XXXXX/YYYYY', // Your AdMob ad unit ID
- * };
- * 
- * async function showInterstitial() {
- *   await AdMob.prepareInterstitial(adOptions);
- *   await AdMob.showInterstitial();
- * }
+ * Ad layer — interstitial trigger logic with retention-aware scheduling.
+ *
+ * isAdFree / setAdFree are delegated to purchases.ts (RevenueCat source of truth).
+ * All ad-display logic lives here.
  */
 
+import { Capacitor } from '@capacitor/core';
 import { STORAGE_KEYS } from '@/constants/storage';
+import { isAdFree, setAdFree } from '@/lib/purchases';
 
-// ─── Total games played — persistent across sessions ─────────────────────────
+// Re-export so every existing import of isAdFree/setAdFree from useAds still works
+export { isAdFree, setAdFree };
+
+// ─── Persistent game counter ──────────────────────────────────────────────────
 
 function getTotalGamesPlayed(): number {
   return parseInt(localStorage.getItem(STORAGE_KEYS.TOTAL_GAMES) ?? '1', 10);
@@ -29,42 +23,65 @@ export function incrementGamesPlayed(): void {
   localStorage.setItem(STORAGE_KEYS.TOTAL_GAMES, String(current + 1));
 }
 
-// ─── Ad-free status ───────────────────────────────────────────────────────────
-
-/**
- * Check if the user has purchased the ad-free version.
- * TODO: Integrate with App Store in-app purchase receipt verification.
- */
-export function isAdFree(): boolean {
-  return localStorage.getItem(STORAGE_KEYS.AD_FREE) === 'true';
-}
-
-/** Call this after a successful in-app purchase to persist ad-free state. */
-export function setAdFree(): void {
-  localStorage.setItem(STORAGE_KEYS.AD_FREE, 'true');
-  localStorage.setItem(STORAGE_KEYS.ORTADOGU_PACK, 'true');
-}
-
 // ─── Interstitial display ─────────────────────────────────────────────────────
 
+async function showInterstitialNow(): Promise<void> {
+  if (!Capacitor.isNativePlatform()) {
+    console.log('[Ads] Interstitial (dev/web — simulated)');
+    return;
+  }
+  // TODO: Replace with AdMob call once @capacitor-community/admob is installed:
+  // import { AdMob } from '@capacitor-community/admob';
+  // const adId = 'ca-app-pub-YOUR_ID/YOUR_UNIT';
+  // try {
+  //   await AdMob.prepareInterstitial({ adId });
+  //   await AdMob.showInterstitial();
+  // } catch (e) {
+  //   console.warn('[Ads] Interstitial failed — skipping:', e);
+  //   // Never throw: a failed ad must never block gameplay
+  // }
+  console.log('[Ads] Interstitial triggered (native placeholder)');
+}
+
+// ─── Retention-aware ad trigger ───────────────────────────────────────────────
+
+export type AdEventType = 'gameOver' | 'electionWin';
+
 /**
- * Show an interstitial ad (placeholder — replace with AdMob call in native build).
- * @param every - Show ad every N games (default: 1)
+ * Call this at every ad opportunity. Applies the retention schedule:
+ *
+ * ┌─────────────────────────┬──────────┬─────────────┐
+ * │ totalGamesPlayed        │ gameOver │ electionWin │
+ * ├─────────────────────────┼──────────┼─────────────┤
+ * │ 1  (first game ever)    │    ✗     │      ✗      │
+ * │ 2  (second game)        │    ✓     │      ✗      │
+ * │ 3+ (all subsequent)     │    ✓     │      ✓      │
+ * └─────────────────────────┴──────────┴─────────────┘
+ */
+export async function handleAdTrigger(eventType: AdEventType): Promise<void> {
+  if (isAdFree()) return;
+
+  const games = getTotalGamesPlayed();
+
+  // Rule 1: first game — never show
+  if (games === 1) return;
+
+  // Rule 2: second game — only on death, not on election win
+  if (games === 2 && eventType === 'electionWin') return;
+
+  // Rule 3: third game onward — show on both events
+  await showInterstitialNow();
+}
+
+/**
+ * Legacy helper kept for backward compatibility.
+ * New code should use handleAdTrigger() instead.
+ * @deprecated
  */
 export async function showInterstitialAd(every = 1): Promise<void> {
   if (isAdFree()) return;
-
   const gameCount = getTotalGamesPlayed();
-
-  // Don't show ad on the very first game
   if (gameCount <= 1) return;
-
-  // Show ad every N games
   if ((gameCount - 1) % every !== 0) return;
-
-  // TODO: Replace with actual AdMob call in native build:
-  // import { AdMob } from '@capacitor-community/admob';
-  // await AdMob.prepareInterstitial({ adId: 'ca-app-pub-XXX/YYY' });
-  // await AdMob.showInterstitial();
-  console.log(`[Ads] Interstitial ad triggered (game #${gameCount})`);
+  await showInterstitialNow();
 }
