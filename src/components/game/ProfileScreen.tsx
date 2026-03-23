@@ -8,6 +8,8 @@ import { AVATAR_DEFS, isAvatarUnlocked, getFunnyStats, type UserProfile } from '
 import { isAdFree } from '@/hooks/useAds';
 import { AvatarImg } from '@/components/AvatarImg';
 import { playClickSound } from '@/hooks/useSound';
+import { setAdFree } from '@/hooks/useAds';
+import { PremiumModal } from '@/components/game/PremiumModal';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 import { GameIcon } from '@/components/GameIcon';
 import { getSeenCards } from '@/lib/cardMemory';
@@ -23,6 +25,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
   const { lang } = useLanguage();
   const { claimedAchievements } = useMetaGame();
   const [showGallery, setShowGallery] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [tempName, setTempName] = useState(profile.nickname);
 
@@ -30,7 +33,13 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
   const funnyStats = getFunnyStats(profile.totalTurns, profile.gamesPlayed);
 
   const handleAvatarSelect = (avatarId: string) => {
-    const unlocked = isAvatarUnlocked(avatarId, claimedAchievements);
+    const def = AVATAR_DEFS.find(a => a.id === avatarId);
+    if (def?.dlcPack && !isAdFree()) {
+      playClickSound();
+      setShowPremiumModal(true);
+      return;
+    }
+    const unlocked = isAvatarUnlocked(avatarId, claimedAchievements, isAdFree());
     if (!unlocked) return;
     playClickSound();
     hapticMedium();
@@ -49,7 +58,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
 
   if (showGallery) {
     return (
-      <div className="fixed inset-0 z-[80] flex flex-col bg-background animate-fade-in overflow-auto" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      <><div className="fixed inset-0 z-[80] flex flex-col bg-background animate-fade-in overflow-auto" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
           <h2 className="text-xl font-black text-foreground">
             {lang === 'tr' ? 'Avatar Galerisi' : 'Avatar Gallery'}
@@ -109,6 +118,13 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
           })}
         </div>
       </div>
+
+      {showPremiumModal && (
+        <PremiumModal
+          onPurchase={() => { setAdFree(); setShowPremiumModal(false); }}
+          onClose={() => setShowPremiumModal(false)}
+        />
+      )}</>
     );
   }
 
@@ -228,6 +244,13 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
           {lang === 'tr' ? 'Avatarı Değiştir' : 'Change Avatar'}
         </Button>
       </div>
+
+      {showPremiumModal && (
+        <PremiumModal
+          onPurchase={() => { setAdFree(); setShowPremiumModal(false); }}
+          onClose={() => setShowPremiumModal(false)}
+        />
+      )}
     </div>
   );
 }

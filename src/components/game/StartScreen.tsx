@@ -16,6 +16,8 @@ import { getUnlockedIds } from '@/lib/achievements';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { AvatarImg } from '@/components/AvatarImg';
+import { PremiumModal } from '@/components/game/PremiumModal';
+import { setAdFree } from '@/hooks/useAds';
 
 const TITLE_VARIANTS = [
   { text: 'I *MUST* STAY' },
@@ -61,6 +63,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
   const [showNewGameConfirm, setShowNewGameConfirm] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showSkillTree, setShowSkillTree] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const currentTitle = TITLE_VARIANTS[titleIndex];
 
@@ -270,13 +273,11 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
           )}
         </div>
 
-        <a
-          href="https://apps.apple.com/app/i-must-stay"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          onClick={() => { playClickSound(); hapticMedium(); setShowPremiumModal(true); }}
           className="rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-2 px-5 border-2 shrink-0 text-shadow-glow">
           <EmojiImg emoji="✨" size={14} /> {lang === 'tr' ? 'Full Sürüm — Reklamsız' : 'Full Version — Ad-Free'} <EmojiImg emoji="✨" size={14} />
-        </a>
+        </button>
       </div>
 
       {/* Webhook test button */}
@@ -371,6 +372,16 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
 
       {showSkillTree && (
         <SkillTreeScreen onClose={() => setShowSkillTree(false)} />
+      )}
+
+      {showPremiumModal && (
+        <PremiumModal
+          onPurchase={() => {
+            setAdFree();
+            setShowPremiumModal(false);
+          }}
+          onClose={() => setShowPremiumModal(false)}
+        />
       )}
     </div>
   );
