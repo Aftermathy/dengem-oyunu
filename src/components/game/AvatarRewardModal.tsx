@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { EmojiImg } from '@/components/EmojiImg';
 import { AVATAR_DEFS } from '@/lib/userProfile';
+import { AvatarImg } from '@/components/AvatarImg';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -161,7 +162,7 @@ export function AvatarRewardModal({ avatarId, onEquip, onClose }: AvatarRewardMo
           {/* Avatar circle */}
           {revealed && (
             <div
-              className="anim-avatar-pop relative flex items-center justify-center rounded-full border-4 border-yellow-400/70"
+              className="anim-avatar-pop relative flex items-center justify-center rounded-full border-4 border-yellow-400/70 overflow-hidden"
               style={{
                 width: 128,
                 height: 128,
@@ -169,7 +170,7 @@ export function AvatarRewardModal({ avatarId, onEquip, onClose }: AvatarRewardMo
                 boxShadow: `0 0 40px ${avatar.color}, 0 0 80px rgba(251,191,36,0.3)`,
               }}
             >
-              <EmojiImg emoji={avatar.emoji} size={64} />
+              <AvatarImg avatar={avatar} size={128} />
             </div>
           )}
         </div>

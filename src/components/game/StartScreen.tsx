@@ -15,6 +15,7 @@ import { SkillTreeScreen } from '@/components/SkillTree';
 import { getUnlockedIds } from '@/lib/achievements';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
+import { AvatarImg } from '@/components/AvatarImg';
 
 const TITLE_VARIANTS = [
   { text: 'I *MUST* STAY' },
@@ -159,9 +160,9 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
               <button
                 onClick={() => { playClickSound(); hapticLight(); onShowProfile(); }}
                 className="w-18 h-18 rounded-full flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors"
-                style={{ width: 72, height: 72, background: av?.color || 'hsl(var(--muted))' }}
+                style={{ width: 72, height: 72, background: av?.color || 'hsl(var(--muted))', overflow: 'hidden' }}
               >
-                <EmojiImg emoji={av?.emoji || '👤'} size={40} />
+                {av ? <AvatarImg avatar={av} size={72} /> : <EmojiImg emoji="👤" size={40} />}
               </button>
             );
           })()}

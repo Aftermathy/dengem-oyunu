@@ -5,6 +5,7 @@ import { EmojiImg } from '@/components/EmojiImg';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { AVATAR_DEFS, isAvatarUnlocked, getFunnyStats, type UserProfile } from '@/lib/userProfile';
+import { AvatarImg } from '@/components/AvatarImg';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 import { GameIcon } from '@/components/GameIcon';
@@ -71,12 +72,12 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
                 }`}
               >
                 <div
-                  className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-md relative ${
+                  className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-md relative overflow-hidden ${
                     !unlocked ? 'brightness-0 opacity-50' : ''
                   }`}
                   style={{ background: avatar.color }}
                 >
-                  <EmojiImg emoji={avatar.emoji} size={32} />
+                  <AvatarImg avatar={avatar} size={64} />
                   {!unlocked && (
                     <div className="absolute inset-0 flex items-center justify-center rounded-full">
                       <GameIcon name="lock" size={20} className="text-white/80" />
@@ -117,10 +118,10 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
           className="relative group"
         >
           <div
-            className="w-28 h-28 rounded-full flex items-center justify-center text-6xl shadow-xl border-4 border-primary/30 group-hover:border-primary transition-colors"
+            className="w-28 h-28 rounded-full flex items-center justify-center text-6xl shadow-xl border-4 border-primary/30 group-hover:border-primary transition-colors overflow-hidden"
             style={{ background: currentAvatar.color }}
           >
-            <EmojiImg emoji={currentAvatar.emoji} size={56} />
+            <AvatarImg avatar={currentAvatar} size={112} />
           </div>
           <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-md">
             <GameIcon name="pencil" size={14} className="text-primary-foreground" />
