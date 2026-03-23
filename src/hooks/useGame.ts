@@ -9,7 +9,6 @@ import { trackEvent } from '@/lib/analytics';
 import { markCardSeen, isCardSeen } from '@/lib/cardMemory';
 import { eventCards, catConsultantCard, milestoneCard50, darkModeCard, dlcCardsTR } from '@/data/cards';
 import { eventCardsEn, catConsultantCardEn, milestoneCard50En, darkModeCardEn, dlcCardsEN } from '@/data/cards-en';
-import { isAdFree } from '@/hooks/useAds';
 import { gameOverScenarios } from '@/data/gameOverScenarios';
 import { gameOverScenariosEn } from '@/data/gameOverScenarios-en';
 import { Language, useLanguage } from '@/contexts/LanguageContext';

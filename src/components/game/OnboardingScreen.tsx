@@ -16,7 +16,7 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   const [step, setStep] = useState<'nickname' | 'avatar'>('nickname');
   const [nickname, setNickname] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('avatar_1');
-  const defaultAvatars = AVATAR_DEFS.filter(a => !a.unlockAchievement);
+  const defaultAvatars = AVATAR_DEFS.filter(a => !a.unlockAchievement && !a.dlcPack);
 
   const handleNicknameSubmit = () => {
     const trimmed = nickname.trim();

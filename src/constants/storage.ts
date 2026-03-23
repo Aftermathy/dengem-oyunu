@@ -4,6 +4,8 @@ export const STORAGE_KEYS = {
   LANGUAGE: 'ims_lang',
   DARK_MODE: 'ims_dark',
   AD_FREE: 'ad_free_purchased',
+  ORTADOGU_PACK: 'has_ortadogu_pack',
+  TOTAL_GAMES: 'ims_total_games',
   SAVE_GAME: 'imuststay_savegame',
   SEEN_CARDS: 'ims_seen_cards',
   CARDS_KNOWLEDGE_SHOWN: 'ims_knowledge_shown',

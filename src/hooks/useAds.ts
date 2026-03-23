@@ -18,15 +18,43 @@
 
 import { STORAGE_KEYS } from '@/constants/storage';
 
-let gameCount = 0;
+// ─── Total games played — persistent across sessions ─────────────────────────
+
+function getTotalGamesPlayed(): number {
+  return parseInt(localStorage.getItem(STORAGE_KEYS.TOTAL_GAMES) ?? '1', 10);
+}
+
+export function incrementGamesPlayed(): void {
+  const current = getTotalGamesPlayed();
+  localStorage.setItem(STORAGE_KEYS.TOTAL_GAMES, String(current + 1));
+}
+
+// ─── Ad-free status ───────────────────────────────────────────────────────────
 
 /**
- * Show an interstitial ad every N games.
- * Returns a promise that resolves when the ad is dismissed (or skipped).
- * @param every - Show ad every N games (default: 1 = every game)
+ * Check if the user has purchased the ad-free version.
+ * TODO: Integrate with App Store in-app purchase receipt verification.
+ */
+export function isAdFree(): boolean {
+  return localStorage.getItem(STORAGE_KEYS.AD_FREE) === 'true';
+}
+
+/** Call this after a successful in-app purchase to persist ad-free state. */
+export function setAdFree(): void {
+  localStorage.setItem(STORAGE_KEYS.AD_FREE, 'true');
+  localStorage.setItem(STORAGE_KEYS.ORTADOGU_PACK, 'true');
+}
+
+// ─── Interstitial display ─────────────────────────────────────────────────────
+
+/**
+ * Show an interstitial ad (placeholder — replace with AdMob call in native build).
+ * @param every - Show ad every N games (default: 1)
  */
 export async function showInterstitialAd(every = 1): Promise<void> {
-  gameCount++;
+  if (isAdFree()) return;
+
+  const gameCount = getTotalGamesPlayed();
 
   // Don't show ad on the very first game
   if (gameCount <= 1) return;
@@ -34,24 +62,9 @@ export async function showInterstitialAd(every = 1): Promise<void> {
   // Show ad every N games
   if ((gameCount - 1) % every !== 0) return;
 
-  // TODO: Replace with actual AdMob call in native build
+  // TODO: Replace with actual AdMob call in native build:
+  // import { AdMob } from '@capacitor-community/admob';
+  // await AdMob.prepareInterstitial({ adId: 'ca-app-pub-XXX/YYY' });
+  // await AdMob.showInterstitial();
   console.log(`[Ads] Interstitial ad triggered (game #${gameCount})`);
-  
-  // Simulate ad display time (remove in production)
-  // await new Promise(resolve => setTimeout(resolve, 2000));
-}
-
-/**
- * Check if the user has purchased the ad-free version.
- * TODO: Integrate with App Store in-app purchase verification.
- */
-export function isAdFree(): boolean {
-  return localStorage.getItem(STORAGE_KEYS.AD_FREE) === 'true';
-}
-
-/**
- * Call this after a successful in-app purchase.
- */
-export function setAdFree(): void {
-  localStorage.setItem(STORAGE_KEYS.AD_FREE, 'true');
 }

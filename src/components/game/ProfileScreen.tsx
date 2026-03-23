@@ -77,35 +77,56 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
                 key={avatar.id}
                 onClick={() => handleAvatarSelect(avatar.id)}
                 className={`relative flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all ${
-                  isSelected ? 'ring-2 ring-primary bg-primary/10' : 
-                  unlocked ? 'bg-card border border-border hover:border-primary/40' : 
-                  'bg-muted/50 border border-border/50 opacity-60'
+                  isSelected
+                    ? 'ring-2 ring-primary bg-primary/10'
+                    : isDlcLocked
+                      ? 'bg-yellow-500/5 border border-yellow-500/30 hover:border-yellow-500/60'
+                      : unlocked
+                        ? 'bg-card border border-border hover:border-primary/40'
+                        : 'bg-muted/50 border border-border/50'
                 }`}
               >
-                <div
-                  className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-md relative overflow-hidden ${
-                    !unlocked ? 'brightness-0 opacity-50' : ''
-                  }`}
-                  style={{ background: avatar.color }}
-                >
-                  <AvatarImg avatar={avatar} size={64} />
-                  {!unlocked && (
-                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40">
-                      <GameIcon name="lock" size={20} className="text-white/80" />
+                {/* Avatar circle — wrapped in relative so badges can escape brightness filter */}
+                <div className="relative">
+                  <div
+                    className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-md overflow-hidden ${
+                      isDlcLocked
+                        ? 'opacity-50 grayscale'
+                        : !unlocked
+                          ? 'brightness-0 opacity-40'
+                          : ''
+                    }`}
+                    style={{ background: avatar.color }}
+                  >
+                    <AvatarImg avatar={avatar} size={64} />
+                  </div>
+
+                  {/* Achievement-locked: grey lock overlay */}
+                  {!unlocked && !isDlcLocked && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/30">
+                      <GameIcon name="lock" size={18} className="text-white/70" />
                     </div>
                   )}
+
+                  {/* DLC-locked: gold lock + star badge — OUTSIDE brightness div */}
                   {isDlcLocked && (
-                    <div className="absolute -bottom-0.5 -right-0.5 bg-yellow-500 rounded-full w-5 h-5 flex items-center justify-center text-[9px] font-black text-black leading-none">
-                      ★
-                    </div>
+                    <>
+                      <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/20">
+                        <GameIcon name="lock" size={18} className="text-yellow-400" />
+                      </div>
+                      <div className="absolute -bottom-0.5 -right-0.5 bg-yellow-500 rounded-full w-5 h-5 flex items-center justify-center text-[9px] font-black text-black leading-none shadow-md">
+                        ★
+                      </div>
+                    </>
                   )}
                 </div>
+
                 {isDlcLocked && (
                   <span className="text-[8px] font-black text-yellow-500 leading-tight text-center">
-                    {lang === 'tr' ? 'Premium' : 'Premium'}
+                    Premium
                   </span>
                 )}
-                <span className="text-[10px] font-bold text-foreground leading-tight text-center">
+                <span className={`text-[10px] font-bold leading-tight text-center ${isDlcLocked ? 'text-yellow-200/70' : 'text-foreground'}`}>
                   {lang === 'tr' ? avatar.nameTR : avatar.nameEN}
                 </span>
                 {isSelected && (
