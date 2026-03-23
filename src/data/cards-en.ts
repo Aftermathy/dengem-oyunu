@@ -737,7 +737,7 @@ export const eventCardsEn: EventCard[] = normalizeCards([
     leftMoney: -5, rightMoney: 3,
   },
   {
-    id: 92, character: 'University Rector', characterEmoji: '🎓', imageId: 'university_rector', category: 'Public',
+    id: 92, character: 'University Rector', characterEmoji: '🎓', imageId: 'university_rector2', category: 'Public',
     description: 'Appoint a trustee rector to the university? Students protesting.',
     leftChoice: 'Appoint trustee', rightChoice: 'Let them elect one',
     leftEffects: [{ power: 'halk', amount: -15 }, { power: 'tarikat', amount: 10 }, { power: 'ordu', amount: 5 }],
@@ -753,7 +753,7 @@ export const eventCardsEn: EventCard[] = normalizeCards([
     leftMoney: 0, rightMoney: -3,
   },
   {
-    id: 94, character: 'Mayor', characterEmoji: '🏘️', imageId: 'mayor', category: 'Public',
+    id: 94, character: 'Mayor', characterEmoji: '🏘️', imageId: 'mayor2', category: 'Public',
     description: 'Urban renewal project. Old neighborhoods demolished for luxury housing.',
     leftChoice: 'Demolish, build luxury', rightChoice: 'Protect residents, restore',
     leftEffects: [{ power: 'mafya', amount: 10 }, { power: 'yatirimcilar', amount: 10 }, { power: 'halk', amount: -15 }],
@@ -761,7 +761,7 @@ export const eventCardsEn: EventCard[] = normalizeCards([
     leftMoney: 10, rightMoney: -8,
   },
   {
-    id: 95, character: 'Health Minister', characterEmoji: '🏥', imageId: 'health_minister', category: 'Public',
+    id: 95, character: 'Health Minister', characterEmoji: '🏥', imageId: 'health_minister2', category: 'Public',
     description: 'Pandemic spreading. Full lockdown or keep the economy running?',
     leftChoice: 'Full lockdown', rightChoice: 'Keep economy open',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -15 }],
