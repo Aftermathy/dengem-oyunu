@@ -1,24 +1,46 @@
-import { hapticWarStart, hapticDoubleSharp, hapticError, hapticLight, hapticMedium } from '@/hooks/useHaptics';
+/**
+ * audioManager — Howler.js backed sound system for Vite + Capacitor.
+ *
+ * Why Howler instead of expo-av:
+ *   expo-av is React Native / Expo only. Howler.js is the Capacitor-compatible
+ *   equivalent and maps 1-to-1 to the requested feature set:
+ *
+ *   expo-av Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
+ *     → Howler's html5:false (Web Audio API backend) bypasses the iOS
+ *       silent switch exactly the same way.
+ *
+ *   expo-av sound.unloadAsync()   → howl.unload()   (used for one-shot sounds)
+ *   expo-av Audio.Sound.createAsync(require(...)) → new Howl({ src: ['/sounds/x.mp3'] })
+ *
+ * Sound files live in public/sounds/ → served by Vite → copied to
+ * ios/App/App/public/sounds/ by `npx cap sync ios`.
+ * See public/sounds/README.md for the full file list.
+ */
+
+import { Howl, Howler } from 'howler';
+import {
+  hapticWarStart,
+  hapticDoubleSharp,
+  hapticError,
+  hapticLight,
+  hapticMedium,
+} from '@/hooks/useHaptics';
 import { STORAGE_KEYS } from '@/constants/storage';
 
-// ─── AudioContext singleton ────────────────────────────────────────────────
-let audioCtx: AudioContext | null = null;
+// ─── Mute state ───────────────────────────────────────────────────────────────
+// Mirrors the existing isMuted/localStorage + CustomEvent pattern.
+
 let isMuted = localStorage.getItem(STORAGE_KEYS.SOUND_MUTED) === 'true';
+Howler.volume(isMuted ? 0 : 1);
 
 if (typeof window !== 'undefined') {
   window.addEventListener('sound-mute-toggle', ((e: CustomEvent) => {
-    isMuted = e.detail;
+    isMuted = e.detail as boolean;
+    Howler.volume(isMuted ? 0 : 1);
   }) as EventListener);
 }
 
-function getAudioCtx(): AudioContext | null {
-  if (isMuted) return null;
-  if (!audioCtx) audioCtx = new AudioContext();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  return audioCtx;
-}
-
-// ─── Sound catalogue ──────────────────────────────────────────────────────
+// ─── Sound catalogue (unchanged identifiers) ─────────────────────────────────
 export const SOUNDS = {
   BUTTON_CLICK:     'button_click',
   CARD_SWIPE_RIGHT: 'card_swipe_right',
@@ -36,329 +58,129 @@ export const SOUNDS = {
 
 export type SoundKey = typeof SOUNDS[keyof typeof SOUNDS];
 
-// ─── Synthesizers (private) ──────────────────────────────────────────────
-function _playButtonClick() {
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const bufferSize = Math.floor(ctx.sampleRate * 0.015);
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 8);
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'highpass';
-    filter.frequency.value = 3000;
-    const gain = ctx.createGain();
-    gain.gain.value = 0.4;
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-    noise.start(now);
-  } catch { /* silent */ }
+// ─── Asset dictionary ─────────────────────────────────────────────────────────
+// Static mapping required: bundlers (Vite/webpack/Metro) cannot resolve
+// dynamically constructed require/import paths at build time.
+// Paths are relative to the Vite `public/` root and work unchanged in
+// Capacitor iOS (files are copied verbatim to the app bundle).
+
+const SOUND_FILES: Record<SoundKey, string> = {
+  [SOUNDS.BUTTON_CLICK]:     '/sounds/click.mp3',
+  [SOUNDS.CARD_SWIPE_RIGHT]: '/sounds/swipe_right.mp3',
+  [SOUNDS.CARD_SWIPE_LEFT]:  '/sounds/swipe_left.mp3',
+  [SOUNDS.GAME_OVER]:        '/sounds/game_over.mp3',
+  [SOUNDS.BRIBE]:            '/sounds/bribe.mp3',
+  [SOUNDS.WARNING]:          '/sounds/warning.mp3',
+  [SOUNDS.WAR_START]:        '/sounds/war_start.mp3',
+  [SOUNDS.ELECTION_CARD]:    '/sounds/election_card.mp3',
+  [SOUNDS.AI_CARD]:          '/sounds/ai_card.mp3',
+  [SOUNDS.SPECIAL_POWER]:    '/sounds/special_power.mp3',
+  [SOUNDS.REROLL]:           '/sounds/reroll.mp3',
+  [SOUNDS.BUDGET_WARNING]:   '/sounds/budget_warning.mp3',
+};
+
+// ─── Cache pool ───────────────────────────────────────────────────────────────
+// High-frequency sounds (tap, swipe) stay loaded in RAM for instant playback.
+// One-shot sounds (game_over, war_start) are loaded lazily and unloaded after
+// each play to keep memory footprint small.
+
+const PERSISTENT_KEYS = new Set<SoundKey>([
+  SOUNDS.BUTTON_CLICK,
+  SOUNDS.CARD_SWIPE_RIGHT,
+  SOUNDS.CARD_SWIPE_LEFT,
+  SOUNDS.WARNING,
+  SOUNDS.BUDGET_WARNING,
+]);
+
+const _pool = new Map<SoundKey, Howl>();
+
+function buildHowl(key: SoundKey): Howl {
+  return new Howl({
+    src:     [SOUND_FILES[key]],
+    preload: PERSISTENT_KEYS.has(key), // preload persistent; lazy-load the rest
+    html5:   false, // ← Web Audio API backend: bypasses iOS silent switch
+    volume:  0.8,
+    onloaderror: (_id, err) =>
+      console.warn(`[Audio] Load error for "${key}":`, err),
+  });
 }
 
-function _playCardSwipe(direction: 'left' | 'right') {
-  hapticLight();
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const bufferSize = ctx.sampleRate * 0.12;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(direction === 'right' ? 800 : 600, now);
-    filter.frequency.exponentialRampToValueAtTime(direction === 'right' ? 2000 : 400, now + 0.1);
-    filter.Q.value = 1.5;
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.25, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-    noise.start(now);
-    noise.stop(now + 0.15);
-  } catch { /* silent */ }
+function getHowl(key: SoundKey): Howl {
+  if (_pool.has(key)) return _pool.get(key)!;
+  const howl = buildHowl(key);
+  _pool.set(key, howl);
+  return howl;
 }
 
-function _playGameOver() {
-  hapticError();
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(400, now);
-    osc.frequency.exponentialRampToValueAtTime(80, now + 0.6);
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.7);
-  } catch { /* silent */ }
-}
+// ─── Core play helper ─────────────────────────────────────────────────────────
 
-function _playBribe() {
-  hapticMedium();
+function play(key: SoundKey): void {
+  if (isMuted) return;
   try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(2800, now);
-    osc.frequency.exponentialRampToValueAtTime(3200, now + 0.04);
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.1, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.08);
-    const bufferSize = ctx.sampleRate * 0.12;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'highpass';
-    filter.frequency.value = 3500;
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.08, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-    noise.connect(filter);
-    filter.connect(noiseGain);
-    noiseGain.connect(ctx.destination);
-    noise.start(now);
-    noise.stop(now + 0.12);
-  } catch { /* silent */ }
-}
+    const howl = getHowl(key);
+    howl.play();
 
-function _playWarning() {
-  hapticDoubleSharp();
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    [0, 0.2].forEach((offset) => {
-      const osc = ctx.createOscillator();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(880, now + offset);
-      osc.frequency.setValueAtTime(660, now + offset + 0.1);
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.12, now + offset);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.18);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(now + offset);
-      osc.stop(now + offset + 0.18);
-    });
-  } catch { /* silent */ }
-}
-
-function _playWarStart() {
-  hapticWarStart();
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const drum1 = ctx.createOscillator();
-    drum1.type = 'sine';
-    drum1.frequency.setValueAtTime(80, now);
-    drum1.frequency.exponentialRampToValueAtTime(40, now + 0.3);
-    const drumGain1 = ctx.createGain();
-    drumGain1.gain.setValueAtTime(0.35, now);
-    drumGain1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-    drum1.connect(drumGain1);
-    drumGain1.connect(ctx.destination);
-    drum1.start(now);
-    drum1.stop(now + 0.3);
-    const drum2 = ctx.createOscillator();
-    drum2.type = 'sine';
-    drum2.frequency.setValueAtTime(90, now + 0.2);
-    drum2.frequency.exponentialRampToValueAtTime(35, now + 0.5);
-    const drumGain2 = ctx.createGain();
-    drumGain2.gain.setValueAtTime(0.4, now + 0.2);
-    drumGain2.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-    drum2.connect(drumGain2);
-    drumGain2.connect(ctx.destination);
-    drum2.start(now + 0.2);
-    drum2.stop(now + 0.5);
-    const riser = ctx.createOscillator();
-    riser.type = 'sawtooth';
-    riser.frequency.setValueAtTime(100, now);
-    riser.frequency.exponentialRampToValueAtTime(300, now + 0.5);
-    const riserGain = ctx.createGain();
-    riserGain.gain.setValueAtTime(0.08, now);
-    riserGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-    riser.connect(riserGain);
-    riserGain.connect(ctx.destination);
-    riser.start(now);
-    riser.stop(now + 0.5);
-  } catch { /* silent */ }
-}
-
-function _playElectionCard() {
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, now);
-    osc.frequency.exponentialRampToValueAtTime(1200, now + 0.15);
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.15, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.2);
-    const osc2 = ctx.createOscillator();
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(900, now + 0.05);
-    osc2.frequency.exponentialRampToValueAtTime(1600, now + 0.18);
-    const gain2 = ctx.createGain();
-    gain2.gain.setValueAtTime(0.08, now + 0.05);
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-    osc2.connect(gain2);
-    gain2.connect(ctx.destination);
-    osc2.start(now + 0.05);
-    osc2.stop(now + 0.2);
-  } catch { /* silent */ }
-}
-
-function _playAiCard() {
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(500, now);
-    osc.frequency.exponentialRampToValueAtTime(150, now + 0.4);
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.12, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(1500, now);
-    filter.frequency.exponentialRampToValueAtTime(300, now + 0.4);
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.45);
-  } catch { /* silent */ }
-}
-
-function _playSpecialPower() {
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(100, now);
-    osc.frequency.exponentialRampToValueAtTime(300, now + 0.3);
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.2, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.35);
-    const osc2 = ctx.createOscillator();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(1200, now + 0.1);
-    osc2.frequency.exponentialRampToValueAtTime(2400, now + 0.25);
-    const gain2 = ctx.createGain();
-    gain2.gain.setValueAtTime(0.1, now + 0.1);
-    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-    osc2.connect(gain2);
-    gain2.connect(ctx.destination);
-    osc2.start(now + 0.1);
-    osc2.stop(now + 0.3);
-  } catch { /* silent */ }
-}
-
-function _playReroll() {
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    for (let i = 0; i < 3; i++) {
-      const t = now + i * 0.06;
-      const osc = ctx.createOscillator();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(1800 + i * 400, t);
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.08, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(t);
-      osc.stop(t + 0.05);
+    // One-shot sounds: unload after playback to free RAM
+    if (!PERSISTENT_KEYS.has(key)) {
+      howl.once('end', () => {
+        howl.unload();
+        _pool.delete(key);
+      });
     }
-  } catch { /* silent */ }
-}
-
-function _playBudgetWarning() {
-  try {
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(200, now);
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.1, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.15);
-  } catch { /* silent */ }
-}
-
-// ─── Central dispatcher ───────────────────────────────────────────────────
-export function playAudio(sound: SoundKey): void {
-  switch (sound) {
-    case SOUNDS.BUTTON_CLICK:     return _playButtonClick();
-    case SOUNDS.CARD_SWIPE_RIGHT: return _playCardSwipe('right');
-    case SOUNDS.CARD_SWIPE_LEFT:  return _playCardSwipe('left');
-    case SOUNDS.GAME_OVER:        return _playGameOver();
-    case SOUNDS.BRIBE:            return _playBribe();
-    case SOUNDS.WARNING:          return _playWarning();
-    case SOUNDS.WAR_START:        return _playWarStart();
-    case SOUNDS.ELECTION_CARD:    return _playElectionCard();
-    case SOUNDS.AI_CARD:          return _playAiCard();
-    case SOUNDS.SPECIAL_POWER:    return _playSpecialPower();
-    case SOUNDS.REROLL:           return _playReroll();
-    case SOUNDS.BUDGET_WARNING:   return _playBudgetWarning();
+  } catch (e) {
+    // Never let audio errors bubble up and interrupt gameplay
+    console.warn('[Audio] Playback failed:', e);
   }
 }
 
-// ─── Named convenience exports (backwards-compatible) ────────────────────
-export const playClickSound        = ()                          => playAudio(SOUNDS.BUTTON_CLICK);
-export const playSwipeSound        = (dir: 'left' | 'right')    => dir === 'right' ? playAudio(SOUNDS.CARD_SWIPE_RIGHT) : playAudio(SOUNDS.CARD_SWIPE_LEFT);
-export const playGameOverSound     = ()                          => playAudio(SOUNDS.GAME_OVER);
-export const playBribeSound        = ()                          => playAudio(SOUNDS.BRIBE);
-export const playWarningSound      = ()                          => playAudio(SOUNDS.WARNING);
-export const playWarStartSound     = ()                          => playAudio(SOUNDS.WAR_START);
-export const playElectionCardSound = ()                          => playAudio(SOUNDS.ELECTION_CARD);
-export const playAiCardSound       = ()                          => playAudio(SOUNDS.AI_CARD);
-export const playSpecialPowerSound = ()                          => playAudio(SOUNDS.SPECIAL_POWER);
-export const playRerollSound       = ()                          => playAudio(SOUNDS.REROLL);
-export const playBudgetWarningSound= ()                          => playAudio(SOUNDS.BUDGET_WARNING);
+// ─── Preload API ──────────────────────────────────────────────────────────────
+// iOS requires a user-gesture before the AudioContext unlocks. Call this on
+// the first user tap so all persistent sounds are decoded and ready.
+// Recommended call site: onClick handler on the very first button the user sees.
+
+let _preloaded = false;
+
+export function preloadSounds(): void {
+  if (_preloaded) return;
+  _preloaded = true;
+  PERSISTENT_KEYS.forEach(key => getHowl(key));
+}
+
+// ─── Central dispatcher ───────────────────────────────────────────────────────
+// Haptic triggers run synchronously alongside audio, mirroring the original
+// Web Audio API implementation.
+
+export function playAudio(sound: SoundKey): void {
+  switch (sound) {
+    case SOUNDS.BUTTON_CLICK:     play(sound); break;
+    case SOUNDS.CARD_SWIPE_RIGHT: hapticLight();       play(sound); break;
+    case SOUNDS.CARD_SWIPE_LEFT:  hapticLight();       play(sound); break;
+    case SOUNDS.GAME_OVER:        hapticError();       play(sound); break;
+    case SOUNDS.BRIBE:            hapticMedium();      play(sound); break;
+    case SOUNDS.WARNING:          hapticDoubleSharp(); play(sound); break;
+    case SOUNDS.WAR_START:        hapticWarStart();    play(sound); break;
+    case SOUNDS.ELECTION_CARD:                         play(sound); break;
+    case SOUNDS.AI_CARD:                               play(sound); break;
+    case SOUNDS.SPECIAL_POWER:                         play(sound); break;
+    case SOUNDS.REROLL:                                play(sound); break;
+    case SOUNDS.BUDGET_WARNING:                        play(sound); break;
+  }
+}
+
+// ─── Named convenience exports (backwards-compatible) ─────────────────────────
+// Every existing import of these functions continues to work unchanged.
+
+export const playClickSound         = () => playAudio(SOUNDS.BUTTON_CLICK);
+export const playSwipeSound         = (dir: 'left' | 'right') =>
+  dir === 'right'
+    ? playAudio(SOUNDS.CARD_SWIPE_RIGHT)
+    : playAudio(SOUNDS.CARD_SWIPE_LEFT);
+export const playGameOverSound      = () => playAudio(SOUNDS.GAME_OVER);
+export const playBribeSound         = () => playAudio(SOUNDS.BRIBE);
+export const playWarningSound       = () => playAudio(SOUNDS.WARNING);
+export const playWarStartSound      = () => playAudio(SOUNDS.WAR_START);
+export const playElectionCardSound  = () => playAudio(SOUNDS.ELECTION_CARD);
+export const playAiCardSound        = () => playAudio(SOUNDS.AI_CARD);
+export const playSpecialPowerSound  = () => playAudio(SOUNDS.SPECIAL_POWER);
+export const playRerollSound        = () => playAudio(SOUNDS.REROLL);
+export const playBudgetWarningSound = () => playAudio(SOUNDS.BUDGET_WARNING);
