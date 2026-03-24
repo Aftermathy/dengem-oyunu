@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
 type ProfileRow = Pick<
   Database['public']['Tables']['profiles']['Row'],
-  'nickname' | 'avatar_id' | 'total_ap' | 'unlocked_avatars'
+  'nickname' | 'avatar_id' | 'total_ap' | 'unlocked_avatars' | 'claimed_achievements'
 >;
 
 interface UserProfileContextValue {
@@ -27,19 +27,18 @@ function getEffectiveUserId(authUserId: string | undefined): string {
 
 async function syncProfileToSupabase(profile: UserProfile, userId: string): Promise<void> {
   try {
-    // Use type assertion to include claimed_achievements (column exists in DB but not in auto-generated types)
-    const record = {
+    const record: ProfileInsert = {
       user_id: userId,
       nickname: profile.nickname || 'Player',
       avatar_id: profile.avatarId,
       total_ap: profile.totalAP,
       unlocked_avatars: profile.unlockedAvatars || [],
       claimed_achievements: profile.claimedAchievements || [],
-    } as ProfileInsert & { claimed_achievements: string[] };
+    };
 
     const { error } = await supabase
       .from('profiles')
-      .upsert(record as unknown as ProfileInsert, { onConflict: 'user_id' });
+      .upsert(record, { onConflict: 'user_id' });
 
     if (error) {
       console.error('[Profile] Sync error:', error.message);
@@ -51,10 +50,9 @@ async function syncProfileToSupabase(profile: UserProfile, userId: string): Prom
 
 async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserProfile> | null> {
   try {
-    // Select all profile fields including claimed_achievements (exists in DB, not in auto-generated types)
     const { data, error } = await supabase
       .from('profiles')
-      .select('nickname, avatar_id, total_ap, unlocked_avatars, claimed_achievements' as 'nickname, avatar_id, total_ap, unlocked_avatars')
+      .select('nickname, avatar_id, total_ap, unlocked_avatars, claimed_achievements')
       .eq('user_id', userId)
       .maybeSingle();
 
@@ -64,8 +62,7 @@ async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserPro
     }
     if (!data) return null;
 
-    // Cast to access claimed_achievements which exists in DB
-    const row = data as unknown as ProfileRow & { claimed_achievements?: string[] | null };
+    const row = data as ProfileRow;
     return {
       nickname: row.nickname || '',
       avatarId: row.avatar_id || 'avatar_1',
