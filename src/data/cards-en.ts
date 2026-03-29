@@ -1050,6 +1050,9 @@ export const eventCardsEn: EventCard[] = normalizeCards([
     rightEffects: [{ power: 'halk', amount: -20 }, { power: 'ordu', amount: -10 }, { power: 'mafya', amount: 0 }, { power: 'yatirimcilar', amount: -10 }, { power: 'tarikat', amount: 15 }, { power: 'halk', amount: 15 }, { power: 'yatirimcilar', amount: 5 }, { power: 'mafya', amount: 0 }, { power: 'tarikat', amount: -5 }, { power: 'ordu', amount: 0 }, { power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 0 }, { power: 'mafya', amount: 5 }, { power: 'tarikat', amount: 0 }, { power: 'ordu', amount: 0 }, { power: 'halk', amount: -5 }, { power: 'yatirimcilar', amount: 0 }, { power: 'mafya', amount: 0 }, { power: 'tarikat', amount: 0 }, { power: 'ordu', amount: 0 }, { power: 'halk', amount: -10 }, { power: 'yatirimcilar', amount: 0 }, { power: 'mafya', amount: 0 }, { power: 'tarikat', amount: 5 }, { power: 'ordu', amount: 0 }, { power: 'halk', amount: 0 }, { power: 'yatirimcilar', amount: 0 }, { power: 'mafya', amount: 0 }, { power: 'tarikat', amount: 0 }, { power: 'ordu', amount: 5 }, { power: 'halk', amount: 0 }, { power: 'yatirimcilar', amount: 5 }, { power: 'mafya', amount: 0 }, { power: 'tarikat', amount: 0 }, { power: 'ordu', amount: 0 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: 5 }, { power: 'mafya', amount: 5 }, { power: 'tarikat', amount: 5 }, { power: 'ordu', amount: 5 }, { power: 'halk', amount: 5 }, { power: 'yatirimcilar', amount: 5 }, { power: 'mafya', amount: 5 }, { power: 'tarikat', amount: 5 }, { power: 'ordu', amount: 5 }],
     leftMoney: -10, rightMoney: -25,
   },
+]);
+
+export const dlcCardsEN: EventCard[] = normalizeCards([
   {
     id: 5001, character: 'Base Commander', characterEmoji: '📡', imageId: 'base_commander2', category: 'Military',
     description: 'Sir, the Blond Sheriff\'s base is requesting something unusual...',
@@ -1131,3 +1134,84 @@ export const eventCardsEn: EventCard[] = normalizeCards([
     leftMoney: 10, rightMoney: 0,
   },
 ]);
+
+export const catConsultantCardEn: EventCard = normalizeCard({
+  id: 9001,
+  character: 'Palace Cat Miyav Pasha',
+  characterEmoji: '🐱',
+  imageId: 'palace_cat',
+  category: 'Easter Egg',
+  description: 'Meow! *Climbs onto the desk, knocks papers to the floor* ...Sir, this cat seems to want to be an advisor.',
+  leftChoice: 'Make it an advisor, cats know best',
+  rightChoice: 'Shoo it away, we have serious work',
+  leftEffects: [
+    { power: 'halk', amount: 15 },
+    { power: 'yatirimcilar', amount: 5 },
+    { power: 'mafya', amount: 0 },
+    { power: 'tarikat', amount: -5 },
+    { power: 'ordu', amount: 0 },
+  ],
+  rightEffects: [
+    { power: 'halk', amount: -10 },
+    { power: 'yatirimcilar', amount: 0 },
+    { power: 'mafya', amount: 5 },
+    { power: 'tarikat', amount: 0 },
+    { power: 'ordu', amount: 0 },
+  ],
+  leftMoney: 10,
+  rightMoney: 0,
+});
+
+export const milestoneCard50En: EventCard = normalizeCard({
+  id: 9002,
+  character: 'Exile Postman',
+  characterEmoji: '✉️',
+  imageId: 'exile_postman',
+  category: 'Easter Egg',
+  description: 'Sir, you\'ve been in power for 50 turns! A letter arrived from abroad: "We\'ve arranged a villa and offshore account for you." Taking a vacation?',
+  leftChoice: 'Let\'s go get some rest!',
+  rightChoice: 'NEVER! I am staying right here!',
+  leftEffects: [
+    { power: 'halk', amount: -5 },
+    { power: 'yatirimcilar', amount: 0 },
+    { power: 'mafya', amount: 0 },
+    { power: 'tarikat', amount: 0 },
+    { power: 'ordu', amount: 0 },
+  ],
+  rightEffects: [
+    { power: 'halk', amount: -10 },
+    { power: 'yatirimcilar', amount: 0 },
+    { power: 'mafya', amount: 0 },
+    { power: 'tarikat', amount: 5 },
+    { power: 'ordu', amount: 0 },
+  ],
+  leftMoney: 50,
+  rightMoney: -5,
+});
+
+export const darkModeCardEn: EventCard = normalizeCard({
+  id: 9999,
+  character: 'Shadow Advisor',
+  characterEmoji: '🌑',
+  imageId: 'shadow_advisor',
+  category: 'Secret',
+  description: 'Sir, the dark side has activated. Foreign forces have increased night operations. Care for a coffee?',
+  leftChoice: 'Black, no sugar!',
+  rightChoice: 'Turkish coffee, extra frothy',
+  leftEffects: [
+    { power: 'halk', amount: 5 },
+    { power: 'yatirimcilar', amount: 5 },
+    { power: 'mafya', amount: 5 },
+    { power: 'tarikat', amount: 5 },
+    { power: 'ordu', amount: 5 },
+  ],
+  rightEffects: [
+    { power: 'halk', amount: 5 },
+    { power: 'yatirimcilar', amount: 5 },
+    { power: 'mafya', amount: 5 },
+    { power: 'tarikat', amount: 5 },
+    { power: 'ordu', amount: 5 },
+  ],
+  leftMoney: 0,
+  rightMoney: 0,
+});
