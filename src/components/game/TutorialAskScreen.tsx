@@ -1,4 +1,5 @@
 import { useLanguage } from '@/contexts/LanguageContext';
+import { playClickSound } from '@/hooks/useSound';
 
 interface Props {
   onYes: () => void;
@@ -21,13 +22,13 @@ export function TutorialAskScreen({ onYes, onNo }: Props) {
         </p>
         <div className="flex gap-3">
           <button
-            onClick={onNo}
+            onClick={() => { playClickSound(); onNo(); }}
             className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-muted text-muted-foreground active:scale-95 transition-all"
           >
             {lang === 'tr' ? 'Hayır, Biliyorum' : 'No, I Know'}
           </button>
           <button
-            onClick={onYes}
+            onClick={() => { playClickSound(); onYes(); }}
             className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-primary text-primary-foreground active:scale-95 transition-all"
           >
             {lang === 'tr' ? 'Evet, Anlat' : 'Yes, Show Me'}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { playClickSound } from '@/hooks/useSound';
 
 interface Props {
   onComplete: () => void;
@@ -8,31 +9,31 @@ interface Props {
 // Election screen approximate vh sections (safe-area ~6vh, title ~9, vote bars ~30, budget+cards ~48, specials ~72)
 const SPOTLIGHT: Array<{ from: number; to: number }> = [
   { from: 0,  to: 14 }, // title + round counter
-  { from: 12, to: 40 }, // vote % bars
-  { from: 38, to: 76 }, // budget + cards + skip
-  { from: 72, to: 100 }, // special powers + laundered money
+  { from: 14, to: 39 }, // vote % bars
+  { from: 39, to: 73 }, // budget + cards + skip
+  { from: 73, to: 90 }, // special powers + laundered money
 ];
 
 const STEPS_TR = [
   {
     emoji: '🔄',
     title: 'Tur Sayacı',
-    desc: 'Seçim 4 turdan oluşur. Her turda bir hamle yaparsın, rakip de bir hamle yapar. Tur 1/4 den 4/4 e kadar ilerler. Tüm turlar bitince oylar sayılır.',
+    desc: 'Seçim 4 turdan oluşur. Her turda bir sen bir muhalefet hamle yapar. Tüm turlar bitince oylar sayılır.',
   },
   {
     emoji: '📊',
     title: 'Oy Barları',
-    desc: 'Sol bar senin oy oranın, sağ bar rakibinki. Yeşil barını %50\'nin üstüne taşıman gerekiyor. Her hamle barları değiştirir. %50\'yi geçersen seçimi kazanırsın.',
+    desc: 'Sol bar senin oy oranın, sağ bar muhalefetin. Her hamle barları değiştirir. %50\'yi geçersen seçimi kazanırsın.',
   },
   {
     emoji: '🃏',
     title: 'Bütçe, Kartlar ve Pas',
-    desc: 'Üstteki bütçeyle hamle kartı satın alırsın. Her kartın bir maliyeti ve oy etkisi var. Nadir kartlar daha güçlüdür. Bütçen yoksa ücretsiz "Pas" seçeneğini kullan — yine de +1% kazanırsın.',
+    desc: 'Üstteki bütçeyle seçim hamlesi satın alırsın. Her kartın bir maliyeti ve oy etkisi var. Nadir kartlar pahalı ama güçlüdür. Bütçen bittiyse "Pas" seçeneğini kullan — yine de +1% kazanırsın.',
   },
   {
-    emoji: '🔮',
-    title: 'Özel Güçler',
-    desc: 'Aklanmış para ile özel güçleri kullanırsın. Bu güçler tek kullanımlık ve çok etkilidir. Aklanmış paran yoksa bu seçenekler kilitlenir.',
+    emoji: '🌑',
+    title: 'Özel Bağlantılar',
+    desc: 'Aklanmış para ile özel bağlantılarını kullanırsın. Bu güçler tek kullanımlık ve çok etkilidir. Kara paran yoksa yoksa boşuna tenezzül etme.',
   },
 ];
 
@@ -53,7 +54,7 @@ const STEPS_EN = [
     desc: 'Use your budget (top) to buy campaign cards. Each card has a cost and a vote effect. Rarer cards are stronger. No budget? Use the free "Skip" option — you still gain +1%.',
   },
   {
-    emoji: '🔮',
+    emoji: '🌑',
     title: 'Special Powers',
     desc: 'Special powers are activated with laundered money. They\'re single-use and very powerful. If you have no laundered funds, these options are locked.',
   },
@@ -121,7 +122,7 @@ export function ElectionTutorialOverlay({ onComplete, lang }: Props) {
           <p className="text-xs text-muted-foreground leading-relaxed mb-3">{current.desc}</p>
 
           <button
-            onClick={() => isLast ? onComplete() : setStep(s => s + 1)}
+            onClick={() => { playClickSound(); isLast ? onComplete() : setStep(s => s + 1); }}
             className="w-full py-2 rounded-xl font-bold text-sm active:scale-95 transition-all text-white"
             style={{ background: 'hsl(var(--game-election))' }}
           >
@@ -130,7 +131,7 @@ export function ElectionTutorialOverlay({ onComplete, lang }: Props) {
               : (lang === 'tr' ? 'Devam →' : 'Next →')}
           </button>
           <button
-            onClick={onComplete}
+            onClick={() => { playClickSound(); onComplete(); }}
             className="w-full mt-1.5 py-1 text-xs text-muted-foreground"
           >
             {lang === 'tr' ? 'Geç' : 'Skip'}

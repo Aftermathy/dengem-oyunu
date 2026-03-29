@@ -29,7 +29,7 @@ export const gameOverScenariosEn: GameOverScenario[] = [
     power: 'tarikat',
     direction: 'low',
     title: 'Cult Coup!',
-    description: 'The organization you thought you purged had infiltrated every level of the state. One midnight the phones rang, but it wasn\'t your people calling. Judges issued arrest warrants, police are looking for you. Media ran "Traitor leader captured" headlines. Robed figures took over the state, secularism became history. You spent the night in a narrow cell.',
+    description: 'The organization you thought you purged had infiltrated every level of the state. One midnight the phones rang, but it wasn\'t your people calling. Judges issued arrest warrants, police are looking for you. Media ran "Traitor leader captured" headlines. Robed figures took over the state, and you spent the dawn in a narrow cell.',
     emoji: '🕋',
     image: 'defeat-tarikat',
   },

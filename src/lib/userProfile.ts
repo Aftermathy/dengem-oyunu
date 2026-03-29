@@ -6,6 +6,7 @@ export interface UserProfile {
   totalTurns: number;
   totalAP: number;
   gamesPlayed: number;
+  wonElections: number;
   hasCompletedOnboarding: boolean;
   isAppleLinked: boolean;
   unlockedAvatars: string[];
@@ -18,6 +19,7 @@ const DEFAULT_PROFILE: UserProfile = {
   totalTurns: 0,
   totalAP: 0,
   gamesPlayed: 0,
+  wonElections: 0,
   hasCompletedOnboarding: false,
   isAppleLinked: false,
   unlockedAvatars: [],
@@ -54,43 +56,38 @@ export interface AvatarDef {
 
 export const AVATAR_DEFS: AvatarDef[] = [
   // 3 default unlocked
-  { id: 'avatar_1', emoji: '👨‍✈️', nameTR: 'Generalissimo', nameEN: 'Generalissimo', color: 'hsl(200 60% 40%)' },
-  { id: 'avatar_2', emoji: '🤵', nameTR: 'Bay Başkan', nameEN: 'Mr. President', color: 'hsl(0 0% 25%)' },
-  { id: 'avatar_3', emoji: '👳', nameTR: 'Sultan', nameEN: 'Sultan', color: 'hsl(35 70% 45%)' },
+  { id: 'avatar_1', emoji: '📊', imageId: 'av1', nameTR: 'Ekonomist', nameEN: 'The Economist', color: 'hsl(210 60% 45%)' },
+  { id: 'avatar_2', emoji: '🕌', imageId: 'av2', nameTR: 'Dini Lider', nameEN: 'Religious Leader', color: 'hsl(140 50% 38%)' },
+  { id: 'avatar_3', emoji: '⭐', imageId: 'av3', nameTR: 'Başkomutan', nameEN: 'Chief Commander', color: 'hsl(0 0% 30%)' },
   // Ortadoğu DLC avatarları — premium (ad-free) ile açılır
   { id: 'avatar_png_1', emoji: '💰', imageId: 'blonde_trader', nameTR: 'Sarışın Tüccar', nameEN: 'Blonde Trader', color: 'hsl(40 70% 35%)', dlcPack: 'ortadogu' },
   { id: 'avatar_png_2', emoji: '🚀', imageId: 'rocket_guy', nameTR: 'Roket Adam', nameEN: 'Rocket Guy', color: 'hsl(220 70% 35%)', dlcPack: 'ortadogu' },
-  { id: 'avatar_png_3', emoji: '⭐', imageId: 'zionist_leader', nameTR: 'Lider', nameEN: 'The Leader', color: 'hsl(0 60% 30%)', dlcPack: 'ortadogu' },
-  // 15 locked - tied to achievements
-  { id: 'avatar_4', emoji: '🧛', nameTR: 'Vampir Diktatör', nameEN: 'Vampire Dictator', color: 'hsl(0 60% 30%)',
-    unlockAchievement: 'survive_10', unlockTextTR: '10 Tur Hayatta Kal', unlockTextEN: 'Survive 10 Turns' },
-  { id: 'avatar_5', emoji: '🤡', nameTR: 'Palyaço Reis', nameEN: 'Clown Leader', color: 'hsl(45 90% 55%)',
+  { id: 'avatar_png_3', emoji: '⭐', imageId: 'zionist_leader', nameTR: 'Siyon', nameEN: 'The Zion', color: 'hsl(0 60% 30%)', dlcPack: 'ortadogu' },
+  // 8 unlockable — tied to achievements
+  { id: 'avatar_4', emoji: '🍳', imageId: 'av4', nameTR: 'Mutfak Muhalifi', nameEN: 'Kitchen Rebel', color: 'hsl(25 80% 45%)',
+    unlockAchievement: 'survive_10', unlockTextTR: '15 Tur Hayatta Kal', unlockTextEN: 'Survive 15 Turns' },
+  { id: 'avatar_5', emoji: '🤝', imageId: 'av5', nameTR: 'Piskevütçü', nameEN: 'Cookie Guy', color: 'hsl(280 50% 40%)',
     unlockAchievement: 'survive_25', unlockTextTR: '25 Tur Hayatta Kal', unlockTextEN: 'Survive 25 Turns' },
-  { id: 'avatar_6', emoji: '🧟', nameTR: 'Zombi Başkan', nameEN: 'Zombie President', color: 'hsl(120 30% 35%)',
-    unlockAchievement: 'survive_50', unlockTextTR: '50 Tur Hayatta Kal', unlockTextEN: 'Survive 50 Turns' },
-  { id: 'avatar_7', emoji: '👽', nameTR: 'Uzaylı Lider', nameEN: 'Alien Leader', color: 'hsl(160 50% 40%)',
-    unlockAchievement: 'rich_100', unlockTextTR: '100B Hazineye Ulaş', unlockTextEN: 'Reach 100B Treasury' },
-  { id: 'avatar_8', emoji: '🤖', nameTR: 'Robot Diktatör', nameEN: 'Robot Dictator', color: 'hsl(210 20% 50%)',
-    unlockAchievement: 'rich_500', unlockTextTR: '500B Hazineye Ulaş', unlockTextEN: 'Reach 500B Treasury' },
-  { id: 'avatar_9', emoji: '🦹', nameTR: 'Süper Villain', nameEN: 'Super Villain', color: 'hsl(280 60% 40%)',
+  { id: 'avatar_6', emoji: '💍', imageId: 'av6', nameTR: 'Damat', nameEN: 'The Son-in-Law', color: 'hsl(0 0% 22%)',
     unlockAchievement: 'win_election_1', unlockTextTR: 'İlk Seçimi Kazan', unlockTextEN: 'Win First Election' },
-  { id: 'avatar_10', emoji: '🧙', nameTR: 'Büyücü Başkan', nameEN: 'Wizard President', color: 'hsl(260 50% 35%)',
-    unlockAchievement: 'launder_5', unlockTextTR: '5 Kez Para Akla', unlockTextEN: 'Launder Money 5 Times' },
-  { id: 'avatar_11', emoji: '🎃', nameTR: 'Balkabağı Reis', nameEN: 'Pumpkin Leader', color: 'hsl(25 80% 50%)',
-    unlockAchievement: 'bribe_10', unlockTextTR: '10 Kez Rüşvet Ver', unlockTextEN: 'Bribe 10 Times' },
-  { id: 'avatar_12', emoji: '💀', nameTR: 'İskelet Kral', nameEN: 'Skeleton King', color: 'hsl(0 0% 15%)',
-    unlockAchievement: 'ohal_1', unlockTextTR: 'OHAL 1 ile Kazan', unlockTextEN: 'Win with OHAL 1' },
-  { id: 'avatar_13', emoji: '👹', nameTR: 'Oni Başkan', nameEN: 'Oni President', color: 'hsl(0 70% 45%)',
-    unlockAchievement: 'ohal_2', unlockTextTR: 'OHAL 2 ile Kazan', unlockTextEN: 'Win with OHAL 2' },
-  { id: 'avatar_14', emoji: '🐉', nameTR: 'Ejderha Lord', nameEN: 'Dragon Lord', color: 'hsl(15 80% 40%)',
-    unlockAchievement: 'ohal_3', unlockTextTR: 'OHAL 3 ile Kazan', unlockTextEN: 'Win with OHAL 3' },
-  { id: 'avatar_15', emoji: '🦊', nameTR: 'Tilki Politikacı', nameEN: 'Fox Politician', color: 'hsl(20 70% 50%)',
-    unlockAchievement: 'all_deaths', unlockTextTR: 'Her Zümreden Düş', unlockTextEN: 'Fall to Every Faction' },
-  { id: 'avatar_16', emoji: '🐸', nameTR: 'Kurbağa Kral', nameEN: 'Frog King', color: 'hsl(100 50% 40%)',
+  { id: 'avatar_7', emoji: '📷', imageId: 'av7', nameTR: 'Tripod Kahramanı', nameEN: 'Tripod Hero', color: 'hsl(195 55% 38%)',
+    unlockAchievement: 'rich_100', unlockTextTR: '200B Hazineye Ulaş', unlockTextEN: 'Reach 200B Treasury' },
+  { id: 'avatar_8', emoji: '📖', imageId: 'av8', nameTR: 'Roman Yazarı', nameEN: 'Novel Writer', color: 'hsl(30 45% 35%)',
+    unlockAchievement: 'launder_5', unlockTextTR: '20 Kez Para Akla', unlockTextEN: 'Launder Money 20 Times' },
+  { id: 'avatar_9', emoji: '😤', imageId: 'av9', nameTR: 'Öfkeli Kel', nameEN: 'Angry Bald Guy', color: 'hsl(0 70% 42%)',
+    unlockAchievement: 'survive_50', unlockTextTR: '50 Tur Hayatta Kal', unlockTextEN: 'Survive 50 Turns' },
+  { id: 'avatar_10', emoji: '🦕', imageId: 'av10', nameTR: 'Dinozorlu Başkan', nameEN: 'Dinosaur President', color: 'hsl(110 45% 35%)',
+    unlockAchievement: 'ohal_1', unlockTextTR: 'OHAL 1 ile Bitir', unlockTextEN: 'Finish with OHAL 1' },
+  { id: 'avatar_11', emoji: '🍵', imageId: 'av11', nameTR: 'Çay Fırlatıcı', nameEN: 'Tea Thrower', color: 'hsl(40 65% 40%)',
+    unlockAchievement: 'bribe_10', unlockTextTR: '20 Kez Rüşvet Ver', unlockTextEN: 'Bribe 20 Times' },
+  // 4 absurd — tied to harder achievements
+  { id: 'avatar_12', emoji: '🪞', imageId: 'av12', nameTR: 'Bi-Başkan', nameEN: 'Bi-President', color: 'hsl(45 75% 45%)',
+    unlockAchievement: 'win_election_3', unlockTextTR: '3 Seçim Kazan', unlockTextEN: 'Win 3 Elections' },
+  { id: 'avatar_13', emoji: '🐱', imageId: 'av13', nameTR: 'Trafo Kedisi', nameEN: 'Cat in Traffic', color: 'hsl(25 70% 50%)',
     unlockAchievement: 'cat_encounter', unlockTextTR: 'Miyav Paşa ile Tanış', unlockTextEN: 'Meet Lord Whiskers' },
-  { id: 'avatar_17', emoji: '🎭', nameTR: 'Maske Başkan', nameEN: 'Masked Leader', color: 'hsl(270 40% 50%)',
-    unlockAchievement: 'survive_100', unlockTextTR: '100 Tur Hayatta Kal', unlockTextEN: 'Survive 100 Turns' },
-  { id: 'avatar_18', emoji: '👑', nameTR: 'Altın Kral', nameEN: 'Golden King', color: 'hsl(45 80% 50%)',
+  { id: 'avatar_14', emoji: '🌌', imageId: 'av14', nameTR: 'Galaktik Sultan', nameEN: 'Galactic Sultan', color: 'hsl(270 60% 42%)',
+    unlockAchievement: 'all_deaths', unlockTextTR: 'Her Zümreden Düş', unlockTextEN: 'Fall to Every Faction' },
+  { id: 'avatar_15', emoji: '🤖', imageId: 'av15', nameTR: 'Yapay Zeka', nameEN: 'Artificial Intelligence', color: 'hsl(185 70% 40%)',
     unlockAchievement: 'final_boss', unlockTextTR: 'Final Seçimini Kazan', unlockTextEN: 'Win the Final Election' },
 ];
 
@@ -109,10 +106,17 @@ export function getAvatarForAchievement(achievementId: string): string | null {
 }
 
 // Funny stats generators
+// tier 0 = < 5 games (rookie), tier 1 = 5–19 games (experienced), tier 2 = 20+ games (veteran)
 export function getFunnyStats(totalTurns: number, gamesPlayed: number) {
+  const tier = gamesPlayed < 5 ? 0 : gamesPlayed < 20 ? 1 : 2;
+  const m = [1, 1.5, 2.5][tier]; // multiplier grows with experience
   return {
-    advisorsFired: Math.floor(totalTurns * 0.3 + gamesPlayed * 2),
-    coffeeTons: parseFloat((totalTurns * 0.02 + gamesPlayed * 0.1).toFixed(1)),
-    silencedOpponents: Math.floor(totalTurns * 0.15 + gamesPlayed * 1.5),
+    tier,
+    advisorsFired: Math.floor((totalTurns * 0.3 + gamesPlayed * 2) * m),
+    coffeeTons: parseFloat(((totalTurns * 0.02 + gamesPlayed * 0.1) * m).toFixed(1)),
+    silencedOpponents: Math.floor((totalTurns * 0.15 + gamesPlayed * 1.5) * m),
+    propagandaMinutes: Math.floor((totalTurns * 12 + gamesPlayed * 20) * m),
+    relativesAbroad: Math.floor((gamesPlayed * 0.8 + totalTurns * 0.03) * m),
+    rewrittenHistory: Math.floor((gamesPlayed * 1.5 + totalTurns * 0.08) * m),
   };
 }

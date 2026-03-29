@@ -448,6 +448,12 @@ All colors MUST be HSL.
   pointer-events: none;
 }
 
+@keyframes slot-sweep {
+  0%   { opacity: 0; transform: translateX(-100%); }
+  50%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(100%); }
+}
+
 /* AI card bounce entrance */
 @keyframes ai-card-bounce {
   0% { transform: scale(0.3) translateY(-50px); opacity: 0; }
@@ -558,3 +564,22 @@ All colors MUST be HSL.
 }
 
 .animate-throne-shatter { animation: throne-shatter 1.2s ease-in-out; }
+
+/* Settings slider — native range input thumb styling */
+.settings-range-hidden {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.settings-range-hidden::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.settings-range-hidden::-moz-range-thumb {
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: none;
+}

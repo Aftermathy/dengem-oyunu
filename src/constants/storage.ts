@@ -15,4 +15,8 @@ export const STORAGE_KEYS = {
   COUNTED_SAVE_TS: 'ims_counted_save_ts',
   SKILL_LEVELS: 'ims_skill_levels',
   CLAIMED_ACHIEVEMENTS: 'ims_claimed_achievements',
+  POST_GAME_TOUR_DONE: 'ims_post_game_tour_done',
+  MUSIC_VOLUME: 'ims_music_vol',
+  SFX_VOLUME: 'ims_sfx_vol',
+  SHOW_FACTION_PCT: 'ims_show_faction_pct',
 } as const;

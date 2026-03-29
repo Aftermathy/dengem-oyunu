@@ -21,6 +21,8 @@ import { AchievementPopup } from '@/components/game/AchievementPopup';
 import { OnboardingScreen } from '@/components/game/OnboardingScreen';
 import { ProfileScreen } from '@/components/game/ProfileScreen';
 import { LeaderboardScreen } from '@/components/game/LeaderboardScreen';
+import { PostGameTutorial } from '@/components/game/PostGameTutorial';
+import { AbsoluteVictoryScreen } from '@/components/game/AbsoluteVictoryScreen';
 import { hasSeenAnyCard, hasShownKnowledgeAnnouncement, markKnowledgeAnnouncementShown, getSeenCards } from '@/lib/cardMemory';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { useUserProfile } from '@/contexts/UserProfileContext';
@@ -28,6 +30,12 @@ import { STORAGE_KEYS } from '@/constants/storage';
 import { hasSavedGame, loadGame } from '@/lib/gameSave';
 import { GameIcon } from '@/components/GameIcon';
 import { submitScore } from '@/lib/leaderboard';
+
+// ── Dev test shortcut: ?victory=0|1|2|3  shows AbsoluteVictoryScreen directly ──
+const DEV_VICTORY_OHAL = (() => {
+  const v = new URLSearchParams(window.location.search).get('victory');
+  return v !== null ? Math.min(3, Math.max(0, parseInt(v, 10) || 0)) : null;
+})();
 
 const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -61,6 +69,7 @@ const Index = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showPostGameTour, setShowPostGameTour] = useState(false);
   const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
   const nextElectionInfo = getNextElectionInfo(turn, completedElections);
   const electionDefeatRef = useRef(false);
@@ -85,6 +94,7 @@ const Index = () => {
     updateProfile({
       totalTurns: userProfile.totalTurns + gs.turn,
       gamesPlayed: userProfile.gamesPlayed + 1,
+      wonElections: (userProfile.wonElections ?? 0) + gs.completedElections.length,
     });
     try {
       await submitScore({
@@ -113,14 +123,27 @@ const Index = () => {
     action();
   }, [recordGameEnd, userProfile.hasCompletedOnboarding, phase]);
 
+  // Shows the post-game tutorial once — call after goToMenu() so the start screen is visible underneath.
+  const triggerPostGameTour = useCallback((wasGameOver: boolean) => {
+    const tourDone = localStorage.getItem(STORAGE_KEYS.POST_GAME_TOUR_DONE) === 'true';
+    if (!tourDone && hasSeenAnyCard()) {
+      localStorage.setItem(STORAGE_KEYS.POST_GAME_TOUR_DONE, 'true');
+      setShowPostGameTour(true);
+      return;
+    }
+    if (wasGameOver && hasSeenAnyCard() && !hasShownKnowledgeAnnouncement()) {
+      setShowKnowledgeAnnouncement(true);
+    }
+  }, []);
+
   const handleGoToMenu = useCallback(() => {
     const wasGameOver = phase === 'gameover' || electionDefeatRef.current;
     electionDefeatRef.current = false;
     goToMenu();
-    if (wasGameOver && hasSeenAnyCard() && !hasShownKnowledgeAnnouncement()) {
-      setShowKnowledgeAnnouncement(true);
+    if (userProfile.hasCompletedOnboarding) {
+      triggerPostGameTour(wasGameOver);
     }
-  }, [phase, goToMenu]);
+  }, [phase, goToMenu, userProfile.hasCompletedOnboarding, triggerPostGameTour]);
 
   const handleStartGame = useCallback(() => {
     if (hasSavedGame()) {
@@ -170,7 +193,7 @@ const Index = () => {
       {phase === 'playing' && currentCard && (
         <>
           <div className="pt-1 pb-0 shrink-0 relative">
-            <div className="absolute right-2 top-1 z-40">
+            <div className="absolute right-2 top-0 z-[80]">
               <SettingsMenu onMainMenu={handleGoToMenu} />
             </div>
             <PowerBars
@@ -261,6 +284,7 @@ const Index = () => {
           onComplete={(result) => handleElectionComplete(result)}
           onLossDetected={handleElectionLoss}
           onRestart={() => withGameEnd(() => startGame())}
+          onAbandon={handleGoToMenu}
           onMainMenu={() => {
             electionDefeatRef.current = true;
             withGameEnd(handleGoToMenu);
@@ -285,6 +309,16 @@ const Index = () => {
         />
       )}
 
+      {(phase === 'absolute_victory' || DEV_VICTORY_OHAL !== null) && (
+        <AbsoluteVictoryScreen
+          lang={lang}
+          earnedAP={DEV_VICTORY_OHAL !== null ? 999 : lastEarnedAP}
+          ohalLevel={DEV_VICTORY_OHAL !== null ? DEV_VICTORY_OHAL : ohalLevel}
+          onRestart={() => { if (DEV_VICTORY_OHAL === null) withGameEnd(() => startGame()); }}
+          onMainMenu={() => { if (DEV_VICTORY_OHAL === null) withGameEnd(() => handleGoToMenu()); }}
+        />
+      )}
+
       {showOnboarding && (
         <OnboardingScreen
           onComplete={(nickname, avatarId) => {
@@ -294,9 +328,8 @@ const Index = () => {
             const wasGameOver = pendingWasGameOver.current;
             pendingWasGameOver.current = false;
             goToMenu();
-            if (wasGameOver && hasSeenAnyCard() && !hasShownKnowledgeAnnouncement()) {
-              setShowKnowledgeAnnouncement(true);
-            }
+            // hasCompletedOnboarding is now true — trigger the post-game tour
+            triggerPostGameTour(wasGameOver);
           }}
         />
       )}
@@ -345,6 +378,20 @@ const Index = () => {
           key={crisisAlertType}
           type={crisisAlertType}
           onDone={clearCrisisAlert}
+        />
+      )}
+
+      {showPostGameTour && (
+        <PostGameTutorial
+          userProfile={userProfile}
+          earnedAP={lastEarnedAP}
+          lang={lang}
+          onComplete={() => {
+            setShowPostGameTour(false);
+            if (hasSeenAnyCard() && !hasShownKnowledgeAnnouncement()) {
+              setShowKnowledgeAnnouncement(true);
+            }
+          }}
         />
       )}
     </div>

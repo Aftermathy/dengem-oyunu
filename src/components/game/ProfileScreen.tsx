@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { EmojiImg } from '@/components/EmojiImg';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -31,6 +30,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
 
   const currentAvatar = AVATAR_DEFS.find(a => a.id === profile.avatarId) || AVATAR_DEFS[0];
   const funnyStats = getFunnyStats(profile.totalTurns, profile.gamesPlayed);
+  const { tier } = funnyStats;
 
   const handleAvatarSelect = (avatarId: string) => {
     const def = AVATAR_DEFS.find(a => a.id === avatarId);
@@ -89,7 +89,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
                 {/* Avatar circle — wrapped in relative so badges can escape brightness filter */}
                 <div className="relative">
                   <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-md overflow-hidden ${
+                    className={`w-16 h-16 rounded-xl flex items-center justify-center text-3xl shadow-md overflow-hidden ${
                       isDlcLocked
                         ? 'opacity-50 grayscale'
                         : !unlocked
@@ -103,7 +103,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
 
                   {/* Achievement-locked: grey lock overlay */}
                   {!unlocked && !isDlcLocked && (
-                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/30">
+                    <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/30">
                       <GameIcon name="lock" size={18} className="text-white/70" />
                     </div>
                   )}
@@ -111,7 +111,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
                   {/* DLC-locked: gold lock + star badge — OUTSIDE brightness div */}
                   {isDlcLocked && (
                     <>
-                      <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/20">
+                      <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/20">
                         <GameIcon name="lock" size={18} className="text-yellow-400" />
                       </div>
                       <div className="absolute -bottom-0.5 -right-0.5 bg-yellow-500 rounded-full w-5 h-5 flex items-center justify-center text-[9px] font-black text-black leading-none shadow-md">
@@ -167,7 +167,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
           className="relative group"
         >
           <div
-            className="w-28 h-28 rounded-full flex items-center justify-center text-6xl shadow-xl border-4 border-primary/30 group-hover:border-primary transition-colors overflow-hidden"
+            className="w-28 h-28 rounded-2xl flex items-center justify-center text-6xl shadow-xl border-4 border-primary/30 group-hover:border-primary transition-colors overflow-hidden"
             style={{ background: currentAvatar.color }}
           >
             <AvatarImg avatar={currentAvatar} size={112} />
@@ -227,6 +227,11 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
             value={String(profile.gamesPlayed)}
           />
           <StatRow
+            emoji="🗳️"
+            label={lang === 'tr' ? 'Kazanılan Seçim' : 'Elections Won'}
+            value={String(profile.wonElections ?? 0)}
+          />
+          <StatRow
             emoji="📖"
             label={lang === 'tr' ? 'Keşfedilen Kart' : 'Cards Discovered'}
             value={`${getSeenCards().size} / ${eventCards.length}`}
@@ -253,17 +258,28 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
             label={lang === 'tr' ? 'Susturulan Muhalif' : 'Silenced Opponents'}
             value={String(funnyStats.silencedOpponents)}
           />
+          <StatRow
+            emoji="📺"
+            label={lang === 'tr'
+              ? ['Yayın Süresi (Dk)', 'Propaganda Süresi (Dk)', 'Beyin Yıkama Süresi (Dk)'][tier]
+              : ['Broadcast Time (Min)', 'Propaganda Duration (Min)', 'Brainwashing Time (Min)'][tier]}
+            value={String(funnyStats.propagandaMinutes)}
+          />
+          <StatRow
+            emoji={['🏝️', '✈️', '🏦'][tier]}
+            label={lang === 'tr'
+              ? ['Tatile Yollanan Akraba', 'Yurt Dışına Kaçırılan Akraba', 'Offshore Hesaplı Akraba'][tier]
+              : ['Relatives Sent on Holiday', 'Relatives Smuggled Abroad', 'Relatives with Offshore Accounts'][tier]}
+            value={String(funnyStats.relativesAbroad)}
+          />
+          <StatRow
+            emoji={['📜', '📚', '🌀'][tier]}
+            label={lang === 'tr'
+              ? ['Yeniden Yazılan Tarih Sayfası', 'Müfredattan Silinen Olay', 'Alternatif Gerçek Sayısı'][tier]
+              : ['History Pages Rewritten', 'Events Erased from Curriculum', 'Alternative Facts Created'][tier]}
+            value={String(funnyStats.rewrittenHistory)}
+          />
         </div>
-
-        {/* Change Avatar Button */}
-        <Button
-          variant="outline"
-          onClick={() => { playClickSound(); hapticLight(); setShowGallery(true); }}
-          className="mt-2"
-        >
-          <EmojiImg emoji="🎨" size={16} className="mr-1.5" />
-          {lang === 'tr' ? 'Avatarı Değiştir' : 'Change Avatar'}
-        </Button>
       </div>
 
       {showPremiumModal && (

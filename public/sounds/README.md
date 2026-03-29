@@ -19,6 +19,7 @@ to `ios/App/App/public/sounds/` so Capacitor iOS picks them up.
 | special_power.mp3   | OHAL / special ability activated  | ~350ms          |
 | reroll.mp3          | Skill tree reroll                 | ~150ms          |
 | budget_warning.mp3  | Low treasury alert                | ~150ms          |
+| main_menu.mp3       | Start screen background music    | looping         |
 
 ## Tips
 - Export at 44.1 kHz, mono, 128 kbps — keeps bundle size low

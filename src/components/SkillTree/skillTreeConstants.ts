@@ -85,14 +85,14 @@ function clamp(idx: number, arr: readonly number[]): number {
 export function getEffectText(skill: SkillDef, level: number, lang: 'tr' | 'en'): string {
   if (level === 0) return lang === 'en' ? 'Not unlocked' : 'Açılmadı';
   const id = skill.id;
-  if (id.startsWith('shield_')) return lang === 'en' ? `Reduces damage by -${level}` : `Hasarı -${level} azaltır`;
-  if (id.startsWith('media_')) return lang === 'en' ? `Boosts gains by +${level}` : `Kazancı +${level} artırır`;
-  if (id === 'election_master') { const pcts = [3,5,8,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `Reduces election costs by ${v}%` : `Seçim maliyetini %${v} düşürür`; }
-  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `Reduces special power costs by ${v}%` : `Özel güç maliyetini %${v} düşürür`; }
+  if (id.startsWith('shield_')) return lang === 'en' ? `Reduces reputation loss by -${level}` : `İtibar kaybını -${level} azaltır`;
+  if (id.startsWith('media_')) return lang === 'en' ? `Boosts reputation gains by +${level}` : `İtibar kazancını +${level} artırır`;
+  if (id === 'election_master') { const pcts = [3,5,8,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `Reduces election card costs by ${v}%` : `Seçim kartı maliyetini %${v} düşürür`; }
+  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `Reduces special connection card costs by ${v}%` : `Özel bağlantı kartı maliyetini %${v} düşürür`; }
   if (id === 'pro_launderer') { const vals = [25,30] as const; const v = clamp(level-1, vals); return lang === 'en' ? `Launders ${v}B per 30B` : `30B'ye ${v}B aklar`; }
-  if (id === 'offshore') { const pcts = [1,2,3] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `${v}% interest per turn` : `Tur başı %${v} faiz`; }
-  if (id === 'lucky_cards') { const pcts = [5,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `+${v}% rare card chance` : `+%${v} nadir kart şansı`; }
-  if (id === 'crisis_management') return lang === 'en' ? 'Survive death once per game' : 'Oyun başına 1 kez ölümden kurtul';
+  if (id === 'offshore') { const pcts = [1,2,3] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `${v}% interest per turn for laundered money` : `Aklanan para için tur başı %${v} faiz`; }
+  if (id === 'lucky_cards') { const pcts = [5,10,15] as const; const v = clamp(level-1, pcts); return lang === 'en' ? `+${v}% rare election card chance` : `+%${v} nadir seçim kartı şansı`; }
+  if (id === 'crisis_management') return lang === 'en' ? 'Survive death once per game if faction bar is zero' : 'İlk zümre itibarı sıfıra indiğinde, 1 kez yardımına yetişir';
   if (id === 'emergency_fund') return lang === 'en' ? 'Inject 25B when bankrupt (once/game)' : 'İflas ettiğinde 25B enjekte et (oyun başına 1)';
   if (id === 'ohal') return getOhalEffectText(level, lang);
   return '';
@@ -102,15 +102,15 @@ export function getNextEffectText(skill: SkillDef, level: number, lang: 'tr' | '
   if (level >= skill.maxLevel) return lang === 'en' ? 'Maximum level reached' : 'Maksimum seviyeye ulaşıldı';
   const nextLevel = level + 1;
   const id = skill.id;
-  if (id.startsWith('shield_')) return lang === 'en' ? `Will reduce damage by -${nextLevel}` : `Hasarı -${nextLevel} azaltacak`;
-  if (id.startsWith('media_')) return lang === 'en' ? `Will boost gains by +${nextLevel}` : `Kazancı +${nextLevel} artıracak`;
-  if (id === 'election_master') { const pcts = [3,5,8,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `Will reduce costs by ${v}%` : `Maliyeti %${v} düşürecek`; }
-  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `Will reduce special power costs by ${v}%` : `Özel güç maliyetini %${v} düşürecek`; }
+  if (id.startsWith('shield_')) return lang === 'en' ? `Will reduce reputation loss by -${nextLevel}` : `İtibar kaybını -${nextLevel} azaltacak`;
+  if (id.startsWith('media_')) return lang === 'en' ? `Will boost reputain gain by +${nextLevel}` : `İtibar kazancını +${nextLevel} artıracak`;
+  if (id === 'election_master') { const pcts = [3,5,8,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `Will reduce election card costs by ${v}%` : `Seçim kartı maaliyetini %${v} düşürecek`; }
+  if (id === 'dark_connections') { const pcts = [3,5,8,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `Will reduce special connection card costs by ${v}%` : `Özel bağlantı kartı maliyetini %${v} düşürecek`; }
   if (id === 'pro_launderer') { const vals = [25,30] as const; const v = clamp(nextLevel-1, vals); return lang === 'en' ? `Will launder ${v}B per 30B` : `30B'ye ${v}B aklayacak`; }
-  if (id === 'offshore') { const pcts = [1,2,3] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `${v}% interest per turn` : `Tur başı %${v} faiz`; }
-  if (id === 'lucky_cards') { const pcts = [5,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `+${v}% rare card chance` : `+%${v} nadir kart şansı`; }
-  if (id === 'crisis_management') return lang === 'en' ? 'Survive death once per game' : 'Oyun başına 1 kez ölümden kurtul';
-  if (id === 'emergency_fund') return lang === 'en' ? 'Inject 25B when bankrupt (once/game)' : 'İflas ettiğinde 25B enjekte et (oyun başına 1)';
+  if (id === 'offshore') { const pcts = [1,2,3] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `${v}% interest per turn for laundered money ` : `Aklanan para için tur başı %${v} faiz`; }
+  if (id === 'lucky_cards') { const pcts = [5,10,15] as const; const v = clamp(nextLevel-1, pcts); return lang === 'en' ? `+${v}% rare election card chance` : `+%${v} nadir seçim kartı şansı`; }
+  if (id === 'crisis_management') return lang === 'en' ? 'Survive death once per game if any faction bar is zero' : 'İlk zümre itibarı sıfıra indiğinde, 1 kez yardımına yetişir';
+  if (id === 'emergency_fund') return lang === 'en' ? 'Inject 25B when bankrupt (once/game)' : 'İflas ettiğinde 25B enjekte et (oyun başına 1 kez)';
   if (id === 'ohal') return getOhalEffectText(nextLevel, lang);
   return '';
 }

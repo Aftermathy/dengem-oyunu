@@ -76,8 +76,8 @@ export function getElectionLabels(lang: string): ElectionLabels {
     electionWon: 'SEÇİM KAZANILDI!', electionLost: 'SEÇİM KAYBEDİLDİ!',
     continue: '4 Sene Daha!', skip: 'Pas (+1%)', vote: 'oy',
     reroll: 'Yenile', rerollCost: `${REROLL_COST}B`,
-    balconyTitle: 'TEBRİKLER!', balconySubtitle: 'Millet yine seni seçti... yine de!',
-    balconyContinue: '4 Sene Daha Devam!',
+    balconyTitle: 'TEBRİKLER!', balconySubtitle: 'Millet yine seni seçti...!',
+    balconyContinue: '4 Sene Daha!',
     insufficientBudget: '⚠️ Yetersiz Bütçe!', insufficientLaundered: '⚠️ Yetersiz Aklanmış Para!',
   };
 }

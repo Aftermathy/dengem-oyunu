@@ -43,7 +43,7 @@ export interface GameOverScenario {
 export const BRIBE_COSTS = [3, 5, 10, 15, 25, 25, 25] as const;
 export const BRIBE_REP_GAIN = 10;
 
-export type GamePhase = 'start' | 'playing' | 'gameover' | 'election';
+export type GamePhase = 'start' | 'playing' | 'gameover' | 'election' | 'absolute_victory';
 
 export interface BribeState {
   [key: string]: number;

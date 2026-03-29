@@ -6,6 +6,11 @@
 export {
   SOUNDS,
   playAudio,
+  preloadSounds,
+  playMainMenuMusic,
+  stopMainMenuMusic,
+  isMusicMuted,
+  setMusicMuted,
   playClickSound,
   playSwipeSound,
   playGameOverSound,
@@ -17,4 +22,8 @@ export {
   playSpecialPowerSound,
   playRerollSound,
   playBudgetWarningSound,
+  getSfxVolume,
+  getMusicVolume,
+  setSfxVolume,
+  setMusicVolume,
 } from '@/utils/audioManager';

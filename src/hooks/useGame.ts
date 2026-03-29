@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { PowerState, PowerType, EventCard, GamePhase } from '@/types/game';
 import { isAdFree, handleAdTrigger, incrementGamesPlayed } from '@/hooks/useAds';
+import { playGameOverSound } from '@/hooks/useSound';
 import { saveGame, loadGame, clearSave } from '@/lib/gameSave';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { GAME_CONFIG } from '@/constants/gameConfig';
@@ -287,6 +288,7 @@ export function useGame(lang: Language) {
         updateHighScore(newTurn);
         awardAP(newTurn, totalLaundered);
         clearSave();
+        playGameOverSound();
         void handleAdTrigger('gameOver');
         setPhase('gameover');
         return;
@@ -310,6 +312,7 @@ export function useGame(lang: Language) {
         updateHighScore(newTurn);
         awardAP(newTurn, totalLaundered);
         clearSave();
+        playGameOverSound();
         void handleAdTrigger('gameOver');
         setPhase('gameover');
         return;
@@ -435,21 +438,18 @@ export function useGame(lang: Language) {
       updateHighScore(turn);
       awardAP(turn, totalLaundered);
       clearSave();
+      playGameOverSound();
       void handleAdTrigger('gameOver');
       setPhase('gameover');
       return;
     }
     const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
     if (electionConfig?.isFinalBoss) {
-      const victoryScenario = { title: t('gameover.victory.title'), description: t('gameover.victory.desc'), emoji: '🏆' };
-      setGameOverInfo(victoryScenario);
       updateHighScore(turn);
       awardAP(turn, totalLaundered);
-      if (modifiers.ohalLevel > 0) {
-        achievements.checkOhal(modifiers.ohalLevel);
-      }
+      achievements.checkOhal(modifiers.ohalLevel); // unlocks ohal_1/2/3 chains
       clearSave();
-      setPhase('gameover');
+      setPhase('absolute_victory');
       return;
     }
     setMoney(result.remainingBudget);

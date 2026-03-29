@@ -20,13 +20,16 @@ interface ElectionScreenProps {
   onComplete: (result: ElectionResult) => void;
   onRestart: () => void;
   onMainMenu: () => void;
+  /** Called when the player abandons mid-battle (Settings → Main Menu).
+   *  Defaults to onMainMenu if not provided. */
+  onAbandon?: () => void;
   onLossDetected?: () => void;
   earnedAP?: number;
   costFactor?: number;
   darkConnectionsReduction?: number;
 }
 
-export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu, onLossDetected, earnedAP = 0, costFactor = 1, darkConnectionsReduction = 0 }: ElectionScreenProps) => {
+export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halkPower, lang, onComplete, onRestart, onMainMenu, onAbandon, onLossDetected, earnedAP = 0, costFactor = 1, darkConnectionsReduction = 0 }: ElectionScreenProps) => {
   const [playerVote, setPlayerVote] = useState(() => config.startingPlayerVote);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<'intro' | 'player' | 'ai' | 'result' | 'victory'>('intro');
@@ -38,6 +41,8 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
   const [aiCardPlayed, setAiCardPlayed] = useState<ElectionCard | null>(null);
   const [usedCardIds, setUsedCardIds] = useState<number[]>([]);
   const [usedAiCardIds, setUsedAiCardIds] = useState<number[]>([]);
+  const [aiSlotCards, setAiSlotCards] = useState<ElectionCard[] | null>(null);
+  const [aiWinnerIndex, setAiWinnerIndex] = useState<number | null>(null);
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   const [barGlowKey, setBarGlowKey] = useState(0);
   const [showAiFlash, setShowAiFlash] = useState(false);
@@ -119,39 +124,62 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
     setUsedPowers(prev => [...prev, power.id]);
   }, [laundered, usedPowers, showBudgetWarningFor, costFactor, darkConnectionsReduction]);
 
-  // AI turn
+  // AI turn — select card + decoys for slot machine, then wait for onSlotSettled
   useEffect(() => {
     if (phase !== 'ai') return;
     setShowAiFlash(true);
-    const flashTimer = setTimeout(() => setShowAiFlash(false), 800);
     hapticAiThinking();
-    const timer = setTimeout(() => {
-      const gap = playerVote - (100 - playerVote);
-      const aiCard = selectAiCard(config.oppositionCards, gap, usedAiCardIds);
-      setUsedAiCardIds(prev => [...prev, aiCard.id]);
-      hapticByRarity(aiCard.rarity);
-      playAiCardSound();
-      if (aiCard.rarity === 'legendary') {
-        setAiLegendaryShake(true);
-        setTimeout(() => setAiLegendaryShake(false), 1500);
-      }
-      setPlayerVote(v => Math.max(0, Math.min(100, v - aiCard.voterEffect)));
-      setBarGlowKey(k => k + 1);
-      setAiCardPlayed(aiCard);
-      setTimeout(() => {
-        if (round >= 4) {
-          setPhase('result');
-        } else {
-          setRound(r => r + 1);
-          setCards(drawCards(config.playerCards, 3, usedCardIds));
-          setAiCardPlayed(null);
-          setPhase('player');
-        }
-      }, 1800);
-    }, 1200);
-    return () => { clearTimeout(timer); clearTimeout(flashTimer); };
+    const flashTimer = setTimeout(() => setShowAiFlash(false), 400);
+
+    // Select the real AI card
+    const gap = playerVote - (100 - playerVote);
+    const aiCard = selectAiCard(config.oppositionCards, gap, usedAiCardIds);
+
+    // Pick 3 decoy cards (different from winner)
+    const decoys = config.oppositionCards
+      .filter(c => c.id !== aiCard.id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+    // Pad with repeats if pool is tiny
+    while (decoys.length < 3) decoys.push(decoys[decoys.length - 1] ?? aiCard);
+
+    // Shuffle winner into a random slot
+    const winnerPos = Math.floor(Math.random() * 4);
+    const slotCards = [...decoys.slice(0, winnerPos), aiCard, ...decoys.slice(winnerPos)];
+
+    setAiSlotCards(slotCards);
+    setAiWinnerIndex(winnerPos);
+
+    return () => { clearTimeout(flashTimer); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, round]);
+
+  // Called by AiSlotMachine when the animation settles on the winner
+  const handleSlotSettled = useCallback((aiCard: ElectionCard) => {
+    setUsedAiCardIds(prev => [...prev, aiCard.id]);
+    hapticByRarity(aiCard.rarity);
+    playAiCardSound();
+    if (aiCard.rarity === 'legendary') {
+      setAiLegendaryShake(true);
+      setTimeout(() => setAiLegendaryShake(false), 1500);
+    }
+    setPlayerVote(v => Math.max(0, Math.min(100, v - aiCard.voterEffect)));
+    setBarGlowKey(k => k + 1);
+    setAiCardPlayed(aiCard);
+    setTimeout(() => {
+      setAiSlotCards(null);
+      setAiWinnerIndex(null);
+      if (round >= 4) {
+        setPhase('result');
+      } else {
+        setRound(r => r + 1);
+        setCards(drawCards(config.playerCards, 3, usedCardIds));
+        setAiCardPlayed(null);
+        setPhase('player');
+      }
+    }, 1600);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [round, usedCardIds, config.playerCards]);
 
   // Award AP on loss detection (once)
   const lossHandledRef = useRef(false);
@@ -161,12 +189,22 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
     onLossDetected?.();
   }, [phase, won, onLossDetected]);
 
-  // Victory transition
+  // Victory transition — skip result screen for wins, go straight to balcony
+  // For final boss: skip balcony entirely and go to absolute victory immediately
   useEffect(() => {
     if (phase !== 'result' || !won) return;
-    const timer = setTimeout(() => setPhase('victory'), 3000);
-    return () => clearTimeout(timer);
-  }, [phase, won]);
+    if (config.isFinalBoss) {
+      onComplete({
+        won: true,
+        playerVote: displayPlayerVote,
+        opponentVote: displayOpponentVote,
+        remainingBudget: budget,
+        remainingLaundered: laundered,
+      });
+      return;
+    }
+    setPhase('victory');
+  }, [phase, won]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFinish = () => {
     onComplete({
@@ -222,13 +260,15 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
           rerollsLeft={rerollsLeft} budgetWarning={budgetWarning}
           usedPowers={usedPowers} aiLegendaryShake={aiLegendaryShake}
           labels={labels} costFactor={costFactor} darkConnectionsReduction={darkConnectionsReduction}
+          aiSlotCards={aiSlotCards} aiWinnerIndex={aiWinnerIndex}
           onPlayCard={playCard} onSkipTurn={skipTurn}
           onReroll={handleReroll} onUseSpecialPower={useSpecialPower}
-          onShowBudgetWarning={showBudgetWarningFor} onMainMenu={onMainMenu}
+          onShowBudgetWarning={showBudgetWarningFor} onMainMenu={onAbandon ?? onMainMenu}
+          onSlotSettled={handleSlotSettled}
         />
       )}
 
-      {phase === 'result' && (
+      {phase === 'result' && !won && (
         <ElectionResultScreen
           won={won} playerVote={playerVote}
           labels={labels} lang={lang}

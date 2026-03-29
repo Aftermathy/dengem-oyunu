@@ -2,6 +2,7 @@ import { ElectionConfig, ElectionCard, ElectionSpecialPower } from '@/types/elec
 import { EmojiImg } from '@/components/EmojiImg';
 import { SettingsMenu } from '@/components/game/SettingsMenu';
 import { RARITY_STYLES, REROLL_COST, ElectionLabels } from './electionUtils';
+import { AiSlotMachine } from './AiSlotMachine';
 
 interface ElectionBattleProps {
   config: ElectionConfig;
@@ -23,12 +24,15 @@ interface ElectionBattleProps {
   labels: ElectionLabels;
   costFactor?: number;
   darkConnectionsReduction?: number;
+  aiSlotCards: ElectionCard[] | null;
+  aiWinnerIndex: number | null;
   onPlayCard: (card: ElectionCard) => void;
   onSkipTurn: () => void;
   onReroll: () => void;
   onUseSpecialPower: (power: ElectionSpecialPower) => void;
   onShowBudgetWarning: (id: number | string) => void;
   onMainMenu: () => void;
+  onSlotSettled: (card: ElectionCard) => void;
 }
 
 export function ElectionBattle({
@@ -37,8 +41,9 @@ export function ElectionBattle({
   cards, aiCardPlayed, selectedCardId, barGlowKey,
   rerollsLeft, budgetWarning, usedPowers,
   aiLegendaryShake, labels, costFactor = 1, darkConnectionsReduction = 0,
+  aiSlotCards, aiWinnerIndex,
   onPlayCard, onSkipTurn, onReroll, onUseSpecialPower,
-  onShowBudgetWarning, onMainMenu,
+  onShowBudgetWarning, onMainMenu, onSlotSettled,
 }: ElectionBattleProps) {
   const effectiveCost = (base: number) => Math.max(1, Math.round(base * costFactor));
   const effectiveSpecialCost = (base: number) => Math.max(1, Math.round(base * costFactor * (1 - darkConnectionsReduction)));
@@ -139,7 +144,7 @@ export function ElectionBattle({
                     </div>
                     <div className="flex items-center gap-2 mb-1.5">
                       <EmojiImg emoji={card.emoji} size={28} />
-                      <p className={`text-sm font-bold leading-tight flex-1 ${style.textColor}`}>{card.text}</p>
+                      <p className="text-sm font-bold leading-tight flex-1 text-white">{card.text}</p>
                     </div>
                     <p className="text-game-success-light text-base font-black">+{card.voterEffect}%</p>
                   </button>
@@ -155,7 +160,7 @@ export function ElectionBattle({
                 </div>
                 <div className="flex items-center gap-2 mb-1.5">
                   <EmojiImg emoji="⏭️" size={28} />
-                  <p className="text-foreground/70 text-sm font-bold leading-tight flex-1">{labels.skip}</p>
+                  <p className="text-white text-sm font-bold leading-tight flex-1">{labels.skip}</p>
                 </div>
                 <p className="text-game-success-light/70 text-base font-black">+1%</p>
               </button>
@@ -164,29 +169,18 @@ export function ElectionBattle({
         )}
 
         {phase === 'ai' && (
-          <div className={`text-center ${aiLegendaryShake ? 'ai-legendary-shake' : ''}`}>
-            {aiCardPlayed ? (() => {
-              const aiStyle = RARITY_STYLES[aiCardPlayed.rarity];
-              const isLegendary = aiCardPlayed.rarity === 'legendary';
-              return (
-                <div className={`border-2 rounded-xl p-4 mx-auto max-w-xs ai-card-bounce ${aiStyle.border} ${aiStyle.bg} ${aiStyle.glow} ${isLegendary ? 'legendary-card-flame' : ''}`}>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className={`text-xs font-black ${aiStyle.labelColor}`}>{aiStyle.label}</span>
-                    <span className="text-game-danger-light text-xs font-bold uppercase tracking-wider">{labels.opposition}</span>
-                  </div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <EmojiImg emoji={aiCardPlayed.emoji} size={36} />
-                    <p className={`text-sm font-bold leading-tight flex-1 ${aiStyle.textColor}`}>{aiCardPlayed.text}</p>
-                  </div>
-                  <p className="text-game-danger-light text-base font-black">-{aiCardPlayed.voterEffect}%</p>
-                </div>
-              );
-            })() : (
-              <div className="animate-pulse">
-                <EmojiImg emoji="🎭" size={48} />
-                <p className="text-game-danger-light text-lg font-bold mt-3">{labels.oppMoving}</p>
-              </div>
-            )}
+          <div className={`${aiLegendaryShake ? 'ai-legendary-shake' : ''}`}>
+            <div className="text-center animate-pulse mb-3">
+              <EmojiImg emoji="🎭" size={36} />
+              <p className="text-game-danger-light text-base font-bold mt-1">{labels.oppMoving}</p>
+            </div>
+            {aiSlotCards && aiWinnerIndex !== null ? (
+              <AiSlotMachine
+                cards={aiSlotCards}
+                winnerIndex={aiWinnerIndex}
+                onSettled={onSlotSettled}
+              />
+            ) : null}
           </div>
         )}
       </div>

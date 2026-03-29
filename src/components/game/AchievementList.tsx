@@ -72,9 +72,9 @@ export function AchievementList({ onClose, onEquipAvatar }: AchievementListProps
               <span className="text-xs font-bold text-game-gold">+{claimableAP}</span>
             </div>
           )}
-          <div className="bg-muted/50 rounded-full px-2.5 py-1 flex items-center gap-1">
+          <div className="bg-purple-500/15 border border-purple-500/30 rounded-full px-2.5 py-1 flex items-center gap-1">
             <EmojiImg emoji="⭐" size={12} />
-            <span className="text-xs font-bold text-game-gold">{authorityPoints}</span>
+            <span className="text-xs font-bold text-purple-400">{authorityPoints}</span>
           </div>
           <button
             onClick={onClose}
@@ -224,9 +224,6 @@ function AchievementRow({
                 border: '1px solid hsl(270 60% 50% / 0.3)',
               }}
             >
-              <div className="w-4 h-4 rounded-full flex items-center justify-center" style={{ background: avatarReward.color }}>
-                <EmojiImg emoji={avatarReward.emoji} size={10} />
-              </div>
               <span className="text-[9px] font-bold" style={{ color: 'hsl(270 60% 60%)' }}>
                 {lang === 'en' ? avatarReward.nameEN : avatarReward.nameTR}
               </span>
@@ -252,8 +249,7 @@ function AchievementRow({
           </div>
           {avatarReward && (
             <div className="flex items-center gap-0.5 mt-0.5">
-              <EmojiImg emoji={avatarReward.emoji} size={9} />
-              <span className="text-[8px] font-bold text-black/70">+Avatar</span>
+              <span className="text-[8px] font-bold text-black/70">+{lang === 'en' ? avatarReward.nameEN : avatarReward.nameTR}</span>
             </div>
           )}
           {ohalUnlock && (

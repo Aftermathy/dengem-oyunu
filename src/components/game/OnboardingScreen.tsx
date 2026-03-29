@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { EmojiImg } from '@/components/EmojiImg';
+import { AvatarImg } from '@/components/AvatarImg';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AVATAR_DEFS } from '@/lib/userProfile';
 import { playClickSound } from '@/hooks/useSound';
@@ -85,10 +86,10 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
                 }`}
               >
                 <div
-                  className="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-lg"
+                  className="w-20 h-20 rounded-xl overflow-hidden shadow-lg"
                   style={{ background: avatar.color }}
                 >
-                  <EmojiImg emoji={avatar.emoji} size={40} />
+                  <AvatarImg avatar={avatar} fill />
                 </div>
                 <span className="text-xs font-bold text-foreground">
                   {lang === 'tr' ? avatar.nameTR : avatar.nameEN}

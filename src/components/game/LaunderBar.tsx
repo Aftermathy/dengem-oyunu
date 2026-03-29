@@ -44,29 +44,29 @@ export function LaunderBar({ totalLaundered, money: _money, onLaunder, canLaunde
 
   return (
     <div className="w-full max-w-md mx-auto px-3 py-1 relative">
-      <div className="flex items-center gap-3">
+      <div className="flex items-stretch gap-3">
         <button
           onClick={handleClick}
           disabled={!canLaunder}
           className={cn(
-            "text-sm font-bold px-4 py-2 rounded-xl transition-all whitespace-nowrap shrink-0",
+            "shrink-0 text-sm font-bold px-4 py-2 rounded-xl transition-all",
             canLaunder
               ? "bg-game-success/80 text-primary-foreground hover:bg-game-success cursor-pointer active:scale-95"
               : "bg-muted text-muted-foreground cursor-not-allowed"
           )}
         >
-          <EmojiImg emoji="🧼" size={15} /> {lang === 'tr' ? 'Akla' : 'Launder'} (-30B)
+          {lang === 'tr' ? 'Akla' : 'Launder'} (-30B)
         </button>
 
-        <div className="flex-1 h-7 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
+        <div className="flex-1 bg-muted/50 rounded-full overflow-hidden border border-border/50 relative">
           <div
             className="h-full bg-gradient-to-r from-game-success to-game-success-light rounded-full transition-all duration-500"
             style={{ width: `${Math.min(totalLaundered, 100)}%` }}
           />
-          <span className="absolute inset-0 flex items-center justify-center text-[11px] font-bold text-foreground gap-1">
-            <EmojiImg emoji="💸" size={12} /> {totalLaundered}B {lang === 'tr' ? 'aklandı' : 'laundered'}
+          <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-foreground gap-1">
+            <EmojiImg emoji="💸" size={14} /> {totalLaundered}B
             {offshoreRate > 0 && Math.floor(totalLaundered * offshoreRate) > 0 && (
-              <span className="text-game-success-light text-[10px]">
+              <span className="text-game-success-light text-xs">
                 (+{Math.floor(totalLaundered * offshoreRate)}/t)
               </span>
             )}

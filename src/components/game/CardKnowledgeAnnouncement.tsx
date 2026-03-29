@@ -1,4 +1,5 @@
 import { useLanguage } from '@/contexts/LanguageContext';
+import { playClickSound } from '@/hooks/useSound';
 
 interface Props {
   onDismiss: () => void;
@@ -12,12 +13,12 @@ export function CardKnowledgeAnnouncement({ onDismiss, seenCount }: Props) {
       <div className="bg-card border-2 border-primary rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl">
         <div className="text-5xl mb-3">🧠</div>
         <h2 className="text-xl font-black text-foreground mb-2">
-          {lang === 'tr' ? 'Tecrübe Kazandın, Lider!' : "You've Earned Experience, Leader!"}
+          {lang === 'tr' ? 'Tecrübe Kazandın, Başkanım!' : "You've Earned Experience, Leader!"}
         </h2>
         <p className="text-sm text-muted-foreground leading-relaxed mb-2">
           {lang === 'tr'
-            ? 'Bir diktatör düşer, iki kere bakar. Artık kartları tanıyorsun — bir dahaki sefere para getirisi ve zümre etkilerini görebileceksin. Hâlâ kaybedersen... bu sefer bahane yok.'
-            : "A dictator falls, but learns. You now know the cards — next time you'll see money effects and faction impacts. If you still lose... no excuses this time."}
+            ? 'Diktatör dediğin bir düşer, iki kere kalkar. Artık kartları tanıyorsun — bir dahaki sefere para getirisi ve zümre etkilerini görebileceksin.'
+            : "A dictator falls, but learns. You now know the cards — next time you'll see money effects and faction impacts. If you still lose..."}
         </p>
         <p className="text-xs font-bold text-primary mb-4">
           {lang === 'tr'
@@ -25,10 +26,10 @@ export function CardKnowledgeAnnouncement({ onDismiss, seenCount }: Props) {
             : `You know the effects of ${seenCount} cards.`}
         </p>
         <button
-          onClick={onDismiss}
+          onClick={() => { playClickSound(); onDismiss(); }}
           className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm active:scale-95 transition-all"
         >
-          {lang === 'tr' ? '👑 Anladım, Geri Dön' : '👑 Got It, Back to Throne'}
+          {lang === 'tr' ? '👑 Anladım, Başlayalım' : '👑 Got It, Back to Throne'}
         </button>
       </div>
     </div>

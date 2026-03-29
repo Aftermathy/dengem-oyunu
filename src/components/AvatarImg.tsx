@@ -4,8 +4,9 @@ import type { AvatarDef } from '@/lib/userProfile';
 
 interface AvatarImgProps {
   avatar: AvatarDef;
-  /** Outer circle size in px */
-  size: number;
+  /** Size in px, or omit and use fill=true to fill parent container */
+  size?: number;
+  fill?: boolean;
   className?: string;
 }
 
@@ -13,7 +14,7 @@ interface AvatarImgProps {
  * Renders a PNG avatar image if `avatar.imageId` is set,
  * otherwise falls back to the emoji on the coloured circle.
  */
-export function AvatarImg({ avatar, size, className = '' }: AvatarImgProps) {
+export function AvatarImg({ avatar, size, fill, className = '' }: AvatarImgProps) {
   const [imgError, setImgError] = useState(false);
 
   if (avatar.imageId && !imgError) {
@@ -23,10 +24,12 @@ export function AvatarImg({ avatar, size, className = '' }: AvatarImgProps) {
         alt={avatar.nameEN}
         onError={() => setImgError(true)}
         className={className}
-        style={{ width: size, height: size, objectFit: 'cover', borderRadius: '50%', display: 'block' }}
+        style={fill
+          ? { width: '100%', height: '100%', objectFit: 'cover', display: 'block' }
+          : { width: size, height: size, objectFit: 'cover', display: 'block' }}
       />
     );
   }
 
-  return <EmojiImg emoji={avatar.emoji} size={Math.round(size * 0.57)} />;
+  return <EmojiImg emoji={avatar.emoji} size={Math.round((size ?? 40) * 0.57)} />;
 }

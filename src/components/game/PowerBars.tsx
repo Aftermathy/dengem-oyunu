@@ -3,8 +3,9 @@ import { PowerEffect } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useEffect, useRef } from 'react';
-import { playBribeSound } from '@/hooks/useSound';
+import { playBribeSound, playBudgetWarningSound } from '@/hooks/useSound';
 import { EmojiImg, EmojiText } from '@/components/EmojiImg';
+import { useSettings } from '@/contexts/SettingsContext';
 
 import { GameImages } from '@/config/assets';
 import { getRandomBribeText } from '@/data/bribeTexts';
@@ -31,15 +32,24 @@ interface PowerBarsProps {
 
 export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChange, projectedMoney, onBribe, canBribe, getBribeCost, isFirstSeenCard = false }: PowerBarsProps) {
   const { t, lang } = useLanguage();
+  const { showFactionPercentages } = useSettings();
   const powers: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
-  const [showPercent, setShowPercent] = useState<PowerType | null>(null);
-  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [bribeCostPreview, setBribeCostPreview] = useState<PowerType | null>(null);
   const [repChanges, setRepChanges] = useState<Record<PowerType, number | null>>({ halk: null, yatirimcilar: null, mafya: null, tarikat: null, ordu: null });
   const prevPowerRef = useRef<PowerState>(power);
   const changeKeyRef = useRef(0);
   const [changeKey, setChangeKey] = useState(0);
-  
-  const [bribeFeedback, setBribeFeedback] = useState<{ faction: PowerType; text: string; cost: number; gain: number } | null>(null);
+  type BribeFeedbackItem = { id: number; text: string; cost: number; gain: number; dying: boolean };
+  const [bribeFeedbacks, setBribeFeedbacks] = useState<BribeFeedbackItem[]>([]);
+  const feedbackIdRef = useRef(0);
+  const [barValueShown, setBarValueShown] = useState<PowerType | null>(null);
+  const barValueTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleBarTap = (p: PowerType) => {
+    if (barValueTimerRef.current) clearTimeout(barValueTimerRef.current);
+    setBarValueShown(p);
+    barValueTimerRef.current = setTimeout(() => setBarValueShown(null), 1500);
+  };
 
   useEffect(() => {
     const prev = prevPowerRef.current;
@@ -71,15 +81,6 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
     return 'linear-gradient(to top, hsl(var(--game-income)), hsl(199 89% 48%))';
   };
 
-  const getBarColor = (value: number) => {
-    if (value <= 15) return 'hsl(var(--game-danger))';
-    if (value <= 30) return 'hsl(var(--game-election))';
-    if (value <= 50) return 'hsl(var(--game-gold-dark))';
-    if (value <= 70) return 'hsl(var(--game-success))';
-    if (value <= 85) return 'hsl(160 84% 39%)';
-    return 'hsl(199 89% 48%)';
-  };
-
   const isAffected = (p: PowerType) => activeEffects.some(e => e.power === p && e.amount !== 0);
   const getEffectDirection = (p: PowerType) => {
     const effect = activeEffects.find(e => e.power === p);
@@ -87,22 +88,38 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
     return effect.amount > 0 ? 'up' : 'down';
   };
 
-  const handleDirectBribe = (p: PowerType) => {
+  const executeBribe = (p: PowerType) => {
     if (!onBribe || !canBribe || !getBribeCost) return;
     if (!canBribe(p)) return;
-
     const room = 100 - power[p];
     const gain = Math.min(room, 10);
     const ratio = gain / 10;
     const cost = Math.max(1, Math.round(getBribeCost(p) * ratio));
-
     const text = getRandomBribeText(p, lang);
-
     playBribeSound();
     onBribe(p);
+    const id = ++feedbackIdRef.current;
+    setBribeFeedbacks(prev => [...prev, { id, text, cost, gain, dying: false }]);
+    setTimeout(() => {
+      setBribeFeedbacks(prev => prev.map(f => f.id === id ? { ...f, dying: true } : f));
+    }, 1200);
+    setTimeout(() => {
+      setBribeFeedbacks(prev => prev.filter(f => f.id !== id));
+    }, 1550);
+  };
 
-    setBribeFeedback({ faction: p, text, cost, gain });
-    setTimeout(() => setBribeFeedback(null), 1500);
+  const handleProfileTap = (p: PowerType) => {
+    if (!canBribe || !getBribeCost) return;
+    if (!canBribe(p)) {
+      playBudgetWarningSound();
+      return;
+    }
+    if (bribeCostPreview === p) {
+      executeBribe(p);
+      setBribeCostPreview(null);
+    } else {
+      setBribeCostPreview(p);
+    }
   };
 
   return (
@@ -137,17 +154,17 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
       </div>
 
       <div className="flex justify-between gap-0.5 px-1 py-0.5">
-        {powers.map((p) => {
+        {powers.map((p, idx) => {
           const val = power[p];
           const affected = isAffected(p);
           const dir = getEffectDirection(p);
           const canDo = canBribe ? canBribe(p) : false;
 
           return (
-            <div key={p} className="flex flex-col items-center gap-0.5 flex-1 min-w-0 relative">
+            <div key={p} className={`flex flex-col items-center gap-0.5 flex-1 min-w-0 relative ${bribeCostPreview === p ? 'z-[70]' : 'z-50'}`}>
               {/* Faction head */}
               <button
-                onClick={() => handleDirectBribe(p)}
+                onClick={() => handleProfileTap(p)}
                 className={cn(
                   "w-14 h-14 rounded-full overflow-hidden border-2 transition-all duration-300 relative",
                   affected
@@ -170,33 +187,37 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 />
               </button>
 
-              {/* Bribe feedback overlay */}
-              {bribeFeedback?.faction === p && (
-                <div className="fixed left-1/2 top-1/3 -translate-x-1/2 z-50 pointer-events-none animate-bribe-feedback">
-                  <div className="bg-card/95 border-2 border-primary/50 rounded-2xl px-5 py-3 shadow-2xl text-center min-w-[200px]">
-                    <div className="text-base text-foreground font-medium"><EmojiText text={bribeFeedback.text} size={18} /></div>
-                    <div className="text-sm font-bold mt-1">
-                      <span className="text-game-danger-light">-{bribeFeedback.cost}B</span>
-                      {' '}
-                      <span className="text-game-success-light">+{bribeFeedback.gain} rep</span>
+              {/* Bribe cost popup — anchored below this faction's head */}
+              {bribeCostPreview === p && getBribeCost && (() => {
+                const cost = Math.max(1, Math.round(getBribeCost(p) * (Math.min(100 - val, 10) / 10)));
+                // Edge factions anchor to screen edge; middle ones center on column
+                const align =
+                  idx === 0                   ? 'left-0' :
+                  idx === powers.length - 1   ? 'right-0' :
+                  'left-1/2 -translate-x-1/2';
+                return (
+                  <div
+                    className={`absolute top-[70px] ${align} z-[55] pointer-events-none`}
+                    style={{ width: '140px' }}
+                  >
+                    <div className="bg-card border-2 border-primary/60 rounded-2xl px-3 py-2 shadow-2xl text-center">
+                      <div className="text-xs font-bold text-muted-foreground mb-0.5">{t(`power.${p}`)}</div>
+                      <div className="text-base font-black text-game-danger-light">-{cost}B</div>
+                      <div className="text-sm font-bold text-game-success-light">+10 rep</div>
+                      <div className="text-[9px] text-muted-foreground mt-1">
+                        {lang === 'tr' ? 'Tekrar tıkla → rüşvet ver' : 'Tap again → bribe'}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
-              {/* Power bar */}
+
+              {/* Power bar — colored fill + tap to show value */}
               <div
-                className="w-full h-20 bg-muted/50 rounded-full relative overflow-hidden border-4 border-game-overlay select-none"
+                className="w-full h-20 bg-muted/50 rounded-full relative overflow-hidden border-4 border-game-overlay select-none cursor-pointer"
                 style={{ transform: 'translateZ(0)', isolation: 'isolate' }}
-                onMouseEnter={() => setShowPercent(p)}
-                onMouseLeave={() => setShowPercent(null)}
-                onTouchStart={() => {
-                  longPressTimer.current = setTimeout(() => setShowPercent(p), 300);
-                }}
-                onTouchEnd={() => {
-                  if (longPressTimer.current) clearTimeout(longPressTimer.current);
-                  setShowPercent(null);
-                }}
+                onClick={() => handleBarTap(p)}
               >
                 <div
                   className="absolute bottom-0 w-full"
@@ -207,16 +228,6 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                     willChange: 'height',
                   }}
                 />
-                {showPercent === p && (
-                  <div className="absolute inset-0 flex items-center justify-center z-10">
-                    <span
-                      className="text-sm font-black"
-                      style={{ color: getBarColor(val), textShadow: '0 0 4px hsl(var(--game-overlay)), 0 0 8px hsl(var(--game-overlay)), 0 1px 2px hsl(var(--game-overlay))' }}
-                    >
-                      {val}%
-                    </span>
-                  </div>
-                )}
                 {affected && (
                   <div className={cn(
                     "absolute inset-0 rounded-full animate-pulse",
@@ -224,15 +235,19 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                   )} />
                 )}
                 {repChanges[p] !== null && (
-                  <div
-                    key={changeKey}
-                    className="rep-change-indicator"
-                  >
+                  <div key={changeKey} className="rep-change-indicator">
                     <span className={cn(
                       "text-xs font-light italic drop-shadow-md",
                       repChanges[p]! > 0 ? 'text-game-success-light' : 'text-game-danger-light'
                     )}>
                       {repChanges[p]! > 0 ? '+' : ''}{repChanges[p]}
+                    </span>
+                  </div>
+                )}
+                {(showFactionPercentages || barValueShown === p) && (
+                  <div className="absolute inset-0 flex items-center justify-center animate-fade-in">
+                    <span className="text-sm font-black text-transparent drop-shadow-none" style={{ WebkitTextStroke: '1px rgba(0,0,0,0.7)' }}>
+                      {val}
                     </span>
                   </div>
                 )}
@@ -250,6 +265,35 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
           );
         })}
       </div>
+
+      {/* Backdrop to dismiss bribe popup on outside tap */}
+      {bribeCostPreview && (
+        <div className="fixed inset-0 z-[45]" onClick={() => setBribeCostPreview(null)} />
+      )}
+
+      {/* Bribe feedback toasts — stacked, each fades independently */}
+      {bribeFeedbacks.length > 0 && (
+        <div className="fixed right-3 top-1/3 z-50 pointer-events-none flex flex-col items-end gap-2">
+          {bribeFeedbacks.map(fb => (
+            <div
+              key={fb.id}
+              className={cn(
+                "transition-all duration-300",
+                fb.dying ? "opacity-0 scale-95 -translate-y-1" : "opacity-100 scale-100 translate-y-0"
+              )}
+            >
+              <div className="bg-card/95 border-2 border-primary/50 rounded-2xl px-5 py-3 shadow-2xl text-center min-w-[200px]">
+                <div className="text-base text-foreground font-medium"><EmojiText text={fb.text} size={18} /></div>
+                <div className="text-sm font-bold mt-1">
+                  <span className="text-game-danger-light">-{fb.cost}B</span>
+                  {' '}
+                  <span className="text-game-success-light">+{fb.gain} rep</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

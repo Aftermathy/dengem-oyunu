@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { playClickSound, playWarStartSound } from '@/hooks/useSound';
+import { playClickSound, playWarStartSound, preloadSounds, playMainMenuMusic, stopMainMenuMusic, isMusicMuted, setMusicMuted } from '@/hooks/useSound';
 import { EmojiImg } from '@/components/EmojiImg';
 import { GameImages } from '@/config/assets';
 const throneIcon = GameImages.throne_icon;
@@ -18,6 +18,7 @@ import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { AvatarImg } from '@/components/AvatarImg';
 import { PremiumModal } from '@/components/game/PremiumModal';
 import { isAdFree, setAdFree } from '@/hooks/useAds';
+import { SettingsModal } from '@/components/game/SettingsModal';
 
 const TITLE_VARIANTS = [
   { text: 'I *MUST* STAY' },
@@ -64,6 +65,8 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
   const [showAchievements, setShowAchievements] = useState(false);
   const [showSkillTree, setShowSkillTree] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [isMusicOn, setIsMusicOn] = useState(() => !isMusicMuted());
+  const [showSettings, setShowSettings] = useState(false);
 
   const currentTitle = TITLE_VARIANTS[titleIndex];
 
@@ -96,6 +99,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
   }, [throneClicks]);
 
   const toggleDarkMode = useCallback(() => {
+    playClickSound();
     const next = !isDark;
     if (next) {
       setShowDarkWarning(true);
@@ -120,6 +124,30 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
       setIsDark(true);
     }
   }, []);
+
+  useEffect(() => {
+    preloadSounds();
+  }, []);
+
+  useEffect(() => {
+    playMainMenuMusic();
+    return () => { stopMainMenuMusic(); };
+  }, []);
+
+  // Keep music toggle UI in sync with global mute state (e.g. changed in-game)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      setIsMusicOn(!(e as CustomEvent).detail);
+    };
+    window.addEventListener('sound-mute-toggle', handler);
+    return () => window.removeEventListener('sound-mute-toggle', handler);
+  }, []);
+
+  const toggleMusic = useCallback(() => {
+    const next = !isMusicOn;
+    setIsMusicOn(next);
+    setMusicMuted(!next);
+  }, [isMusicOn]);
 
   const renderTitle = () => {
     const parts = currentTitle.text.split(/\*([^*]+)\*/);
@@ -162,23 +190,34 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
             return (
               <button
                 onClick={() => { playClickSound(); hapticLight(); onShowProfile(); }}
-                className="w-18 h-18 rounded-full flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors"
-                style={{ width: 72, height: 72, background: av?.color || 'hsl(var(--muted))', overflow: 'hidden' }}
+                className="w-24 aspect-square flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors rounded-2xl overflow-hidden"
+                style={{ background: av?.color || 'hsl(var(--muted))' }}
               >
-                {av ? <AvatarImg avatar={av} size={72} /> : <EmojiImg emoji="👤" size={40} />}
+                {av ? <AvatarImg avatar={av} fill /> : <EmojiImg emoji="👤" size={40} />}
               </button>
             );
           })()}
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="bg-purple-500/15 border border-purple-500/30 rounded-full px-2.5 py-1 flex items-center gap-1">
-            <EmojiImg emoji="⭐" size={13} />
-            <span className="text-xs font-bold text-purple-400">{authorityPoints}</span>
+        <div className="flex flex-col items-end gap-1.5">
+          <div className="flex items-center gap-2">
+            <div className="bg-purple-500/15 border border-purple-500/30 rounded-full px-2.5 py-1 flex items-center gap-1">
+              <EmojiImg emoji="⭐" size={13} />
+              <span className="text-xs font-bold text-purple-400">{authorityPoints}</span>
+            </div>
+            <GameIcon name="sun" size={16} className="text-muted-foreground" />
+            <Switch checked={isDark} onCheckedChange={toggleDarkMode} />
+            <GameIcon name="moon" size={16} className="text-muted-foreground" />
           </div>
-          <GameIcon name="sun" size={16} className="text-muted-foreground" />
-          <Switch checked={isDark} onCheckedChange={toggleDarkMode} />
-          <GameIcon name="moon" size={16} className="text-muted-foreground" />
+          <button
+            onClick={() => { playClickSound(); setShowSettings(true); }}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors active:scale-90 mt-2"
+          >
+            <GameIcon name="settings" size={14} />
+            <span className="text-[10px] font-bold uppercase tracking-wider">
+              {lang === 'tr' ? 'Ayarlar' : 'Settings'}
+            </span>
+          </button>
         </div>
       </div>
 
@@ -187,8 +226,11 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
         <img
           src={throneIcon}
           alt="Throne"
+          draggable={false}
           className={`interactive-img w-72 h-72 sm:w-80 sm:h-80 object-contain drop-shadow-lg cursor-pointer select-none shrink-0 ${throneAnim}`}
           onClick={handleThroneClick}
+          onContextMenu={e => e.preventDefault()}
+          onDragStart={e => e.preventDefault()}
         />
       </div>
 
@@ -220,6 +262,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
                 playClickSound();
                 setShowNewGameConfirm(true);
               } else {
+                stopMainMenuMusic();
                 playWarStartSound();
                 onStart();
               }
@@ -232,7 +275,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
             <Button
               size="lg"
               variant="outline"
-              onClick={() => {playClickSound();hapticMedium();onContinue();}}
+              onClick={() => {playClickSound();hapticMedium();stopMainMenuMusic();onContinue();}}
               className="w-full text-lg py-5 font-bold justify-center">
               {lang === 'tr' ? 'Devam Et' : 'Continue'}
             </Button>
@@ -291,27 +334,27 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
       {showDarkWarning && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-game-overlay/80 animate-fade-in p-6" onClick={() => setShowDarkWarning(false)}>
           <div className="bg-card border-2 border-destructive rounded-2xl p-6 max-w-sm text-center shadow-2xl" onClick={e => e.stopPropagation()}>
-            <EmojiImg emoji="⚠️" size={48} className="mx-auto mb-3" />
+            <EmojiImg emoji="⚫️" size={48} className="mx-auto mb-3" />
             <h3 className="text-xl font-black text-destructive mb-2">
-              {lang === 'tr' ? 'KARA MOD AKTİF!' : 'DARK MODE ACTIVATED!'}
+              {lang === 'tr' ? 'KARA MODA GEÇİŞ!' : 'DARK MODE ACTIVATION!'}
             </h3>
             <p className="text-foreground text-sm leading-relaxed mb-4">
               {lang === 'tr'
-                ? '🕶️ Dikkat! Kara moda geçmek, dış güçlerin ülke üzerindeki emellerini artırır. Karanlık tarafta çay içmek güzeldir ama gölgeler her yerdedir... Yine de cesaretin varsa, buyur!'
-                : '🕶️ Warning! Activating Dark Mode strengthens foreign powers\' ambitions over the nation. Drinking tea on the dark side is lovely, but shadows are everywhere... If you dare, proceed!'}
+                ? '🕶️ Dikkat! Kara moda geçmek, dış güçlerin ülke üzerindeki emellerini artırır.. Yine de cesaretin varsa, buyur!'
+                : '🕶️ Warning! Activating Dark Mode strengthens foreign powers\' ambitions over the nation.. If you dare, proceed!'}
             </p>
             <div className="flex gap-3">
               <button
-                onClick={() => setShowDarkWarning(false)}
+                onClick={() => { playClickSound(); setShowDarkWarning(false); }}
                 className="flex-1 py-2.5 rounded-xl font-bold text-sm bg-muted text-foreground active:scale-95 transition-all"
               >
                 {lang === 'tr' ? '😰 Vazgeç' : '😰 Cancel'}
               </button>
               <button
-                onClick={confirmDarkMode}
+                onClick={() => { playClickSound(); confirmDarkMode(); }}
                 className="flex-1 py-2.5 rounded-xl font-bold text-sm bg-destructive text-destructive-foreground active:scale-95 transition-all"
               >
-                {lang === 'tr' ? '😈 Kara Tarafa Geç' : '😈 Join the Dark Side'}
+                {lang === 'tr' ? '😈 Kara Moda Geç' : '😈 Join the Dark Mode'}
               </button>
             </div>
           </div>
@@ -338,7 +381,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
                 {lang === 'tr' ? 'İptal' : 'Cancel'}
               </button>
               <button
-                onClick={() => { setShowNewGameConfirm(false); playWarStartSound(); onStart(); }}
+                onClick={() => { setShowNewGameConfirm(false); stopMainMenuMusic(); playWarStartSound(); onStart(); }}
                 className="flex-1 py-2.5 rounded-xl font-bold text-sm bg-destructive text-destructive-foreground active:scale-95 transition-all"
               >
                 {lang === 'tr' ? 'Yeni Oyun' : 'New Game'}
@@ -364,6 +407,10 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
           }}
           onClose={() => setShowPremiumModal(false)}
         />
+      )}
+
+      {showSettings && (
+        <SettingsModal onClose={() => setShowSettings(false)} />
       )}
     </div>
   );

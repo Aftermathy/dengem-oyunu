@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { UserProfileProvider } from "@/contexts/UserProfileContext";
 import { MetaGameProvider } from "@/contexts/MetaGameContext";
+import { SettingsProvider } from "@/contexts/SettingsContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -18,6 +19,7 @@ const App = () => (
       <AuthProvider>
         <UserProfileProvider>
           <MetaGameProvider>
+            <SettingsProvider>
             <TooltipProvider>
               <Toaster />
               <Sonner />
@@ -29,6 +31,7 @@ const App = () => (
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>
+            </SettingsProvider>
           </MetaGameProvider>
         </UserProfileProvider>
       </AuthProvider>

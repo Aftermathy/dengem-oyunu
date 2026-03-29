@@ -17,21 +17,23 @@ import {
 } from 'lucide-react';
 
 // ─── Image asset imports ──────────────────────────────────────────────────
-import factionHalk          from '@/assets/faction-halk.jpg';
-import factionYatirimcilar  from '@/assets/faction-yatirimcilar.jpg';
-import factionMafya         from '@/assets/faction-mafya.jpg';
-import factionTarikat       from '@/assets/faction-tarikat.jpg';
-import factionOrdu          from '@/assets/faction-ordu.jpg';
+import factionHalk          from '@/assets/faction-halk.png';
+import factionYatirimcilar  from '@/assets/faction-yatirimcilar.png';
+import factionMafya         from '@/assets/faction-mafya.png';
+import factionTarikat       from '@/assets/faction-tarikat.png';
+import factionOrdu          from '@/assets/faction-ordu.png';
 
-import defeatHalk           from '@/assets/defeat-halk.jpg';
-import defeatYatirimcilar   from '@/assets/defeat-yatirimcilar.jpg';
-import defeatMafya          from '@/assets/defeat-mafya.jpg';
-import defeatTarikat        from '@/assets/defeat-tarikat.jpg';
-import defeatOrdu           from '@/assets/defeat-ordu.jpg';
-import defeatIflas          from '@/assets/defeat-iflas.jpg';
-import defeatElection       from '@/assets/defeat-election.jpg';
+import defeatHalk           from '@/assets/defeat-halk.png';
+import defeatYatirimcilar   from '@/assets/defeat-yatirimcilar.png';
+import defeatMafya          from '@/assets/defeat-mafya.png';
+import defeatTarikat        from '@/assets/defeat-tarikat.png';
+import defeatOrdu           from '@/assets/defeat-ordu.png';
+import defeatIflas          from '@/assets/defeat-iflas.png';
+import defeatElection       from '@/assets/defeat-election.png';
 
-import victoryBalcony       from '@/assets/victory-balcony.jpg';
+import victoryBalcony       from '@/assets/victory-balcony.png';
+// ↓ Replace with your final art — drop victory-absolute.png into src/assets/
+import victoryAbsolute      from '@/assets/victory-absolute.png';
 import splashBg             from '@/assets/splash-bg.jpg';
 import throneIcon           from '@/assets/throne-icon.png';
 import arrowLeft            from '@/assets/arrow-left.svg';
@@ -97,6 +99,7 @@ export const GameImages = {
   defeat_election:      defeatElection,
   // Misc
   victory_balcony:      victoryBalcony,
+  victory_absolute:     victoryAbsolute,
   splash_bg:            splashBg,
   throne_icon:          throneIcon,
   arrow_left:           arrowLeft,

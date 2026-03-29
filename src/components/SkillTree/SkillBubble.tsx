@@ -115,12 +115,11 @@ export function SkillBubble({
       </button>
 
       {warningMessage && (
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-50 animate-fade-in whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-bold"
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-50 whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-bold"
           style={{
             background: 'hsl(0 70% 45%)',
             color: 'white',
             boxShadow: '0 4px 16px hsl(0 0% 0% / 0.5)',
-            animation: 'fade-in 0.2s ease-out',
           }}
         >
           {warningMessage}

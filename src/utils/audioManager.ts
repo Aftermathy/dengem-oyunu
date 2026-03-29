@@ -27,17 +27,106 @@ import {
 } from '@/hooks/useHaptics';
 import { STORAGE_KEYS } from '@/constants/storage';
 
+// ─── Volume levels ─────────────────────────────────────────────────────────────
+let _sfxVolume = (() => {
+  const v = parseFloat(localStorage.getItem(STORAGE_KEYS.SFX_VOLUME) ?? '');
+  return isNaN(v) ? 0.8 : Math.max(0, Math.min(1, v));
+})();
+
+let _musicVolume = (() => {
+  const v = parseFloat(localStorage.getItem(STORAGE_KEYS.MUSIC_VOLUME) ?? '');
+  return isNaN(v) ? 0.5 : Math.max(0, Math.min(1, v));
+})();
+
 // ─── Mute state ───────────────────────────────────────────────────────────────
 // Mirrors the existing isMuted/localStorage + CustomEvent pattern.
 
 let isMuted = localStorage.getItem(STORAGE_KEYS.SOUND_MUTED) === 'true';
-Howler.volume(isMuted ? 0 : 1);
+
+// NOTE: Do NOT call Howler.volume() here at module load.
+// On iOS WKWebView, any Howler API that touches AudioContext outside a user
+// gesture creates a suspended context that can never be resumed — causing
+// permanent silence. We defer all AudioContext work to the first touchstart.
+
+// Shared helper: apply mute state and broadcast to all listeners
+function _applyMute(muted: boolean): void {
+  isMuted = muted;
+  Howler.volume(muted ? 0 : 1);
+  localStorage.setItem(STORAGE_KEYS.SOUND_MUTED, String(muted));
+  window.dispatchEvent(new CustomEvent('sound-mute-toggle', { detail: muted }));
+}
 
 if (typeof window !== 'undefined') {
   window.addEventListener('sound-mute-toggle', ((e: CustomEvent) => {
     isMuted = e.detail as boolean;
     Howler.volume(isMuted ? 0 : 1);
   }) as EventListener);
+
+  // ── iOS AudioContext lifecycle ────────────────────────────────────────────
+  //
+  // iOS rule: AudioContext must be created AND resumed inside a user gesture.
+  //
+  // _needsReinit: set by visibilitychange (background→foreground).
+  //   The actual reinit runs on the next touchstart (gesture context).
+  //
+  // _audioUnlocked: false until the very first touchstart. On that first
+  //   touch we create the AudioContext inside the gesture so iOS starts it
+  //   in 'running' state instead of 'suspended'.
+
+  let _needsReinit = false;
+  let _audioUnlocked = false;
+
+  const _doReinit = (): void => {
+    const wasPlayingMusic = !!_musicHowl;
+    if (_musicHowl) { _musicHowl.stop(); _musicHowl.unload(); _musicHowl = null; }
+    _musicLoading = false;
+    _musicGen++;
+    Howler.unload();
+    _pool.clear();
+    _preloaded = false;
+
+    const newCtx = Howler.ctx;
+    if (newCtx && newCtx.state !== 'running') {
+      newCtx.resume().then(() => { Howler.volume(isMuted ? 0 : 1); }).catch(() => {});
+    } else {
+      Howler.volume(isMuted ? 0 : 1);
+    }
+
+    preloadSounds();
+    if (wasPlayingMusic) playMainMenuMusic();
+  };
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      _needsReinit = true;
+    }
+  });
+
+  document.addEventListener('touchstart', () => {
+    if (_needsReinit) {
+      _needsReinit = false;
+      _doReinit();
+      return;
+    }
+
+    // First-ever touch: unlock AudioContext inside gesture so iOS allows it.
+    if (!_audioUnlocked) {
+      _audioUnlocked = true;
+      if (!_preloaded) preloadSounds(); // creates Howl instances → Howler creates AudioContext here
+      Howler.volume(isMuted ? 0 : 1);
+      const ctx = Howler.ctx;
+      if (ctx && ctx.state !== 'running') {
+        ctx.resume().catch(() => {});
+      }
+      return;
+    }
+
+    // Subsequent touches: just ensure context is still running
+    const ctx = Howler.ctx;
+    if (ctx && ctx.state !== 'running') {
+      ctx.resume().catch(() => {});
+    }
+  }, { passive: true });
 }
 
 // ─── Sound catalogue (unchanged identifiers) ─────────────────────────────────
@@ -84,13 +173,10 @@ const SOUND_FILES: Record<SoundKey, string> = {
 // One-shot sounds (game_over, war_start) are loaded lazily and unloaded after
 // each play to keep memory footprint small.
 
-const PERSISTENT_KEYS = new Set<SoundKey>([
-  SOUNDS.BUTTON_CLICK,
-  SOUNDS.CARD_SWIPE_RIGHT,
-  SOUNDS.CARD_SWIPE_LEFT,
-  SOUNDS.WARNING,
-  SOUNDS.BUDGET_WARNING,
-]);
+// All sounds are persistent — 12 small MP3s (~28 KB each ≈ 336 KB total) is
+// negligible on mobile. Lazy-loading causes iOS async-decode failures outside
+// the gesture context, so we preload everything up front.
+const PERSISTENT_KEYS = new Set<SoundKey>(Object.values(SOUNDS));
 
 const _pool = new Map<SoundKey, Howl>();
 
@@ -99,7 +185,7 @@ function buildHowl(key: SoundKey): Howl {
     src:     [SOUND_FILES[key]],
     preload: PERSISTENT_KEYS.has(key), // preload persistent; lazy-load the rest
     html5:   false, // ← Web Audio API backend: bypasses iOS silent switch
-    volume:  0.8,
+    volume:  _sfxVolume,
     onloaderror: (_id, err) =>
       console.warn(`[Audio] Load error for "${key}":`, err),
   });
@@ -117,18 +203,30 @@ function getHowl(key: SoundKey): Howl {
 function play(key: SoundKey): void {
   if (isMuted) return;
   try {
-    const howl = getHowl(key);
-    howl.play();
+    const ctx = Howler.ctx;
+    const doPlay = () => {
+      try {
+        const howl = getHowl(key);
+        howl.play();
+        if (!PERSISTENT_KEYS.has(key)) {
+          howl.once('end', () => { howl.unload(); _pool.delete(key); });
+        }
+      } catch (e) {
+        console.warn('[Audio] Playback failed:', e);
+      }
+    };
 
-    // One-shot sounds: unload after playback to free RAM
-    if (!PERSISTENT_KEYS.has(key)) {
-      howl.once('end', () => {
-        howl.unload();
-        _pool.delete(key);
-      });
+    // If the AudioContext is suspended (e.g. after iOS background), resume it
+    // first and play only after the context is running. Without this, sounds
+    // fired on the same tick as the first touchstart after backgrounding are
+    // silently dropped even though ctx.resume() was called — because resume()
+    // is async and the context is still suspended when howl.play() executes.
+    if (ctx && ctx.state !== 'running') {
+      ctx.resume().then(doPlay).catch(() => {});
+    } else {
+      doPlay();
     }
   } catch (e) {
-    // Never let audio errors bubble up and interrupt gameplay
     console.warn('[Audio] Playback failed:', e);
   }
 }
@@ -144,6 +242,68 @@ export function preloadSounds(): void {
   if (_preloaded) return;
   _preloaded = true;
   PERSISTENT_KEYS.forEach(key => getHowl(key));
+}
+
+// ─── Main Menu Music ──────────────────────────────────────────────────────────
+// Looping background track for the start screen. Shares the global mute state.
+// Uses a sprite-based loop to eliminate the ~500ms gap that MP3 loop: true produces
+// (the gap comes from trailing silence in the encoded file).
+
+let _musicHowl: Howl | null = null;
+let _musicLoading = false;
+let _musicGen = 0; // incremented on stop to cancel in-flight probe
+
+export function isMusicMuted(): boolean {
+  return isMuted;
+}
+
+export function setMusicMuted(muted: boolean): void {
+  _applyMute(muted);
+}
+
+export function playMainMenuMusic(): void {
+  if (_musicHowl || _musicLoading) return;
+  _musicLoading = true;
+  const gen = ++_musicGen;
+  const src = ['/sounds/main_menu.mp3'];
+
+  // Step 1: silent probe to measure the exact audio duration
+  const probe = new Howl({
+    src,
+    html5: false,
+    volume: 0,
+    onload: function () {
+      const durationMs = Math.floor(probe.duration() * 1000);
+      probe.unload();
+      _musicLoading = false;
+      if (gen !== _musicGen) return; // stopMainMenuMusic was called — abort
+
+      // Step 2: create the real Howl with a sprite that trims trailing silence
+      // Trimming 500 ms from the end removes the encoder/fade-out gap on loop.
+      const loopEnd = Math.max(1000, durationMs - 500);
+      _musicHowl = new Howl({
+        src,
+        html5: false,
+        volume: _musicVolume,
+        sprite: { main: [0, loopEnd, true] },
+        onloaderror: (_id, err) => console.warn('[Audio] Music load error:', err),
+      });
+      _musicHowl.play('main'); // Howler global volume handles muting
+    },
+    onloaderror: (_id, err) => {
+      _musicLoading = false;
+      console.warn('[Audio] Music probe error:', err);
+    },
+  });
+}
+
+export function stopMainMenuMusic(): void {
+  _musicGen++;       // invalidate any in-flight probe
+  _musicLoading = false;
+  if (!_musicHowl) return;
+  _musicHowl.stop();
+  _musicHowl.unload();
+  _musicHowl = null;
 }
 
 // ─── Central dispatcher ───────────────────────────────────────────────────────
@@ -184,3 +344,19 @@ export const playAiCardSound        = () => playAudio(SOUNDS.AI_CARD);
 export const playSpecialPowerSound  = () => playAudio(SOUNDS.SPECIAL_POWER);
 export const playRerollSound        = () => playAudio(SOUNDS.REROLL);
 export const playBudgetWarningSound = () => playAudio(SOUNDS.BUDGET_WARNING);
+
+// ─── Volume control exports ────────────────────────────────────────────────────
+export function getSfxVolume(): number { return _sfxVolume; }
+export function getMusicVolume(): number { return _musicVolume; }
+
+export function setSfxVolume(vol: number): void {
+  _sfxVolume = Math.max(0, Math.min(1, vol));
+  localStorage.setItem(STORAGE_KEYS.SFX_VOLUME, String(_sfxVolume));
+  _pool.forEach(howl => howl.volume(_sfxVolume));
+}
+
+export function setMusicVolume(vol: number): void {
+  _musicVolume = Math.max(0, Math.min(1, vol));
+  localStorage.setItem(STORAGE_KEYS.MUSIC_VOLUME, String(_musicVolume));
+  if (_musicHowl) _musicHowl.volume(_musicVolume);
+}

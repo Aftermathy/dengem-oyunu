@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
 import { EmojiImg } from '@/components/EmojiImg';
@@ -41,18 +40,31 @@ export function GameOverScreen({
   const bgImage = image ? defeatImages[image] : null;
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-end w-full overflow-hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="fixed inset-0 flex flex-col items-center justify-end w-full overflow-hidden bg-black" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <div className="absolute inset-0 z-20 pointer-events-none gameover-blackfade" />
 
-      {bgImage && (
+      {(image === 'defeat-halk' || image === 'defeat-election') ? (
+        <div className="absolute inset-0 z-0 bg-black">
+          <video
+            src={image === 'defeat-halk' ? '/assets/defeat_halk.mp4' : '/assets/defeat_election.mp4'}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ WebkitPlaysinline: true } as React.CSSProperties}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/20" />
+        </div>
+      ) : bgImage ? (
         <div className="absolute inset-0 z-0">
           <img src={bgImage} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/20" />
         </div>
-      )}
+      ) : null}
 
       <div className="relative z-10 flex flex-col items-center gap-3 p-6 pb-4 text-center max-w-sm mx-auto">
-        <div className="text-5xl"><EmojiImg emoji={emoji} size={56} /></div>
         <h2 className="text-2xl sm:text-3xl font-black text-red-400 drop-shadow-lg">{title}</h2>
         <p className="text-sm text-white/90 leading-relaxed drop-shadow-md">{description}</p>
 
@@ -85,12 +97,12 @@ export function GameOverScreen({
         )}
 
         <div className="flex gap-3 mt-2 w-full">
-          <Button size="lg" onClick={() => { playClickSound(); onRestart(); }} className="flex-1 text-sm px-4 py-4 font-bold bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 text-white hover:bg-primary-foreground/20">
+          <button onClick={() => { playClickSound(); onRestart(); }} className="flex-1 text-sm px-4 py-4 font-bold rounded-md bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 text-white active:scale-95 transition-all">
             {t('gameover.restart')}
-          </Button>
-          <Button size="lg" onClick={() => { playClickSound(); onMainMenu(); }} variant="outline" className="flex-1 text-sm px-4 py-4 font-bold bg-game-overlay/30 backdrop-blur-sm border border-primary-foreground/20 text-white/80 hover:bg-game-overlay/50">
+          </button>
+          <button onClick={() => { playClickSound(); onMainMenu(); }} className="flex-1 text-sm px-4 py-4 font-bold rounded-md bg-game-overlay/30 backdrop-blur-sm border border-primary-foreground/20 text-white/80 active:scale-95 transition-all">
             {t('gameover.menu')}
-          </Button>
+          </button>
         </div>
       </div>
     </div>

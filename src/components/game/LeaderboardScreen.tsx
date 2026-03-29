@@ -186,7 +186,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
                 {lang === 'tr' ? 'Bağlantı Hatası' : 'Connection Error'}
               </p>
               <button
-                onClick={() => { setFetchError(false); setRetryCount(c => c + 1); }}
+                onClick={() => { playClickSound(); setFetchError(false); setRetryCount(c => c + 1); }}
                 className="px-4 py-2 rounded-xl text-sm font-bold bg-primary text-primary-foreground active:scale-95 transition-all"
               >
                 {lang === 'tr' ? 'Tekrar Dene' : 'Retry'}

@@ -41,6 +41,15 @@ async function syncProfileToSupabase(profile: UserProfile, userId: string): Prom
       .upsert(record, { onConflict: 'user_id' });
 
     if (error) {
+      // Column doesn't exist yet — retry without claimed_achievements
+      if (error.message.includes('claimed_achievements')) {
+        const { claimed_achievements: _dropped, ...recordWithout } = record;
+        const { error: error2 } = await supabase
+          .from('profiles')
+          .upsert(recordWithout, { onConflict: 'user_id' });
+        if (error2) console.error('[Profile] Sync error (fallback):', error2.message);
+        return;
+      }
       console.error('[Profile] Sync error:', error.message);
     }
   } catch (err) {
@@ -50,6 +59,7 @@ async function syncProfileToSupabase(profile: UserProfile, userId: string): Prom
 
 async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserProfile> | null> {
   try {
+    // Try full fetch including claimed_achievements (requires migration)
     const { data, error } = await supabase
       .from('profiles')
       .select('nickname, avatar_id, total_ap, unlocked_avatars, claimed_achievements')
@@ -57,6 +67,22 @@ async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserPro
       .maybeSingle();
 
     if (error) {
+      // Column doesn't exist yet (migration pending) — retry without it
+      if (error.message.includes('claimed_achievements')) {
+        const { data: data2, error: error2 } = await supabase
+          .from('profiles')
+          .select('nickname, avatar_id, total_ap, unlocked_avatars')
+          .eq('user_id', userId)
+          .maybeSingle();
+        if (error2) { console.error('[Profile] Fetch error:', error2.message); return null; }
+        if (!data2) return null;
+        return {
+          nickname: data2.nickname || '',
+          avatarId: data2.avatar_id || 'avatar_1',
+          totalAP: data2.total_ap ?? 0,
+          unlockedAvatars: data2.unlocked_avatars ?? [],
+        };
+      }
       console.error('[Profile] Fetch error:', error.message);
       return null;
     }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { playClickSound } from '@/hooks/useSound';
 
 interface Props {
   onComplete: () => void;
@@ -15,8 +16,8 @@ interface Props {
 const SPOTLIGHT: Array<{ from: number; to: number }> = [
   { from: 0,  to: 10 }, // money
   { from: 10, to: 26 }, // factions  — ends just before turn counter at 26.3vh
-  { from: 26, to: 33 }, // turn / election countdown
-  { from: 32, to: 38 }, // launder bar
+  { from: 26, to: 31 }, // turn / election countdown
+  { from: 31, to: 35 }, // launder bar
   { from: 36, to: 100 }, // card
 ];
 
@@ -96,7 +97,7 @@ export function TutorialOverlay({ onComplete }: Props) {
           <p className="text-xs text-muted-foreground leading-relaxed mb-3">{current.desc}</p>
 
           <button
-            onClick={() => isLast ? onComplete() : setStep(s => s + 1)}
+            onClick={() => { playClickSound(); isLast ? onComplete() : setStep(s => s + 1); }}
             className="w-full py-2 rounded-xl bg-primary text-primary-foreground font-bold text-sm active:scale-95 transition-all"
           >
             {isLast
@@ -104,7 +105,7 @@ export function TutorialOverlay({ onComplete }: Props) {
               : (lang === 'tr' ? 'Devam →' : 'Next →')}
           </button>
           <button
-            onClick={onComplete}
+            onClick={() => { playClickSound(); onComplete(); }}
             className="w-full mt-1.5 py-1 text-xs text-muted-foreground"
           >
             {lang === 'tr' ? 'Geç' : 'Skip'}
