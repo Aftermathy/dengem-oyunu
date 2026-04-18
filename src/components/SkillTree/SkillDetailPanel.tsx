@@ -9,6 +9,7 @@ interface SkillDetailPanelProps {
   level: number;
   ap: number;
   lang: 'tr' | 'en';
+  isDark: boolean;
   justPurchased: boolean;
   lockReason: SkillLockReason;
   onPurchase: () => void;
@@ -16,7 +17,7 @@ interface SkillDetailPanelProps {
 }
 
 export function SkillDetailPanel({
-  skill, level, ap, lang, justPurchased, lockReason, onPurchase, onClose,
+  skill, level, ap, lang, isDark, justPurchased, lockReason, onPurchase, onClose,
 }: SkillDetailPanelProps) {
   const Icon = SKILL_ICONS[skill.id] || GameIcons.shield;
   const maxed = level >= skill.maxLevel;
@@ -26,6 +27,39 @@ export function SkillDetailPanel({
   const isOhal = skill.id === 'ohal';
   const isFree = isOhal;
   const ohalLevelLocked = isOhal && !maxed && !isOhalLevelUnlockable(level);
+
+  // ── Theme tokens ──────────────────────────────────────────────────────────
+  const th = isDark ? {
+    panelBg: isOhal
+      ? 'linear-gradient(180deg, hsl(15 30% 16%), hsl(15 25% 10%))'
+      : 'linear-gradient(180deg, hsl(220 25% 16%), hsl(220 30% 10%))',
+    dragHandle:    'hsl(0 0% 100% / 0.2)',
+    titleText:     'hsl(0 0% 90%)',
+    labelText:     'hsl(0 0% 50%)',
+    effectText:    'hsl(0 0% 85%)',
+    dimText:       'hsl(0 0% 40%)',
+    surfaceBg:     'hsl(0 0% 100% / 0.05)',
+    surfaceBorder: '1px solid hsl(0 0% 100% / 0.08)',
+    lockedBtnBg:   'hsl(0 0% 100% / 0.05)',
+    lockedBtnColor:'hsl(0 0% 35%)',
+    lockedBtnBorder:'1px solid hsl(0 0% 100% / 0.08)',
+    ohalDetailText:'hsl(0 0% 75%)',
+  } : {
+    panelBg: isOhal
+      ? 'linear-gradient(180deg, hsl(15 25% 97%), hsl(15 20% 93%))'
+      : 'linear-gradient(180deg, hsl(220 20% 98%), hsl(220 15% 94%))',
+    dragHandle:    'hsl(0 0% 0% / 0.15)',
+    titleText:     'hsl(220 25% 10%)',
+    labelText:     'hsl(220 10% 45%)',
+    effectText:    'hsl(220 20% 12%)',
+    dimText:       'hsl(220 10% 55%)',
+    surfaceBg:     'hsl(0 0% 0% / 0.04)',
+    surfaceBorder: '1px solid hsl(0 0% 0% / 0.08)',
+    lockedBtnBg:   'hsl(0 0% 0% / 0.06)',
+    lockedBtnColor:'hsl(220 10% 45%)',
+    lockedBtnBorder:'1px solid hsl(0 0% 0% / 0.1)',
+    ohalDetailText:'hsl(220 15% 30%)',
+  };
 
   return (
     <>
@@ -38,21 +72,19 @@ export function SkillDetailPanel({
       <div
         className="fixed bottom-0 left-0 right-0 z-[120] rounded-t-3xl px-6 pt-6 pb-[calc(env(safe-area-inset-bottom,16px)+20px)] animate-fade-in"
         style={{
-          background: isOhal
-            ? 'linear-gradient(180deg, hsl(15 30% 16%), hsl(15 25% 10%))'
-            : 'linear-gradient(180deg, hsl(220 25% 16%), hsl(220 30% 10%))',
+          background: th.panelBg,
           border: '1px solid hsl(0 0% 100% / 0.1)',
           borderBottom: 'none',
           boxShadow: `0 -10px 40px hsl(0 0% 0% / 0.5), 0 0 60px ${catConfig.glowColor}`,
         }}
       >
-        <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: 'hsl(0 0% 100% / 0.2)' }} />
+        <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: th.dragHandle }} />
 
         <div className="flex items-center gap-4 mb-5">
           <div
             className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 ${justPurchased ? 'scale-110' : ''}`}
             style={{
-              background: `linear-gradient(135deg, ${catConfig.color.replace(')', ' / 0.3)')}, hsl(220 25% 15%))`,
+              background: `linear-gradient(135deg, ${catConfig.color.replace(')', ' / 0.3)')}, ${isDark ? 'hsl(220 25% 15%)' : 'hsl(220 20% 92%)'})`,
               border: `1px solid ${catConfig.color.replace(')', ' / 0.4)')}`,
               boxShadow: `0 4px 20px ${catConfig.glowColor}`,
             }}
@@ -60,7 +92,7 @@ export function SkillDetailPanel({
             <Icon size={26} style={{ color: catConfig.color }} />
           </div>
           <div>
-            <h3 className="text-base font-black" style={{ color: 'hsl(0 0% 90%)' }}>
+            <h3 className="text-base font-black" style={{ color: th.titleText }}>
               {getSkillTitle(skill, lang)}
             </h3>
             <p className="text-xs font-medium mt-0.5" style={{ color: catConfig.color }}>
@@ -69,11 +101,11 @@ export function SkillDetailPanel({
           </div>
         </div>
 
-        <div className="rounded-xl p-3.5 mb-3" style={{ background: 'hsl(0 0% 100% / 0.05)', border: '1px solid hsl(0 0% 100% / 0.08)' }}>
-          <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: 'hsl(0 0% 50%)' }}>
+        <div className="rounded-xl p-3.5 mb-3" style={{ background: th.surfaceBg, border: th.surfaceBorder }}>
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: th.labelText }}>
             {lang === 'en' ? 'Current Effect' : 'Mevcut Etki'}
           </p>
-          <p className="text-sm font-semibold" style={{ color: level > 0 ? 'hsl(0 0% 85%)' : 'hsl(0 0% 40%)' }}>
+          <p className="text-sm font-semibold" style={{ color: level > 0 ? th.effectText : th.dimText }}>
             {getEffectText(skill, level, lang)}
           </p>
         </div>
@@ -83,7 +115,7 @@ export function SkillDetailPanel({
             <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: 'hsl(15 90% 50%)' }}>
               {lang === 'en' ? 'Level Details' : 'Seviye Detayları'}
             </p>
-            <div className="space-y-1 text-xs" style={{ color: 'hsl(0 0% 75%)' }}>
+            <div className="space-y-1 text-xs" style={{ color: th.ohalDetailText }}>
               <p>⬇️ {lang === 'en' ? 'Extra negative effects' : 'Ekstra negatif etki'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>-{OHAL_NEGATIVE_EXTRA[level]}</span></p>
               <p>⬇️ {lang === 'en' ? 'Reduced positive effects' : 'Azaltılmış pozitif etki'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>-{OHAL_POSITIVE_REDUCTION[level]}</span></p>
               <p>⬇️ {lang === 'en' ? 'Launder output' : 'Aklama verimi'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>{OHAL_LAUNDER_OUTPUT[level]}B</span></p>
@@ -106,11 +138,11 @@ export function SkillDetailPanel({
         )}
 
         {!maxed && !isOhal && (
-          <div className="rounded-xl p-3.5 mb-5" style={{ background: `${catConfig.color.replace(')', ' / 0.08)')}`, border: `1px solid ${catConfig.color.replace(')', ' / 0.2)')}` }}>
+          <div className="rounded-xl p-3.5 mb-5" style={{ background: catConfig.color.replace(')', ' / 0.08)'), border: `1px solid ${catConfig.color.replace(')', ' / 0.2)')}` }}>
             <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: catConfig.color }}>
               {lang === 'en' ? 'After Upgrade' : 'Yükseltme Sonucu'}
             </p>
-            <p className="text-sm font-semibold" style={{ color: 'hsl(0 0% 85%)' }}>
+            <p className="text-sm font-semibold" style={{ color: th.effectText }}>
               {getNextEffectText(skill, level, lang)}
             </p>
           </div>
@@ -124,9 +156,9 @@ export function SkillDetailPanel({
           </div>
         ) : lockReason ? (
           <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
-            style={{ background: 'hsl(0 0% 100% / 0.05)', color: 'hsl(0 0% 35%)', border: '1px solid hsl(0 0% 100% / 0.08)' }}
+            style={{ background: th.lockedBtnBg, color: th.lockedBtnColor, border: th.lockedBtnBorder }}
           >
-            <GameIcon name="lock" size={14} className="inline mr-1" style={{ color: 'hsl(0 0% 35%)' }} />
+            <GameIcon name="lock" size={14} className="inline mr-1" style={{ color: th.lockedBtnColor }} />
             {lang === 'en' ? 'Locked' : 'Kilitli'}
           </div>
         ) : ohalLevelLocked ? (
@@ -150,9 +182,9 @@ export function SkillDetailPanel({
               color: 'white',
               boxShadow: `0 4px 20px ${catConfig.glowColor}, 0 0 40px ${catConfig.glowColor}`,
             } : {
-              background: 'hsl(0 0% 100% / 0.05)',
-              color: 'hsl(0 0% 35%)',
-              border: '1px solid hsl(0 0% 100% / 0.08)',
+              background: th.lockedBtnBg,
+              color: th.lockedBtnColor,
+              border: th.lockedBtnBorder,
             }}
           >
             {isFree ? (
@@ -162,7 +194,7 @@ export function SkillDetailPanel({
               </>
             ) : (
               <>
-                <GameIcon name="star" size={14} fill={canAfford ? 'white' : 'hsl(0 0% 35%)'} />
+                <GameIcon name="star" size={14} fill={canAfford ? 'white' : th.lockedBtnColor} />
                 {lang === 'en' ? `Upgrade for ${cost} AP` : `${cost} AP ile Yükselt`}
               </>
             )}

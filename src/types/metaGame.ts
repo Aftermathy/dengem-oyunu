@@ -33,6 +33,7 @@ export const DARK_CONN_REDUCTION = [0.03, 0.05, 0.08, 0.10, 0.15];
 export const LUCKY_BONUS = [0.05, 0.10, 0.15];
 export const PRO_LAUNDER_OUTPUT = [25, 30]; // base is 20
 export const OFFSHORE_RATE = [0.01, 0.02, 0.03];
+export const COMMISSION_RATES = [0.05, 0.10, 0.15]; // komisyoncu: % of card income skimmed to laundered
 
 /** Achievement IDs required to unlock each OHAL skill level */
 export const OHAL_UNLOCK_ACHIEVEMENTS = {
@@ -82,6 +83,8 @@ export const SKILL_DEFS: SkillDef[] = [
     titleTR: 'Profesyonel Aklayıcı', titleEN: 'Professional Launderer', descTR: 'Aklama verimliliğini artırır (25/30B)', descEN: 'Increases laundering efficiency (25/30B)' },
   { id: 'offshore', maxLevel: 3, costs: [25, 50, 80], emoji: '🏦', tier: 2, category: 'economy',
     titleTR: 'Offshore Hesabı', titleEN: 'Offshore Account', descTR: 'Aklanmış paraya tur başı faiz (%1…%3)', descEN: 'Adds interest on laundered money (1%…3%)' },
+  { id: 'komisyoncu', maxLevel: 3, costs: [25, 50, 80], emoji: '💰', tier: 2, category: 'economy',
+    titleTR: 'Komisyoncu', titleEN: 'Broker', descTR: 'Kart gelirinden komisyon al, aklanan paraya aktar (%5…%15)', descEN: 'Skim a commission from card income into laundered funds (5%…15%)' },
 
   // ── Strategy ──
   { id: 'lucky_cards', maxLevel: 3, costs: [20, 40, 70], emoji: '🍀', tier: 2, category: 'strategy',
@@ -114,6 +117,7 @@ export interface ActiveModifiers {
   darkConnectionsReduction: number;
   launderOutput: number;
   offshoreRate: number;
+  commissionRate: number;
   rareCardBonus: number;
   hasCrisisManagement: boolean;
   hasEmergencyFund: boolean;
@@ -143,6 +147,7 @@ export function computeModifiers(skillLevels: Record<string, number>): ActiveMod
   const dcLvl = skillLevels['dark_connections'] || 0;
   const plLvl = skillLevels['pro_launderer'] || 0;
   const osLvl = skillLevels['offshore'] || 0;
+  const kmLvl = skillLevels['komisyoncu'] || 0;
   const lcLvl = skillLevels['lucky_cards'] || 0;
   const cmLvl = skillLevels['crisis_management'] || 0;
   const efLvl = skillLevels['emergency_fund'] || 0;
@@ -163,6 +168,7 @@ export function computeModifiers(skillLevels: Record<string, number>): ActiveMod
     darkConnectionsReduction: dcLvl > 0 ? DARK_CONN_REDUCTION[dcLvl - 1] : 0,
     launderOutput,
     offshoreRate: osLvl > 0 ? OFFSHORE_RATE[osLvl - 1] : 0,
+    commissionRate: kmLvl > 0 ? COMMISSION_RATES[kmLvl - 1] : 0,
     rareCardBonus: lcLvl > 0 ? LUCKY_BONUS[lcLvl - 1] : 0,
     hasCrisisManagement: cmLvl > 0,
     hasEmergencyFund: efLvl > 0,

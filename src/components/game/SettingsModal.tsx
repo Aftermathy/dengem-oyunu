@@ -4,6 +4,7 @@ import { useSettings } from '@/contexts/SettingsContext';
 import { GameIcon } from '@/components/GameIcon';
 import { playClickSound } from '@/hooks/useSound';
 import { STORAGE_KEYS } from '@/constants/storage';
+import { restorePurchases, isAdFree } from '@/lib/purchases';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -141,6 +142,7 @@ export function SettingsModal({ onClose, onMainMenu }: SettingsModalProps) {
   const tr = lang === 'tr';
 
   const [muted, setMuted] = useState(() => localStorage.getItem(STORAGE_KEYS.SOUND_MUTED) === 'true');
+  const [restoreState, setRestoreState] = useState<'idle' | 'loading' | 'success' | 'already' | 'error'>('idle');
 
   useEffect(() => {
     const handler = (e: Event) => setMuted((e as CustomEvent).detail as boolean);
@@ -271,6 +273,69 @@ export function SettingsModal({ onClose, onMainMenu }: SettingsModalProps) {
               onChange={setSfxVolume}
               disabled={muted}
             />
+          </div>
+
+          {/* Divider */}
+          <div style={{ height: 1, background: 'hsl(var(--game-election) / 0.18)' }} />
+
+          {/* Purchases section */}
+          <div>
+            <div
+              className="text-[8px] font-black tracking-[4px] uppercase mb-3 flex items-center gap-2"
+              style={{ color: 'hsl(var(--game-election) / 0.6)' }}
+            >
+              <div style={{ width: 3, height: 10, background: 'hsl(var(--game-election) / 0.6)', borderRadius: 0 }} />
+              {tr ? 'SATIN ALIMLAR' : 'PURCHASES'}
+            </div>
+
+            {isAdFree() ? (
+              <div
+                className="flex items-center gap-2 py-2 px-3 rounded"
+                style={{ background: 'hsl(145 70% 42% / 0.12)', border: '1px solid hsl(145 70% 42% / 0.3)' }}
+              >
+                <GameIcon name="check" size={13} style={{ color: 'hsl(145 70% 55%)' }} />
+                <span className="text-[11px] font-bold" style={{ color: 'hsl(145 70% 55%)' }}>
+                  {tr ? 'Premium aktif — Reklamsız ✓' : 'Premium active — Ad-Free ✓'}
+                </span>
+              </div>
+            ) : (
+              <div>
+                <button
+                  disabled={restoreState === 'loading'}
+                  onClick={async () => {
+                    playClickSound();
+                    setRestoreState('loading');
+                    const active = await restorePurchases();
+                    setRestoreState(active ? 'success' : 'error');
+                    setTimeout(() => setRestoreState('idle'), 3000);
+                  }}
+                  className="w-full flex items-center justify-between py-2.5 px-3 rounded active:scale-95 transition-all disabled:opacity-50"
+                  style={{ border: '1px solid hsl(var(--game-election) / 0.3)', background: 'hsl(var(--game-election) / 0.06)' }}
+                >
+                  <span className="text-[11px] font-bold uppercase tracking-wide text-foreground/70">
+                    {tr ? 'Satın Alımları Geri Yükle' : 'Restore Purchases'}
+                  </span>
+                  {restoreState === 'loading' && (
+                    <span className="text-[10px]" style={{ color: 'hsl(var(--game-election))' }}>⏳</span>
+                  )}
+                  {restoreState === 'success' && (
+                    <span className="text-[10px] font-bold" style={{ color: 'hsl(145 70% 55%)' }}>
+                      {tr ? '✓ Premium aktif!' : '✓ Premium active!'}
+                    </span>
+                  )}
+                  {restoreState === 'error' && (
+                    <span className="text-[10px] font-bold" style={{ color: 'hsl(0 70% 60%)' }}>
+                      {tr ? 'Bulunamadı' : 'Not found'}
+                    </span>
+                  )}
+                </button>
+                <p className="text-[9px] text-muted-foreground mt-1 px-1">
+                  {tr
+                    ? 'Aynı Apple ID ile önceden satın aldıysan ücretsiz geri yükler.'
+                    : 'Restores your purchase if made with the same Apple ID.'}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Divider */}

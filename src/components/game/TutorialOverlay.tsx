@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
 
@@ -6,19 +6,15 @@ interface Props {
   onComplete: () => void;
 }
 
-// Layout vh breakpoints for iPhone 17 Pro Max (932px logical height, 59px dynamic island safe area)
-// pt-safe(6.3) + pt-1(0.4) = 6.7vh start
-// money row    ends  ~9.5vh  (26px)
-// factions     ends ~26.3vh  (156px: h-14 button + h-20 bar + label + py-0.5)
-// turn counter ends ~31.2vh  (46px: year + election text + py-0.5)
-// launder bar  ends ~36.0vh  (44px: py-1 + button py-2)
-// card                36.0vh –100vh
-const SPOTLIGHT: Array<{ from: number; to: number }> = [
-  { from: 0,  to: 10 }, // money
-  { from: 10, to: 26 }, // factions  — ends just before turn counter at 26.3vh
-  { from: 26, to: 31 }, // turn / election countdown
-  { from: 31, to: 35 }, // launder bar
-  { from: 36, to: 100 }, // card
+const SELECTORS = ['tut-money', 'tut-factions', 'tut-turn', 'tut-launder', 'tut-card'];
+
+// Fallback positions for iPhone 17 Pro Max — used only if measurement fails
+const FALLBACK: Array<{ from: number; to: number }> = [
+  { from: 0,  to: 10 },
+  { from: 10, to: 26 },
+  { from: 26, to: 31 },
+  { from: 31, to: 35 },
+  { from: 36, to: 100 },
 ];
 
 const STEPS_TR = [
@@ -41,11 +37,27 @@ export function TutorialOverlay({ onComplete }: Props) {
   const { lang } = useLanguage();
   const steps = lang === 'tr' ? STEPS_TR : STEPS_EN;
   const [step, setStep] = useState(0);
+  const [spots, setSpots] = useState(FALLBACK);
+
+  useLayoutEffect(() => {
+    const h = window.innerHeight;
+    const PAD = 6;
+    const measured = SELECTORS.map((sel, i) => {
+      const el = document.querySelector(`[data-tutorial="${sel}"]`);
+      if (!el) return FALLBACK[i];
+      const r = el.getBoundingClientRect();
+      return {
+        from: Math.max(0, ((r.top - PAD) / h) * 100),
+        to: Math.min(100, ((r.bottom + PAD) / h) * 100),
+      };
+    });
+    setSpots(measured);
+  }, []);
+
   const current = steps[step];
   const isLast = step === steps.length - 1;
-  const spot = SPOTLIGHT[step];
+  const spot = spots[step];
 
-  // Tooltip goes below the spotlight unless it's the last step (card area fills bottom)
   const tooltipBelow = step < 4;
   const tooltipTop = tooltipBelow ? spot.to : undefined;
   const tooltipBottom = !tooltipBelow ? (100 - spot.from) : undefined;

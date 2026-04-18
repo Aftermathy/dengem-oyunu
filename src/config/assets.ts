@@ -12,7 +12,7 @@ import {
   AlertTriangle, Shield, Tv, Coins, Target,
   X, Star, ChevronUp, Lock, RotateCcw, Syringe, Flame,
   Settings, Volume2, VolumeX, Home, Moon, Sun,
-  Pencil, Check,
+  Pencil, Check, Percent,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -61,6 +61,7 @@ export const GameIcons = {
   target:         Target,
   flame:          Flame,
   syringe:        Syringe,
+  percent:        Percent,
   // UI chrome
   close:          X,
   star:           Star,

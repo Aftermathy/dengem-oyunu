@@ -3542,33 +3542,6 @@ export const milestoneCard50: EventCard = normalizeCard({
   rightMoney: -5,
 });
 
-export const prologueCard: EventCard = normalizeCard({
-  id: 9003,
-  character: "Gizemli Ziyaretçi",
-  characterEmoji: "🕵️",
-  imageId: "mysterious_visitor",
-  category: "Dış Güçler",
-  description: "Bir yabancı elçi sarayınıza girdi. Masanıza bir fincan Türk kahvesi bıraktı ve gülümsedi. 'İçer misiniz, liderim?' dedi.",
-  leftChoice: "Reddet — zehir olabilir",
-  rightChoice: "İç — diplomasi şarttır",
-  leftEffects: [
-    { power: "halk", amount: 0 },
-    { power: "yatirimcilar", amount: 0 },
-    { power: "mafya", amount: 0 },
-    { power: "tarikat", amount: 0 },
-    { power: "ordu", amount: 5 },
-  ],
-  rightEffects: [
-    { power: "halk", amount: 0 },
-    { power: "yatirimcilar", amount: 5 },
-    { power: "mafya", amount: 0 },
-    { power: "tarikat", amount: 0 },
-    { power: "ordu", amount: 0 },
-  ],
-  leftMoney: 0,
-  rightMoney: 2,
-});
-
 // Dark mode easter egg card
 export const darkModeCard: EventCard = normalizeCard({
   id: 9999,

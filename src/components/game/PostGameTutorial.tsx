@@ -1,41 +1,9 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { playClickSound } from '@/hooks/useSound';
 import { EmojiImg } from '@/components/EmojiImg';
 import { AvatarImg } from '@/components/AvatarImg';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { cn } from '@/lib/utils';
-
-// ─── POSITION CONSTANTS ───────────────────────────────────────────────────────
-// Adjust fromY / toY  : vertical   — % of viewport height (0 = top, 100 = bottom)
-// Adjust fromX / toX  : horizontal — % of viewport width  (0 = left, 100 = right)
-// Adjust tooltipBelow : true = tooltip card appears BELOW the lit area
-//                       false = tooltip card appears ABOVE the lit area
-
-const SPOTS = {
-  // Step 0 ── Avatar button  (top-left corner)
-  AVATAR: {
-    fromY: 12,  toY: 23,   // ← adjust Y: top row of start screen
-    fromX: 3,  toX: 26,   // ← adjust X: left 25 % of screen
-    below: true,
-  },
-  // Step 1 ── AP / authority-points badge  (top-right corner)
-  AP_BADGE: {
-    fromY: 8,  toY: 11,   // ← adjust Y: slightly shorter than avatar row
-    fromX: 60, toX: 75,  // ← adjust X: right 40 % of screen
-    below: true,
-  },
-  // Step 2 ── Achievements · Skills · Leaderboard  (bottom row)
-  BOTTOM_NAV: {
-    fromY: 78, toY: 85,   // ← adjust Y: bottom meta-navigation row
-    fromX: 0,  toX: 100,  // ← adjust X: full width
-    below: false,
-  },
-} as const;
-
-// Total step count (0-indexed). Step 3 is the final CTA card (no spotlight).
-const TOTAL_STEPS = 4;
-
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface Props {
   userProfile: UserProfile;
@@ -51,16 +19,41 @@ interface StepContent {
   btn: string;
 }
 
+type SpotPx = { fromPx: number; toPx: number; fromXPx: number; toXPx: number; below: boolean };
+
+const SELECTORS = ['tut-avatar', 'tut-ap', 'tut-bottomnav'] as const;
+const TOOLTIP_BELOW = [true, true, false];
+const TOTAL_STEPS = 4;
+const PAD = 6;
+
 export function PostGameTutorial({ userProfile, earnedAP, lang, onComplete }: Props) {
   const [step, setStep] = useState(0);
+  const [spots, setSpots] = useState<SpotPx[] | null>(null);
   const av = AVATAR_DEFS.find(a => a.id === userProfile.avatarId);
   const tr = lang === 'tr';
+
+  useLayoutEffect(() => {
+    const h = window.innerHeight;
+    const w = window.innerWidth;
+    const measured: SpotPx[] = SELECTORS.map((sel, i) => {
+      const el = document.querySelector(`[data-tutorial="${sel}"]`);
+      if (!el) return { fromPx: 0, toPx: h * 0.2, fromXPx: 0, toXPx: w, below: TOOLTIP_BELOW[i] };
+      const r = el.getBoundingClientRect();
+      return {
+        fromPx:  Math.max(0, r.top - PAD),
+        toPx:    Math.min(h, r.bottom + PAD),
+        fromXPx: Math.max(0, r.left - PAD),
+        toXPx:   Math.min(w, r.right + PAD),
+        below:   TOOLTIP_BELOW[i],
+      };
+    });
+    setSpots(measured);
+  }, []);
 
   const next = () => { playClickSound(); setStep(s => s + 1); };
   const finish = () => { playClickSound(); onComplete(); };
 
   const spotlightSteps: StepContent[] = [
-    // step 0 — avatar
     {
       emoji: '👤',
       title: tr ? 'Profilin' : 'Your Profile',
@@ -69,7 +62,6 @@ export function PostGameTutorial({ userProfile, earnedAP, lang, onComplete }: Pr
         : 'This is your profile. Tap it to change your avatar and check your stats.',
       btn: tr ? 'Devam →' : 'Next →',
     },
-    // step 1 — AP badge
     {
       emoji: '⭐',
       title: tr ? `+${earnedAP} AP Kazandın!` : `You Earned +${earnedAP} AP!`,
@@ -78,7 +70,6 @@ export function PostGameTutorial({ userProfile, earnedAP, lang, onComplete }: Pr
         : 'You earn AP by playing. Use it to develop skills and climb the leaderboard.',
       btn: tr ? 'Tamam, Anladım!' : 'Got it!',
     },
-    // step 2 — bottom nav
     {
       emoji: '🏅',
       title: tr ? 'Ek Araçların' : 'Your Additional Tools',
@@ -89,36 +80,36 @@ export function PostGameTutorial({ userProfile, earnedAP, lang, onComplete }: Pr
     },
   ];
 
-  const spotKeys = ['AVATAR', 'AP_BADGE', 'BOTTOM_NAV'] as const;
-
   // ── Steps 0-2: Spotlight layout ──────────────────────────────────────────
   if (step < 3) {
     const content = spotlightSteps[step];
-    const spot = SPOTS[spotKeys[step]];
-    const { fromY, toY, fromX, toX, below } = spot;
+    const h = window.innerHeight;
+    const w = window.innerWidth;
+
+    // Use measured spots if ready, else show nothing until measured
+    if (!spots) return null;
+
+    const spot = spots[step];
+    const { fromPx, toPx, fromXPx, toXPx, below } = spot;
 
     return (
       <div className="fixed inset-0 z-[160] pointer-events-auto">
         {/* ── Dark masks ────────────────────────────────────────────────── */}
-        {/* Top mask */}
-        {fromY > 0 && (
+        {fromPx > 0 && (
           <div className="absolute left-0 right-0 top-0 bg-black/85 pointer-events-none"
-               style={{ height: `${fromY}vh` }} />
+               style={{ height: fromPx }} />
         )}
-        {/* Bottom mask */}
-        {toY < 100 && (
+        {toPx < h && (
           <div className="absolute left-0 right-0 bottom-0 bg-black/85 pointer-events-none"
-               style={{ height: `${100 - toY}vh` }} />
+               style={{ height: h - toPx }} />
         )}
-        {/* Left mask inside lit band */}
-        {fromX > 0 && (
+        {fromXPx > 0 && (
           <div className="absolute bg-black/85 pointer-events-none"
-               style={{ top: `${fromY}vh`, height: `${toY - fromY}vh`, left: 0, width: `${fromX}%` }} />
+               style={{ top: fromPx, height: toPx - fromPx, left: 0, width: fromXPx }} />
         )}
-        {/* Right mask inside lit band */}
-        {toX < 100 && (
+        {toXPx < w && (
           <div className="absolute bg-black/85 pointer-events-none"
-               style={{ top: `${fromY}vh`, height: `${toY - fromY}vh`, right: 0, width: `${100 - toX}%` }} />
+               style={{ top: fromPx, height: toPx - fromPx, right: 0, width: w - toXPx }} />
         )}
 
         {/* ── Backdrop click to dismiss ─────────────────────────────────── */}
@@ -127,15 +118,13 @@ export function PostGameTutorial({ userProfile, earnedAP, lang, onComplete }: Pr
         {/* ── Tooltip card ──────────────────────────────────────────────── */}
         <div
           className="absolute left-0 right-0 flex flex-col items-center px-4 z-[162]"
-          style={below ? { top: `${toY}vh` } : { bottom: `${100 - fromY}vh` }}
+          style={below ? { top: toPx } : { bottom: h - fromPx }}
         >
-          {/* Arrow pointing up into spotlight (tooltip below) */}
           {below && (
             <div className="w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-primary/60 mb-0.5" />
           )}
 
           <div className="bg-card border-2 border-primary/50 rounded-2xl p-4 max-w-xs w-full text-center shadow-2xl">
-            {/* Progress dots */}
             <div className="flex gap-1.5 justify-center mb-2">
               {Array.from({ length: TOTAL_STEPS - 1 }).map((_, i) => (
                 <div key={i} className={cn(
@@ -145,7 +134,6 @@ export function PostGameTutorial({ userProfile, earnedAP, lang, onComplete }: Pr
               ))}
             </div>
 
-            {/* Avatar preview on step 0 */}
             {step === 0 && (
               <div className="flex justify-center mb-2">
                 <div
@@ -175,7 +163,6 @@ export function PostGameTutorial({ userProfile, earnedAP, lang, onComplete }: Pr
             </button>
           </div>
 
-          {/* Arrow pointing down into spotlight (tooltip above) */}
           {!below && (
             <div className="w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-primary/60 mt-0.5" />
           )}

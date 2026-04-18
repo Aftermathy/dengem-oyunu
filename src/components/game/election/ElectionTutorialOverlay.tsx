@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useLayoutEffect } from 'react';
 import { playClickSound } from '@/hooks/useSound';
 
 interface Props {
@@ -6,12 +6,14 @@ interface Props {
   lang: string;
 }
 
-// Election screen approximate vh sections (safe-area ~6vh, title ~9, vote bars ~30, budget+cards ~48, specials ~72)
-const SPOTLIGHT: Array<{ from: number; to: number }> = [
-  { from: 0,  to: 14 }, // title + round counter
-  { from: 14, to: 39 }, // vote % bars
-  { from: 39, to: 73 }, // budget + cards + skip
-  { from: 73, to: 90 }, // special powers + laundered money
+const SELECTORS = ['tut-el-title', 'tut-el-votebars', 'tut-el-cards', 'tut-el-specials'];
+
+// Fallback positions — used only if measurement fails
+const FALLBACK: Array<{ from: number; to: number }> = [
+  { from: 0,  to: 14 },
+  { from: 14, to: 39 },
+  { from: 39, to: 73 },
+  { from: 73, to: 90 },
 ];
 
 const STEPS_TR = [
@@ -63,11 +65,28 @@ const STEPS_EN = [
 export function ElectionTutorialOverlay({ onComplete, lang }: Props) {
   const steps = lang === 'tr' ? STEPS_TR : STEPS_EN;
   const [step, setStep] = useState(0);
+  const [spots, setSpots] = useState(FALLBACK);
+
+  useLayoutEffect(() => {
+    const h = window.innerHeight;
+    const PAD = 6;
+    const measured = SELECTORS.map((sel, i) => {
+      const el = document.querySelector(`[data-tutorial="${sel}"]`);
+      if (!el) return FALLBACK[i];
+      const r = el.getBoundingClientRect();
+      return {
+        from: Math.max(0, ((r.top - PAD) / h) * 100),
+        to: Math.min(100, ((r.bottom + PAD) / h) * 100),
+      };
+    });
+    setSpots(measured);
+  }, []);
+
   const current = steps[step];
   const isLast = step === steps.length - 1;
-  const spot = SPOTLIGHT[step];
+  const spot = spots[step];
 
-  // Steps 0-1: tooltip below spotlight; steps 2-3: tooltip above (cards+specials are in lower half)
+  // Steps 0-1: tooltip below spotlight; steps 2-3: tooltip above
   const tooltipBelow = step < 2;
   const tooltipTop = tooltipBelow ? spot.to : undefined;
   const tooltipBottom = !tooltipBelow ? (100 - spot.from) : undefined;
@@ -109,9 +128,7 @@ export function ElectionTutorialOverlay({ onComplete, lang }: Props) {
               <div
                 key={i}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === step
-                    ? 'w-8 bg-game-election'
-                    : 'w-3 bg-muted'
+                  i === step ? 'w-8 bg-game-election' : 'w-3 bg-muted'
                 }`}
               />
             ))}

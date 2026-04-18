@@ -9,6 +9,8 @@ export interface SavedGameState {
   reputation: number;
   completedElections: number[];
   savedAt: number; // timestamp
+  // Turn-delay chain cards scheduled but not yet injected into the deck
+  pendingChainCards?: { card: Record<string, unknown>; insertAtTurn: number }[];
 }
 
 export function saveGame(state: SavedGameState): void {

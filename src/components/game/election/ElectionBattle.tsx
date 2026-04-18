@@ -51,7 +51,7 @@ export function ElectionBattle({
   return (
     <div className="flex-1 flex flex-col overflow-y-auto relative z-10">
       {/* Title bar */}
-      <div className="text-center pt-4 pb-1 relative">
+      <div data-tutorial="tut-el-title" className="text-center pt-4 pb-1 relative">
         <div className="absolute right-2 top-3 z-40">
           <SettingsMenu onMainMenu={onMainMenu} />
         </div>
@@ -65,11 +65,11 @@ export function ElectionBattle({
       </div>
 
       {/* Vote bars */}
-      <div className="flex justify-center items-end gap-8 px-8 py-3">
+      <div data-tutorial="tut-el-votebars" className="flex justify-center items-end py-3" style={{ gap: 'min(32px, 7.4vw)', paddingLeft: 'min(32px, 7.4vw)', paddingRight: 'min(32px, 7.4vw)' }}>
         <div className="flex flex-col items-center">
           <span className="text-game-success-light font-black text-xl mb-1">{displayPlayerVote}%</span>
           <div key={barGlowKey} className="w-14 rounded-t-lg overflow-visible border border-game-success/50 vote-bar-glow relative"
-            style={{ height: 130, background: 'hsl(var(--game-success) / 0.1)' }}>
+            style={{ height: 'min(130px, 30.2vw)', background: 'hsl(var(--game-success) / 0.1)' }}>
             <div className="w-full transition-all duration-700 ease-out rounded-t vote-bar-flame"
               style={{ height: `${displayPlayerVote}%`, marginTop: `${100 - displayPlayerVote}%`, background: 'linear-gradient(180deg, hsl(var(--game-success)), hsl(var(--game-success) / 0.7))' }} />
           </div>
@@ -79,7 +79,7 @@ export function ElectionBattle({
         <div className="flex flex-col items-center">
           <span className="text-game-danger-light font-black text-xl mb-1">{displayOpponentVote}%</span>
           <div className={`w-14 rounded-t-lg overflow-visible border border-game-danger/50 relative ${phase === 'ai' && aiCardPlayed ? 'opp-bar-glow' : ''}`}
-            style={{ height: 130, background: 'hsl(var(--game-danger) / 0.1)' }}>
+            style={{ height: 'min(130px, 30.2vw)', background: 'hsl(var(--game-danger) / 0.1)' }}>
             <div className="w-full transition-all duration-700 ease-out rounded-t vote-bar-flame"
               style={{ height: `${displayOpponentVote}%`, marginTop: `${100 - displayOpponentVote}%`, background: 'linear-gradient(180deg, hsl(var(--game-danger)), hsl(var(--game-danger) / 0.5))' }} />
           </div>
@@ -98,7 +98,7 @@ export function ElectionBattle({
       </div>
 
       {/* Card area */}
-      <div className={`px-3 py-2 ${phase === 'ai' ? 'flex-1 flex flex-col justify-center' : 'flex flex-col'}`}>
+      <div data-tutorial="tut-el-cards" className={`px-3 py-2 ${phase === 'ai' ? 'flex-1 flex flex-col justify-center' : 'flex flex-col'}`}>
         {phase === 'player' && (
           <>
             <div className="flex justify-between items-center mb-2 px-1">
@@ -187,7 +187,7 @@ export function ElectionBattle({
 
       {/* Special powers */}
       {phase === 'player' && config.specialPowers.length > 0 && (
-        <div className="px-3 pb-4">
+        <div data-tutorial="tut-el-specials" className="px-3 pb-4">
           <p className="text-game-special-light/80 text-xs mb-2 text-center font-bold uppercase tracking-widest flex items-center justify-center gap-1">
             <EmojiImg emoji="🔮" size={14} /> {labels.specialPowers}
           </p>

@@ -7,6 +7,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { AVATAR_DEFS } from '@/lib/userProfile';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
+import { sanitizeNickname, validateNickname, nicknameErrorText, NICKNAME_MAX } from '@/lib/nicknameValidation';
 
 interface OnboardingScreenProps {
   onComplete: (nickname: string, avatarId: string) => void;
@@ -19,9 +20,10 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   const [selectedAvatar, setSelectedAvatar] = useState('avatar_1');
   const defaultAvatars = AVATAR_DEFS.filter(a => !a.unlockAchievement && !a.dlcPack);
 
+  const nicknameErr = validateNickname(nickname);
+
   const handleNicknameSubmit = () => {
-    const trimmed = nickname.trim();
-    if (trimmed.length < 2 || trimmed.length > 20) return;
+    if (nicknameErr) return;
     playClickSound();
     hapticMedium();
     setStep('avatar');
@@ -46,20 +48,27 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
           </p>
           <Input
             value={nickname}
-            onChange={e => setNickname(e.target.value.slice(0, 20))}
+            onChange={e => setNickname(sanitizeNickname(e.target.value))}
             placeholder={lang === 'tr' ? 'Takma adını gir...' : 'Enter your nickname...'}
             className="text-center text-lg font-bold bg-card border-2 border-primary/30 focus:border-primary"
-            maxLength={20}
+            maxLength={NICKNAME_MAX}
             autoFocus
             onKeyDown={e => e.key === 'Enter' && handleNicknameSubmit()}
           />
-          <div className="text-xs text-muted-foreground/60">
-            {nickname.trim().length}/20
+          <div className="flex flex-col items-center gap-1">
+            {nicknameErr && nickname.length > 0 && (
+              <span className="text-xs text-destructive font-medium">
+                {nicknameErrorText(nicknameErr, lang)}
+              </span>
+            )}
+            <span className="text-xs text-muted-foreground/60">
+              {nickname.trim().length}/{NICKNAME_MAX}
+            </span>
           </div>
           <Button
             size="lg"
             onClick={handleNicknameSubmit}
-            disabled={nickname.trim().length < 2}
+            disabled={!!nicknameErr}
             className="w-full text-lg py-5 font-bold"
           >
             {lang === 'tr' ? 'Devam Et' : 'Continue'}

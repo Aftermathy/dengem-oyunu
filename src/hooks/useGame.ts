@@ -1,4 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import { App } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import { PowerState, PowerType, EventCard, GamePhase } from '@/types/game';
 import { isAdFree, handleAdTrigger, incrementGamesPlayed } from '@/hooks/useAds';
 import { playGameOverSound } from '@/hooks/useSound';
@@ -15,8 +17,10 @@ import { gameOverScenariosEn } from '@/data/gameOverScenarios-en';
 import { Language, useLanguage } from '@/contexts/LanguageContext';
 import { ELECTION_TRIGGER_MAP, getElectionConfig } from '@/data/electionData';
 import { ElectionResult } from '@/types/election';
-import { chainCardsA_TR, chainCardsB_TR } from '@/data/chainCards';
-import { chainCardsA_EN, chainCardsB_EN } from '@/data/chainCards-en';
+import { darkModeChain_TR } from '@/data/chainCards';
+import { darkModeChain_EN } from '@/data/chainCards-en';
+import { CHAIN_TRIGGERS_TR, type ChainDelay } from '@/data/chainCardsByTurn';
+import { CHAIN_TRIGGERS_EN } from '@/data/chainCardsByTurn-en';
 import { useBribe } from '@/hooks/useBribe';
 import { useLaunderShop } from '@/hooks/useLaunderShop';
 import { useMetaGame } from '@/contexts/MetaGameContext';
@@ -51,7 +55,16 @@ function getScenarios(lang: Language) {
   return lang === 'en' ? gameOverScenariosEn : gameOverScenarios;
 }
 
+function resolveChainDelay(delay: ChainDelay): number {
+  if (typeof delay === 'number') return delay;
+  return Math.floor(Math.random() * (delay.max - delay.min + 1)) + delay.min;
+}
+
 export type CrisisAlertType = 'crisis' | 'emergency_fund' | null;
+
+// Last regular-swipe turn before the final election fires at turn 87.
+// Chain cards scheduled beyond this turn will never be shown.
+const LAST_SWIPE_TURN = Math.max(...Object.keys(ELECTION_TRIGGER_MAP).map(Number)) - 1;
 
 export function useGame(lang: Language) {
   const { t } = useLanguage();
@@ -116,6 +129,9 @@ export function useGame(lang: Language) {
 
   // ── Crisis alert queue ──
   const [crisisAlertType, setCrisisAlertType] = useState<CrisisAlertType>(null);
+
+  // ── Turn-delay chain cards ──
+  const [pendingChainCards, setPendingChainCards] = useState<{ card: EventCard; insertAtTurn: number }[]>([]);
 
   const currentCard = deck[cardIndex] || null;
 
@@ -194,12 +210,14 @@ export function useGame(lang: Language) {
     setUsedCardIdsInGame(new Set());
     setLastEarnedAP(0);
     setCrisisAlertType(null);
+    setPendingChainCards([]);
     resetGameSession();
     setPhase('playing');
   }, [lang, resetBribeCounts, resetShop, modifiers.rareCardBonus, resetGameSession]);
 
   // ── Continue saved game ──
   const continueGame = useCallback(() => {
+    const saved = loadGame();
     const shuffled = shuffleArray(getCards(lang, modifiers.rareCardBonus));
     setDeck(shuffled);
     const firstCard = shuffled[0];
@@ -213,6 +231,11 @@ export function useGame(lang: Language) {
     setCurrentElectionIndex(null);
     setLastEarnedAP(0);
     setCrisisAlertType(null);
+    setPendingChainCards(
+      saved?.pendingChainCards
+        ? (saved.pendingChainCards as { card: EventCard; insertAtTurn: number }[])
+        : []
+    );
     resetGameSession();
     setPhase('playing');
   }, [lang, modifiers.rareCardBonus, resetGameSession]);
@@ -257,14 +280,37 @@ export function useGame(lang: Language) {
       ? Math.floor(totalLaundered * modifiers.offshoreRate)
       : 0;
 
+    // Komisyoncu: skim % of positive card income into laundered funds
+    let commission = 0;
+    if (modifiers.commissionRate > 0 && moneyEffect > 0) {
+      commission = Math.floor(moneyEffect * modifiers.commissionRate);
+      moneyEffect -= commission;
+      setTotalLaundered(prev => prev + commission);
+    }
+
     let newMoney = money + moneyEffect + maxIncome + offshoreIncome;
     setMoney(newMoney);
     if (newMoney > maxMoney) setMaxMoney(newMoney);
-    const totalMoneyChange = moneyEffect + maxIncome + offshoreIncome;
+    const totalMoneyChange = moneyEffect + maxIncome + offshoreIncome + commission;
     if (totalMoneyChange !== 0) setLastMoneyChange(totalMoneyChange);
 
     const newTurn = turn + 1;
     setTurn(newTurn);
+
+    // Schedule turn-delay chain card if this card has a trigger.
+    // Never schedule beyond LAST_SWIPE_TURN — no regular swipes happen after the final election.
+    const chainMap = lang === 'en' ? CHAIN_TRIGGERS_EN : CHAIN_TRIGGERS_TR;
+    const chainTrigger = chainMap[currentCard.id];
+    if (chainTrigger) {
+      const chainCard = direction === 'left' ? chainTrigger.left : chainTrigger.right;
+      if (chainCard) {
+        const delay = resolveChainDelay(chainTrigger.delay);
+        const insertAtTurn = newTurn + delay;
+        if (insertAtTurn <= LAST_SWIPE_TURN) {
+          setPendingChainCards(prev => [...prev, { card: chainCard, insertAtTurn }]);
+        }
+      }
+    }
 
     // Check faction death
     const over = checkGameOver(newPower);
@@ -288,6 +334,7 @@ export function useGame(lang: Language) {
         updateHighScore(newTurn);
         awardAP(newTurn, totalLaundered);
         clearSave();
+        setPendingChainCards([]);
         playGameOverSound();
         void handleAdTrigger('gameOver');
         setPhase('gameover');
@@ -312,6 +359,7 @@ export function useGame(lang: Language) {
         updateHighScore(newTurn);
         awardAP(newTurn, totalLaundered);
         clearSave();
+        setPendingChainCards([]);
         playGameOverSound();
         void handleAdTrigger('gameOver');
         setPhase('gameover');
@@ -347,10 +395,24 @@ export function useGame(lang: Language) {
       nextIndex = 0;
     }
 
-    const nextCard = nextDeck[nextIndex];
-    if (nextCard) {
-      setCurrentCardFirstSeen(!isCardSeen(nextCard.id));
+    // Inject any due turn-delay chain cards
+    const dueChains = pendingChainCards.filter(p => newTurn >= p.insertAtTurn);
+    if (dueChains.length > 0) {
+      setPendingChainCards(prev => prev.filter(p => newTurn < p.insertAtTurn));
+      setDeck(prev => {
+        const copy = [...prev];
+        // Insert in reverse order so dueChains[0] (oldest scheduled) ends up at nextIndex.
+        [...dueChains].reverse().forEach(({ card }) => copy.splice(nextIndex, 0, card));
+        return copy;
+      });
     }
+
+    // currentCardFirstSeen: use the chain card's ID if one was injected at nextIndex,
+    // otherwise use the regular next card. Chain cards are always unseen by definition.
+    const nextCardId = dueChains.length > 0
+      ? dueChains[0].card.id
+      : nextDeck[nextIndex]?.id;
+    setCurrentCardFirstSeen(nextCardId !== undefined ? !isCardSeen(nextCardId) : false);
 
     // Check election trigger
     const electionIndex = ELECTION_TRIGGER_MAP[newTurn];
@@ -360,6 +422,7 @@ export function useGame(lang: Language) {
       saveGame({
         power: newPower, money: newMoney, turn: newTurn, cardIndex: nextIndex,
         bribeCounts, reputation: 0, completedElections, savedAt: Date.now(),
+        pendingChainCards: pendingChainCards as { card: Record<string, unknown>; insertAtTurn: number }[],
       });
       setPhase('election');
       return;
@@ -386,7 +449,7 @@ export function useGame(lang: Language) {
       bribeCounts, reputation: 0, completedElections, savedAt: Date.now(),
     });
     setCardIndex(nextIndex);
-  }, [currentCard, phase, power, money, turn, cardIndex, deck, checkGameOver, lang, tutorialShown, completedElections, bribeCounts, usedCardIdsInGame, maxMoney, t, modifiers, totalLaundered, crisisAvailableThisGame, useCrisisJoker, emergencyFundAvailableThisGame, useEmergencyFund, awardAP, updateHighScore, achievements]);
+  }, [currentCard, phase, power, money, turn, cardIndex, deck, checkGameOver, lang, tutorialShown, completedElections, bribeCounts, usedCardIdsInGame, maxMoney, t, modifiers, totalLaundered, crisisAvailableThisGame, useCrisisJoker, emergencyFundAvailableThisGame, useEmergencyFund, awardAP, updateHighScore, achievements, pendingChainCards]);
 
   // ── Tutorial handlers ──
   const completeTutorialBribe = useCallback(() => {
@@ -432,17 +495,6 @@ export function useGame(lang: Language) {
 
   // ── Election completion ──
   const handleElectionComplete = useCallback((result: ElectionResult) => {
-    if (!result.won) {
-      const lostScenario = { title: t('gameover.election_lost.title'), description: t('gameover.election_lost.desc'), emoji: '🗳️', image: 'defeat-halk' };
-      setGameOverInfo(lostScenario);
-      updateHighScore(turn);
-      awardAP(turn, totalLaundered);
-      clearSave();
-      playGameOverSound();
-      void handleAdTrigger('gameOver');
-      setPhase('gameover');
-      return;
-    }
     const electionConfig = currentElectionIndex !== null ? getElectionConfig(lang, currentElectionIndex) : null;
     if (electionConfig?.isFinalBoss) {
       updateHighScore(turn);
@@ -461,12 +513,10 @@ export function useGame(lang: Language) {
       setCompletedElections(newCompletedElections);
     }
     setCurrentElectionIndex(null);
-    const chainChoice = localStorage.getItem(STORAGE_KEYS.CHAIN_CHOICE) as 'left' | 'right' | null;
-    if (chainChoice) {
+    const darkModeChainActive = localStorage.getItem(STORAGE_KEYS.CHAIN_CHOICE) !== null;
+    if (darkModeChainActive) {
       const electionNum = newCompletedElections.length - 1;
-      const chainPool = lang === 'en'
-        ? (chainChoice === 'left' ? chainCardsA_EN : chainCardsB_EN)
-        : (chainChoice === 'left' ? chainCardsA_TR : chainCardsB_TR);
+      const chainPool = lang === 'en' ? darkModeChain_EN : darkModeChain_TR;
       const chainCard = chainPool[Math.min(electionNum, chainPool.length - 1)];
       if (chainCard) {
         const insertAt = pendingAdvance?.nextIndex ?? 0;
@@ -482,9 +532,50 @@ export function useGame(lang: Language) {
       setPendingAdvance(null);
     }
     if (result.playerVote > maxElectionPct) setMaxElectionPct(result.playerVote);
+    // Save immediately after election win so completed election is persisted
+    // before the player's first swipe (covers app crash edge case).
+    saveGame({
+      power, money: result.remainingBudget, turn, cardIndex: pendingAdvance?.nextIndex ?? 0,
+      bribeCounts, reputation: 0, completedElections: newCompletedElections, savedAt: Date.now(),
+      pendingChainCards: pendingChainCards as { card: Record<string, unknown>; insertAtTurn: number }[],
+    });
     void handleAdTrigger('electionWin');
     setPhase('playing');
   }, [lang, turn, currentElectionIndex, pendingAdvance, completedElections, setTotalLaundered, maxElectionPct, t, totalLaundered, awardAP, updateHighScore, modifiers.ohalLevel, achievements]);
+
+  // ── Background save on app hide (phone call, notification, swipe-up) ──────
+  // saveGame is called after every swipe, but this is a safety net for edge
+  // cases: election screen, tutorial screen, or mid-gesture interruptions.
+  // On native iOS: Capacitor App.addListener('appStateChange') is more reliable
+  // than visibilitychange (WKWebView can delay or skip it during phone calls).
+  // On web: falls back to visibilitychange.
+  const bgSaveRef = useRef({ power, money, turn, cardIndex, bribeCounts, completedElections, pendingChainCards });
+  bgSaveRef.current = { power, money, turn, cardIndex, bribeCounts, completedElections, pendingChainCards };
+
+  useEffect(() => {
+    const doSave = () => {
+      if (bgSaveRef.current.turn === 0) return; // don't save before game starts
+      const s = bgSaveRef.current;
+      saveGame({
+        power: s.power, money: s.money, turn: s.turn, cardIndex: s.cardIndex,
+        bribeCounts: s.bribeCounts, reputation: 0, completedElections: s.completedElections,
+        savedAt: Date.now(),
+        pendingChainCards: s.pendingChainCards as { card: Record<string, unknown>; insertAtTurn: number }[],
+      });
+    };
+
+    if (Capacitor.isNativePlatform()) {
+      let listenerHandle: { remove: () => void } | null = null;
+      App.addListener('appStateChange', ({ isActive }) => {
+        if (!isActive) doSave();
+      }).then(handle => { listenerHandle = handle; });
+      return () => { listenerHandle?.remove(); };
+    } else {
+      const handleVisibility = () => { if (document.visibilityState === 'hidden') doSave(); };
+      document.addEventListener('visibilitychange', handleVisibility);
+      return () => document.removeEventListener('visibilitychange', handleVisibility);
+    }
+  }, []);
 
   return {
     phase, power, money, currentCard, turn, highScore,

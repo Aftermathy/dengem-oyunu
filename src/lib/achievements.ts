@@ -42,7 +42,7 @@ export function checkTurnAchievements(turn: number): string[] {
   if (turn >= 15 && unlockAchievement('survive_10')) newlyUnlocked.push('survive_10');
   if (turn >= 25 && unlockAchievement('survive_25')) newlyUnlocked.push('survive_25');
   if (turn >= 50 && unlockAchievement('survive_50')) newlyUnlocked.push('survive_50');
-  if (turn >= 100 && unlockAchievement('survive_100')) newlyUnlocked.push('survive_100');
+  if (turn >= 75 && unlockAchievement('survive_100')) newlyUnlocked.push('survive_100');
   return newlyUnlocked;
 }
 
@@ -50,8 +50,8 @@ export function checkTurnAchievements(turn: number): string[] {
 
 export function checkMoneyAchievements(money: number): string[] {
   const newlyUnlocked: string[] = [];
-  if (money >= 200 && unlockAchievement('rich_100')) newlyUnlocked.push('rich_100');
-  if (money >= 500 && unlockAchievement('rich_500')) newlyUnlocked.push('rich_500');
+  if (money >= 256 && unlockAchievement('rich_100')) newlyUnlocked.push('rich_100');
+  if (money >= 512 && unlockAchievement('rich_500')) newlyUnlocked.push('rich_500');
   return newlyUnlocked;
 }
 
@@ -61,12 +61,8 @@ export function checkPowerAchievements(power: PowerState): string[] {
   const newlyUnlocked: string[] = [];
   const factions: PowerType[] = ['halk', 'yatirimcilar', 'mafya', 'tarikat', 'ordu'];
 
-  for (const f of factions) {
-    if (power[f] >= 100) {
-      if (unlockAchievement('max_faction')) newlyUnlocked.push('max_faction');
-      break;
-    }
-  }
+  const factionsAt100 = factions.filter(f => power[f] >= 100).length;
+  if (factionsAt100 >= 3 && unlockAchievement('max_faction')) newlyUnlocked.push('max_faction');
 
   const allBalanced = factions.every(f => power[f] >= 70 && power[f] <= 90);
   if (allBalanced && unlockAchievement('perfect_balance')) {
@@ -133,7 +129,7 @@ export function trackBribe(): string[] {
   try {
     const count = parseInt(localStorage.getItem(BRIBE_TOTAL_KEY) || '0', 10) + 1;
     localStorage.setItem(BRIBE_TOTAL_KEY, String(count));
-    if (count >= 20 && unlockAchievement('bribe_10')) newlyUnlocked.push('bribe_10');
+    if (count >= 50 && unlockAchievement('bribe_10')) newlyUnlocked.push('bribe_10');
   } catch {}
   return newlyUnlocked;
 }
@@ -145,7 +141,7 @@ export function trackLaunder(): string[] {
   try {
     const count = parseInt(localStorage.getItem(LAUNDER_TOTAL_KEY) || '0', 10) + 1;
     localStorage.setItem(LAUNDER_TOTAL_KEY, String(count));
-    if (count >= 20 && unlockAchievement('launder_5')) newlyUnlocked.push('launder_5');
+    if (count >= 50 && unlockAchievement('launder_5')) newlyUnlocked.push('launder_5');
   } catch {}
   return newlyUnlocked;
 }
@@ -159,7 +155,7 @@ export function checkCardAchievement(cardId: number): string[] {
   if (cardId === 9999 && unlockAchievement('dark_mode_event')) newlyUnlocked.push('dark_mode_event');
   if (cardId === 9002 && unlockAchievement('exile_letter')) newlyUnlocked.push('exile_letter');
 
-  if ([9101, 9102, 9103, 9201, 9202, 9203].includes(cardId)) {
+  if ([9201, 9202, 9203].includes(cardId)) {
     try {
       const raw = localStorage.getItem(CHAIN_SEEN_KEY);
       const seen: number[] = raw ? JSON.parse(raw) : [];
@@ -167,9 +163,8 @@ export function checkCardAchievement(cardId: number): string[] {
         seen.push(cardId);
         localStorage.setItem(CHAIN_SEEN_KEY, JSON.stringify(seen));
       }
-      const chainA = [9101, 9102, 9103].every(id => seen.includes(id));
-      const chainB = [9201, 9202, 9203].every(id => seen.includes(id));
-      if ((chainA || chainB) && unlockAchievement('coffee_chain')) {
+      const chainComplete = [9201, 9202, 9203].every(id => seen.includes(id));
+      if (chainComplete && unlockAchievement('coffee_chain')) {
         newlyUnlocked.push('coffee_chain');
       }
     } catch {}

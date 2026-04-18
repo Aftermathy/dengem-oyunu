@@ -7,6 +7,7 @@ interface CategoryClusterProps {
   config: typeof CATEGORY_CONFIG[string];
   skills: SkillDef[];
   lang: 'tr' | 'en';
+  isDark: boolean;
   getSkillLevel: (id: string) => number;
   justPurchasedId: string | null;
   onBubbleClick: (s: SkillDef) => void;
@@ -14,10 +15,11 @@ interface CategoryClusterProps {
 }
 
 export function CategoryCluster({
-  config, skills, lang, getSkillLevel, justPurchasedId, onBubbleClick, categoryKey, bubbleWarning,
+  config, skills, lang, isDark, getSkillLevel, justPurchasedId, onBubbleClick, categoryKey, bubbleWarning,
 }: CategoryClusterProps) {
   const HubIcon = config.icon;
   const isOhal = categoryKey === 'ohal';
+  const ohalTextColor = isDark ? 'hsl(15 60% 55%)' : 'hsl(15 60% 40%)';
 
   return (
     <div className={`mb-8 relative ${isOhal ? 'mt-4 pt-4' : ''}`}
@@ -26,7 +28,7 @@ export function CategoryCluster({
       <div className="flex items-center justify-center gap-2 mb-4">
         <div className="h-px flex-1 max-w-[60px]" style={{ background: `linear-gradient(to right, transparent, ${config.color})` }} />
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full"
-          style={{ background: `${config.glowColor}`, border: `1px solid ${config.color}` }}
+          style={{ background: config.glowColor, border: `1px solid ${config.color}` }}
         >
           <HubIcon size={13} style={{ color: config.color }} />
           <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: config.color }}>
@@ -37,7 +39,7 @@ export function CategoryCluster({
       </div>
 
       {isOhal && (
-        <p className="text-center text-[10px] mb-3 px-4" style={{ color: 'hsl(15 60% 55%)' }}>
+        <p className="text-center text-[10px] mb-3 px-4" style={{ color: ohalTextColor }}>
           {lang === 'en'
             ? '⚠️ Makes the game harder but multiplies your AP rewards!'
             : '⚠️ Oyunu zorlaştırır ama AP ödüllerini katlar!'}
@@ -80,6 +82,7 @@ export function CategoryCluster({
               level={getSkillLevel(skill.id)}
               categoryColor={config.color}
               categoryGlow={config.glowColor}
+              isDark={isDark}
               justPurchased={justPurchasedId === skill.id}
               onClick={() => onBubbleClick(skill)}
               warningMessage={bubbleWarning?.skillId === skill.id ? bubbleWarning.message : null}

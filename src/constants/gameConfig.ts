@@ -21,6 +21,5 @@ export const GAME_CONFIG = {
   // Special card injection
   CAT_CARD_CHANCE: 0.05,
   CAT_MAX_POSITION: 20,
-  DARK_MODE_MAX_POSITION: 15,
   MILESTONE_TURN: 50,
 } as const;

@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Responsive font scaling ─────────────────────────────────────────────────
+ * Baseline: iPhone 17 Pro Max = 430px logical width → 16px root font
+ * iPhone SE (375px): 3.72vw × 375 ≈ 13.95px  (≈87% scale)
+ * 1st-gen SE (320px): clamped to 13px          (≈81% scale)
+ * All Tailwind rem-based utilities (text-*, p-*, w-*, h-*, gap-*, etc.)
+ * scale proportionally with no component changes required.
+ * ─────────────────────────────────────────────────────────────────────────── */
+html {
+  font-size: clamp(13px, 3.72vw, 16px);
+}
+
 /* Prevent web-like interactions (text selection, image saving, etc.) */
 * {
   -webkit-user-select: none;

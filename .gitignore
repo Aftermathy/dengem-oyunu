@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Sensitive / secret files
+apple-key.p8
+apple-client-secret.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

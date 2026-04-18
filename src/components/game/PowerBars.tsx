@@ -125,7 +125,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
   return (
     <div className="w-full max-w-md mx-auto">
       {/* Money display */}
-      <div className="flex items-center justify-center gap-2 mb-0.5">
+      <div data-tutorial="tut-money" className="flex items-center justify-center gap-2 mb-0.5">
         <EmojiImg emoji="💰" size={20} />
         <span className={cn(
           "text-base font-black transition-colors duration-300",
@@ -153,7 +153,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
         )}
       </div>
 
-      <div className="flex justify-between gap-0.5 px-1 py-0.5">
+      <div data-tutorial="tut-factions" className="flex justify-between gap-0.5 px-1 py-0.5">
         {powers.map((p, idx) => {
           const val = power[p];
           const affected = isAffected(p);
@@ -198,7 +198,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 return (
                   <div
                     className={`absolute top-[70px] ${align} z-[55] pointer-events-none`}
-                    style={{ width: '140px' }}
+                    style={{ width: 'clamp(110px, 35vw, 140px)' }}
                   >
                     <div className="bg-card border-2 border-primary/60 rounded-2xl px-3 py-2 shadow-2xl text-center">
                       <div className="text-xs font-bold text-muted-foreground mb-0.5">{t(`power.${p}`)}</div>
@@ -282,7 +282,7 @@ export function PowerBars({ power, activeEffects = [], money = 0, lastMoneyChang
                 fb.dying ? "opacity-0 scale-95 -translate-y-1" : "opacity-100 scale-100 translate-y-0"
               )}
             >
-              <div className="bg-card/95 border-2 border-primary/50 rounded-2xl px-5 py-3 shadow-2xl text-center min-w-[200px]">
+              <div className="bg-card/95 border-2 border-primary/50 rounded-2xl px-5 py-3 shadow-2xl text-center" style={{ minWidth: 'clamp(160px, 46vw, 200px)' }}>
                 <div className="text-base text-foreground font-medium"><EmojiText text={fb.text} size={18} /></div>
                 <div className="text-sm font-bold mt-1">
                   <span className="text-game-danger-light">-{fb.cost}B</span>

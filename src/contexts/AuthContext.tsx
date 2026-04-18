@@ -1,12 +1,19 @@
-import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef, type ReactNode } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { lovable } from '@/integrations/lovable/index';
-import type { User, Session } from '@supabase/supabase-js';
+import { createContext, useContext, useState, useCallback, useMemo, useEffect, useRef, type ReactNode } from 'react';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { getDeviceId } from '@/lib/deviceId';
+import { supabase } from '@/integrations/supabase/client';
+
+interface SignInWithApplePlugin {
+  authorize(options: { clientId: string; redirectURI: string; scopes: string; state: string; nonce: string }): Promise<{
+    response?: { identityToken?: string };
+  }>;
+}
+const SignInWithApple = registerPlugin<SignInWithApplePlugin>('SignInWithApple');
+
+const APPLE_USER_KEY = 'ims_apple_user_id';
 
 interface AuthContextValue {
-  user: User | null;
-  session: Session | null;
+  user: { id: string } | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   signInWithApple: () => Promise<{ success: boolean; error?: string }>;
@@ -15,34 +22,26 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-/**
- * Migrate device-UUID rows to the real auth user_id.
- * Runs once after first Apple sign-in.
- */
-async function migrateDeviceToAuth(authUserId: string): Promise<void> {
+async function migrateDeviceToApple(appleUserId: string): Promise<void> {
   const deviceId = getDeviceId();
-  if (deviceId === authUserId) return; // already correct
-
+  if (deviceId === appleUserId) return;
   try {
-    // Migrate profiles row
     const { data: existing } = await supabase
       .from('profiles')
       .select('id')
-      .eq('user_id', authUserId)
+      .eq('user_id', appleUserId)
       .maybeSingle();
 
     if (!existing) {
-      // No profile for auth user yet — update the device row
       await supabase
         .from('profiles')
-        .update({ user_id: authUserId })
+        .update({ user_id: appleUserId })
         .eq('user_id', deviceId);
     }
 
-    // Migrate leaderboard rows
     await supabase
       .from('leaderboard_scores')
-      .update({ user_id: authUserId })
+      .update({ user_id: appleUserId })
       .eq('user_id', deviceId);
   } catch (err) {
     console.error('[Auth] Migration error:', err);
@@ -50,79 +49,77 @@ async function migrateDeviceToAuth(authUserId: string): Promise<void> {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  // Track previous auth user id to detect first-ever sign-in transition (anonymous → authenticated)
-  const prevUserIdRef = useRef<string | null>(null);
+  const [appleUserId, setAppleUserId] = useState<string | null>(() =>
+    localStorage.getItem(APPLE_USER_KEY)
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const hasMigratedRef = useRef(false);
 
   useEffect(() => {
-    // Listen for auth state changes FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
-
-      // Migrate device data only on the first SIGNED_IN from an anonymous state (no setTimeout)
-      if (event === 'SIGNED_IN' && newSession?.user && !prevUserIdRef.current) {
-        migrateDeviceToAuth(newSession.user.id);
-      }
-      prevUserIdRef.current = newSession?.user?.id ?? null;
-    });
-
-    // Then check existing session — initialise prevUserIdRef so migration doesn't re-run on refresh
-    supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
-      setSession(existingSession);
-      setUser(existingSession?.user ?? null);
-      prevUserIdRef.current = existingSession?.user?.id ?? null;
-      setIsLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+    if (appleUserId && !hasMigratedRef.current) {
+      hasMigratedRef.current = true;
+      migrateDeviceToApple(appleUserId);
+    }
+  }, [appleUserId]);
 
   const signInWithApple = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
+    if (!Capacitor.isNativePlatform()) {
+      return { success: false, error: 'Apple Sign In only available on iOS' };
+    }
+    setIsLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth('apple', {
-        redirect_uri: window.location.origin,
+      const response = await SignInWithApple.authorize({
+        clientId: 'com.denizerdogan.imuststay',
+        redirectURI: 'https://oqgvhbpqrwsdfbanzuun.supabase.co/auth/v1/callback',
+        scopes: 'name email',
+        state: crypto.randomUUID(),
+        nonce: crypto.randomUUID(),
       });
 
-      if (result.error) {
-        const msg = result.error instanceof Error ? result.error.message : String(result.error);
-        console.error('[Auth] Apple Sign In error:', msg);
-        return { success: false, error: msg };
+      const identityToken = response.response?.identityToken;
+      if (!identityToken) {
+        setIsLoading(false);
+        return { success: false, error: 'No identity token received' };
       }
 
-      // If redirected, the page will reload with session
-      if ((result as any).redirected) {
-        return { success: true };
+      const payload = JSON.parse(atob(identityToken.split('.')[1]));
+      const sub: string = payload.sub;
+      if (!sub) {
+        setIsLoading(false);
+        return { success: false, error: 'No user ID in token' };
       }
 
+      localStorage.setItem(APPLE_USER_KEY, sub);
+      setAppleUserId(sub);
+      await migrateDeviceToApple(sub);
+      setIsLoading(false);
       return { success: true };
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      console.error('[Auth] Apple Sign In exception:', msg);
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.toLowerCase().includes('cancel') || msg.toLowerCase().includes('dismiss')) {
+        setIsLoading(false);
+        return { success: false, error: 'cancelled' };
+      }
+      console.error('[Auth] Apple Sign In error:', msg);
+      setIsLoading(false);
       return { success: false, error: msg };
     }
   }, []);
 
   const signOut = useCallback(async () => {
-    try {
-      await supabase.auth.signOut();
-      setUser(null);
-      setSession(null);
-    } catch (err) {
-      console.error('[Auth] Sign out error:', err);
-    }
+    localStorage.removeItem(APPLE_USER_KEY);
+    setAppleUserId(null);
   }, []);
+
+  const user = useMemo(() => (appleUserId ? { id: appleUserId } : null), [appleUserId]);
 
   const value = useMemo<AuthContextValue>(() => ({
     user,
-    session,
-    isAuthenticated: !!user,
+    isAuthenticated: !!appleUserId,
     isLoading,
     signInWithApple,
     signOut,
-  }), [user, session, isLoading, signInWithApple, signOut]);
+  }), [user, appleUserId, isLoading, signInWithApple, signOut]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

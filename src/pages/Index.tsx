@@ -209,10 +209,10 @@ const Index = () => {
             />
           </div>
 
-          <div className="flex flex-col items-center justify-center py-0.5 animate-fade-in shrink-0" key={`turn-${turn}`}>
+          <div data-tutorial="tut-turn" className="flex flex-col items-center justify-center py-0.5 animate-fade-in shrink-0" key={`turn-${turn}`}>
             <div className="flex items-center">
               <span className="text-base font-black tracking-wider text-foreground font-georgia">
-                {2002 + Math.floor(turn / 4)}
+                {2002 + Math.floor(turn * 26 / 87)}
               </span>
               <span className="text-sm font-bold text-primary ml-1.5 tracking-widest font-georgia">
                 Q{(turn % 4) + 1}
@@ -240,7 +240,7 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="shrink-0">
+          <div data-tutorial="tut-launder" className="shrink-0">
             <LaunderBar
               totalLaundered={totalLaundered}
               money={money}
@@ -251,7 +251,7 @@ const Index = () => {
             />
           </div>
 
-          <div className="flex-1 flex items-center justify-center px-4 min-h-0 pb-[env(safe-area-inset-bottom)]">
+          <div data-tutorial="tut-card" className="flex-1 flex items-center justify-center px-4 min-h-0 pb-[env(safe-area-inset-bottom)]">
             <SwipeCard
               key={currentCard.id + '-' + turn}
               card={currentCard}

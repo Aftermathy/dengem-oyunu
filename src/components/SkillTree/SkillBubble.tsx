@@ -8,13 +8,14 @@ interface SkillBubbleProps {
   level: number;
   categoryColor: string;
   categoryGlow: string;
+  isDark: boolean;
   justPurchased: boolean;
   onClick: () => void;
   warningMessage: string | null;
 }
 
 export function SkillBubble({
-  skill, level, categoryColor, categoryGlow, justPurchased, onClick, warningMessage,
+  skill, level, categoryColor, categoryGlow, isDark, justPurchased, onClick, warningMessage,
 }: SkillBubbleProps) {
   const Icon = SKILL_ICONS[skill.id] || Shield;
   const maxed = level >= skill.maxLevel;
@@ -23,6 +24,19 @@ export function SkillBubble({
   const ringRadius = 27;
   const ringStroke = 3;
   const circumference = 2 * Math.PI * ringRadius;
+
+  // ── Theme tokens ──────────────────────────────────────────────────────────
+  const inactiveBg = isDark
+    ? `radial-gradient(circle at 35% 30%, hsl(0 0% 100% / 0.08), hsl(220 20% 20%) 60%, hsl(220 30% 10%) 100%)`
+    : `radial-gradient(circle at 35% 30%, hsl(0 0% 100% / 0.6), hsl(220 15% 88%) 60%, hsl(220 20% 82%) 100%)`;
+  const inactiveShadow = isDark
+    ? 'inset 0 -4px 8px hsl(0 0% 0% / 0.4), inset 0 2px 4px hsl(0 0% 100% / 0.05)'
+    : 'inset 0 -4px 8px hsl(0 0% 0% / 0.08), inset 0 2px 4px hsl(0 0% 100% / 0.7)';
+  const inactiveBorder = isDark ? 'hsl(0 0% 100% / 0.08)' : 'hsl(0 0% 0% / 0.1)';
+  const emptyRing = isDark ? 'hsl(0 0% 100% / 0.1)' : 'hsl(0 0% 0% / 0.12)';
+  const inactiveIconColor = isDark ? 'hsl(0 0% 40%)' : 'hsl(0 0% 55%)';
+  const lockOverlay = isDark ? 'hsl(0 0% 0% / 0.3)' : 'hsl(0 0% 0% / 0.06)';
+  const lockIconColor = isDark ? 'hsl(0 0% 35%)' : 'hsl(0 0% 45%)';
 
   const segments = Array.from({ length: skill.maxLevel }).map((_, i) => {
     const segmentLength = circumference / skill.maxLevel;
@@ -55,12 +69,12 @@ export function SkillBubble({
           className="absolute inset-1 rounded-full"
           style={{
             background: isActive
-              ? `radial-gradient(circle at 35% 30%, hsl(0 0% 100% / 0.15), ${categoryColor.replace(')', ' / 0.25)')} 40%, hsl(220 30% 12%) 100%)`
-              : 'radial-gradient(circle at 35% 30%, hsl(0 0% 100% / 0.08), hsl(220 20% 20%) 60%, hsl(220 30% 10%) 100%)',
+              ? `radial-gradient(circle at 35% 30%, hsl(0 0% 100% / 0.15), ${categoryColor.replace(')', ' / 0.25)')} 40%, ${isDark ? 'hsl(220 30% 12%)' : 'hsl(220 20% 92%)'} 100%)`
+              : inactiveBg,
             boxShadow: isActive
               ? `0 4px 20px ${categoryGlow}, inset 0 -4px 8px hsl(0 0% 0% / 0.4), inset 0 2px 4px hsl(0 0% 100% / 0.1)`
-              : 'inset 0 -4px 8px hsl(0 0% 0% / 0.4), inset 0 2px 4px hsl(0 0% 100% / 0.05)',
-            border: `1px solid ${isActive ? categoryColor.replace(')', ' / 0.4)') : 'hsl(0 0% 100% / 0.08)'}`,
+              : inactiveShadow,
+            border: `1px solid ${isActive ? categoryColor.replace(')', ' / 0.4)') : inactiveBorder}`,
           }}
         />
 
@@ -72,7 +86,7 @@ export function SkillBubble({
               cy={bubbleSize / 2}
               r={ringRadius}
               fill="none"
-              stroke={seg.filled ? categoryColor : 'hsl(0 0% 100% / 0.1)'}
+              stroke={seg.filled ? categoryColor : emptyRing}
               strokeWidth={ringStroke}
               strokeDasharray={`${seg.dashLength} ${circumference - seg.dashLength}`}
               strokeDashoffset={seg.offset}
@@ -89,7 +103,7 @@ export function SkillBubble({
           size={22}
           className="relative z-10 transition-all duration-300"
           style={{
-            color: isActive ? categoryColor : 'hsl(0 0% 40%)',
+            color: isActive ? categoryColor : inactiveIconColor,
             filter: isActive ? `drop-shadow(0 0 6px ${categoryGlow})` : 'none',
           }}
         />
@@ -107,9 +121,9 @@ export function SkillBubble({
 
         {!isActive && (
           <div className="absolute inset-1 rounded-full flex items-center justify-center z-10"
-            style={{ background: 'hsl(0 0% 0% / 0.3)' }}
+            style={{ background: lockOverlay }}
           >
-            <GameIcon name="lock" size={10} style={{ color: 'hsl(0 0% 35%)' }} className="absolute bottom-1 right-1" />
+            <GameIcon name="lock" size={10} style={{ color: lockIconColor }} className="absolute bottom-1 right-1" />
           </div>
         )}
       </button>

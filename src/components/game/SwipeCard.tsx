@@ -81,7 +81,7 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
         <div
           className="relative w-full h-full transition-all duration-300 ease-out"
           style={{
-            transform: `translateX(${exiting === 'left' ? -500 : 500}px) rotate(${exiting === 'left' ? -30 : 30}deg)`,
+            transform: `translateX(${exiting === 'left' ? -120 : 120}vw) rotate(${exiting === 'left' ? -30 : 30}deg)`,
             opacity: 0,
           }}
         >
@@ -149,7 +149,8 @@ function CharacterVisual({ card }: { card: EventCard }) {
           src={`/assets/images/characters/${card.imageId}.png`}
           alt={card.character}
           onError={() => setImgError(true)}
-          className="w-[135px] h-[135px] object-cover rounded-full block"
+          className="object-cover rounded-full block"
+          style={{ width: 'min(135px, 31.4vw)', height: 'min(135px, 31.4vw)' }}
         />
       </div>
     );

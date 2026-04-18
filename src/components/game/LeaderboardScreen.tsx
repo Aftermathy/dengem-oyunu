@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
+import { AvatarImg } from '@/components/AvatarImg';
 import { GameIcon } from '@/components/GameIcon';
 import { useAppleSignIn } from '@/hooks/useAppleSignIn';
 import { fetchLeaderboard, type LeaderboardEntry } from '@/lib/leaderboard';
@@ -18,7 +19,7 @@ interface LeaderboardScreenProps {
 
 export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: LeaderboardScreenProps) {
   const { lang } = useLanguage();
-  const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked } = useAppleSignIn();
+  const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked, error: appleError } = useAppleSignIn();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -145,18 +146,23 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
               </span>
             </div>
           ) : (
-            <button
-              onClick={handleAppleSignIn}
-              disabled={appleLoading}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95 bg-foreground text-background disabled:opacity-60"
-            >
-              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
-                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-              </svg>
-              {appleLoading
-                ? (lang === 'tr' ? 'Bağlanıyor...' : 'Connecting...')
-                : (lang === 'tr' ? 'Apple ile Giriş Yap' : 'Sign in with Apple')}
-            </button>
+            <>
+              {appleError && appleError !== 'cancelled' && (
+                <p className="text-xs text-destructive text-center mb-1 font-medium">{appleError}</p>
+              )}
+              <button
+                onClick={handleAppleSignIn}
+                disabled={appleLoading}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95 bg-foreground text-background disabled:opacity-60"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                </svg>
+                {appleLoading
+                  ? (lang === 'tr' ? 'Bağlanıyor...' : 'Connecting...')
+                  : (lang === 'tr' ? 'Apple ile Giriş Yap' : 'Sign in with Apple')}
+              </button>
+            </>
           )}
         </div>
 
@@ -221,10 +227,10 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
 
                     {/* Avatar */}
                     <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 border-2 border-border/30"
+                      className="w-10 h-10 rounded-full overflow-hidden shrink-0 border-2 border-border/30 flex items-center justify-center"
                       style={{ background: av.color }}
                     >
-                      <EmojiImg emoji={av.emoji} size={22} />
+                      <AvatarImg avatar={av} fill />
                     </div>
 
                     {/* Name */}

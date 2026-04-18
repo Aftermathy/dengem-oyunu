@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import { sanitizeNickname, validateNickname, nicknameErrorText, NICKNAME_MAX } from '@/lib/nicknameValidation';
 import { EmojiImg } from '@/components/EmojiImg';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMetaGame } from '@/contexts/MetaGameContext';
@@ -47,13 +48,13 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
     setShowGallery(false);
   };
 
+  const tempNameErr = validateNickname(tempName);
+
   const handleSaveName = () => {
-    const trimmed = tempName.trim();
-    if (trimmed.length >= 2 && trimmed.length <= 20) {
-      onUpdateProfile({ nickname: trimmed });
-      setEditingName(false);
-      playClickSound();
-    }
+    if (tempNameErr) return;
+    onUpdateProfile({ nickname: tempName.trim() });
+    setEditingName(false);
+    playClickSound();
   };
 
   if (showGallery) {
@@ -180,18 +181,25 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
         {/* Nickname */}
         <div className="flex items-center gap-2">
           {editingName ? (
-            <div className="flex items-center gap-2">
-              <Input
-                value={tempName}
-                onChange={e => setTempName(e.target.value.slice(0, 20))}
-                className="text-center text-lg font-bold w-48"
-                maxLength={20}
-                autoFocus
-                onKeyDown={e => e.key === 'Enter' && handleSaveName()}
-              />
-              <button onClick={handleSaveName} className="p-1.5 rounded-full bg-primary">
-                <GameIcon name="check" size={14} className="text-primary-foreground" />
-              </button>
+            <div className="flex flex-col items-center gap-1">
+              <div className="flex items-center gap-2">
+                <Input
+                  value={tempName}
+                  onChange={e => setTempName(sanitizeNickname(e.target.value))}
+                  className="text-center text-lg font-bold w-48"
+                  maxLength={NICKNAME_MAX}
+                  autoFocus
+                  onKeyDown={e => e.key === 'Enter' && handleSaveName()}
+                />
+                <button onClick={handleSaveName} disabled={!!tempNameErr} className="p-1.5 rounded-full bg-primary disabled:opacity-50">
+                  <GameIcon name="check" size={14} className="text-primary-foreground" />
+                </button>
+              </div>
+              {tempNameErr && (
+                <span className="text-xs text-destructive font-medium">
+                  {nicknameErrorText(tempNameErr, lang)}
+                </span>
+              )}
             </div>
           ) : (
             <>

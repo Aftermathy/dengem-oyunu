@@ -5,6 +5,7 @@ import { SKILL_DEFS, type SkillDef } from '@/types/metaGame';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
 import { GameIcon } from '@/components/GameIcon';
+import { useIsDark } from '@/hooks/useIsDark';
 import { CATEGORY_CONFIG, isOhalLevelUnlockable, getOhalLockMessage } from './skillTreeConstants';
 import { CategoryCluster } from './CategoryCluster';
 import { SkillDetailPanel } from './SkillDetailPanel';
@@ -12,15 +13,47 @@ import { SkillDetailPanel } from './SkillDetailPanel';
 export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
   const { lang } = useLanguage();
   const { authorityPoints, purchaseSkill, getSkillLevel, getSkillLockReason, resetAllSkills } = useMetaGame();
+  const isDark = useIsDark();
   const [selectedSkill, setSelectedSkill] = useState<SkillDef | null>(null);
   const [justPurchasedId, setJustPurchasedId] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [bubbleWarning, setBubbleWarning] = useState<{ skillId: string; message: string } | null>(null);
 
+  // ── Theme tokens ──────────────────────────────────────────────────────────
+  const t = isDark ? {
+    screenBg:        'radial-gradient(ellipse at 50% 20%, hsl(220 25% 18%), hsl(220 30% 8%))',
+    titleColor:      'hsl(0 0% 85%)',
+    closeBtnBg:      'hsl(0 0% 100% / 0.1)',
+    closeBtnBorder:  '1px solid hsl(0 0% 100% / 0.15)',
+    closeBtnIcon:    'hsl(0 0% 70%)',
+    modalOverlay:    'hsl(0 0% 0% / 0.7)',
+    modalBg:         'linear-gradient(180deg, hsl(0 30% 18%), hsl(0 25% 12%))',
+    modalBorder:     '1px solid hsl(0 60% 40% / 0.4)',
+    modalTitle:      'hsl(0 0% 90%)',
+    modalBody:       'hsl(0 0% 65%)',
+    cancelBtnBg:     'hsl(0 0% 100% / 0.08)',
+    cancelBtnColor:  'hsl(0 0% 60%)',
+    cancelBtnBorder: '1px solid hsl(0 0% 100% / 0.1)',
+  } : {
+    screenBg:        'hsl(220 20% 94%)',
+    titleColor:      'hsl(220 25% 10%)',
+    closeBtnBg:      'hsl(0 0% 0% / 0.07)',
+    closeBtnBorder:  '1px solid hsl(0 0% 0% / 0.12)',
+    closeBtnIcon:    'hsl(220 20% 25%)',
+    modalOverlay:    'hsl(0 0% 0% / 0.5)',
+    modalBg:         'linear-gradient(180deg, hsl(0 20% 96%), hsl(0 15% 92%))',
+    modalBorder:     '1px solid hsl(0 60% 40% / 0.3)',
+    modalTitle:      'hsl(220 25% 10%)',
+    modalBody:       'hsl(220 10% 40%)',
+    cancelBtnBg:     'hsl(0 0% 0% / 0.06)',
+    cancelBtnColor:  'hsl(220 10% 40%)',
+    cancelBtnBorder: '1px solid hsl(0 0% 0% / 0.1)',
+  };
+
   const handleBubbleClick = useCallback((skill: SkillDef) => {
     playClickSound();
     hapticMedium();
-    
+
     const lockReason = getSkillLockReason(skill.id);
     if (lockReason) {
       const msg = lockReason === 'ohal_blocks_others'
@@ -30,7 +63,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
       setTimeout(() => setBubbleWarning(null), 2500);
       return;
     }
-    
+
     if (skill.id === 'ohal') {
       const currentLevel = getSkillLevel('ohal');
       if (!isOhalLevelUnlockable(currentLevel)) {
@@ -40,7 +73,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
         return;
       }
     }
-    
+
     setSelectedSkill(skill);
   }, [getSkillLockReason, getSkillLevel, lang]);
 
@@ -87,10 +120,10 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col" style={{ background: 'radial-gradient(ellipse at 50% 20%, hsl(220 25% 18%), hsl(220 30% 8%))' }}>
+    <div className="fixed inset-0 z-[100] flex flex-col" style={{ background: t.screenBg }}>
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-[calc(env(safe-area-inset-top,0px)+14px)] pb-3">
-        <h2 className="text-base font-black tracking-wide" style={{ color: 'hsl(0 0% 85%)' }}>
+        <h2 className="text-base font-black tracking-wide" style={{ color: t.titleColor }}>
           {lang === 'en' ? 'SKILL TREE' : 'YETENEK AĞACI'}
         </h2>
         <div className="flex items-center gap-2">
@@ -122,9 +155,9 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform"
-            style={{ background: 'hsl(0 0% 100% / 0.1)', border: '1px solid hsl(0 0% 100% / 0.15)' }}
+            style={{ background: t.closeBtnBg, border: t.closeBtnBorder }}
           >
-            <GameIcon name="close" size={16} style={{ color: 'hsl(0 0% 70%)' }} />
+            <GameIcon name="close" size={16} style={{ color: t.closeBtnIcon }} />
           </button>
         </div>
       </div>
@@ -138,6 +171,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
             config={config}
             skills={skills}
             lang={lang}
+            isDark={isDark}
             getSkillLevel={getSkillLevel}
             justPurchasedId={justPurchasedId}
             onBubbleClick={handleBubbleClick}
@@ -153,6 +187,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
           level={getSkillLevel(selectedSkill.id)}
           ap={authorityPoints}
           lang={lang}
+          isDark={isDark}
           justPurchased={justPurchasedId === selectedSkill.id}
           lockReason={getSkillLockReason(selectedSkill.id)}
           onPurchase={handlePurchase}
@@ -163,12 +198,12 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
       {/* Reset Confirmation Modal */}
       {showResetConfirm && (
         <>
-          <div className="fixed inset-0 z-[130]" style={{ background: 'hsl(0 0% 0% / 0.7)', backdropFilter: 'blur(4px)' }} onClick={() => setShowResetConfirm(false)} />
+          <div className="fixed inset-0 z-[130]" style={{ background: t.modalOverlay, backdropFilter: 'blur(4px)' }} onClick={() => setShowResetConfirm(false)} />
           <div className="fixed inset-0 z-[140] flex items-center justify-center px-8">
             <div className="rounded-2xl p-6 max-w-sm w-full"
               style={{
-                background: 'linear-gradient(180deg, hsl(0 30% 18%), hsl(0 25% 12%))',
-                border: '1px solid hsl(0 60% 40% / 0.4)',
+                background: t.modalBg,
+                border: t.modalBorder,
                 boxShadow: '0 20px 60px hsl(0 0% 0% / 0.5)',
               }}
             >
@@ -178,11 +213,11 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
                 >
                   <GameIcon name="rotate_ccw" size={20} style={{ color: 'hsl(0 70% 60%)' }} />
                 </div>
-                <h3 className="text-base font-black" style={{ color: 'hsl(0 0% 90%)' }}>
+                <h3 className="text-base font-black" style={{ color: t.modalTitle }}>
                   {lang === 'en' ? 'Reset All Skills?' : 'Tüm Yetenekleri Sıfırla?'}
                 </h3>
               </div>
-              <p className="text-sm mb-2" style={{ color: 'hsl(0 0% 65%)' }}>
+              <p className="text-sm mb-2" style={{ color: t.modalBody }}>
                 {lang === 'en'
                   ? `All skills (including OHAL) will be reset${totalSpent > 0 ? ` and ${totalSpent} AP will be refunded` : ''}.`
                   : `Tüm yetenekler (OHAL dahil) sıfırlanacak${totalSpent > 0 ? ` ve ${totalSpent} AP iade edilecek` : ''}.`}
@@ -191,7 +226,7 @@ export function SkillTreeScreen({ onClose }: { onClose: () => void }) {
                 <button
                   onClick={() => setShowResetConfirm(false)}
                   className="flex-1 py-2.5 rounded-xl text-sm font-bold active:scale-95 transition-transform"
-                  style={{ background: 'hsl(0 0% 100% / 0.08)', color: 'hsl(0 0% 60%)', border: '1px solid hsl(0 0% 100% / 0.1)' }}
+                  style={{ background: t.cancelBtnBg, color: t.cancelBtnColor, border: t.cancelBtnBorder }}
                 >
                   {lang === 'en' ? 'Cancel' : 'İptal'}
                 </button>

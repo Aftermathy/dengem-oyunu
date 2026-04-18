@@ -3,6 +3,7 @@ import { EmojiImg } from '@/components/EmojiImg';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
+import { purchaseOrtadoguPack, restorePurchases } from '@/lib/purchases';
 
 interface PremiumModalProps {
   onPurchase: () => void;
@@ -25,6 +26,9 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
   const { lang } = useLanguage();
   const features = lang === 'tr' ? FEATURES_TR : FEATURES_EN;
   const [visible, setVisible] = useState(false);
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [feedback, setFeedback] = useState<'success' | 'cancelled' | 'error' | 'restored' | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 30);
@@ -36,10 +40,41 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
     onClose();
   };
 
-  const handlePurchase = () => {
+  const handlePurchase = async () => {
+    if (purchasing || restoring) return;
     playClickSound();
     hapticMedium();
-    onPurchase();
+    setPurchasing(true);
+    setFeedback(null);
+    const result = await purchaseOrtadoguPack();
+    setPurchasing(false);
+    if (result === 'success') {
+      setFeedback('success');
+      setTimeout(() => { onPurchase(); }, 800);
+    } else if (result === 'cancelled') {
+      setFeedback('cancelled');
+      setTimeout(() => setFeedback(null), 2000);
+    } else {
+      setFeedback('error');
+      setTimeout(() => setFeedback(null), 2500);
+    }
+  };
+
+  const handleRestore = async () => {
+    if (purchasing || restoring) return;
+    playClickSound();
+    hapticMedium();
+    setRestoring(true);
+    setFeedback(null);
+    const active = await restorePurchases();
+    setRestoring(false);
+    if (active) {
+      setFeedback('restored');
+      setTimeout(() => { onPurchase(); }, 800);
+    } else {
+      setFeedback('error');
+      setTimeout(() => setFeedback(null), 2500);
+    }
   };
 
   return (
@@ -113,17 +148,39 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
         <div className="mx-6 h-px" style={{ background: 'hsl(45 50% 40% / 0.25)' }} />
 
         {/* Price + CTA */}
-        <div className="px-6 pt-4 pb-6 space-y-3">
+        <div className="px-6 pt-4 pb-[calc(env(safe-area-inset-bottom,0px)+24px)] space-y-3">
+          {feedback && (
+            <div
+              className="text-center text-sm font-bold py-2 rounded-xl"
+              style={{
+                background: feedback === 'success' || feedback === 'restored'
+                  ? 'hsl(145 70% 42% / 0.2)' : feedback === 'cancelled'
+                  ? 'hsl(45 80% 50% / 0.15)' : 'hsl(0 70% 50% / 0.2)',
+                color: feedback === 'success' || feedback === 'restored'
+                  ? 'hsl(145 70% 55%)' : feedback === 'cancelled'
+                  ? 'hsl(45 80% 60%)' : 'hsl(0 70% 65%)',
+              }}
+            >
+              {feedback === 'success' && (lang === 'tr' ? '✓ Satın alındı!' : '✓ Purchased!')}
+              {feedback === 'restored' && (lang === 'tr' ? '✓ Premium geri yüklendi!' : '✓ Premium restored!')}
+              {feedback === 'cancelled' && (lang === 'tr' ? 'İptal edildi' : 'Cancelled')}
+              {feedback === 'error' && (lang === 'tr' ? 'Bir hata oluştu, tekrar dene' : 'An error occurred, try again')}
+            </div>
+          )}
+
           <button
             onClick={handlePurchase}
-            className="w-full py-4 rounded-2xl font-black text-base text-black active:scale-95 transition-transform relative overflow-hidden"
+            disabled={purchasing || restoring}
+            className="w-full py-4 rounded-2xl font-black text-base text-black active:scale-95 transition-transform relative overflow-hidden disabled:opacity-60"
             style={{
               background: 'linear-gradient(135deg, hsl(45 90% 55%), hsl(35 85% 48%))',
               boxShadow: '0 4px 28px hsl(45 80% 50% / 0.45)',
             }}
           >
             <span className="relative z-10">
-              {lang === 'tr' ? '✦ Satın Al — $2.99' : '✦ Purchase — $2.99'}
+              {purchasing
+                ? (lang === 'tr' ? '⏳ İşleniyor...' : '⏳ Processing...')
+                : (lang === 'tr' ? '✦ Satın Al — $2.99' : '✦ Purchase — $2.99')}
             </span>
           </button>
 
@@ -133,6 +190,16 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
             style={{ background: 'hsl(0 0% 100% / 0.04)' }}
           >
             {lang === 'tr' ? 'Şimdi Değil' : 'Not Now'}
+          </button>
+
+          <button
+            onClick={handleRestore}
+            disabled={purchasing || restoring}
+            className="w-full py-2 text-xs font-semibold text-white/30 hover:text-white/50 transition-colors disabled:opacity-40"
+          >
+            {restoring
+              ? (lang === 'tr' ? '⏳ Kontrol ediliyor...' : '⏳ Checking...')
+              : (lang === 'tr' ? 'Satın Alımları Geri Yükle' : 'Restore Purchases')}
           </button>
         </div>
 

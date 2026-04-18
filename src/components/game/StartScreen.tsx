@@ -189,9 +189,10 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
             const av = AVATAR_DEFS.find(a => a.id === userProfile.avatarId);
             return (
               <button
+                data-tutorial="tut-avatar"
                 onClick={() => { playClickSound(); hapticLight(); onShowProfile(); }}
-                className="w-24 aspect-square flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors rounded-2xl overflow-hidden"
-                style={{ background: av?.color || 'hsl(var(--muted))' }}
+                className="aspect-square flex items-center justify-center shadow-md border-2 border-primary/30 hover:border-primary transition-colors rounded-2xl overflow-hidden"
+                style={{ width: 'min(96px, 22.3vw)', background: av?.color || 'hsl(var(--muted))' }}
               >
                 {av ? <AvatarImg avatar={av} fill /> : <EmojiImg emoji="👤" size={40} />}
               </button>
@@ -201,7 +202,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
 
         <div className="flex flex-col items-end gap-1.5">
           <div className="flex items-center gap-2">
-            <div className="bg-purple-500/15 border border-purple-500/30 rounded-full px-2.5 py-1 flex items-center gap-1">
+            <div data-tutorial="tut-ap" className="bg-purple-500/15 border border-purple-500/30 rounded-full px-2.5 py-1 flex items-center gap-1">
               <EmojiImg emoji="⭐" size={13} />
               <span className="text-xs font-bold text-purple-400">{authorityPoints}</span>
             </div>
@@ -227,7 +228,8 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
           src={throneIcon}
           alt="Throne"
           draggable={false}
-          className={`interactive-img w-72 h-72 sm:w-80 sm:h-80 object-contain drop-shadow-lg cursor-pointer select-none shrink-0 ${throneAnim}`}
+          className={`interactive-img object-contain drop-shadow-lg cursor-pointer select-none shrink-0 ${throneAnim}`}
+          style={{ width: 'min(288px, 67vw)', height: 'min(288px, 67vw)' }}
           onClick={handleThroneClick}
           onContextMenu={e => e.preventDefault()}
           onDragStart={e => e.preventDefault()}
@@ -283,7 +285,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
 
           {/* Meta-game navigation */}
           {userProfile?.hasCompletedOnboarding && (
-            <div className="flex items-center gap-3 flex-wrap justify-center">
+            <div data-tutorial="tut-bottomnav" className="flex items-center gap-3 flex-wrap justify-center">
               <button
                 onClick={() => { playClickSound(); hapticLight(); setShowAchievements(true); }}
                 className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
@@ -401,10 +403,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
 
       {showPremiumModal && (
         <PremiumModal
-          onPurchase={() => {
-            setAdFree();
-            setShowPremiumModal(false);
-          }}
+          onPurchase={() => setShowPremiumModal(false)}
           onClose={() => setShowPremiumModal(false)}
         />
       )}

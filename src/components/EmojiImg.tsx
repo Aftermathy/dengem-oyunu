@@ -4,6 +4,9 @@
  */
 
 import React from 'react';
+import { Capacitor } from '@capacitor/core';
+
+const isIOS = Capacitor.getPlatform() === 'ios';
 
 interface EmojiImgProps {
   emoji: string;
@@ -52,7 +55,7 @@ export function EmojiImg({ emoji, size = 24, className = '', alt, useCDN = false
       aria-label={label || alt || emoji}
       className={`inline-block ${className}`}
       style={{
-        fontFamily: 'Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji, sans-serif',
+        fontFamily: isIOS ? "'Apple Color Emoji', sans-serif" : 'Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji, sans-serif',
         fontSize: size ? `${size}px` : '1em',
         lineHeight: 1,
         verticalAlign: 'middle',

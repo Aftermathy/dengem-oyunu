@@ -1,9 +1,7 @@
 import { EmojiImg } from '@/components/EmojiImg';
 import { ElectionLabels, ConfettiOverlay, AnimatedVote } from './electionUtils';
 import { playClickSound } from '@/hooks/useSound';
-import { GameImages } from '@/config/assets';
 import { GameIcon } from '@/components/GameIcon';
-const defeatElectionImg = GameImages.defeat_election;
 
 interface ElectionResultProps {
   won: boolean;

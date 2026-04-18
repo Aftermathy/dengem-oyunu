@@ -7,9 +7,9 @@
  *  Step 3 › Xcode → Signing & Capabilities → "+ Capability" → In-App Purchase
  *  Step 4 › App Store Connect → In-App Purchases → New:
  *             Type: Non-Consumable
- *             Product ID: com.imuststay.game.ortadogu_pack
+ *             Product ID: com.denizerdogan.imuststay.ortadogu_pack
  *  Step 5 › RevenueCat dashboard (app.revenuecat.com):
- *             - New App → iOS bundle: com.imuststay.game
+ *             - New App → iOS bundle: com.denizerdogan.imuststay
  *             - New Entitlement ID: "premium"
  *             - Attach product to entitlement
  *             - Copy API Key (starts with "appl_") → paste into RC_IOS_API_KEY below
@@ -21,13 +21,13 @@
  * After activation: RevenueCat is the SOURCE OF TRUTH; localStorage is a cache.
  */
 
-// RC: import Purchases, { PURCHASES_ERROR_CODE } from '@revenuecat/purchases-capacitor';
+import { Purchases, PURCHASES_ERROR_CODE } from '@revenuecat/purchases-capacitor';
 import { Capacitor } from '@capacitor/core';
 import { STORAGE_KEYS } from '@/constants/storage';
 
-export const RC_IOS_API_KEY      = 'appl_YOUR_KEY_HERE'; // ← replace before release
+export const RC_IOS_API_KEY      = 'test_ihtTSmWoXGvEJOgpleFmveUrmkV';
 export const RC_ENTITLEMENT_ID   = 'premium';
-export const ORTADOGU_PRODUCT_ID = 'com.imuststay.game.ortadogu_pack';
+export const ORTADOGU_PRODUCT_ID = 'com.denizerdogan.imuststay.ortadogu_pack';
 
 // ─── localStorage cache ───────────────────────────────────────────────────────
 // We write to localStorage after every verified purchase / restore so that
@@ -76,8 +76,8 @@ export function setAdFree(): void {
 export async function initPurchases(): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;
   try {
-    // RC: await Purchases.configure({ apiKey: RC_IOS_API_KEY });
-    // RC: await refreshPremiumStatus();
+    await Purchases.configure({ apiKey: RC_IOS_API_KEY });
+    await refreshPremiumStatus();
   } catch (e) {
     console.error('[IAP] Init failed:', e);
   }
@@ -90,10 +90,10 @@ export async function initPurchases(): Promise<void> {
 export async function refreshPremiumStatus(): Promise<boolean> {
   if (!Capacitor.isNativePlatform()) return cacheIsPremium();
   try {
-    // RC: const { customerInfo } = await Purchases.getCustomerInfo();
-    // RC: const active = !!customerInfo.entitlements.active[RC_ENTITLEMENT_ID];
-    // RC: cacheSetPremium(active);
-    // RC: return active;
+    const { customerInfo } = await Purchases.getCustomerInfo();
+    const active = !!customerInfo.entitlements.active[RC_ENTITLEMENT_ID];
+    cacheSetPremium(active);
+    return active;
   } catch (e) {
     console.error('[IAP] Status refresh failed:', e);
   }
@@ -107,10 +107,10 @@ export async function refreshPremiumStatus(): Promise<boolean> {
 export async function restorePurchases(): Promise<boolean> {
   if (!Capacitor.isNativePlatform()) return cacheIsPremium();
   try {
-    // RC: const { customerInfo } = await Purchases.restorePurchases();
-    // RC: const active = !!customerInfo.entitlements.active[RC_ENTITLEMENT_ID];
-    // RC: cacheSetPremium(active);
-    // RC: return active;
+    const { customerInfo } = await Purchases.restorePurchases();
+    const active = !!customerInfo.entitlements.active[RC_ENTITLEMENT_ID];
+    cacheSetPremium(active);
+    return active;
   } catch (e) {
     console.error('[IAP] Restore failed:', e);
   }
@@ -134,27 +134,22 @@ export async function purchaseOrtadoguPack(): Promise<'success' | 'cancelled' | 
     return 'success';
   }
 
-  // RC: Uncomment the block below once RevenueCat is activated (Step 6)
-  // try {
-  //   const { offerings } = await Purchases.getOfferings();
-  //   const pkg = offerings.current?.availablePackages.find(
-  //     p => p.product.identifier === ORTADOGU_PRODUCT_ID,
-  //   );
-  //   if (!pkg) {
-  //     console.error('[IAP] Product not found in offerings:', ORTADOGU_PRODUCT_ID);
-  //     return 'error';
-  //   }
-  //   const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
-  //   const active = !!customerInfo.entitlements.active[RC_ENTITLEMENT_ID];
-  //   if (active) { cacheSetPremium(true); return 'success'; }
-  //   return 'error';
-  // } catch (e: any) {
-  //   if (e?.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) return 'cancelled';
-  //   console.error('[IAP] Purchase failed:', e);
-  //   return 'error';
-  // }
-
-  // Guard: block real native purchases until RC is activated to avoid bypassing payment
-  console.warn('[IAP] RevenueCat not yet activated — native purchase blocked');
-  return 'error';
+  try {
+    const { offerings } = await Purchases.getOfferings();
+    const pkg = offerings.current?.availablePackages.find(
+      p => p.product.identifier === ORTADOGU_PRODUCT_ID,
+    );
+    if (!pkg) {
+      console.error('[IAP] Product not found in offerings:', ORTADOGU_PRODUCT_ID);
+      return 'error';
+    }
+    const { customerInfo } = await Purchases.purchasePackage({ aPackage: pkg });
+    const active = !!customerInfo.entitlements.active[RC_ENTITLEMENT_ID];
+    if (active) { cacheSetPremium(true); return 'success'; }
+    return 'error';
+  } catch (e: any) {
+    if (e?.code === PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) return 'cancelled';
+    console.error('[IAP] Purchase failed:', e);
+    return 'error';
+  }
 }

@@ -31,14 +31,16 @@ export function useAchievements() {
 
   /** Track death-related achievements */
   const trackDeathAchievements = useCallback((deathFaction: string | undefined, turn: number) => {
-    if (deathFaction) trackDeath(deathFaction);
-    trackSpeedDeath(turn);
-  }, []);
+    const q: string[] = [];
+    if (deathFaction) q.push(...trackDeath(deathFaction));
+    q.push(...trackSpeedDeath(turn));
+    queueAchievements(q);
+  }, [queueAchievements]);
 
   /** Track bankruptcy achievement */
   const trackBankruptcyAchievement = useCallback(() => {
-    trackBankruptcy();
-  }, []);
+    queueAchievements(trackBankruptcy());
+  }, [queueAchievements]);
 
   /** Check election-related achievements */
   const checkElection = useCallback((completedCount: number, isFinalBoss: boolean) => {
