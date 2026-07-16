@@ -80,7 +80,7 @@ export function AchievementList({ onClose, onEquipAvatar }: AchievementListProps
             onClick={onClose}
             className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-foreground font-bold text-lg active:scale-90 transition-transform"
           >
-            ✕
+            X
           </button>
         </div>
       </div>
@@ -191,7 +191,7 @@ function AchievementRow({
         {showDetails ? (
           <EmojiImg emoji={achievement.emoji} size={28} />
         ) : (
-          <span className="text-xl text-muted-foreground">❓</span>
+          <EmojiImg emoji="❓" size={20} />
         )}
       </div>
       <div className="min-w-0 flex-1">
@@ -261,10 +261,10 @@ function AchievementRow({
         </button>
       ) : isClaimed ? (
         <div className="text-xs font-bold text-game-success shrink-0 flex items-center gap-1">
-          ✓ <span className="text-[10px] text-game-success/60">{achievement.apReward}</span>
+          <span>+</span> <span className="text-[10px] text-game-success/60">{achievement.apReward}</span>
         </div>
       ) : isUnlocked ? (
-        <div className="text-xs font-bold text-primary shrink-0">✓</div>
+        <div className="text-xs font-bold text-primary shrink-0">OK</div>
       ) : null}
     </div>
   );

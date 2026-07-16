@@ -341,22 +341,23 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
               {lang === 'tr' ? 'KARA MODA GEÇİŞ!' : 'DARK MODE ACTIVATION!'}
             </h3>
             <p className="text-foreground text-sm leading-relaxed mb-4">
+              <EmojiImg emoji="🕶️" size={14} className="mr-1" />
               {lang === 'tr'
-                ? '🕶️ Dikkat! Kara moda geçmek, dış güçlerin ülke üzerindeki emellerini artırır.. Yine de cesaretin varsa, buyur!'
-                : '🕶️ Warning! Activating Dark Mode strengthens foreign powers\' ambitions over the nation.. If you dare, proceed!'}
+                ? ' Dikkat! Kara moda geçmek, dış güçlerin ülke üzerindeki emellerini artırır.. Yine de cesaretin varsa, buyur!'
+                : ' Warning! Activating Dark Mode strengthens foreign powers\' ambitions over the nation.. If you dare, proceed!'}
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => { playClickSound(); setShowDarkWarning(false); }}
                 className="flex-1 py-2.5 rounded-xl font-bold text-sm bg-muted text-foreground active:scale-95 transition-all"
               >
-                {lang === 'tr' ? '😰 Vazgeç' : '😰 Cancel'}
+                <EmojiImg emoji="😰" size={14} className="mr-1" />{lang === 'tr' ? ' Vazgeç' : ' Cancel'}
               </button>
               <button
                 onClick={() => { playClickSound(); confirmDarkMode(); }}
                 className="flex-1 py-2.5 rounded-xl font-bold text-sm bg-destructive text-destructive-foreground active:scale-95 transition-all"
               >
-                {lang === 'tr' ? '😈 Kara Moda Geç' : '😈 Join the Dark Mode'}
+                <EmojiImg emoji="😈" size={14} className="mr-1" />{lang === 'tr' ? ' Kara Moda Geç' : ' Join the Dark Mode'}
               </button>
             </div>
           </div>

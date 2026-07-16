@@ -25,21 +25,21 @@ export function VictoryBalcony({ displayPlayerVote, displayOpponentVote, labels,
           style={{ textShadow: '0 0 30px hsl(var(--game-gold) / 0.5)' }}>
           {labels.balconyTitle}
         </h2>
-        <p className="text-primary-foreground/90 text-lg italic leading-relaxed drop-shadow-md">
+        <p className="text-white/90 text-lg italic leading-relaxed drop-shadow-md">
           "{labels.balconySubtitle}"
         </p>
         <div className="flex gap-8 my-4">
           <div className="text-center">
             <div className="text-3xl font-black text-game-success-light">{displayPlayerVote}%</div>
-            <div className="text-xs text-primary-foreground/60">{labels.you}</div>
+            <div className="text-xs text-white/70">{labels.you}</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-black text-game-danger-light">{displayOpponentVote}%</div>
-            <div className="text-xs text-primary-foreground/60">{labels.opposition}</div>
+            <div className="text-xs text-white/70">{labels.opposition}</div>
           </div>
         </div>
         <button onClick={() => { playClickSound(); onFinish(); }}
-          className="w-full py-4 font-black rounded-2xl text-xl active:scale-95 transition-all border-2 animate-pulse text-primary-foreground"
+          className="w-full py-4 font-black rounded-2xl text-xl active:scale-95 transition-all border-2 animate-pulse text-white"
           style={{
             background: 'linear-gradient(135deg, hsl(var(--game-success) / 0.8), hsl(var(--game-success-light)))',
             borderColor: 'hsl(var(--game-success-light))',

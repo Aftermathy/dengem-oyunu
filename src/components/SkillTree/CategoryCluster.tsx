@@ -1,6 +1,7 @@
 import type { SkillDef } from '@/types/metaGame';
 import { CATEGORY_CONFIG } from './skillTreeConstants';
 import { SkillBubble } from './SkillBubble';
+import { EmojiImg } from '@/components/EmojiImg';
 
 interface CategoryClusterProps {
   categoryKey: string;
@@ -40,9 +41,10 @@ export function CategoryCluster({
 
       {isOhal && (
         <p className="text-center text-[10px] mb-3 px-4" style={{ color: ohalTextColor }}>
+          <EmojiImg emoji="⚠️" size={11} className="mr-1" />
           {lang === 'en'
-            ? '⚠️ Makes the game harder but multiplies your AP rewards!'
-            : '⚠️ Oyunu zorlaştırır ama AP ödüllerini katlar!'}
+            ? ' Makes the game harder but multiplies your AP rewards!'
+            : ' Oyunu zorlaştırır ama AP ödüllerini katlar!'}
         </p>
       )}
 

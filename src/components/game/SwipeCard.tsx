@@ -208,10 +208,10 @@ function CardContent({ card, direction, t: _t, isFirstSeen }: {
       <div className="grid grid-cols-2 border-t border-border/60 bg-muted/20 flex-shrink-0">
         <div className="flex items-center justify-center text-sm font-bold py-3 min-h-[52px] border-r border-border/60">
           {isFirstSeen ? (
-            <span className="text-muted-foreground/60 tracking-widest">? 💰</span>
+            <span className="text-muted-foreground/60 tracking-widest flex items-center gap-1">? <EmojiImg emoji="💰" size={14} /></span>
           ) : leftMoney !== 0 ? (
-            <span className={leftMoney > 0 ? 'text-game-success' : 'text-game-danger'}>
-              {leftMoney > 0 ? '+' : ''}{leftMoney}B 💰
+            <span className={`flex items-center gap-1 ${leftMoney > 0 ? 'text-game-success' : 'text-game-danger'}`}>
+              {leftMoney > 0 ? '+' : ''}{leftMoney}B <EmojiImg emoji="💰" size={14} />
             </span>
           ) : (
             <span className="text-muted-foreground/40">—</span>
@@ -219,10 +219,10 @@ function CardContent({ card, direction, t: _t, isFirstSeen }: {
         </div>
         <div className="flex items-center justify-center text-sm font-bold py-3 min-h-[52px]">
           {isFirstSeen ? (
-            <span className="text-muted-foreground/60 tracking-widest">? 💰</span>
+            <span className="text-muted-foreground/60 tracking-widest flex items-center gap-1">? <EmojiImg emoji="💰" size={14} /></span>
           ) : rightMoney !== 0 ? (
-            <span className={rightMoney > 0 ? 'text-game-success' : 'text-game-danger'}>
-              {rightMoney > 0 ? '+' : ''}{rightMoney}B 💰
+            <span className={`flex items-center gap-1 ${rightMoney > 0 ? 'text-game-success' : 'text-game-danger'}`}>
+              {rightMoney > 0 ? '+' : ''}{rightMoney}B <EmojiImg emoji="💰" size={14} />
             </span>
           ) : (
             <span className="text-muted-foreground/40">—</span>

@@ -1,5 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
+import { EmojiImg } from '@/components/EmojiImg';
 
 interface Props {
   onYes: () => void;
@@ -11,7 +12,7 @@ export function TutorialAskScreen({ onYes, onNo }: Props) {
   return (
     <div className="fixed inset-0 z-[150] bg-black/80 flex items-center justify-center p-6 animate-fade-in">
       <div className="bg-card border-2 border-border rounded-2xl p-6 max-w-xs w-full text-center shadow-2xl">
-        <div className="text-4xl mb-3">👑</div>
+        <div className="mb-3"><EmojiImg emoji="👑" size={40} /></div>
         <h2 className="text-lg font-black text-foreground mb-2">
           {lang === 'tr' ? 'Nasıl Oynanır?' : 'How to Play?'}
         </h2>

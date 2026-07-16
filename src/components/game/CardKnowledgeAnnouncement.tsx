@@ -1,5 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
+import { EmojiImg } from '@/components/EmojiImg';
 
 interface Props {
   onDismiss: () => void;
@@ -11,7 +12,7 @@ export function CardKnowledgeAnnouncement({ onDismiss, seenCount }: Props) {
   return (
     <div className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-6 animate-fade-in">
       <div className="bg-card border-2 border-primary rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl">
-        <div className="text-5xl mb-3">🧠</div>
+        <div className="mb-3"><EmojiImg emoji="🧠" size={48} /></div>
         <h2 className="text-xl font-black text-foreground mb-2">
           {lang === 'tr' ? 'Tecrübe Kazandın, Başkanım!' : "You've Earned Experience, Leader!"}
         </h2>
@@ -29,7 +30,7 @@ export function CardKnowledgeAnnouncement({ onDismiss, seenCount }: Props) {
           onClick={() => { playClickSound(); onDismiss(); }}
           className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm active:scale-95 transition-all"
         >
-          {lang === 'tr' ? '👑 Anladım, Başlayalım' : '👑 Got It, Back to Throne'}
+          <EmojiImg emoji="👑" size={14} className="mr-1" />{lang === 'tr' ? ' Anladım, Başlayalım' : ' Got It, Back to Throne'}
         </button>
       </div>
     </div>

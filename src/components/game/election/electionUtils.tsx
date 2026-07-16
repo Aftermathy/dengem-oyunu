@@ -68,7 +68,7 @@ export function getElectionLabels(lang: string): ElectionLabels {
     reroll: 'Reroll', rerollCost: `${REROLL_COST}B`,
     balconyTitle: 'CONGRATULATIONS!', balconySubtitle: 'The people have chosen you... again!',
     balconyContinue: '4 More Years!',
-    insufficientBudget: '⚠️ Insufficient Budget!', insufficientLaundered: '⚠️ Not Enough Laundered!',
+    insufficientBudget: '! Insufficient Budget!', insufficientLaundered: '! Not Enough Laundered!',
   } : {
     opposition: 'Muhalefet', you: 'Sen', pickMove: 'Hamle seç:',
     oppMoving: 'Muhalefet hamle yapıyor...', budget: 'Bütçe', laundered: 'Aklanmış',
@@ -78,7 +78,7 @@ export function getElectionLabels(lang: string): ElectionLabels {
     reroll: 'Yenile', rerollCost: `${REROLL_COST}B`,
     balconyTitle: 'TEBRİKLER!', balconySubtitle: 'Millet yine seni seçti...!',
     balconyContinue: '4 Sene Daha!',
-    insufficientBudget: '⚠️ Yetersiz Bütçe!', insufficientLaundered: '⚠️ Yetersiz Aklanmış Para!',
+    insufficientBudget: '! Yetersiz Bütçe!', insufficientLaundered: '! Yetersiz Aklanmış Para!',
   };
 }
 

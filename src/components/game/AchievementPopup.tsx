@@ -40,7 +40,7 @@ export function AchievementPopup({ achievementId, onDone }: AchievementPopupProp
         </div>
         <div className="min-w-0">
           <div className="text-xs font-bold text-primary uppercase tracking-wider">
-            {lang === 'en' ? '🏅 Achievement Unlocked!' : '🏅 Başarım Açıldı!'}
+            <EmojiImg emoji="🏅" size={12} className="mr-1" />{lang === 'en' ? ' Achievement Unlocked!' : ' Başarım Açıldı!'}
           </div>
           <div className="text-sm font-black text-foreground truncate">
             {getAchievementTitle(achievement, lang)}

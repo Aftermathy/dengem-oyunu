@@ -41,7 +41,7 @@ export class ErrorBoundary extends Component<Props, State> {
             color: '#f0f0f0',
           }}
         >
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>⚠️</div>
+          <div style={{ fontSize: '4rem', marginBottom: '1rem', fontWeight: 900, color: '#facc15' }}>!</div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>
             Bir Hata Oluştu / Something Went Wrong
           </h1>

@@ -188,7 +188,7 @@ export function PostGameTutorial({ userProfile, earnedAP, lang, onComplete }: Pr
           onClick={finish}
           className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-black text-base active:scale-95 transition-all"
         >
-          {tr ? '👑 Hükmet!' : '👑 Rule!'}
+          <EmojiImg emoji="👑" size={14} className="mr-1" />{tr ? ' Hükmet!' : ' Rule!'}
         </button>
       </div>
     </div>

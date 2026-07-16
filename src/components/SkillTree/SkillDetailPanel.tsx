@@ -1,5 +1,6 @@
 import { GameIcon } from '@/components/GameIcon';
 import { GameIcons } from '@/config/assets';
+import { EmojiImg } from '@/components/EmojiImg';
 import type { SkillLockReason } from '@/contexts/MetaGameContext';
 import { getSkillTitle, type SkillDef, OHAL_NEGATIVE_EXTRA, OHAL_POSITIVE_REDUCTION, OHAL_LAUNDER_OUTPUT, OHAL_ELECTION_COST_MULT, OHAL_MONEY_VOLATILITY, OHAL_AP_MULTIPLIER } from '@/types/metaGame';
 import { SKILL_ICONS, CATEGORY_CONFIG, getEffectText, getNextEffectText, isOhalLevelUnlockable, getOhalLockMessage } from './skillTreeConstants';
@@ -116,12 +117,12 @@ export function SkillDetailPanel({
               {lang === 'en' ? 'Level Details' : 'Seviye Detayları'}
             </p>
             <div className="space-y-1 text-xs" style={{ color: th.ohalDetailText }}>
-              <p>⬇️ {lang === 'en' ? 'Extra negative effects' : 'Ekstra negatif etki'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>-{OHAL_NEGATIVE_EXTRA[level]}</span></p>
-              <p>⬇️ {lang === 'en' ? 'Reduced positive effects' : 'Azaltılmış pozitif etki'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>-{OHAL_POSITIVE_REDUCTION[level]}</span></p>
-              <p>⬇️ {lang === 'en' ? 'Launder output' : 'Aklama verimi'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>{OHAL_LAUNDER_OUTPUT[level]}B</span></p>
-              <p>⬇️ {lang === 'en' ? 'Election cost multiplier' : 'Seçim maliyet çarpanı'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>×{OHAL_ELECTION_COST_MULT[level]}</span></p>
-              <p>📈 {lang === 'en' ? 'Money volatility' : 'Para volatilitesi'}: <span className="font-bold" style={{ color: 'hsl(45 80% 55%)' }}>×{OHAL_MONEY_VOLATILITY[level]}</span></p>
-              <p>⭐ {lang === 'en' ? 'AP Multiplier' : 'AP Çarpanı'}: <span className="font-black" style={{ color: 'hsl(45 90% 55%)' }}>×{OHAL_AP_MULTIPLIER[level]}</span></p>
+              <p><EmojiImg emoji="⬇️" size={12} className="mr-1" />{lang === 'en' ? 'Extra negative effects' : 'Ekstra negatif etki'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>-{OHAL_NEGATIVE_EXTRA[level]}</span></p>
+              <p><EmojiImg emoji="⬇️" size={12} className="mr-1" />{lang === 'en' ? 'Reduced positive effects' : 'Azaltılmış pozitif etki'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>-{OHAL_POSITIVE_REDUCTION[level]}</span></p>
+              <p><EmojiImg emoji="⬇️" size={12} className="mr-1" />{lang === 'en' ? 'Launder output' : 'Aklama verimi'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>{OHAL_LAUNDER_OUTPUT[level]}B</span></p>
+              <p><EmojiImg emoji="⬇️" size={12} className="mr-1" />{lang === 'en' ? 'Election cost multiplier' : 'Seçim maliyet çarpanı'}: <span className="font-bold" style={{ color: 'hsl(0 70% 60%)' }}>x{OHAL_ELECTION_COST_MULT[level]}</span></p>
+              <p><EmojiImg emoji="📈" size={12} className="mr-1" />{lang === 'en' ? 'Money volatility' : 'Para volatilitesi'}: <span className="font-bold" style={{ color: 'hsl(45 80% 55%)' }}>x{OHAL_MONEY_VOLATILITY[level]}</span></p>
+              <p><EmojiImg emoji="⭐" size={12} className="mr-1" />{lang === 'en' ? 'AP Multiplier' : 'AP Çarpanı'}: <span className="font-black" style={{ color: 'hsl(45 90% 55%)' }}>x{OHAL_AP_MULTIPLIER[level]}</span></p>
             </div>
           </div>
         )}
@@ -152,7 +153,7 @@ export function SkillDetailPanel({
           <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"
             style={{ background: 'hsl(145 70% 42% / 0.15)', color: 'hsl(145 70% 55%)', border: '1px solid hsl(145 70% 42% / 0.3)' }}
           >
-            {lang === 'en' ? '✓ MAXIMUM LEVEL' : '✓ MAKSİMUM SEVİYE'}
+            {lang === 'en' ? 'MAX LEVEL' : 'MAKSİMUM SEVİYE'}
           </div>
         ) : lockReason ? (
           <div className="text-center py-3 rounded-xl font-bold text-sm mt-3"

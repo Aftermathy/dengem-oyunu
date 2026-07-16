@@ -6,11 +6,59 @@
  */
 
 import { Capacitor } from '@capacitor/core';
+import { AdMob, AdmobConsentStatus } from '@capacitor-community/admob';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { isAdFree, setAdFree } from '@/lib/purchases';
 
 // Re-export so every existing import of isAdFree/setAdFree from useAds still works
 export { isAdFree, setAdFree };
+
+// ─── AdMob configuration ──────────────────────────────────────────────────────
+// The App ID (ca-app-pub-5942367057795211~4387951075) lives in Info.plist as
+// GADApplicationIdentifier. Only the interstitial ad unit ID is needed here.
+const INTERSTITIAL_AD_ID = 'ca-app-pub-5942367057795211/3936524936';
+
+// Non-personalized ads flag — true when the user declines App Tracking Transparency.
+let _npa = false;
+let _adsReady = false;
+
+/**
+ * Initialize AdMob once at app startup. Runs the full compliance flow:
+ *   1) iOS App Tracking Transparency (ATT) prompt for IDFA
+ *   2) Google UMP consent (GDPR / EU) — shows the consent form when required
+ *   3) Serves personalized ads only when the user consented AND allowed tracking;
+ *      otherwise falls back to non-personalized. Skips ads entirely if UMP says
+ *      they can't be requested.
+ * Safe no-op on web/dev. Never throws — a failed init must not break the app.
+ */
+export async function initAds(): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return;
+  try {
+    // 1) iOS App Tracking Transparency (IDFA)
+    const before = await AdMob.trackingAuthorizationStatus();
+    if (before.status === 'notDetermined') {
+      await AdMob.requestTrackingAuthorization();
+    }
+    const att = await AdMob.trackingAuthorizationStatus();
+
+    // 2) Google UMP consent (GDPR / EU regions)
+    let consent = await AdMob.requestConsentInfo();
+    if (consent.status === AdmobConsentStatus.REQUIRED && consent.isConsentFormAvailable) {
+      consent = await AdMob.showConsentForm();
+    }
+
+    // 3) Personalized only when consent is fine (obtained or not required) AND tracking allowed
+    const consentOk =
+      consent.status === AdmobConsentStatus.OBTAINED ||
+      consent.status === AdmobConsentStatus.NOT_REQUIRED;
+    _npa = !(consentOk && att.status === 'authorized');
+
+    await AdMob.initialize();
+    _adsReady = consent.canRequestAds !== false; // respect UMP: no ads if consent refused
+  } catch (e) {
+    console.warn('[Ads] init failed:', e);
+  }
+}
 
 // ─── Persistent game counter ──────────────────────────────────────────────────
 
@@ -30,17 +78,14 @@ async function showInterstitialNow(): Promise<void> {
     console.log('[Ads] Interstitial (dev/web — simulated)');
     return;
   }
-  // TODO: Replace with AdMob call once @capacitor-community/admob is installed:
-  // import { AdMob } from '@capacitor-community/admob';
-  // const adId = 'ca-app-pub-YOUR_ID/YOUR_UNIT';
-  // try {
-  //   await AdMob.prepareInterstitial({ adId });
-  //   await AdMob.showInterstitial();
-  // } catch (e) {
-  //   console.warn('[Ads] Interstitial failed — skipping:', e);
-  //   // Never throw: a failed ad must never block gameplay
-  // }
-  console.log('[Ads] Interstitial triggered (native placeholder)');
+  if (!_adsReady) return; // AdMob not initialized — never block gameplay
+  try {
+    await AdMob.prepareInterstitial({ adId: INTERSTITIAL_AD_ID, npa: _npa });
+    await AdMob.showInterstitial();
+  } catch (e) {
+    console.warn('[Ads] Interstitial failed — skipping:', e);
+    // Never throw: a failed ad must never block gameplay
+  }
 }
 
 // ─── Retention-aware ad trigger ───────────────────────────────────────────────

@@ -161,8 +161,8 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
                   ? 'hsl(45 80% 60%)' : 'hsl(0 70% 65%)',
               }}
             >
-              {feedback === 'success' && (lang === 'tr' ? '✓ Satın alındı!' : '✓ Purchased!')}
-              {feedback === 'restored' && (lang === 'tr' ? '✓ Premium geri yüklendi!' : '✓ Premium restored!')}
+              {feedback === 'success' && (lang === 'tr' ? 'Satın alındı!' : 'Purchased!')}
+              {feedback === 'restored' && (lang === 'tr' ? 'Premium geri yüklendi!' : 'Premium restored!')}
               {feedback === 'cancelled' && (lang === 'tr' ? 'İptal edildi' : 'Cancelled')}
               {feedback === 'error' && (lang === 'tr' ? 'Bir hata oluştu, tekrar dene' : 'An error occurred, try again')}
             </div>
@@ -179,8 +179,8 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
           >
             <span className="relative z-10">
               {purchasing
-                ? (lang === 'tr' ? '⏳ İşleniyor...' : '⏳ Processing...')
-                : (lang === 'tr' ? '✦ Satın Al — $2.99' : '✦ Purchase — $2.99')}
+                ? (<><EmojiImg emoji="⏳" size={14} className="mr-1" />{lang === 'tr' ? ' İşleniyor...' : ' Processing...'}</>)
+                : (lang === 'tr' ? 'Satın Al — $2.99' : 'Purchase — $2.99')}
             </span>
           </button>
 
@@ -198,7 +198,7 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
             className="w-full py-2 text-xs font-semibold text-white/30 hover:text-white/50 transition-colors disabled:opacity-40"
           >
             {restoring
-              ? (lang === 'tr' ? '⏳ Kontrol ediliyor...' : '⏳ Checking...')
+              ? (<><EmojiImg emoji="⏳" size={12} className="mr-1" />{lang === 'tr' ? ' Kontrol ediliyor...' : ' Checking...'}</>)
               : (lang === 'tr' ? 'Satın Alımları Geri Yükle' : 'Restore Purchases')}
           </button>
         </div>

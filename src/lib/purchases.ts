@@ -25,7 +25,7 @@ import { Purchases, PURCHASES_ERROR_CODE } from '@revenuecat/purchases-capacitor
 import { Capacitor } from '@capacitor/core';
 import { STORAGE_KEYS } from '@/constants/storage';
 
-export const RC_IOS_API_KEY      = 'test_ihtTSmWoXGvEJOgpleFmveUrmkV';
+export const RC_IOS_API_KEY      = 'appl_zddSGoSQLVgnyqKrzfOjHRRbeYV';
 export const RC_ENTITLEMENT_ID   = 'premium';
 export const ORTADOGU_PRODUCT_ID = 'com.denizerdogan.imuststay.ortadogu_pack';
 

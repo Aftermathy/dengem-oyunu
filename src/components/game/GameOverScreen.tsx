@@ -97,11 +97,11 @@ export function GameOverScreen({
         )}
 
         <div className="flex gap-3 mt-2 w-full">
-          <button onClick={() => { playClickSound(); onRestart(); }} className="flex-1 text-sm px-4 py-4 font-bold rounded-md bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 text-white active:scale-95 transition-all">
-            {t('gameover.restart')}
+          <button onClick={() => { playClickSound(); onRestart(); }} className="flex-1 text-sm px-4 py-4 font-bold rounded-md bg-white/10 backdrop-blur-sm border border-white/25 text-white active:scale-95 transition-all">
+            <EmojiImg emoji="🔄" size={14} className="mr-1" />{t('gameover.restart')}
           </button>
-          <button onClick={() => { playClickSound(); onMainMenu(); }} className="flex-1 text-sm px-4 py-4 font-bold rounded-md bg-game-overlay/30 backdrop-blur-sm border border-primary-foreground/20 text-white/80 active:scale-95 transition-all">
-            {t('gameover.menu')}
+          <button onClick={() => { playClickSound(); onMainMenu(); }} className="flex-1 text-sm px-4 py-4 font-bold rounded-md bg-game-overlay/30 backdrop-blur-sm border border-white/25 text-white/80 active:scale-95 transition-all">
+            <EmojiImg emoji="🏠" size={14} className="mr-1" />{t('gameover.menu')}
           </button>
         </div>
       </div>

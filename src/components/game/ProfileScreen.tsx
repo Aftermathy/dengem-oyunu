@@ -116,7 +116,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
                         <GameIcon name="lock" size={18} className="text-yellow-400" />
                       </div>
                       <div className="absolute -bottom-0.5 -right-0.5 bg-yellow-500 rounded-full w-5 h-5 flex items-center justify-center text-[9px] font-black text-black leading-none shadow-md">
-                        ★
+                        *
                       </div>
                     </>
                   )}
@@ -249,7 +249,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
         {/* Funny Stats */}
         <div className="w-full max-w-xs bg-card border border-border rounded-2xl p-4 space-y-3">
           <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
-            {lang === 'tr' ? '🤫 Gizli Dosya' : '🤫 Classified File'}
+            <EmojiImg emoji="🤫" size={14} className="mr-1" />{lang === 'tr' ? ' Gizli Dosya' : ' Classified File'}
           </h4>
           <StatRow
             emoji="🔥"

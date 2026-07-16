@@ -106,7 +106,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
           onClick={() => setShowLinkedModal(false)}
         >
           <div className="bg-card border-2 border-green-500/50 rounded-2xl p-8 mx-6 max-w-sm w-full shadow-2xl text-center animate-in zoom-in-95 duration-200">
-            <div className="text-5xl mb-3">✅</div>
+            <div className="mb-3"><EmojiImg emoji="✅" size={48} /></div>
             <h3 className="text-lg font-black text-foreground mb-1">
               {lang === 'tr' ? 'Hesap Bağlandı!' : 'Account Linked!'}
             </h3>

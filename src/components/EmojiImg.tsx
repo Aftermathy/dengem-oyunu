@@ -31,7 +31,7 @@ function emojiToCodepoint(emoji: string): string {
   return codepoints.join('-');
 }
 
-export function EmojiImg({ emoji, size = 24, className = '', alt, useCDN = false, label }: EmojiImgProps) {
+export function EmojiImg({ emoji, size = 24, className = '', alt, useCDN = true, label }: EmojiImgProps) {
   if (useCDN) {
     const codepoint = emojiToCodepoint(emoji);
     const src = `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${codepoint}.svg`;
@@ -55,7 +55,7 @@ export function EmojiImg({ emoji, size = 24, className = '', alt, useCDN = false
       aria-label={label || alt || emoji}
       className={`inline-block ${className}`}
       style={{
-        fontFamily: isIOS ? "'Apple Color Emoji', sans-serif" : 'Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji, sans-serif',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif',
         fontSize: size ? `${size}px` : '1em',
         lineHeight: 1,
         verticalAlign: 'middle',
