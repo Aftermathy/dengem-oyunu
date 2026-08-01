@@ -6,6 +6,7 @@
  */
 
 import { Capacitor } from '@capacitor/core';
+import { App as CapApp } from '@capacitor/app';
 import { AdMob, AdmobConsentStatus } from '@capacitor-community/admob';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { isAdFree, setAdFree } from '@/lib/purchases';
@@ -23,6 +24,40 @@ let _npa = false;
 let _adsReady = false;
 
 /**
+ * iOS only shows the App Tracking Transparency prompt when the app's
+ * UIApplication state is `.active`. initAds() runs at launch — while the app
+ * is still `.inactive` behind the splash screen — so a bare
+ * requestTrackingAuthorization() gets silently dropped and Apple's reviewers
+ * "cannot locate the ATT permission request." Wait for the active state before
+ * asking, so the prompt reliably appears on a fresh install.
+ */
+async function waitForActive(): Promise<void> {
+  const { isActive } = await CapApp.getState();
+  if (isActive) return;
+  await new Promise<void>((resolve) => {
+    let settled = false;
+    const finish = (handle?: { remove: () => void }) => {
+      if (settled) return;
+      settled = true;
+      handle?.remove();
+      resolve();
+    };
+    CapApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) finish(handleRef);
+    }).then((handle) => {
+      handleRef = handle;
+      // Re-check in case it went active between getState() and the listener attaching.
+      CapApp.getState().then(({ isActive }) => {
+        if (isActive) finish(handle);
+      });
+    });
+    let handleRef: { remove: () => void } | undefined;
+    // Safety net: never block init forever if the event never fires.
+    setTimeout(() => finish(handleRef), 5000);
+  });
+}
+
+/**
  * Initialize AdMob once at app startup. Runs the full compliance flow:
  *   1) iOS App Tracking Transparency (ATT) prompt for IDFA
  *   2) Google UMP consent (GDPR / EU) — shows the consent form when required
@@ -35,6 +70,8 @@ export async function initAds(): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;
   try {
     // 1) iOS App Tracking Transparency (IDFA)
+    //    Must run while the app is `.active`, otherwise iOS never shows the prompt.
+    await waitForActive();
     const before = await AdMob.trackingAuthorizationStatus();
     if (before.status === 'notDetermined') {
       await AdMob.requestTrackingAuthorization();

@@ -95,7 +95,12 @@ const LanguageContext = createContext<LanguageContextType | null>(null);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Language>(() => {
-    return (localStorage.getItem(STORAGE_KEYS.LANGUAGE) as Language) || "tr";
+    const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE) as Language | null;
+    if (saved === "tr" || saved === "en") return saved;
+    // First launch: auto-detect from the device language.
+    // Turkish device → Turkish; everything else → English. User can still change it in-game.
+    const sys = (navigator.languages?.[0] || navigator.language || "").toLowerCase();
+    return sys.startsWith("tr") ? "tr" : "en";
   });
 
   const setLang = useCallback((l: Language) => {

@@ -18,6 +18,7 @@ import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { AvatarImg } from '@/components/AvatarImg';
 import { PremiumModal } from '@/components/game/PremiumModal';
 import { isAdFree, setAdFree } from '@/hooks/useAds';
+import { IAP_ENABLED } from '@/lib/purchases';
 import { SettingsModal } from '@/components/game/SettingsModal';
 
 const TITLE_VARIANTS = [
@@ -318,7 +319,7 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
           )}
         </div>
 
-        {!isAdFree() && (
+        {IAP_ENABLED && !isAdFree() && (
           <button
             onClick={() => { playClickSound(); hapticMedium(); setShowPremiumModal(true); }}
             className="rounded-lg text-xs font-semibold tracking-wide text-primary/80 border-primary/20 hover:border-primary/40 hover:text-primary transition-all duration-300 shimmer-btn py-2 px-5 border-2 shrink-0 text-shadow-glow">

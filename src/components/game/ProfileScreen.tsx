@@ -6,6 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useMetaGame } from '@/contexts/MetaGameContext';
 import { AVATAR_DEFS, isAvatarUnlocked, getFunnyStats, type UserProfile } from '@/lib/userProfile';
 import { isAdFree } from '@/hooks/useAds';
+import { IAP_ENABLED } from '@/lib/purchases';
 import { AvatarImg } from '@/components/AvatarImg';
 import { playClickSound } from '@/hooks/useSound';
 import { setAdFree } from '@/hooks/useAds';
@@ -36,8 +37,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
   const handleAvatarSelect = (avatarId: string) => {
     const def = AVATAR_DEFS.find(a => a.id === avatarId);
     if (def?.dlcPack && !isAdFree()) {
-      playClickSound();
-      setShowPremiumModal(true);
+      if (IAP_ENABLED) { playClickSound(); setShowPremiumModal(true); }
       return;
     }
     const unlocked = isAvatarUnlocked(avatarId, claimedAchievements, isAdFree());
@@ -69,7 +69,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
           </button>
         </div>
         <div className="grid grid-cols-3 gap-3 p-4">
-          {AVATAR_DEFS.map(avatar => {
+          {AVATAR_DEFS.filter(avatar => IAP_ENABLED || !avatar.dlcPack).map(avatar => {
             const unlocked = isAvatarUnlocked(avatar.id, claimedAchievements, isAdFree());
             const isDlcLocked = !!avatar.dlcPack && !isAdFree();
             const isSelected = avatar.id === profile.avatarId;

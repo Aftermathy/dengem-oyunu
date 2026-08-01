@@ -29,6 +29,12 @@ export const RC_IOS_API_KEY      = 'appl_zddSGoSQLVgnyqKrzfOjHRRbeYV';
 export const RC_ENTITLEMENT_ID   = 'premium';
 export const ORTADOGU_PRODUCT_ID = 'com.denizerdogan.imuststay.ortadogu_pack';
 
+// Master switch for the in-app purchase UI. Kept OFF until the Apple Paid
+// Applications Agreement is active and the IAP is approved in App Store Connect —
+// otherwise the purchase sheet fails ("products could not be fetched") and App
+// Review rejects. Flip to `true` (and ship an update) once the agreement is live.
+export const IAP_ENABLED = false;
+
 // ─── localStorage cache ───────────────────────────────────────────────────────
 // We write to localStorage after every verified purchase / restore so that
 // isAdFree() remains synchronous and safe to call during render.
@@ -74,6 +80,7 @@ export function setAdFree(): void {
  * Call once at app start (main.tsx / App.tsx).
  */
 export async function initPurchases(): Promise<void> {
+  if (!IAP_ENABLED) return;          // IAP disabled → don't configure RevenueCat at all
   if (!Capacitor.isNativePlatform()) return;
   try {
     await Purchases.configure({ apiKey: RC_IOS_API_KEY });

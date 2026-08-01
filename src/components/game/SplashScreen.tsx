@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { GameImages } from '@/config/assets';
 const splashBg = GameImages.splash_bg;
 import { EmojiImg } from '@/components/EmojiImg';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -10,6 +11,7 @@ interface SplashScreenProps {
 export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [progress, setProgress] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
+  const { lang } = useLanguage();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -80,10 +82,11 @@ export const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           className="text-[10px] sm:text-xs text-center leading-relaxed max-w-xs italic"
           style={{ color: 'hsl(30, 10%, 45%)' }}
         >
-          Bu oyundaki tüm olaylar, karakterler ve kurumlar tamamen hayal ürünüdür.
-          Gerçek kişi ve olaylarla herhangi bir benzerlik...{' '}
+          {lang === 'tr'
+            ? 'Bu oyundaki tüm olaylar, karakterler ve kurumlar tamamen hayal ürünüdür. Gerçek kişi ve olaylarla herhangi bir benzerlik...'
+            : 'All events, characters, and institutions in this game are entirely fictional. Any resemblance to real persons or events is...'}{' '}
           <span style={{ color: 'hsl(35, 40%, 60%)' }}>
-            şaşırtıcı derecede tesadüftür. <EmojiImg emoji="😏" size={14} />
+            {lang === 'tr' ? 'şaşırtıcı derecede tesadüftür.' : 'purely, surprisingly coincidental.'} <EmojiImg emoji="😏" size={14} />
           </span>
         </p>
       </div>

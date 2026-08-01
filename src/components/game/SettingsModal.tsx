@@ -4,7 +4,7 @@ import { useSettings } from '@/contexts/SettingsContext';
 import { GameIcon } from '@/components/GameIcon';
 import { playClickSound } from '@/hooks/useSound';
 import { STORAGE_KEYS } from '@/constants/storage';
-import { restorePurchases, isAdFree } from '@/lib/purchases';
+import { restorePurchases, isAdFree, IAP_ENABLED } from '@/lib/purchases';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -275,6 +275,7 @@ export function SettingsModal({ onClose, onMainMenu }: SettingsModalProps) {
             />
           </div>
 
+          {IAP_ENABLED && (<>
           {/* Divider */}
           <div style={{ height: 1, background: 'hsl(var(--game-election) / 0.18)' }} />
 
@@ -337,6 +338,7 @@ export function SettingsModal({ onClose, onMainMenu }: SettingsModalProps) {
               </div>
             )}
           </div>
+          </>)}
 
           {/* Divider */}
           <div style={{ height: 1, background: 'hsl(var(--game-election) / 0.18)' }} />
