@@ -29,11 +29,12 @@ export const RC_IOS_API_KEY      = 'appl_zddSGoSQLVgnyqKrzfOjHRRbeYV';
 export const RC_ENTITLEMENT_ID   = 'premium';
 export const ORTADOGU_PRODUCT_ID = 'com.denizerdogan.imuststay.ortadogu_pack';
 
-// Master switch for the in-app purchase UI. Kept OFF until the Apple Paid
-// Applications Agreement is active and the IAP is approved in App Store Connect —
-// otherwise the purchase sheet fails ("products could not be fetched") and App
-// Review rejects. Flip to `true` (and ship an update) once the agreement is live.
-export const IAP_ENABLED = false;
+// Master switch for the in-app purchase UI. Flipped ON for 1.0.5 (build 8).
+// RELEASE GATE: do not submit this build until the Apple Paid Applications
+// Agreement is Active AND the IAP is created in App Store Connect — otherwise
+// the purchase sheet fails ("products could not be fetched") and App Review
+// rejects.
+export const IAP_ENABLED = true;
 
 // ─── localStorage cache ───────────────────────────────────────────────────────
 // We write to localStorage after every verified purchase / restore so that
