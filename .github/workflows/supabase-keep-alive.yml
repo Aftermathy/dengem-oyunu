@@ -1,0 +1,57 @@
+name: Supabase uyanık kalsın
+
+# Supabase'in ücretsiz planında bir proje yedi gün hareketsiz kalırsa
+# duraklatılır. Duraklatılmış proje, App Store'da yayında olan uygulamanın
+# oturum açmasını, kaydını ve sıralamasını çalışmaz hâle getirir — kullanıcı
+# için bu, uygulamanın bozulmasıdır.
+#
+# Uygulamanın kendi trafiği yeterli olduğu sürece bu iş akışı hiçbir şey
+# değiştirmez; boş geçen bir haftaya karşı sigortadır.
+
+on:
+  schedule:
+    # Her gün 03:17 UTC. Yedi günlük pencereye karşı günlük dokunuş, tek bir
+    # başarısız koşunun projeyi uçurumun kenarına getirmemesi için.
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Veritabanına dokun
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${URL:-}" ] || [ -z "${KEY:-}" ]; then
+            echo "SUPABASE_URL veya SUPABASE_PUBLISHABLE_KEY tanımlı değil." >&2
+            exit 1
+          fi
+          # REST kökü, RLS'e takılmayan ve tablo adı bilmeyi gerektirmeyen tek
+          # uç: OpenAPI tanımını döndürür ve gerçek bir API isteği olarak sayılır.
+          HTTP=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY" \
+            "$URL/rest/v1/")
+          echo "rest/v1/ → $HTTP"
+          case "$HTTP" in
+            200|401|404) ;;
+            *) echo "Beklenmeyen yanıt: $HTTP — proje duraklatılmış olabilir." >&2; exit 1 ;;
+          esac
+
+      - name: Auth uçlarına dokun
+        env:
+          URL: ${{ secrets.SUPABASE_URL }}
+          KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+          # Auth ayrı bir servistir; veritabanı uyanıkken auth'un uyuduğu bir
+          # durumda oyun yine açılmaz. İki servise de ayrı ayrı dokunulur.
+          HTTP=$(curl -sS -o /dev/null -w '%{http_code}' \
+            -H "apikey: $KEY" "$URL/auth/v1/health")
+          echo "auth/v1/health → $HTTP"
+          [ "$HTTP" = "200" ] || { echo "Auth yanıt vermedi: $HTTP" >&2; exit 1; }
