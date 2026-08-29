@@ -17,25 +17,25 @@ import {
 } from 'lucide-react';
 
 // ─── Image asset imports ──────────────────────────────────────────────────
-import factionHalk          from '@/assets/faction-halk.png';
-import factionYatirimcilar  from '@/assets/faction-yatirimcilar.png';
-import factionMafya         from '@/assets/faction-mafya.png';
-import factionTarikat       from '@/assets/faction-tarikat.png';
-import factionOrdu          from '@/assets/faction-ordu.png';
+import factionHalk          from '@/assets/faction-halk.webp';
+import factionYatirimcilar  from '@/assets/faction-yatirimcilar.webp';
+import factionMafya         from '@/assets/faction-mafya.webp';
+import factionTarikat       from '@/assets/faction-tarikat.webp';
+import factionOrdu          from '@/assets/faction-ordu.webp';
 
-import defeatHalk           from '@/assets/defeat-halk.png';
-import defeatYatirimcilar   from '@/assets/defeat-yatirimcilar.png';
-import defeatMafya          from '@/assets/defeat-mafya.png';
-import defeatTarikat        from '@/assets/defeat-tarikat.png';
-import defeatOrdu           from '@/assets/defeat-ordu.png';
-import defeatIflas          from '@/assets/defeat-iflas.png';
-import defeatElection       from '@/assets/defeat-election.png';
+import defeatHalk           from '@/assets/defeat-halk.webp';
+import defeatYatirimcilar   from '@/assets/defeat-yatirimcilar.webp';
+import defeatMafya          from '@/assets/defeat-mafya.webp';
+import defeatTarikat        from '@/assets/defeat-tarikat.webp';
+import defeatOrdu           from '@/assets/defeat-ordu.webp';
+import defeatIflas          from '@/assets/defeat-iflas.webp';
+import defeatElection       from '@/assets/defeat-election.webp';
 
-import victoryBalcony       from '@/assets/victory-balcony.png';
-// ↓ Replace with your final art — drop victory-absolute.png into src/assets/
-import victoryAbsolute      from '@/assets/victory-absolute.png';
+import victoryBalcony       from '@/assets/victory-balcony.webp';
+// ↓ Replace with your final art — drop victory-absolute.webp into src/assets/
+import victoryAbsolute      from '@/assets/victory-absolute.webp';
 import splashBg             from '@/assets/splash-bg.jpg';
-import throneIcon           from '@/assets/throne-icon.png';
+import throneIcon           from '@/assets/throne-icon.webp';
 import arrowLeft            from '@/assets/arrow-left.svg';
 import arrowRight           from '@/assets/arrow-right.svg';
 

@@ -17,7 +17,6 @@ const defeatImages: Record<string, string> = {
 interface GameOverScreenProps {
   title: string;
   description: string;
-  emoji: string;
   image?: string;
   turn: number;
   highScore: number;
@@ -33,7 +32,7 @@ interface GameOverScreenProps {
 }
 
 export function GameOverScreen({
-  title, description, emoji, image, turn, highScore, money, earnedAP,
+  title, description, image, turn, highScore, money, earnedAP,
   onRestart, onMainMenu,
 }: GameOverScreenProps) {
   const { t } = useLanguage();

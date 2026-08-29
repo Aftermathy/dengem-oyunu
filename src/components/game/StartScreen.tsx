@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { playClickSound, playWarStartSound, preloadSounds, playMainMenuMusic, stopMainMenuMusic, isMusicMuted, setMusicMuted } from '@/hooks/useSound';
+import { playClickSound, playWarStartSound, preloadSounds, playMainMenuMusic, stopMainMenuMusic } from '@/hooks/useSound';
 import { EmojiImg } from '@/components/EmojiImg';
 import { GameImages } from '@/config/assets';
 const throneIcon = GameImages.throne_icon;
@@ -17,7 +17,7 @@ import { useMetaGame } from '@/contexts/MetaGameContext';
 import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { AvatarImg } from '@/components/AvatarImg';
 import { PremiumModal } from '@/components/game/PremiumModal';
-import { isAdFree, setAdFree } from '@/hooks/useAds';
+import { isAdFree } from '@/hooks/useAds';
 import { IAP_ENABLED } from '@/lib/purchases';
 import { SettingsModal } from '@/components/game/SettingsModal';
 
@@ -66,7 +66,6 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
   const [showAchievements, setShowAchievements] = useState(false);
   const [showSkillTree, setShowSkillTree] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
-  const [isMusicOn, setIsMusicOn] = useState(() => !isMusicMuted());
   const [showSettings, setShowSettings] = useState(false);
 
   const currentTitle = TITLE_VARIANTS[titleIndex];
@@ -134,21 +133,6 @@ export function StartScreen({ highScore, onStart, onContinue, onShowProfile, onS
     playMainMenuMusic();
     return () => { stopMainMenuMusic(); };
   }, []);
-
-  // Keep music toggle UI in sync with global mute state (e.g. changed in-game)
-  useEffect(() => {
-    const handler = (e: Event) => {
-      setIsMusicOn(!(e as CustomEvent).detail);
-    };
-    window.addEventListener('sound-mute-toggle', handler);
-    return () => window.removeEventListener('sound-mute-toggle', handler);
-  }, []);
-
-  const toggleMusic = useCallback(() => {
-    const next = !isMusicOn;
-    setIsMusicOn(next);
-    setMusicMuted(!next);
-  }, [isMusicOn]);
 
   const renderTitle = () => {
     const parts = currentTitle.text.split(/\*([^*]+)\*/);

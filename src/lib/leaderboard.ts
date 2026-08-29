@@ -10,8 +10,9 @@ export interface LeaderboardEntry {
   max_laundered: number;
   death_reason: string | null;
   created_at: string;
-  user_id: string;
   avatar_id?: string;
+  /** True for the caller's own row. Computed by the view, so no identity travels. */
+  is_me: boolean;
 }
 
 export interface SubmitScoreData {
@@ -53,12 +54,22 @@ export async function submitScore(data: SubmitScoreData, userId: string): Promis
 }
 
 /**
- * Fetch top scores, enriched with avatar_id from profiles.
+ * Fetch the public board.
+ *
+ * Reads `public_leaderboard`, not the table. The table's SELECT policy now only
+ * returns the caller's own rows, because `user_id` is the sole identity in this
+ * system and the old "viewable by everyone" policy handed every one of them to
+ * anyone holding the shipped anon key. The view exposes what a board needs to
+ * show — nickname, score, avatar — and no identity at all.
+ *
+ * It also deduplicates: a row is inserted at the end of every run and the score
+ * is cumulative, so one active player used to occupy the entire top 50. The view
+ * keeps each player's best.
  */
 export async function fetchLeaderboard(limit = 50): Promise<LeaderboardEntry[]> {
   try {
-    const { data: scores, error } = await supabase
-      .from('leaderboard_scores')
+    const { data, error } = await supabase
+      .from('public_leaderboard')
       .select('*')
       .order('score', { ascending: false })
       .limit(limit);
@@ -67,35 +78,60 @@ export async function fetchLeaderboard(limit = 50): Promise<LeaderboardEntry[]> 
       console.error('[Leaderboard] Fetch error:', error.message);
       return [];
     }
-    if (!scores || scores.length === 0) return [];
+    if (!data) return [];
 
-    // Batch-fetch avatar_ids from profiles for all user_ids in the result
-    const userIds = [...new Set(scores.map(s => s.user_id))];
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('user_id, avatar_id')
-      .in('user_id', userIds);
-
-    const avatarMap: Record<string, string> = {};
-    for (const p of profiles || []) {
-      avatarMap[p.user_id] = p.avatar_id;
-    }
-
-    return scores.map(s => ({
-      id: s.id,
-      nickname: s.nickname,
-      score: s.score,
-      elections_won: s.elections_won,
-      max_money: s.max_money,
-      max_election_pct: s.max_election_pct,
-      max_laundered: s.max_laundered,
+    return data.map(s => ({
+      id: s.id ?? '',
+      nickname: s.nickname ?? 'Player',
+      score: s.score ?? 0,
+      elections_won: s.elections_won ?? 0,
+      max_money: s.max_money ?? 0,
+      max_election_pct: s.max_election_pct ?? 0,
+      max_laundered: s.max_laundered ?? 0,
       death_reason: s.death_reason,
-      created_at: s.created_at,
-      user_id: s.user_id,
-      avatar_id: avatarMap[s.user_id] || 'avatar_1',
+      created_at: s.created_at ?? '',
+      avatar_id: s.avatar_id ?? 'avatar_1',
+      is_me: s.is_me ?? false,
     }));
   } catch (err) {
     console.error('[Leaderboard] Fetch exception:', err);
     return [];
+  }
+}
+
+/** Outcome of a moderation action; the UI needs to tell these apart. */
+export type ModerationResult = 'ok' | 'error';
+
+/**
+ * Report a leaderboard entry.
+ *
+ * Takes the row id, never a player id: the public view deliberately does not
+ * expose user_id, and the RPC resolves the row to a player server-side. Three
+ * distinct reporters hide the entry from everyone; the report itself stays for
+ * a human to read afterwards.
+ */
+export async function reportEntry(entryId: string, reason?: string): Promise<ModerationResult> {
+  try {
+    const { error } = await supabase.rpc('report_leaderboard_entry', {
+      p_entry_id: entryId,
+      p_reason: reason ?? null,
+    });
+    if (error) { console.error('[Leaderboard] Report failed:', error.message); return 'error'; }
+    return 'ok';
+  } catch (err) {
+    console.error('[Leaderboard] Report exception:', err);
+    return 'error';
+  }
+}
+
+/** Hide a player from this viewer's board, permanently and for them alone. */
+export async function blockEntry(entryId: string): Promise<ModerationResult> {
+  try {
+    const { error } = await supabase.rpc('block_leaderboard_entry', { p_entry_id: entryId });
+    if (error) { console.error('[Leaderboard] Block failed:', error.message); return 'error'; }
+    return 'ok';
+  } catch (err) {
+    console.error('[Leaderboard] Block exception:', err);
+    return 'error';
   }
 }

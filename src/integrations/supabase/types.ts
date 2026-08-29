@@ -10,10 +10,37 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.4"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
+      content_reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string | null
+          reported_nickname: string
+          reported_user_id: string
+          reporter_uid: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reported_nickname: string
+          reported_user_id: string
+          reporter_uid: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reported_nickname?: string
+          reported_user_id?: string
+          reporter_uid?: string
+        }
+        Relationships: []
+      }
       game_events: {
         Row: {
           created_at: string
@@ -80,10 +107,29 @@ export type Database = {
         }
         Relationships: []
       }
+      player_blocks: {
+        Row: {
+          blocked_user_id: string
+          blocker_uid: string
+          created_at: string
+        }
+        Insert: {
+          blocked_user_id: string
+          blocker_uid?: string
+          created_at?: string
+        }
+        Update: {
+          blocked_user_id?: string
+          blocker_uid?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_id: string
           avatar_url: string | null
+          claimed_achievements: string[]
           created_at: string
           id: string
           nickname: string
@@ -95,6 +141,7 @@ export type Database = {
         Insert: {
           avatar_id?: string
           avatar_url?: string | null
+          claimed_achievements?: string[]
           created_at?: string
           id?: string
           nickname?: string
@@ -106,6 +153,7 @@ export type Database = {
         Update: {
           avatar_id?: string
           avatar_url?: string | null
+          claimed_achievements?: string[]
           created_at?: string
           id?: string
           nickname?: string
@@ -118,10 +166,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_leaderboard: {
+        Row: {
+          avatar_id: string | null
+          created_at: string | null
+          death_reason: string | null
+          elections_won: number | null
+          id: string | null
+          is_me: boolean | null
+          max_election_pct: number | null
+          max_laundered: number | null
+          max_money: number | null
+          nickname: string | null
+          score: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      block_leaderboard_entry: {
+        Args: { p_entry_id: string }
+        Returns: undefined
+      }
+      delete_my_account: { Args: never; Returns: undefined }
+      report_leaderboard_entry: {
+        Args: { p_entry_id: string; p_reason?: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

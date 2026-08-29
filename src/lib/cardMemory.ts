@@ -13,7 +13,7 @@ export function markCardSeen(id: number): void {
     const seen = getSeenCards();
     seen.add(id);
     localStorage.setItem(STORAGE_KEYS.SEEN_CARDS, JSON.stringify([...seen]));
-  } catch {}
+  } catch { /* private mode / quota: a card may simply be seen as new again */ }
 }
 
 export function isCardSeen(id: number): boolean {

@@ -106,7 +106,7 @@ export function trackDeath(faction: string): string[] {
     if (deaths.length >= 5 && unlockAchievement('all_deaths')) {
       newlyUnlocked.push('all_deaths');
     }
-  } catch {}
+  } catch { /* private mode / quota: an achievement may unlock on a later run */ }
   return newlyUnlocked;
 }
 
@@ -130,7 +130,7 @@ export function trackBribe(): string[] {
     const count = parseInt(localStorage.getItem(BRIBE_TOTAL_KEY) || '0', 10) + 1;
     localStorage.setItem(BRIBE_TOTAL_KEY, String(count));
     if (count >= 50 && unlockAchievement('bribe_10')) newlyUnlocked.push('bribe_10');
-  } catch {}
+  } catch { /* private mode / quota: an achievement may unlock on a later run */ }
   return newlyUnlocked;
 }
 
@@ -142,7 +142,7 @@ export function trackLaunder(): string[] {
     const count = parseInt(localStorage.getItem(LAUNDER_TOTAL_KEY) || '0', 10) + 1;
     localStorage.setItem(LAUNDER_TOTAL_KEY, String(count));
     if (count >= 50 && unlockAchievement('launder_5')) newlyUnlocked.push('launder_5');
-  } catch {}
+  } catch { /* private mode / quota: an achievement may unlock on a later run */ }
   return newlyUnlocked;
 }
 
@@ -167,7 +167,7 @@ export function checkCardAchievement(cardId: number): string[] {
       if (chainComplete && unlockAchievement('coffee_chain')) {
         newlyUnlocked.push('coffee_chain');
       }
-    } catch {}
+    } catch { /* private mode / quota: an achievement may unlock on a later run */ }
   }
 
   return newlyUnlocked;

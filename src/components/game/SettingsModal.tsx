@@ -5,6 +5,10 @@ import { GameIcon } from '@/components/GameIcon';
 import { playClickSound } from '@/hooks/useSound';
 import { STORAGE_KEYS } from '@/constants/storage';
 import { restorePurchases, isAdFree, IAP_ENABLED } from '@/lib/purchases';
+import { useAuth } from '@/contexts/AuthContext';
+
+/** Published policy. Also declared in Info.plist and on the App Store listing. */
+const PRIVACY_POLICY_URL = 'https://aftermathvibe.com/privacy-policy.html';
 
 interface SettingsModalProps {
   onClose: () => void;
@@ -140,9 +144,13 @@ export function SettingsModal({ onClose, onMainMenu }: SettingsModalProps) {
   const { lang } = useLanguage();
   const { musicVolume, sfxVolume, showFactionPercentages, setMusicVolume, setSfxVolume, setShowFactionPercentages } = useSettings();
   const tr = lang === 'tr';
+  const { isAuthenticated, deleteAccount } = useAuth();
+  /* 'idle' → 'confirm' → 'working'. Deleting an account is irreversible, so it
+     never happens on a single tap. */
+  const [deleteState, setDeleteState] = useState<'idle' | 'confirm' | 'working' | 'error'>('idle');
 
   const [muted, setMuted] = useState(() => localStorage.getItem(STORAGE_KEYS.SOUND_MUTED) === 'true');
-  const [restoreState, setRestoreState] = useState<'idle' | 'loading' | 'success' | 'already' | 'error'>('idle');
+  const [restoreState, setRestoreState] = useState<'idle' | 'loading' | 'success' | 'nothing' | 'error'>('idle');
 
   useEffect(() => {
     const handler = (e: Event) => setMuted((e as CustomEvent).detail as boolean);
@@ -306,8 +314,12 @@ export function SettingsModal({ onClose, onMainMenu }: SettingsModalProps) {
                   onClick={async () => {
                     playClickSound();
                     setRestoreState('loading');
-                    const active = await restorePurchases();
-                    setRestoreState(active ? 'success' : 'error');
+                    const result = await restorePurchases();
+                    setRestoreState(
+                      result === 'restored' ? 'success'
+                        : result === 'nothing_to_restore' ? 'nothing'
+                        : 'error',
+                    );
                     setTimeout(() => setRestoreState('idle'), 3000);
                   }}
                   className="w-full flex items-center justify-between py-2.5 px-3 rounded active:scale-95 transition-all disabled:opacity-50"
@@ -324,9 +336,14 @@ export function SettingsModal({ onClose, onMainMenu }: SettingsModalProps) {
                       {tr ? '✓ Premium aktif!' : '✓ Premium active!'}
                     </span>
                   )}
+                  {restoreState === 'nothing' && (
+                    <span className="text-[10px] font-bold text-muted-foreground">
+                      {tr ? 'Satın alma yok' : 'Nothing to restore'}
+                    </span>
+                  )}
                   {restoreState === 'error' && (
                     <span className="text-[10px] font-bold" style={{ color: 'hsl(0 70% 60%)' }}>
-                      {tr ? 'Bulunamadı' : 'Not found'}
+                      {tr ? 'Ulaşılamadı' : 'Could not reach store'}
                     </span>
                   )}
                 </button>
@@ -368,6 +385,99 @@ export function SettingsModal({ onClose, onMainMenu }: SettingsModalProps) {
             </div>
           </div>
 
+        </div>
+
+        {/* Account & privacy */}
+        <div className="px-5 pb-4">
+          <button
+            onClick={() => { playClickSound(); window.open(PRIVACY_POLICY_URL, '_system'); }}
+            className="w-full flex items-center justify-between py-2.5 px-3 rounded active:scale-95 transition-all"
+            style={{ border: '1px solid hsl(var(--game-election) / 0.3)', background: 'hsl(var(--game-election) / 0.06)' }}
+          >
+            <span className="text-[11px] font-bold uppercase tracking-wide text-foreground/70">
+              {tr ? 'Gizlilik Politikası' : 'Privacy Policy'}
+            </span>
+          </button>
+
+          {/*
+            Guideline 5.1.1(v): an app that creates an account must let the user
+            delete it from inside the app. Only shown once there is a real
+            account to delete — an anonymous session has nothing behind it.
+          */}
+          {isAuthenticated && (
+            <div className="mt-2">
+              {deleteState === 'idle' && (
+                <button
+                  onClick={() => { playClickSound(); setDeleteState('confirm'); }}
+                  className="w-full py-2.5 px-3 rounded active:scale-95 transition-all text-[11px] font-bold uppercase tracking-wide"
+                  style={{
+                    border: '1px solid hsl(var(--game-danger) / 0.35)',
+                    background: 'hsl(var(--game-danger) / 0.06)',
+                    color: 'hsl(var(--game-danger-light))',
+                  }}
+                >
+                  {tr ? 'Hesabımı Sil' : 'Delete My Account'}
+                </button>
+              )}
+
+              {deleteState === 'confirm' && (
+                <div
+                  className="rounded p-3"
+                  style={{ border: '1px solid hsl(var(--game-danger) / 0.45)', background: 'hsl(var(--game-danger) / 0.08)' }}
+                >
+                  <p className="text-[10px] leading-relaxed" style={{ color: 'hsl(var(--game-danger-light))' }}>
+                    {tr
+                      ? 'Hesabın, skorların ve profilin kalıcı olarak silinir. Bu işlem geri alınamaz.'
+                      : 'Your account, scores and profile are permanently deleted. This cannot be undone.'}
+                  </p>
+                  <div className="flex gap-2 mt-2.5">
+                    <button
+                      onClick={() => { playClickSound(); setDeleteState('idle'); }}
+                      className="flex-1 py-2 rounded text-[10px] font-bold uppercase tracking-wide text-foreground/60"
+                      style={{ border: '1px solid hsl(var(--game-election) / 0.3)' }}
+                    >
+                      {tr ? 'Vazgeç' : 'Cancel'}
+                    </button>
+                    <button
+                      onClick={async () => {
+                        playClickSound();
+                        setDeleteState('working');
+                        const res = await deleteAccount();
+                        if (res.success) { onClose(); } else { setDeleteState('error'); }
+                      }}
+                      className="flex-1 py-2 rounded text-[10px] font-black uppercase tracking-wide"
+                      style={{ background: 'hsl(var(--game-danger) / 0.8)', color: 'white' }}
+                    >
+                      {tr ? 'Kalıcı Olarak Sil' : 'Delete Permanently'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {deleteState === 'working' && (
+                <p className="text-[10px] text-center py-2 text-foreground/60">
+                  {tr ? 'Siliniyor…' : 'Deleting…'}
+                </p>
+              )}
+
+              {deleteState === 'error' && (
+                <div className="rounded p-3" style={{ border: '1px solid hsl(0 70% 60% / 0.4)' }}>
+                  <p className="text-[10px]" style={{ color: 'hsl(0 70% 65%)' }}>
+                    {tr
+                      ? 'Silinemedi. Bağlantını kontrol edip tekrar dene.'
+                      : 'Could not delete. Check your connection and try again.'}
+                  </p>
+                  <button
+                    onClick={() => { playClickSound(); setDeleteState('idle'); }}
+                    className="w-full mt-2 py-2 rounded text-[10px] font-bold uppercase tracking-wide text-foreground/60"
+                    style={{ border: '1px solid hsl(var(--game-election) / 0.3)' }}
+                  >
+                    {tr ? 'Tamam' : 'OK'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Footer — Main Menu button (in-game only) */}

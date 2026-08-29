@@ -3,7 +3,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { GameIcon } from '@/components/GameIcon';
 
 interface CrisisAlertProps {
-  type: 'crisis' | 'emergency_fund';
+  type: 'crisis' | 'emergency_fund' | 'both';
   onDone: () => void;
 }
 
@@ -22,13 +22,19 @@ export function CrisisAlert({ type, onDone }: CrisisAlertProps) {
     return () => { clearTimeout(timer); clearTimeout(shakeTimer); };
   }, [onDone]);
 
-  const isCrisis = type === 'crisis';
-  const title = isCrisis
-    ? (lang === 'en' ? 'Crisis Management Activated!' : 'Kriz Yönetimi Devreye Girdi!')
-    : (lang === 'en' ? 'Emergency Fund Injected!' : 'Acil Fon Enjekte Edildi!');
-  const subtitle = isCrisis
-    ? (lang === 'en' ? 'Bar restored to 20%! (Once per game)' : 'Bar %20\'ye çekildi! (Oyun başına 1 kez)')
-    : (lang === 'en' ? '+25B injected! (Once per game)' : '+25B enjekte edildi! (Oyun başına 1 kez)');
+  const en = lang === 'en';
+  const isCrisis = type === 'crisis' || type === 'both';
+  const title = type === 'both'
+    ? (en ? 'Both Lifelines Spent!' : 'İki Joker de Yandı!')
+    : type === 'crisis'
+      ? (en ? 'Crisis Management Activated!' : 'Kriz Yönetimi Devreye Girdi!')
+      : (en ? 'Emergency Fund Injected!' : 'Acil Fon Enjekte Edildi!');
+  const subtitle = type === 'both'
+    ? (en ? 'Bar restored to 20% and +25B injected. Neither is available again this game.'
+          : 'Bar %20\'ye çekildi ve +25B enjekte edildi. İkisi de bu oyunda bir daha yok.')
+    : type === 'crisis'
+      ? (en ? 'Bar restored to 20%! (Once per game)' : 'Bar %20\'ye çekildi! (Oyun başına 1 kez)')
+      : (en ? '+25B injected! (Once per game)' : '+25B enjekte edildi! (Oyun başına 1 kez)');
 
   return (
     <div

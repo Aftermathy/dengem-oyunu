@@ -26,3 +26,6 @@ apple-client-secret.txt
 *.njsproj
 *.sln
 *.sw?
+
+# tsc -b artıkları
+*.tsbuildinfo

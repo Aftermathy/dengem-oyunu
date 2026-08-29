@@ -20,7 +20,7 @@ export function AvatarImg({ avatar, size, fill, className = '' }: AvatarImgProps
   if (avatar.imageId && !imgError) {
     return (
       <img
-        src={`/assets/avatars/${avatar.imageId}.png`}
+        src={`/assets/avatars/${avatar.imageId}.webp`}
         alt={avatar.nameEN}
         onError={() => setImgError(true)}
         className={className}

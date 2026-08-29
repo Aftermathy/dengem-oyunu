@@ -3,7 +3,7 @@ import { EmojiImg } from '@/components/EmojiImg';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playClickSound } from '@/hooks/useSound';
 import { hapticMedium } from '@/hooks/useHaptics';
-import { purchaseOrtadoguPack, restorePurchases } from '@/lib/purchases';
+import { purchaseOrtadoguPack, restorePurchases, getPackPriceString } from '@/lib/purchases';
 
 interface PremiumModalProps {
   onPurchase: () => void;
@@ -12,13 +12,13 @@ interface PremiumModalProps {
 
 const FEATURES_TR = [
   { emoji: '🗺️', title: '10 Özel Senaryo Kartı', desc: 'Ortadoğu Kriz Paketi — jeopolitik kararlar, gerçek sonuçlar.' },
-  { emoji: '🎭', title: '3 Yeni Lider Profili',  desc: 'Karikatür ikonlar: Sarışın Şerif, Acemler, Siyonistler...' },
+  { emoji: '🎭', title: '3 Yeni Lider Profili',  desc: 'Karikatür avatarlar: Sarışın Tüccar, Roket Adam, Siyon.' },
   { emoji: '📵', title: 'Ömür Boyu Reklamsız',    desc: 'Bir daha asla reklam görmeden oyna.' },
 ];
 
 const FEATURES_EN = [
   { emoji: '🗺️', title: '10 Exclusive Scenario Cards', desc: 'Middle East Crisis Pack — geopolitical decisions, real consequences.' },
-  { emoji: '🎭', title: '3 New Leader Profiles',        desc: 'Caricature icons: Blonde Sheriff, Persians, Zionists...' },
+  { emoji: '🎭', title: '3 New Leader Profiles',        desc: 'Caricature avatars: Blonde Trader, Rocket Guy, The Zion.' },
   { emoji: '📵', title: 'Lifetime Ad-Free',              desc: 'Never see another ad while you play.' },
 ];
 
@@ -28,7 +28,15 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
   const [visible, setVisible] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
-  const [feedback, setFeedback] = useState<'success' | 'cancelled' | 'error' | 'restored' | null>(null);
+  const [feedback, setFeedback] = useState<'success' | 'cancelled' | 'error' | 'restored' | 'nothing' | null>(null);
+  /** Localised price from StoreKit; null until it arrives, or if the store is unreachable. */
+  const [price, setPrice] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    void getPackPriceString().then(p => { if (alive) setPrice(p); });
+    return () => { alive = false; };
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 30);
@@ -66,13 +74,14 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
     hapticMedium();
     setRestoring(true);
     setFeedback(null);
-    const active = await restorePurchases();
+    const result = await restorePurchases();
     setRestoring(false);
-    if (active) {
+    if (result === 'restored') {
       setFeedback('restored');
       setTimeout(() => { onPurchase(); }, 800);
     } else {
-      setFeedback('error');
+      // 'nothing_to_restore' is not a failure — it is an answer.
+      setFeedback(result === 'nothing_to_restore' ? 'nothing' : 'error');
       setTimeout(() => setFeedback(null), 2500);
     }
   };
@@ -164,7 +173,8 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
               {feedback === 'success' && (lang === 'tr' ? 'Satın alındı!' : 'Purchased!')}
               {feedback === 'restored' && (lang === 'tr' ? 'Premium geri yüklendi!' : 'Premium restored!')}
               {feedback === 'cancelled' && (lang === 'tr' ? 'İptal edildi' : 'Cancelled')}
-              {feedback === 'error' && (lang === 'tr' ? 'Bir hata oluştu, tekrar dene' : 'An error occurred, try again')}
+              {feedback === 'nothing' && (lang === 'tr' ? 'Geri yüklenecek satın alma yok' : 'No purchase to restore')}
+              {feedback === 'error' && (lang === 'tr' ? 'Mağazaya ulaşılamadı, tekrar dene' : 'Could not reach the store, try again')}
             </div>
           )}
 
@@ -180,7 +190,9 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
             <span className="relative z-10">
               {purchasing
                 ? (<><EmojiImg emoji="⏳" size={14} className="mr-1" />{lang === 'tr' ? ' İşleniyor...' : ' Processing...'}</>)
-                : (lang === 'tr' ? 'Satın Al — $2.99' : 'Purchase — $2.99')}
+                : (lang === 'tr'
+                    ? (price ? `Satın Al — ${price}` : 'Satın Al')
+                    : (price ? `Purchase — ${price}` : 'Purchase'))}
             </span>
           </button>
 

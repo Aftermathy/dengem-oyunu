@@ -1095,7 +1095,7 @@ export const dlcCardsEN: EventCard[] = normalizeCards([
   },
   {
     id: 5006, character: 'Energy Minister', characterEmoji: '☢️', imageId: 'energy_minister2', category: 'Foreign Policy',
-    description: 'Rumor has it the Zionists\' bombs couldn\'t go deep enough and the Persians underground that resource...',
+    description: 'Rumor has it the Zion\'s bombs couldn\'t go deep enough and the Persians underground that resource...',
     leftChoice: 'Let\'s secretly enrich uranium too!', rightChoice: 'Leave it to the Peace Forces',
     leftEffects: [{ power: 'halk', amount: 10 }, { power: 'yatirimcilar', amount: -20 }, { power: 'mafya', amount: 0 }, { power: 'tarikat', amount: 10 }, { power: 'ordu', amount: 15 }],
     rightEffects: [{ power: 'halk', amount: 0 }, { power: 'yatirimcilar', amount: 5 }, { power: 'mafya', amount: 0 }, { power: 'tarikat', amount: 0 }, { power: 'ordu', amount: -5 }],

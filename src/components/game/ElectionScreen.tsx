@@ -245,7 +245,7 @@ export const ElectionScreen = ({ config, money, launderedMoney, halkPower: _halk
           lang={lang}
           onComplete={() => {
             setShowTutorial(false);
-            try { localStorage.setItem(STORAGE_KEYS.ELECTION_TUTORIAL_DONE, 'true'); } catch {}
+            try { localStorage.setItem(STORAGE_KEYS.ELECTION_TUTORIAL_DONE, 'true'); } catch { /* private mode / quota: at worst the tutorial shows once more */ }
           }}
         />
       )}

@@ -23,9 +23,9 @@ interface MetaGameContextValue {
   getSkillLockReason: (skillId: string) => SkillLockReason;
   resetAllSkills: () => void;
   crisisAvailableThisGame: boolean;
-  useCrisisJoker: () => void;
+  spendCrisisJoker: () => void;
   emergencyFundAvailableThisGame: boolean;
-  useEmergencyFund: () => void;
+  spendEmergencyFund: () => void;
   resetGameSession: () => void;
 }
 
@@ -142,8 +142,8 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const useCrisisJoker = useCallback(() => setCrisisUsed(true), []);
-  const useEmergencyFund = useCallback(() => setEmergencyFundUsed(true), []);
+  const spendCrisisJoker = useCallback(() => setCrisisUsed(true), []);
+  const spendEmergencyFund = useCallback(() => setEmergencyFundUsed(true), []);
   const resetGameSession = useCallback(() => {
     setCrisisUsed(false);
     setEmergencyFundUsed(false);
@@ -162,11 +162,11 @@ export function MetaGameProvider({ children }: { children: ReactNode }) {
     getSkillLockReason,
     resetAllSkills,
     crisisAvailableThisGame: modifiers.hasCrisisManagement && !crisisUsed,
-    useCrisisJoker,
+    spendCrisisJoker,
     emergencyFundAvailableThisGame: modifiers.hasEmergencyFund && !emergencyFundUsed,
-    useEmergencyFund,
+    spendEmergencyFund,
     resetGameSession,
-  }), [authorityPoints, skills, claimed, modifiers, earnAP, claimAchievement, isAchievementClaimed, purchaseSkill, getSkillLevel, getSkillLockReason, resetAllSkills, crisisUsed, useCrisisJoker, emergencyFundUsed, useEmergencyFund, resetGameSession]);
+  }), [authorityPoints, skills, claimed, modifiers, earnAP, claimAchievement, isAchievementClaimed, purchaseSkill, getSkillLevel, getSkillLockReason, resetAllSkills, crisisUsed, spendCrisisJoker, emergencyFundUsed, spendEmergencyFund, resetGameSession]);
 
   return <MetaGameContext.Provider value={value}>{children}</MetaGameContext.Provider>;
 }

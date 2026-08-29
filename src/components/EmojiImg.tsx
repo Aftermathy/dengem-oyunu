@@ -4,10 +4,6 @@
  */
 
 import React from 'react';
-import { Capacitor } from '@capacitor/core';
-
-const isIOS = Capacitor.getPlatform() === 'ios';
-
 interface EmojiImgProps {
   emoji: string;
   size?: number;
@@ -31,7 +27,15 @@ function emojiToCodepoint(emoji: string): string {
   return codepoints.join('-');
 }
 
-export function EmojiImg({ emoji, size = 24, className = '', alt, useCDN = true, label }: EmojiImgProps) {
+/*
+  `useCDN` defaults to false, which is what this file's own header and the prop's
+  doc comment have always said it did. It was `true`, and no call site passes the
+  prop, so every icon in the game — menus, buttons, the game-over screen — was an
+  <img> fetched from cdn.jsdelivr.net at render time. With no network the UI lost
+  all of its icons, and every player's device announced itself to a third-party
+  CDN on each launch.
+*/
+export function EmojiImg({ emoji, size = 24, className = '', alt, useCDN = false, label }: EmojiImgProps) {
   if (useCDN) {
     const codepoint = emojiToCodepoint(emoji);
     const src = `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${codepoint}.svg`;

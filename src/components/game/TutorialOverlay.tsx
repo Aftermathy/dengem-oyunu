@@ -109,7 +109,7 @@ export function TutorialOverlay({ onComplete }: Props) {
           <p className="text-xs text-muted-foreground leading-relaxed mb-3">{current.desc}</p>
 
           <button
-            onClick={() => { playClickSound(); isLast ? onComplete() : setStep(s => s + 1); }}
+            onClick={() => { playClickSound(); if (isLast) onComplete(); else setStep(s => s + 1); }}
             className="w-full py-2 rounded-xl bg-primary text-primary-foreground font-bold text-sm active:scale-95 transition-all"
           >
             {isLast

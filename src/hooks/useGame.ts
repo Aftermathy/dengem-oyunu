@@ -60,7 +60,13 @@ function resolveChainDelay(delay: ChainDelay): number {
   return Math.floor(Math.random() * (delay.max - delay.min + 1)) + delay.min;
 }
 
-export type CrisisAlertType = 'crisis' | 'emergency_fund' | null;
+/**
+ * `'both'` exists because a single card can zero a faction and bankrupt the
+ * player at once (card 25 does). Both jokers are then spent, but the second
+ * setCrisisAlertType used to overwrite the first, so the player was told about
+ * one of the two things they had just used up.
+ */
+export type CrisisAlertType = 'crisis' | 'emergency_fund' | 'both' | null;
 
 // Last regular-swipe turn before the final election fires at turn 87.
 // Chain cards scheduled beyond this turn will never be shown.
@@ -69,8 +75,8 @@ const LAST_SWIPE_TURN = Math.max(...Object.keys(ELECTION_TRIGGER_MAP).map(Number
 export function useGame(lang: Language) {
   const { t } = useLanguage();
   const {
-    modifiers, earnAP, crisisAvailableThisGame, useCrisisJoker,
-    emergencyFundAvailableThisGame, useEmergencyFund, resetGameSession,
+    modifiers, earnAP, crisisAvailableThisGame, spendCrisisJoker,
+    emergencyFundAvailableThisGame, spendEmergencyFund, resetGameSession,
   } = useMetaGame();
   const achievements = useAchievements();
 
@@ -231,17 +237,25 @@ export function useGame(lang: Language) {
     setCurrentElectionIndex(null);
     setLastEarnedAP(0);
     setCrisisAlertType(null);
-    setPendingChainCards(
-      saved?.pendingChainCards
-        ? (saved.pendingChainCards as { card: EventCard; insertAtTurn: number }[])
-        : []
-    );
+    setPendingChainCards(saved?.pendingChainCards ?? []);
+    // Restore the cash the player already spent on laundering: without it the
+    // election shop reads 0 and every special power is unaffordable.
+    setTotalLaundered(saved?.totalLaundered ?? 0);
     resetGameSession();
     setPhase('playing');
-  }, [lang, modifiers.rareCardBonus, resetGameSession]);
+  }, [lang, modifiers.rareCardBonus, resetGameSession, setTotalLaundered]);
 
   // ── Swipe handler ──
+  /*
+    True only while a card is flying out. Cleared unconditionally as the first
+    thing swipe() does, and swipe() is always called by the same timeout that
+    set it, so the flag cannot get stuck holding the buttons shut.
+  */
+  const [resolvingSwipe, setResolvingSwipe] = useState(false);
+  const beginSwipe = useCallback(() => setResolvingSwipe(true), []);
+
   const swipe = useCallback((direction: 'left' | 'right') => {
+    setResolvingSwipe(false);
     if (!currentCard || phase !== 'playing') return;
 
     const firstSeen = !isCardSeen(currentCard.id);
@@ -321,7 +335,7 @@ export function useGame(lang: Language) {
           if (fixedPower[key] <= 0) fixedPower[key] = 20;
         }
         newPower = fixedPower;
-        useCrisisJoker();
+        spendCrisisJoker();
         setPower(newPower);
         setCrisisAlertType('crisis');
       } else {
@@ -349,8 +363,10 @@ export function useGame(lang: Language) {
       if (emergencyFundAvailableThisGame) {
         newMoney = 25;
         setMoney(25);
-        useEmergencyFund();
-        setCrisisAlertType('emergency_fund');
+        spendEmergencyFund();
+        // Functional form: the crisis branch above may have set this in the same
+        // synchronous handler, and the plain value would still read null here.
+        setCrisisAlertType(prev => (prev === 'crisis' ? 'both' : 'emergency_fund'));
       } else {
         const bankruptScenario = { title: t('gameover.bankruptcy.title'), description: t('gameover.bankruptcy.desc'), emoji: '💸', image: 'defeat-iflas' };
         achievements.trackBankruptcyAchievement();
@@ -422,7 +438,7 @@ export function useGame(lang: Language) {
       saveGame({
         power: newPower, money: newMoney, turn: newTurn, cardIndex: nextIndex,
         bribeCounts, reputation: 0, completedElections, savedAt: Date.now(),
-        pendingChainCards: pendingChainCards as { card: Record<string, unknown>; insertAtTurn: number }[],
+        pendingChainCards, totalLaundered, peakLaundered,
       });
       setPhase('election');
       return;
@@ -439,6 +455,7 @@ export function useGame(lang: Language) {
         saveGame({
           power: newPower, money: newMoney, turn: newTurn, cardIndex: nextIndex,
           bribeCounts, reputation: 0, completedElections, savedAt: Date.now(),
+          pendingChainCards, totalLaundered, peakLaundered,
         });
         return;
       }
@@ -447,9 +464,10 @@ export function useGame(lang: Language) {
     saveGame({
       power: newPower, money: newMoney, turn: newTurn, cardIndex: nextIndex,
       bribeCounts, reputation: 0, completedElections, savedAt: Date.now(),
+      pendingChainCards, totalLaundered, peakLaundered,
     });
     setCardIndex(nextIndex);
-  }, [currentCard, phase, power, money, turn, cardIndex, deck, checkGameOver, lang, tutorialShown, completedElections, bribeCounts, usedCardIdsInGame, maxMoney, t, modifiers, totalLaundered, crisisAvailableThisGame, useCrisisJoker, emergencyFundAvailableThisGame, useEmergencyFund, awardAP, updateHighScore, achievements, pendingChainCards]);
+  }, [currentCard, phase, power, money, turn, cardIndex, deck, checkGameOver, lang, tutorialShown, completedElections, bribeCounts, usedCardIdsInGame, maxMoney, t, modifiers, totalLaundered, crisisAvailableThisGame, spendCrisisJoker, emergencyFundAvailableThisGame, spendEmergencyFund, awardAP, updateHighScore, achievements, pendingChainCards]);
 
   // ── Tutorial handlers ──
   const completeTutorialBribe = useCallback(() => {
@@ -480,11 +498,12 @@ export function useGame(lang: Language) {
       saveGame({
         power, money, turn, cardIndex, bribeCounts,
         reputation: 0, completedElections, savedAt: Date.now(),
+        pendingChainCards, totalLaundered, peakLaundered,
       });
     }
     setPhase('start');
     setGameOverInfo(null);
-  }, [phase, power, money, turn, cardIndex, bribeCounts, completedElections]);
+  }, [phase, power, money, turn, cardIndex, bribeCounts, completedElections, pendingChainCards, totalLaundered, peakLaundered]);
 
   // ── Election loss handler ──
   const handleElectionLoss = useCallback(() => {
@@ -537,7 +556,7 @@ export function useGame(lang: Language) {
     saveGame({
       power, money: result.remainingBudget, turn, cardIndex: pendingAdvance?.nextIndex ?? 0,
       bribeCounts, reputation: 0, completedElections: newCompletedElections, savedAt: Date.now(),
-      pendingChainCards: pendingChainCards as { card: Record<string, unknown>; insertAtTurn: number }[],
+      pendingChainCards, totalLaundered, peakLaundered,
     });
     void handleAdTrigger('electionWin');
     setPhase('playing');
@@ -549,18 +568,30 @@ export function useGame(lang: Language) {
   // On native iOS: Capacitor App.addListener('appStateChange') is more reliable
   // than visibilitychange (WKWebView can delay or skip it during phone calls).
   // On web: falls back to visibilitychange.
-  const bgSaveRef = useRef({ power, money, turn, cardIndex, bribeCounts, completedElections, pendingChainCards });
-  bgSaveRef.current = { power, money, turn, cardIndex, bribeCounts, completedElections, pendingChainCards };
+  const bgSaveRef = useRef({ phase, power, money, turn, cardIndex, bribeCounts, completedElections, pendingChainCards, totalLaundered, peakLaundered });
+  bgSaveRef.current = { phase, power, money, turn, cardIndex, bribeCounts, completedElections, pendingChainCards, totalLaundered, peakLaundered };
 
   useEffect(() => {
     const doSave = () => {
-      if (bgSaveRef.current.turn === 0) return; // don't save before game starts
       const s = bgSaveRef.current;
+      if (s.turn === 0) return; // don't save before game starts
+      /*
+        Only a run that is still being played may be written back.
+
+        The guard used to be `turn === 0` alone. After a death, swipe() calls
+        clearSave() and moves to 'gameover' — but turn is still 40 and one
+        faction is still at 0, so a phone call or a swipe to the home screen on
+        the game-over screen wrote the dead run straight back to disk. The next
+        launch offered "Continue", dropped the player into an already-lost turn,
+        and awarded the AP for that run a second time.
+      */
+      if (s.phase !== 'playing' && s.phase !== 'election') return;
       saveGame({
         power: s.power, money: s.money, turn: s.turn, cardIndex: s.cardIndex,
         bribeCounts: s.bribeCounts, reputation: 0, completedElections: s.completedElections,
         savedAt: Date.now(),
-        pendingChainCards: s.pendingChainCards as { card: Record<string, unknown>; insertAtTurn: number }[],
+        pendingChainCards: s.pendingChainCards,
+        totalLaundered: s.totalLaundered, peakLaundered: s.peakLaundered,
       });
     };
 
@@ -586,9 +617,12 @@ export function useGame(lang: Language) {
     crisisAlertType, clearCrisisAlert: () => setCrisisAlertType(null),
     ohalLevel: modifiers.ohalLevel,
     startGame, continueGame, swipe,
-    bribe, canBribe, getBribeCost,
+    beginSwipe,
+    bribe,
+    canBribe: useCallback((f: PowerType) => !resolvingSwipe && canBribe(f), [resolvingSwipe, canBribe]),
+    getBribeCost,
     completeTutorialBribe, skipTutorial, goToMenu,
-    totalLaundered, canLaunder, launder,
+    totalLaundered, canLaunder: canLaunder && !resolvingSwipe, launder,
     currentElectionIndex, completedElections, handleElectionComplete,
     handleElectionLoss,
     pendingAchievements: achievements.pendingAchievements,

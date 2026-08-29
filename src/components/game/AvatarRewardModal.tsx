@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { EmojiImg } from '@/components/EmojiImg';
 import { AVATAR_DEFS } from '@/lib/userProfile';
 import { AvatarImg } from '@/components/AvatarImg';
 import { playClickSound } from '@/hooks/useSound';

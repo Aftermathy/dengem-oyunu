@@ -2,18 +2,72 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- App does NOT use data for tracking -->
-    <key>NSPrivacyTracking</key>
-    <false/>
+    <!--
+      The app tracks.
 
-    <!-- No tracking domains -->
+      This said <false/> until 1.0.5 build 9, while useAds.ts called
+      AdMob.requestTrackingAuthorization() and served personalised ads whenever
+      the user allowed it. Asking for ATT is, by Apple's own definition, asking
+      permission to track: declaring otherwise here contradicts the prompt the
+      user sees and is caught by Apple's automated privacy-manifest checks.
+    -->
+    <key>NSPrivacyTracking</key>
+    <true/>
+
+    <!--
+      Domains that receive data used for tracking. Apple blocks these at the
+      network layer when the user has not granted ATT, which is the mechanism
+      that makes the declaration mean something.
+
+      These are Google's published AdMob serving and measurement endpoints. If
+      Google changes that list, this array must follow it: a domain listed here
+      wrongly gets blocked, and a tracking domain missing from here is exactly
+      what the automated check looks for.
+    -->
     <key>NSPrivacyTrackingDomains</key>
-    <array/>
+    <array>
+        <string>googleads.g.doubleclick.net</string>
+        <string>pagead2.googlesyndication.com</string>
+        <string>googleadservices.com</string>
+        <string>app-measurement.com</string>
+    </array>
 
     <!-- Data collected by the app -->
     <key>NSPrivacyCollectedDataTypes</key>
     <array>
-        <!-- User ID (device ID / Apple Sign In ID) -->
+        <!--
+          Advertising identifier (IDFA). Only read after the user allows
+          tracking; when they decline, useAds.ts sets the non-personalised flag
+          and the identifier is not used. It is still declared here, because the
+          declaration describes what the app may collect, not what a particular
+          user happened to allow.
+        -->
+        <dict>
+            <key>NSPrivacyCollectedDataType</key>
+            <string>NSPrivacyCollectedDataTypeDeviceID</string>
+            <key>NSPrivacyCollectedDataTypeLinked</key>
+            <false/>
+            <key>NSPrivacyCollectedDataTypeTracking</key>
+            <true/>
+            <key>NSPrivacyCollectedDataTypePurposes</key>
+            <array>
+                <string>NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising</string>
+            </array>
+        </dict>
+        <!-- Ad interaction data handled by AdMob (impressions, clicks). -->
+        <dict>
+            <key>NSPrivacyCollectedDataType</key>
+            <string>NSPrivacyCollectedDataTypeAdvertisingData</string>
+            <key>NSPrivacyCollectedDataTypeLinked</key>
+            <false/>
+            <key>NSPrivacyCollectedDataTypeTracking</key>
+            <true/>
+            <key>NSPrivacyCollectedDataTypePurposes</key>
+            <array>
+                <string>NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising</string>
+            </array>
+        </dict>
+        <!-- User ID (device UUID, or the Apple Sign In identifier once linked) -->
         <dict>
             <key>NSPrivacyCollectedDataType</key>
             <string>NSPrivacyCollectedDataTypeUserID</string>
@@ -31,7 +85,7 @@
             <key>NSPrivacyCollectedDataType</key>
             <string>NSPrivacyCollectedDataTypeGameplayContent</string>
             <key>NSPrivacyCollectedDataTypeLinked</key>
-            <false/>
+            <true/>
             <key>NSPrivacyCollectedDataTypeTracking</key>
             <false/>
             <key>NSPrivacyCollectedDataTypePurposes</key>
@@ -39,7 +93,7 @@
                 <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
             </array>
         </dict>
-        <!-- Other diagnostic data (error logs sent to backend) -->
+        <!-- Other diagnostic data (error logs sent to the backend) -->
         <dict>
             <key>NSPrivacyCollectedDataType</key>
             <string>NSPrivacyCollectedDataTypeOtherDiagnosticData</string>

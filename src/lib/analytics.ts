@@ -61,7 +61,7 @@ async function flush() {
   }));
 
   try {
-    const { error } = await supabase.from('game_events').insert(rows as any);
+    const { error } = await supabase.from('game_events').insert(rows);
     if (error && isDev) {
       console.warn('[Analytics] Flush error:', error.message);
     }

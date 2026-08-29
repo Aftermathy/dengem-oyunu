@@ -2,7 +2,6 @@ import { createContext, useContext, useState, useCallback, useMemo, useEffect, t
 import { loadUserProfile, saveUserProfile, type UserProfile } from '@/lib/userProfile';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
-import { getDeviceId } from '@/lib/deviceId';
 import { useAuth } from '@/contexts/AuthContext';
 
 type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
@@ -21,14 +20,22 @@ interface UserProfileContextValue {
 
 const UserProfileContext = createContext<UserProfileContextValue | null>(null);
 
-function getEffectiveUserId(authUserId: string | undefined): string {
-  return authUserId || getDeviceId();
-}
-
 async function syncProfileToSupabase(profile: UserProfile, userId: string): Promise<void> {
   try {
+    /*
+      The id is re-read from the live session instead of trusting the one passed
+      in. React state can be a render behind, and a write that goes out with a
+      stale or empty id is rejected by the row-level policy — the first launch of
+      the identity build logged exactly that: "new row violates row-level
+      security policy for table profiles". Asking the client who it is at the
+      moment of writing removes the race rather than narrowing it.
+    */
+    const { data: { session } } = await supabase.auth.getSession();
+    const uid = session?.user.id;
+    if (!uid || uid !== userId) return;
+
     const record: ProfileInsert = {
-      user_id: userId,
+      user_id: uid,
       nickname: profile.nickname || 'Player',
       avatar_id: profile.avatarId,
       total_ap: profile.totalAP,
@@ -103,15 +110,24 @@ async function fetchProfileFromSupabase(userId: string): Promise<Partial<UserPro
 }
 
 export function UserProfileProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, isAuthenticated, isReady } = useAuth();
   const [profile, setProfile] = useState<UserProfile>(loadUserProfile);
 
-  const effectiveUserId = getEffectiveUserId(user?.id);
+  /*
+    Empty string until the session is up. Identity used to be a device UUID the
+    client made up for itself; it is now auth.uid(), which the server issued and
+    can check. Every write is guarded on it being non-empty, because a write
+    with no session is denied by the policies anyway and would only log noise.
+  */
+  const effectiveUserId = user?.id ?? '';
 
   useEffect(() => {
     let cancelled = false;
-    const isAuthenticated = effectiveUserId !== getDeviceId();
+    if (!isReady || !effectiveUserId) return;
     async function initialSync() {
+      // What the profile looked like when the request went out; anything that
+      // differs when it comes back was changed by the player in the meantime.
+      const base = loadUserProfile();
       const remote = await fetchProfileFromSupabase(effectiveUserId);
       if (cancelled || !remote) return;
       setProfile(prev => {
@@ -125,10 +141,20 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
         const remoteClaimed = remote.claimedAchievements || [];
         const mergedClaimed = [...new Set([...localClaimed, ...remoteClaimed])];
 
+        /*
+          Local wins for the two fields the player edits by hand. The remote
+          copy used to win unconditionally, so someone who opened the app on a
+          weak connection and immediately changed their avatar watched the old
+          one snap back when the request landed — and the next sync then wrote
+          the rolled-back value out again. Totals and arrays still merge, so no
+          progress is lost either way.
+        */
+        const editedLocally = prev.nickname !== base.nickname || prev.avatarId !== base.avatarId;
+
         const merged: UserProfile = {
           ...prev,
-          nickname: remote.nickname || prev.nickname,
-          avatarId: remote.avatarId || prev.avatarId,
+          nickname: editedLocally ? prev.nickname : (remote.nickname || prev.nickname),
+          avatarId: editedLocally ? prev.avatarId : (remote.avatarId || prev.avatarId),
           totalAP: Math.max(prev.totalAP, remote.totalAP ?? 0),
           isAppleLinked: isAuthenticated,
           unlockedAvatars: mergedAvatars,
@@ -138,15 +164,15 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
         return merged;
       });
     }
-    initialSync();
+    void initialSync();
     return () => { cancelled = true; };
-  }, [effectiveUserId]);
+  }, [effectiveUserId, isReady, isAuthenticated]);
 
   const updateProfile = useCallback((updates: Partial<UserProfile>) => {
     setProfile(prev => {
       const next = { ...prev, ...updates };
       saveUserProfile(next);
-      syncProfileToSupabase(next, effectiveUserId);
+      if (effectiveUserId) syncProfileToSupabase(next, effectiveUserId);
       return next;
     });
   }, [effectiveUserId]);
@@ -156,7 +182,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
     setProfile(prev => {
       const next = { ...prev, totalAP: prev.totalAP + amount };
       saveUserProfile(next);
-      syncProfileToSupabase(next, effectiveUserId);
+      if (effectiveUserId) syncProfileToSupabase(next, effectiveUserId);
       return next;
     });
   }, [effectiveUserId]);
@@ -166,7 +192,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
       if (prev.unlockedAvatars?.includes(avatarId)) return prev;
       const next = { ...prev, unlockedAvatars: [...(prev.unlockedAvatars || []), avatarId] };
       saveUserProfile(next);
-      syncProfileToSupabase(next, effectiveUserId);
+      if (effectiveUserId) syncProfileToSupabase(next, effectiveUserId);
       return next;
     });
   }, [effectiveUserId]);

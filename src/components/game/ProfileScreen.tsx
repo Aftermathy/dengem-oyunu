@@ -9,7 +9,6 @@ import { isAdFree } from '@/hooks/useAds';
 import { IAP_ENABLED } from '@/lib/purchases';
 import { AvatarImg } from '@/components/AvatarImg';
 import { playClickSound } from '@/hooks/useSound';
-import { setAdFree } from '@/hooks/useAds';
 import { PremiumModal } from '@/components/game/PremiumModal';
 import { hapticLight, hapticMedium } from '@/hooks/useHaptics';
 import { GameIcon } from '@/components/GameIcon';
@@ -143,7 +142,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
 
       {showPremiumModal && (
         <PremiumModal
-          onPurchase={() => { setAdFree(); setShowPremiumModal(false); }}
+          onPurchase={() => setShowPremiumModal(false)}
           onClose={() => setShowPremiumModal(false)}
         />
       )}</>
@@ -292,7 +291,7 @@ export function ProfileScreen({ profile, onUpdateProfile, onClose }: ProfileScre
 
       {showPremiumModal && (
         <PremiumModal
-          onPurchase={() => { setAdFree(); setShowPremiumModal(false); }}
+          onPurchase={() => setShowPremiumModal(false)}
           onClose={() => setShowPremiumModal(false)}
         />
       )}

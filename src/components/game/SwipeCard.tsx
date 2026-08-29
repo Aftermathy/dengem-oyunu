@@ -11,12 +11,14 @@ const arrowRight = GameImages.arrow_right;
 interface SwipeCardProps {
   card: EventCard;
   onSwipe: (direction: 'left' | 'right') => void;
+  /** Fired the moment the card starts flying out, 300ms before onSwipe. */
+  onSwipeStart?: () => void;
   onHoverEffects: (effects: PowerEffect[]) => void;
   onHoverMoney: (amount: number | null) => void;
   isFirstSeen: boolean;
 }
 
-export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirstSeen }: SwipeCardProps) {
+export function SwipeCard({ card, onSwipe, onSwipeStart, onHoverEffects, onHoverMoney, isFirstSeen }: SwipeCardProps) {
   const { t } = useLanguage();
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -59,6 +61,16 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
       const dir = dragX > 0 ? 'right' : 'left';
       playSwipeSound(dir);
       setExiting(dir);
+      /*
+        The card's decision is applied 300ms later, when the animation ends, and
+        that call carries absolute power and money values computed now. A bribe
+        or a laundering tapped with the other thumb inside that window is applied
+        to current state and then overwritten by those stale absolutes — the
+        reputation gain vanished while bribeCounts stayed raised, and laundering
+        came out free. Telling the parent the swipe has started lets it close
+        those buttons for the length of the animation.
+      */
+      onSwipeStart?.();
       setTimeout(() => {
         onSwipe(dir);
         setExiting(null);
@@ -67,6 +79,22 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
     } else {
       setDragX(0);
     }
+    onHoverEffects([]);
+    onHoverMoney(null);
+  };
+
+  /*
+    iOS ends a drag with `pointercancel` and no `pointerup` whenever the system
+    takes over: an incoming call, Siri, the home swipe, pulling down Control or
+    Notification Centre. Without this the card froze mid-tilt with isDragging
+    still true and dragX still past the threshold, and the player's next tap
+    anywhere then fired the exit path — an irreversible card decision they never
+    made. Cancelling resets without consulting the threshold, on purpose.
+  */
+  const handlePointerCancel = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    setDragX(0);
     onHoverEffects([]);
     onHoverMoney(null);
   };
@@ -126,6 +154,8 @@ export function SwipeCard({ card, onSwipe, onHoverEffects, onHoverMoney, isFirst
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+        onLostPointerCapture={handlePointerCancel}
       >
         <CardContent card={card} direction={direction} t={t} isFirstSeen={isFirstSeen} />
       </div>
@@ -146,7 +176,7 @@ function CharacterVisual({ card }: { card: EventCard }) {
         }}
       >
         <img
-          src={`/assets/images/characters/${card.imageId}.png`}
+          src={`/assets/images/characters/${card.imageId}.webp`}
           alt={card.character}
           onError={() => setImgError(true)}
           className="object-cover rounded-full block"

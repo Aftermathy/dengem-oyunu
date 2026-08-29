@@ -3654,7 +3654,7 @@ export const dlcCardsTR: EventCard[] = normalizeCards([
     imageId: "energy_minister2",
     category: "Dış Politika",
     dlcPack: "ortadogu",
-    description: "Söylentilere göre Siyonistlerin bombaları derine inemedi ve Acemler yeraltında o 'Büyük Patlayıcı'yı tamamladı.",
+    description: "Söylentilere göre Siyonların bombaları derine inemedi ve Acemler yeraltında o 'Büyük Patlayıcı'yı tamamladı.",
     leftChoice: "Biz de gizlice uranyum zenginleştirelim!",
     rightChoice: "Barış Güçleri'ne 'Çok endişeliyiz' faksı çek.",
     leftEffects: [{ power: "halk", amount: 10 }, { power: "yatirimcilar", amount: -20 }, { power: "mafya", amount: 0 }, { power: "tarikat", amount: 10 }, { power: "ordu", amount: 15 }],

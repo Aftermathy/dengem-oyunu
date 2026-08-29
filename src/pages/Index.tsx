@@ -42,7 +42,7 @@ const Index = () => {
   const { lang } = useLanguage();
   const {
     phase, power, money, currentCard, turn, highScore,
-    gameOverInfo, lastMoneyChange, startGame, continueGame, swipe,
+    gameOverInfo, lastMoneyChange, startGame, continueGame, swipe, beginSwipe,
     bribe, canBribe, getBribeCost, tutorialFaction,
     completeTutorialBribe, skipTutorial, goToMenu,
     totalLaundered, canLaunder, launder,
@@ -256,6 +256,7 @@ const Index = () => {
               key={currentCard.id + '-' + turn}
               card={currentCard}
               onSwipe={swipe}
+              onSwipeStart={beginSwipe}
               onHoverEffects={handleHoverEffects}
               onHoverMoney={handleHoverMoney}
               isFirstSeen={currentCardFirstSeen}
@@ -297,7 +298,6 @@ const Index = () => {
         <GameOverScreen
           title={gameOverInfo.title}
           description={gameOverInfo.description}
-          emoji={gameOverInfo.emoji}
           image={gameOverInfo.image}
           turn={turn}
           highScore={highScore}

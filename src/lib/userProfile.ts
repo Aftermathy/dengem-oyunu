@@ -62,7 +62,7 @@ export const AVATAR_DEFS: AvatarDef[] = [
   // Ortadoğu DLC avatarları — premium (ad-free) ile açılır
   { id: 'avatar_png_1', emoji: '💰', imageId: 'blonde_trader', nameTR: 'Sarışın Tüccar', nameEN: 'Blonde Trader', color: 'hsl(40 70% 35%)', dlcPack: 'ortadogu' },
   { id: 'avatar_png_2', emoji: '🚀', imageId: 'rocket_guy', nameTR: 'Roket Adam', nameEN: 'Rocket Guy', color: 'hsl(220 70% 35%)', dlcPack: 'ortadogu' },
-  { id: 'avatar_png_3', emoji: '⭐', imageId: 'zionist_leader', nameTR: 'Siyon', nameEN: 'The Zion', color: 'hsl(0 60% 30%)', dlcPack: 'ortadogu' },
+  { id: 'avatar_png_3', emoji: '⭐', imageId: 'star_marshal', nameTR: 'Siyon', nameEN: 'The Zion', color: 'hsl(0 60% 30%)', dlcPack: 'ortadogu' },
   // 8 unlockable — tied to achievements
   { id: 'avatar_4', emoji: '🍳', imageId: 'av4', nameTR: 'Mutfak Muhalifi', nameEN: 'Kitchen Rebel', color: 'hsl(25 80% 45%)',
     unlockAchievement: 'speed_death', unlockTextTR: '8 Turdan Önce Düş', unlockTextEN: 'Fall Before Turn 8' },

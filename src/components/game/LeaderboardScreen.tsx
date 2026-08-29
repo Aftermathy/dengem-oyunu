@@ -7,8 +7,7 @@ import { AVATAR_DEFS, type UserProfile } from '@/lib/userProfile';
 import { AvatarImg } from '@/components/AvatarImg';
 import { GameIcon } from '@/components/GameIcon';
 import { useAppleSignIn } from '@/hooks/useAppleSignIn';
-import { fetchLeaderboard, type LeaderboardEntry } from '@/lib/leaderboard';
-import { getDeviceId } from '@/lib/deviceId';
+import { fetchLeaderboard, reportEntry, blockEntry, type LeaderboardEntry } from '@/lib/leaderboard';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface LeaderboardScreenProps {
@@ -26,9 +25,14 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
   const [retryCount, setRetryCount] = useState(0);
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [showLinkedModal, setShowLinkedModal] = useState(false);
-
-  // Use auth user_id if signed in, otherwise device UUID
-  const myUserId = user?.id || getDeviceId();
+  /*
+    Guideline 1.2 wants a way to report and a way to block whoever is behind a
+    nickname on a public board. Held per row id, which is all the client has:
+    the view does not hand out user ids, so both actions go through an RPC that
+    resolves the row to a player on the server.
+  */
+  const [moderating, setModerating] = useState<LeaderboardEntry | null>(null);
+  const [moderationDone, setModerationDone] = useState<'reported' | 'blocked' | 'error' | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,7 +44,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
         if (cancelled) return;
 
         // Check if player already has an entry in the fetched data
-        const hasPlayerEntry = data.some(e => e.user_id === myUserId);
+        const hasPlayerEntry = data.some(e => e.is_me);
 
         if (!hasPlayerEntry) {
           // Add local player as a virtual entry for display
@@ -54,8 +58,8 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
             max_laundered: 0,
             death_reason: null,
             created_at: new Date().toISOString(),
-            user_id: myUserId,
             avatar_id: userProfile.avatarId,
+            is_me: true,
           };
           data.push(virtualEntry);
           data.sort((a, b) => b.score - a.score);
@@ -70,7 +74,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     }
     load();
     return () => { cancelled = true; };
-  }, [userProfile.totalAP, userProfile.nickname, userProfile.avatarId, myUserId, lang, retryCount]);
+  }, [userProfile.totalAP, userProfile.nickname, userProfile.avatarId, user?.id, lang, retryCount]);
 
   const getMedal = (i: number) => {
     if (i === 0) return '🥇';
@@ -90,13 +94,13 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
     hapticMedium();
     const data = await appleSignIn();
     if (data) {
-      onUpdateProfile({ isAppleLinked: true } as any);
+      onUpdateProfile({ isAppleLinked: true });
       setShowLinkedModal(true);
     }
   };
 
   // findIndex returns -1 when not found — keep as index so >= 0 check is unambiguous
-  const playerRankIndex = entries.findIndex(e => e.user_id === myUserId);
+  const playerRankIndex = entries.findIndex(e => e.is_me);
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 animate-fade-in p-4">
@@ -207,7 +211,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
           ) : (
             <div className="space-y-1.5">
               {entries.map((entry, i) => {
-                const isPlayer = entry.user_id === myUserId;
+                const isPlayer = entry.is_me;
                 const av = isPlayer ? getPlayerAvatar() : getAvatarDef(entry.avatar_id);
                 return (
                   <div
@@ -253,6 +257,18 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
                       </div>
                       <div className="text-[10px] text-muted-foreground">AP</div>
                     </div>
+
+                    {/* Report / block. Never on your own row, and never on the
+                        local placeholder, which has no server row behind it. */}
+                    {!isPlayer && entry.id !== 'local-player' && (
+                      <button
+                        onClick={() => { playClickSound(); setModerating(entry); setModerationDone(null); }}
+                        aria-label={lang === 'tr' ? 'Bu oyuncuyu bildir veya engelle' : 'Report or block this player'}
+                        className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground/60 active:scale-90 transition-transform"
+                      >
+                        <span className="text-base leading-none">⋯</span>
+                      </button>
+                    )}
                   </div>
                 );
               })}
@@ -260,6 +276,89 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
           )}
         </div>
       </div>
+
+      {moderating && (
+        <div
+          className="fixed inset-0 z-[320] flex items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm"
+          onClick={() => setModerating(null)}
+        >
+          <div
+            className="w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl p-5 bg-background"
+            onClick={e => e.stopPropagation()}
+          >
+            <p className="text-sm font-bold text-foreground mb-1">
+              {moderating.nickname}
+            </p>
+            <p className="text-[11px] text-muted-foreground mb-4">
+              {lang === 'tr'
+                ? 'Bu ad rahatsız ediciyse bildir. Engellersen bu oyuncuyu bir daha tabloda görmezsin.'
+                : 'Report this name if it is offensive. Blocking hides this player from your board for good.'}
+            </p>
+
+            {moderationDone === null ? (
+              <div className="space-y-2">
+                <button
+                  onClick={async () => {
+                    playClickSound();
+                    const r = await reportEntry(moderating.id);
+                    setModerationDone(r === 'ok' ? 'reported' : 'error');
+                  }}
+                  className="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wide"
+                  style={{ border: '1px solid hsl(var(--game-danger) / 0.4)', color: 'hsl(var(--game-danger-light))' }}
+                >
+                  {lang === 'tr' ? 'Bildir' : 'Report'}
+                </button>
+                <button
+                  onClick={async () => {
+                    playClickSound();
+                    const r = await blockEntry(moderating.id);
+                    if (r === 'ok') {
+                      setEntries(prev => prev.filter(e => e.id !== moderating.id));
+                      setModerationDone('blocked');
+                    } else {
+                      setModerationDone('error');
+                    }
+                  }}
+                  className="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wide"
+                  style={{ border: '1px solid hsl(var(--game-danger) / 0.4)', color: 'hsl(var(--game-danger-light))' }}
+                >
+                  {lang === 'tr' ? 'Engelle' : 'Block'}
+                </button>
+                <button
+                  onClick={() => { playClickSound(); setModerating(null); }}
+                  className="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wide text-muted-foreground"
+                  style={{ border: '1px solid hsl(var(--game-election) / 0.25)' }}
+                >
+                  {lang === 'tr' ? 'Vazgeç' : 'Cancel'}
+                </button>
+              </div>
+            ) : (
+              <div>
+                <p className="text-xs py-2" style={{
+                  color: moderationDone === 'error' ? 'hsl(0 70% 60%)' : 'hsl(145 70% 55%)',
+                }}>
+                  {moderationDone === 'reported' && (lang === 'tr'
+                    ? 'Bildirildi. Yeterli bildirim gelirse bu ad herkesten gizlenir.'
+                    : 'Reported. The name is hidden from everyone once enough people report it.')}
+                  {moderationDone === 'blocked' && (lang === 'tr'
+                    ? 'Engellendi. Bu oyuncuyu bir daha görmeyeceksin.'
+                    : 'Blocked. You will not see this player again.')}
+                  {moderationDone === 'error' && (lang === 'tr'
+                    ? 'İşlem tamamlanamadı, tekrar dene.'
+                    : 'That did not go through, try again.')}
+                </p>
+                <button
+                  onClick={() => { playClickSound(); setModerating(null); }}
+                  className="w-full mt-2 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wide text-muted-foreground"
+                  style={{ border: '1px solid hsl(var(--game-election) / 0.25)' }}
+                >
+                  {lang === 'tr' ? 'Kapat' : 'Close'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
