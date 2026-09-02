@@ -9,7 +9,7 @@ export const darkModeChain_TR: EventCard[] = normalizeCards([
   // After election 1
   {
     id: 9201,
-    character: "CIA Analisti",
+    character: "Dost Ülke İstihbarat Analisti",
     characterEmoji: "🕶️",
     imageId: "shadow_advisor",
     category: "Dış Güçler",
@@ -39,7 +39,7 @@ export const darkModeChain_TR: EventCard[] = normalizeCards([
     characterEmoji: "🕵️",
     imageId: "shadow_advisor",
     category: "Dış Güçler",
-    description: "Tekrar geldi. Bu sefer Starbucks'tan sipariş getirdi. 'Hatırladınız mı? Biz de sizi hatırladık.' dedi. Fatura 47 dolar.",
+    description: "Tekrar geldi. Bu sefer o pahalı zincir kahveciden sipariş getirdi. 'Hatırladınız mı? Biz de sizi hatırladık.' dedi. Fatura kabarık.",
     leftChoice: "Faturayı hazineye yükle",
     rightChoice: "Kendin öde — kibarlık şart",
     leftEffects: [

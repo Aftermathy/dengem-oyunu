@@ -11,7 +11,7 @@ import { Language } from "@/contexts/LanguageContext";
 const govCardsTr: ElectionCard[] = [
   // === COMMON (3B, 2-3%) ===
   { id: 1, text: "Otobüsten halka çay fırlat", emoji: "🫖", voterEffect: 2, cost: 3, rarity: "common" },
-  { id: 2, text: "Cami açılışı yap", emoji: "🕌", voterEffect: 3, cost: 3, rarity: "common" },
+  { id: 2, text: "Mabet açılışı yap", emoji: "🙏", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 3, text: "Bedava ekmek dağıt", emoji: "🍞", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 4, text: "Ücretsiz kömür dağıt", emoji: "🪨", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 11, text: "Milli değerler söylemi yap", emoji: "🏴", voterEffect: 3, cost: 3, rarity: "common" },
@@ -36,7 +36,7 @@ const govCardsTr: ElectionCard[] = [
   { id: 24, text: "Döviz müdahalesi yap", emoji: "💱", voterEffect: 5, cost: 6, rarity: "uncommon" },
   { id: 25, text: "Miting maratonu başlat", emoji: "🎤", voterEffect: 4, cost: 6, rarity: "uncommon" },
   { id: 34, text: "Halka 'epistemolojik kopuş' anlat", emoji: "🧠", voterEffect: 4, cost: 6, rarity: "uncommon" },
-  { id: 35, text: "Yalandan ıssız dağda petrol bul", emoji: "🛢️", voterEffect: 4, cost: 6, rarity: "uncommon" },
+  { id: 35, text: "Yalandan ıssız dağda maden bul", emoji: "🛢️", voterEffect: 4, cost: 6, rarity: "uncommon" },
   { id: 44, text: "Deprem yardımı vaadi ver", emoji: "🏗️", voterEffect: 5, cost: 6, rarity: "uncommon" },
   { id: 54, text: "Tüm medyayı sustur", emoji: "🔇", voterEffect: 5, cost: 6, rarity: "uncommon" },
   { id: 55, text: "Korku iklimi oluştur", emoji: "😰", voterEffect: 4, cost: 6, rarity: "uncommon" },
@@ -44,10 +44,10 @@ const govCardsTr: ElectionCard[] = [
   // === EPIC (10B, 5-6%) ===
   { id: 6, text: "Halka montaj videolar göster", emoji: "📽️", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 7, text: "Seçime 1 hafta kala uzaya astronot gönder", emoji: "🚀", voterEffect: 5, cost: 10, rarity: "epic" },
-  { id: 16, text: "Park nöbetçileri olaylarını terörize et", emoji: "😱", voterEffect: 6, cost: 10, rarity: "epic" },
-  { id: 17, text: "Yerli ve milli arabanla dolaş", emoji: "🚗", voterEffect: 5, cost: 10, rarity: "epic" },
+  { id: 16, text: "Meydandaki çadırcıları terörize et", emoji: "😱", voterEffect: 6, cost: 10, rarity: "epic" },
+  { id: 17, text: "Milli arabanla dolaş", emoji: "🚗", voterEffect: 5, cost: 10, rarity: "epic" },
   { id: 26, text: "Mega proje açılışı yap", emoji: "🌉", voterEffect: 6, cost: 10, rarity: "epic" },
-  { id: 27, text: "Seçim sabahı denizde devasa gaz rezervi bul", emoji: "💨", voterEffect: 6, cost: 10, rarity: "epic" },
+  { id: 27, text: "Seçim sabahı büyük bir maden müjdesi ver", emoji: "💨", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 36, text: "Manda yoğurdu ve kestane balı tarifi ver", emoji: "🍯", voterEffect: 5, cost: 10, rarity: "epic" },
   { id: 37, text: "Muhalefeti karalama kampanyası başlat", emoji: "🗞️", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 46, text: "Asgari ücret artışı müjdele", emoji: "💵", voterEffect: 5, cost: 10, rarity: "epic" },
@@ -67,7 +67,7 @@ const govCardsTr: ElectionCard[] = [
 /* ── MUHALEFET (OPPOSITION) CARD POOL (TR) ── */
 const oppCardsTr: ElectionCard[] = [
   // === COMMON (3B, 2-3%) ===
-  { id: 101, text: "128 milyar dolar nerede?", emoji: "💸", voterEffect: 3, cost: 3, rarity: "common" },
+  { id: 101, text: "120 küsür milyar nerede?", emoji: "💸", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 102, text: "Soğan ve patates kuyruğu göster", emoji: "🧅", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 103, text: "İşsizlik rakamlarını paylaş", emoji: "📉", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 104, text: "Gençlerin yurtdışına kaçmasını olay yap", emoji: "✈️", voterEffect: 2, cost: 3, rarity: "common" },
@@ -78,7 +78,7 @@ const oppCardsTr: ElectionCard[] = [
   { id: 109, text: "Çiftçi borç batağında", emoji: "🌾", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 110, text: "Eğitim sistemi çöktü", emoji: "📚", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 111, text: "Sağlık sistemi yetersiz", emoji: "🏥", voterEffect: 3, cost: 3, rarity: "common" },
-  { id: 112, text: "Kadın cinayetlerini gündeme getir", emoji: "🚨", voterEffect: 2, cost: 3, rarity: "common" },
+  { id: 112, text: "Kadına şiddeti gündeme getir", emoji: "🚨", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 113, text: "Deprem ihmallerini hatırlat", emoji: "🏚️", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 114, text: "Vergi adaleti iste", emoji: "⚖️", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 115, text: "Dede'yi yine aday göster", emoji: "😤", voterEffect: 3, cost: 3, rarity: "common" },
@@ -99,7 +99,7 @@ const oppCardsTr: ElectionCard[] = [
   { id: 210, text: "Seçim güvenliği talep et", emoji: "🔐", voterEffect: 5, cost: 6, rarity: "uncommon" },
 
   // === EPIC (10B, 5-6%) ===
-  { id: 301, text: "Millet İttifakı kur", emoji: "🤝", voterEffect: 6, cost: 10, rarity: "epic" },
+  { id: 301, text: "Halk İttifakı kur", emoji: "🤝", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 302, text: "Büyük meydan mitingi düzenle", emoji: "🎤", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 303, text: "Ekonomi vaatleri paketi sun", emoji: "📋", voterEffect: 5, cost: 10, rarity: "epic" },
   { id: 304, text: "Yürüyen merdivene ters bin", emoji: "👣", voterEffect: 6, cost: 10, rarity: "epic" },
@@ -249,12 +249,12 @@ const electionsTr: ElectionConfig[] = [
     ],
   },
   {
-    year: 2013, triggerTurn: 40, title: "SEÇİM 2013", subtitle: "Yerel Seçim - Gezi'nin gölgesinde!",
+    year: 2013, triggerTurn: 40, title: "SEÇİM 2013", subtitle: "Yerel Seçim - Meydan olaylarının gölgesinde!",
     startingPlayerVote: 55, playerCards: govCardsTr, oppositionCards: oppCardsTr,
     specialPowers: [
-      { id: "twitter13", name: "Twitter Yasağı", emoji: "🐦", description: "Sosyal medyayı kapat", voterEffect: 7, launderedCost: 12 },
+      { id: "twitter13", name: "Cıvıltı Yasağı", emoji: "🐦", description: "Sosyal medyayı kapat", voterEffect: 7, launderedCost: 12 },
       { id: "teror13", name: "Terör Kartını Oyna", emoji: "💣", description: "'Terör bağlantısı' iddiaları ile muhalefetin sesini kes", voterEffect: 8, launderedCost: 14 },
-      { id: "paralel13", name: "Paralel Yapı İftirası", emoji: "🕸️", description: "Muhalefeti 'paralel yapı' ile suçla", voterEffect: 6, launderedCost: 10 },
+      { id: "paralel13", name: "Gölge Örgüt İftirası", emoji: "🕸️", description: "Muhalefeti 'gölge örgüt' üyeliğiyle suçla", voterEffect: 6, launderedCost: 10 },
       { id: "dinle13", name: "Telefon Dinleme", emoji: "🎧", description: "Rakiplerin konuşmalarını dinle ve sızdır", voterEffect: 7, launderedCost: 11 },
     ],
   },
@@ -312,10 +312,10 @@ const electionsEn: ElectionConfig[] = [
     ],
   },
   {
-    year: 2013, triggerTurn: 40, title: "ELECTION 2013", subtitle: "Local Election - In Gezi's shadow!",
+    year: 2013, triggerTurn: 40, title: "ELECTION 2013", subtitle: "Local Election - In the shadow of the square riots!",
     startingPlayerVote: 55, playerCards: govCardsEn, oppositionCards: oppCardsEn,
     specialPowers: [
-      { id: "twitter13", name: "Twitter Ban", emoji: "🐦", description: "Shut down social media", voterEffect: 7, launderedCost: 12 },
+      { id: "twitter13", name: "Chirp Ban", emoji: "🐦", description: "Shut down social media", voterEffect: 7, launderedCost: 12 },
       { id: "teror13", name: "Play Terror Card", emoji: "💣", description: "Silence opposition with 'terror links' allegations", voterEffect: 8, launderedCost: 14 },
       { id: "paralel13", name: "Parallel State Smear", emoji: "🕸️", description: "Accuse opposition of being a 'parallel state'", voterEffect: 6, launderedCost: 10 },
       { id: "dinle13", name: "Wiretap Rivals", emoji: "🎧", description: "Tap rival phones and leak conversations", voterEffect: 7, launderedCost: 11 },

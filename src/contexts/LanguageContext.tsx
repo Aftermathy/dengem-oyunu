@@ -34,7 +34,7 @@ const translations: Record<Language, Record<string, string>> = {
     "gameover.menu": "Ana Menü",
     // Game-over scenarios
     "gameover.bankruptcy.title": "İflas!",
-    "gameover.bankruptcy.desc": "Kasa bomboş. Para yok, güç yok. Temizlikçi bile istifa etti. Alacaklılar saraya dayandı, IMF yönetimi devraldı. Miras olarak bıraktığın tek şey mali çılgınlığın hikayesi. Yeni teknokrat hükümet altın klozet kapaklarını internetten satışa çıkardı.",
+    "gameover.bankruptcy.desc": "Kasa bomboş. Para yok, güç yok. Temizlikçi bile istifa etti. Alacaklılar saraya dayandı, Küresel Kredi Fonu yönetimi devraldı. Miras olarak bıraktığın tek şey mali çılgınlığın hikayesi. Yeni teknokrat hükümet altın klozet kapaklarını bir müzayede sitesinde satışa çıkardı.",
     "gameover.election_lost.title": "Seçim Kaybedildi!",
     "gameover.election_lost.desc": "Sandık konuştu. Yolsuzluk saltanatın burada sona erdi. Halk korku yerine umudu seçti. Bavullarını topla — yeni hükümet kilitleri değiştirmeye başladı bile.",
     "gameover.victory.title": "Senden İyisi Yok!",
@@ -72,7 +72,7 @@ const translations: Record<Language, Record<string, string>> = {
     "gameover.menu": "Main Menu",
     // Game-over scenarios
     "gameover.bankruptcy.title": "Bankruptcy!",
-    "gameover.bankruptcy.desc": "The coffers are empty. No money, no power. Even the janitor quit. Creditors stormed the palace, IMF took control. Your legacy? A cautionary tale of fiscal madness. The new technocrat government is auctioning off your golden toilet seats on eBay.",
+    "gameover.bankruptcy.desc": "The coffers are empty. No money, no power. Even the janitor quit. Creditors stormed the palace, the Global Credit Fund took control. Your legacy? A cautionary tale of fiscal madness. The new technocrat government is auctioning off your golden toilet seats at a back-street auction house.",
     "gameover.election_lost.title": "Election Lost!",
     "gameover.election_lost.desc": "The ballot box has spoken. Your reign of corruption ends here. The people chose hope over fear. Pack your bags — the new government is already changing the locks.",
     "gameover.victory.title": "No One's Better Than You!",

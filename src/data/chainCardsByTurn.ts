@@ -11,8 +11,8 @@ export interface ChainTriggerEntry {
 
 // TR chain trigger map: key = parent card ID that triggers the chain
 export const CHAIN_TRIGGERS_TR: Record<number, ChainTriggerEntry> = {
-  // ── ID 19: AİHM ve Elçi ──────────────────────────────────────────────────
-  // Left (elçiyi kabul et) → 1 tur sonra AİHM kararları masaya gelir
+  // ── ID 19: Haklar Mahkemesi ve Elçi ──────────────────────────────────────
+  // Left (elçiyi kabul et) → 1 tur sonra mahkeme kararları masaya gelir
   // Right'ta chain yok
   19: {
     delay: 1,
@@ -23,8 +23,8 @@ export const CHAIN_TRIGGERS_TR: Record<number, ChainTriggerEntry> = {
       imageId: 'diplomat',
       category: 'Dış Politika',
       description: 'Elçi masaya Batı İnsan Hakları Mahkemesi kararlarını koydu. Siyasi tutukluları bırakmazsak ağır yaptırım gelecekmiş!',
-      leftChoice: '"AİHM bizi bağlamaz, Eyy Batı!" çek.',
-      rightChoice: '"İnsan Hakları Eylem Planı" açıkla.',
+      leftChoice: '"Batı İnsan Hakları Mahkemesi bizi bağlamaz!" diye kükre.',
+      rightChoice: '"Özgürlükler Yol Haritası" açıkla.',
       leftEffects: [
         { power: 'halk', amount: 5 },
         { power: 'yatirimcilar', amount: -15 },
@@ -77,7 +77,7 @@ export const CHAIN_TRIGGERS_TR: Record<number, ChainTriggerEntry> = {
     }),
   },
 
-  // ── ID 32: S-400 Füze ────────────────────────────────────────────────────
+  // ── ID 32: Hava Savunma Bataryası ────────────────────────────────────────
   // Left (al) → 4-6 tur sonra güncelleme parası talebi gelir
   // Right'ta chain yok
   32: {
@@ -88,7 +88,7 @@ export const CHAIN_TRIGGERS_TR: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🪖',
       imageId: 'nato_representative',
       category: 'Ordu',
-      description: 'Kuzey ülkesi S-400\'lerin fişini takıp aktif etmek için fahiş bir "güncelleme" parası istiyor!',
+      description: 'Kuzey ülkesi, depoda tozlanan o dev hava savunma bataryalarının fişini takmak için fahiş bir "aktivasyon" parası istiyor!',
       leftChoice: 'Parayı basıp sistemi aç!',
       rightChoice: 'Para yok, depoda kalsın. "Test ediyoruz" de.',
       leftEffects: [
@@ -121,7 +121,7 @@ export const CHAIN_TRIGGERS_TR: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🕵️',
       imageId: 'intelligence_chief',
       category: 'Siyasi Entrika',
-      description: 'Kaset işe yaradı! Rakip "Bana kumpas kurdular" deyip havlu attı. Ama tepki oyları şimdi ana muhalefete kayıyor.',
+      description: 'Görüntü işe yaradı! Rakip "Bana tuzak kurdular" deyip havlu attı. Ama tepki oyları şimdi ana muhalefete kayıyor.',
       leftChoice: 'Milliyetçi adayı da siz kapın, cehennemin kapıları bizde olsun',
       rightChoice: 'Boşver bizim kendimize güvenimiz tam',
       leftEffects: [
@@ -154,8 +154,8 @@ export const CHAIN_TRIGGERS_TR: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🏙️',
       imageId: 'mayor',
       category: 'Siyasi Entrika',
-      description: 'Yenilettiğiniz seçimde bu kez 800 bin fark yedik!',
-      leftChoice: 'Biraz bekle kayyum atarız.',
+      description: 'Yenilettiğiniz seçimde bu kez 1.2 milyon fark yedik!',
+      leftChoice: 'Biraz bekle, merkezden vekil atarız.',
       rightChoice: 'Halkın iradesi de, mecburen tebrik et.',
       leftEffects: [
         { power: 'halk', amount: -15 },
@@ -187,7 +187,7 @@ export const CHAIN_TRIGGERS_TR: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🏭',
       imageId: 'privatization_director',
       category: 'Ekonomi',
-      description: 'Yandaşlara sattığımız fabrikaların makinalarını hurdacıya satıp arsalarına lüks AVM diktiler. Şimdi şekeri ve kağıdı dışarıdan 10 katına ithal ediyoruz!',
+      description: 'Bizimkilere sattığımız fabrikaların makinalarını hurdacıya satıp arsalarına lüks AVM diktiler. Şimdi çividen ipliğe her şeyi dışarıdan 10 katına ithal ediyoruz!',
       leftChoice: 'AVM\'nin şatafatlı açılış kurdelesini ben keserim.',
       rightChoice: 'Sattığımızdan daha yükseğe geri alalım.',
       leftEffects: [
@@ -214,7 +214,7 @@ export const CHAIN_TRIGGERS_TR: Record<number, ChainTriggerEntry> = {
       imageId: 'privatization_director',
       category: 'Ekonomi',
       description: 'Satmadığınız o fabrikalar bu yıl tarihi kâr rekoru kırdı! Kasamız dolup taşıyor!',
-      leftChoice: 'Karı Varlık Fonu\'na aktar, oradan yandaşlara dağıt.',
+      leftChoice: 'Kârı Millî Kalkınma Kasası\'na aktar, oradan bizimkilere dağıt.',
       rightChoice: 'Kâr payıyla halka ucuz ürün sat, seçim şovu yap.',
       leftEffects: [
         { power: 'halk', amount: -10 },
@@ -272,7 +272,7 @@ export const CHAIN_TRIGGERS_TR: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🪙',
       imageId: 'crypto_advisor',
       category: 'Güvenlik',
-      description: 'Denetlemediğimiz o dev yerli kripto borsasının jöleli genç CEO\'su 2 milyar dolarla Arnavutluk\'a kaçtı! Kriptozedeler kapıya dayandı.',
+      description: 'Denetlemediğimiz o dev yerli kripto borsasının jöleli genç CEO\'su 2 milyar dövizle yurt dışına kaçtı! Kriptozedeler kapıya dayandı.',
       leftChoice: 'Vatandaşın zararını karşıla',
       rightChoice: 'Tüm kripto borsaları yasakla!',
       leftEffects: [

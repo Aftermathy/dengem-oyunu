@@ -92,7 +92,7 @@ export function PremiumModal({ onPurchase, onClose }: PremiumModalProps) {
       onClick={handleClose}
     >
       <div
-        className="relative w-full max-w-sm mx-0 sm:mx-4 rounded-t-3xl sm:rounded-3xl overflow-hidden transition-all duration-500"
+        className="relative w-full max-w-sm mx-0 sm:mx-4 rounded-t-3xl sm:rounded-3xl overflow-hidden transition-all duration-500 text-left"
         style={{
           background: 'linear-gradient(170deg, hsl(220 25% 10%) 0%, hsl(0 20% 8%) 100%)',
           border: '1px solid hsl(45 70% 50% / 0.35)',

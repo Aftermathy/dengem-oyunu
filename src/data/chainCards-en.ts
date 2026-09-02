@@ -9,7 +9,7 @@ export const darkModeChain_EN: EventCard[] = normalizeCards([
   // After election 1
   {
     id: 9201,
-    character: "CIA Analyst",
+    character: "Friendly Nation Intelligence Analyst",
     characterEmoji: "🕶️",
     imageId: "shadow_advisor",
     category: "Foreign Powers",
@@ -39,7 +39,7 @@ export const darkModeChain_EN: EventCard[] = normalizeCards([
     characterEmoji: "🕵️",
     imageId: "shadow_advisor",
     category: "Foreign Powers",
-    description: "They're back. This time with a Starbucks order. 'Remember us? We remember you.' The bill is $47.",
+    description: "They're back. This time with an order from that overpriced coffee chain. 'Remember us? We remember you.' The bill is steep.",
     leftChoice: "Charge it to the treasury",
     rightChoice: "Pay yourself — diplomacy costs",
     leftEffects: [

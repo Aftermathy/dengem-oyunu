@@ -15,8 +15,18 @@ export function VictoryBalcony({ displayPlayerVote, displayOpponentVote, labels,
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-end z-10 animate-fade-in">
       <ConfettiOverlay />
-      <div className="absolute inset-0 z-0">
-        <img src={victoryBalconyImg} alt="Victory balcony" className="w-full h-full object-cover object-center" />
+      <div className="absolute inset-0 z-0 bg-black">
+        <video
+          src="/assets/victory_balcony.mp4"
+          poster={victoryBalconyImg}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{ WebkitPlaysinline: true } as React.CSSProperties}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-game-overlay via-game-overlay/60 to-transparent" />
       </div>
       <div className="relative z-10 flex flex-col items-center gap-3 p-6 pb-6 text-center max-w-sm mx-auto">

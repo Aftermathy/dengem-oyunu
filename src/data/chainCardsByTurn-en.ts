@@ -3,7 +3,7 @@ import type { ChainTriggerEntry } from './chainCardsByTurn';
 
 // EN chain trigger map: key = parent card ID that triggers the chain
 export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
-  // ── ID 19: ECHR and Ambassador ───────────────────────────────────────────
+  // ── ID 19: Rights Court and Ambassador ───────────────────────────────────
   19: {
     delay: 1,
     left: normalizeCard({
@@ -13,8 +13,8 @@ export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
       imageId: 'diplomat',
       category: 'Foreign Policy',
       description: 'The ambassador laid out European Human Rights Court rulings on the table. Release political prisoners or face heavy sanctions!',
-      leftChoice: '"The ECHR has no authority over us — Go away, West!"',
-      rightChoice: 'Announce a "Human Rights Action Plan".',
+      leftChoice: '"That court holds no authority over us!" you thunder.',
+      rightChoice: 'Announce a "Roadmap for Liberties".',
       leftEffects: [
         { power: 'halk', amount: 5 },
         { power: 'yatirimcilar', amount: -15 },
@@ -65,7 +65,7 @@ export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
     }),
   },
 
-  // ── ID 32: S-400 Missile ──────────────────────────────────────────────────
+  // ── ID 32: Air Defence Battery ────────────────────────────────────────────
   32: {
     delay: { min: 4, max: 6 },
     left: normalizeCard({
@@ -74,7 +74,7 @@ export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🪖',
       imageId: 'nato_representative',
       category: 'Military',
-      description: 'The Northern country is demanding an outrageous "update" fee to plug in and activate the S-400s!',
+      description: 'The Northern country is demanding an outrageous "activation" fee just to plug in those giant air-defence batteries gathering dust in the depot!',
       leftChoice: 'Pay up and switch the system on!',
       rightChoice: 'No money — let it sit in storage. Say we\'re "testing it."',
       leftEffects: [
@@ -105,7 +105,7 @@ export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🕵️',
       imageId: 'intelligence_chief',
       category: 'Political Intrigue',
-      description: 'The tape worked! The rival threw in the towel crying "I\'ve been framed." But the backlash votes are now flowing to the main opposition.',
+      description: 'The footage worked! The rival threw in the towel crying "They set me up." But the backlash votes are now flowing to the main opposition.',
       leftChoice: 'Absorb the nationalist candidate too — let\'s own all the gates of hell',
       rightChoice: 'Forget it, we have full confidence in ourselves',
       leftEffects: [
@@ -136,7 +136,7 @@ export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🏙️',
       imageId: 'mayor',
       category: 'Political Intrigue',
-      description: 'In the re-run election you called, we lost by 800,000 votes this time!',
+      description: 'In the re-run election you called, we lost by 1.2 million votes this time!',
       leftChoice: 'Wait a bit, we\'ll appoint a trustee.',
       rightChoice: 'The people have spoken — congratulate them, we have no choice.',
       leftEffects: [
@@ -167,7 +167,7 @@ export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🏭',
       imageId: 'privatization_director',
       category: 'Economy',
-      description: 'The cronies we sold the factories to stripped the machines for scrap and built luxury malls on the lots. Now we import sugar and paper at 10x the price!',
+      description: 'The cronies we sold the factories to stripped the machines for scrap and built luxury malls on the lots. Now we import everything from nails to thread at 10x the price!',
       leftChoice: 'I\'ll cut the ribbon at the grand opening myself.',
       rightChoice: 'Buy them back at a higher price than we sold.',
       leftEffects: [
@@ -194,7 +194,7 @@ export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
       imageId: 'privatization_director',
       category: 'Economy',
       description: 'Those factories you kept broke profit records this year! The treasury is overflowing!',
-      leftChoice: 'Channel profits to the Sovereign Fund, distribute to loyalists.',
+      leftChoice: 'Channel profits to the National Development Fund, distribute to our own people.',
       rightChoice: 'Sell cheap goods to the public with the profits — make it an election show.',
       leftEffects: [
         { power: 'halk', amount: -10 },
@@ -250,7 +250,7 @@ export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
       characterEmoji: '🪙',
       imageId: 'crypto_advisor',
       category: 'Security',
-      description: "The gel-haired young CEO of that unregulated domestic exchange bolted to Albania with $2 billion! Victims are at the gate.",
+      description: "The gel-haired young CEO of that unregulated domestic exchange bolted abroad with 2 billion in hard currency! Victims are at the gate.",
       leftChoice: "Compensate citizens' losses",
       rightChoice: 'Ban all crypto exchanges!',
       leftEffects: [
