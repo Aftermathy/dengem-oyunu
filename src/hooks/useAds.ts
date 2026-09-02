@@ -19,6 +19,32 @@ export { isAdFree, setAdFree };
 // GADApplicationIdentifier. Only the interstitial ad unit ID is needed here.
 const INTERSTITIAL_AD_ID = 'ca-app-pub-5942367057795211/3936524936';
 
+/**
+ * Test reklamı anahtarı — cihazda doğrulama için, üretimde kapalı.
+ *
+ * Google'ın kuralı net: geliştirme sırasında **canlı reklam istenmez ve
+ * kesinlikle tıklanmaz**. Kendi canlı reklamına tıklamak geçersiz trafik
+ * sayılıyor ve AdMob hesabının kapanmasına kadar gidebiliyor.
+ *
+ * Bu anahtar `localStorage` üzerinden açılıyor, derleme bayrağıyla değil:
+ * taze bir kurulumda anahtar **yok**, yani üretime yanlışlıkla açık gidemez.
+ * Açmak için Safari geliştirici konsolundan:
+ *
+ *     localStorage.setItem('ims_ad_test', '1')
+ *
+ * Açıkken Google'ın her zaman dolan test reklamı gösterilir. Bu, "reklam
+ * geliyor mu" sorusunu **doluluktan bağımsız** cevaplıyor: yeni bir AdMob
+ * birimi saatlerce boş dönebilir ve o durumda hattın çalışıp çalışmadığı
+ * ayırt edilemez.
+ */
+function testModuAcikMi(): boolean {
+  try {
+    return localStorage.getItem('ims_ad_test') === '1';
+  } catch {
+    return false;
+  }
+}
+
 // Non-personalized ads flag — true when the user declines App Tracking Transparency.
 let _npa = false;
 let _adsReady = false;
@@ -165,10 +191,16 @@ async function showInterstitialNow(): Promise<void> {
   }
   if (!_adsReady) return; // AdMob not initialized — never block gameplay
   try {
-    await AdMob.prepareInterstitial({ adId: INTERSTITIAL_AD_ID, npa: _npa });
+    const test = testModuAcikMi();
+    await AdMob.prepareInterstitial({ adId: INTERSTITIAL_AD_ID, npa: _npa, isTesting: test });
     await AdMob.showInterstitial();
+    console.log('[Ads] interstitial shown', JSON.stringify({ test }));
   } catch (e) {
-    console.warn('[Ads] Interstitial failed — skipping:', e);
+    // Hata alanlarıyla yazılıyor: köprü, `message` ve `code` alanları
+    // numaralandırılamayan bir Error ile reddediyor ve nesneyi olduğu gibi
+    // yazdırmak ekrana boş bir `{}` basıyor. Doluluk yokluğu (`no fill`) ile
+    // gerçek arıza ancak bu mesajdan ayrılıyor.
+    console.error('[Ads] Interstitial failed:', JSON.stringify(describeError(e)));
     // Never throw: a failed ad must never block gameplay
   }
 }
