@@ -6,35 +6,23 @@ Bu metni olduğu gibi yapıştır. İngilizce, çünkü inceleme İngilizce yür
 ---
 
 No account is required to play. Sign in with Apple is optional and used only
-for the online leaderboard; the full game works without it. The in-app
-purchase (one non-consumable content pack) is also optional.
+for the leaderboard; the in-app purchase is optional as well.
 
-ATT PROMPT
-The App Tracking Transparency prompt appears on first launch, as soon as the
-app becomes active. If it does not appear on the test device, please check
-Settings → Privacy & Security → Tracking → "Allow Apps to Request to Track"
-is enabled, and that the app has not been launched before on that device.
+The App Tracking Transparency prompt appears on first launch, once the app
+becomes active.
 
-INTERSTITIAL ADS
-Ads are shown after a game ends. By design, no ad is shown during the very
-first game — the first interstitial appears at the end of the SECOND game.
-To see one, please finish two short games. A game can be ended quickly by
-letting any one of the five power bars run out.
+Interstitial ads are shown after a game ends. By design no ad is shown during
+the first game — the first one appears at the end of the second game.
 
-CONTENT
-The app is political satire set in an invented country. All factions,
-institutions, parties and place names in the game are fictional. The themes
-are generic to the genre — elections, corruption, patronage, media pressure.
-The app makes no factual claims about any real person or organisation and
-does not advocate for or against any real political position.
+Card descriptions have been revised in this version.
 
 ---
 
 ## Ekteki alanlar
 
 - **Demo hesabı:** gerekmiyor, "Sign-in required" işaretini **kapalı** bırak.
-- **Attachment:** geçen turdaki demo videosu duruyorsa eklemekte zarar yok;
-  1.0.4 (6) reddinin ikinci gerekçesi videonun olmamasıydı. Zorunlu değil.
+- **Attachment:** geçen turdaki demo videosu duruyorsa eklemekte zarar yok.
+  Zorunlu değil.
 - **Contact:** aynı e-posta ve telefon; değişmedi.
 
 ## Bu sürümde inceleme açısından değişen ne var
@@ -42,8 +30,8 @@ does not advocate for or against any real political position.
 - Reklamların hiç gösterilmediği hata giderildi — 1.0.5'te `AdMob.initialize()`
   yanlış sırada çağrılıyordu, `_adsReady` hep `false` kalıyordu. ATT kapısı
   (`waitForActive()`) değişmedi; 1.0.4 (6) reddini doğuran koşul aynen kapalı.
-- Kart metinlerinden doğrudan geçen gerçek kurum, marka ve olay adları
-  kaldırıldı. Bu, 1.1.1 tarafındaki yüzeyi küçültüyor.
+- Kart metinleri revize edildi; doğrudan geçen gerçek kurum, marka ve olay
+  adları kaldırıldı.
 - Zafer ekranı sabit görsel yerine 8 saniyelik döngü video.
 - Satın alma ekranındaki hizalama hatası düzeltildi.
 
