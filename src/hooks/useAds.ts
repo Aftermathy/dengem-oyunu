@@ -247,3 +247,52 @@ export async function showInterstitialAd(every = 1): Promise<void> {
   if ((gameCount - 1) % every !== 0) return;
   await showInterstitialNow();
 }
+
+// ─── Cihazda teşhis kancası ───────────────────────────────────────────────────
+/**
+ * Reklam hattının durumunu **istenildiği an** okumak için.
+ *
+ * Neden gerekiyor: `initAds()` yalnız açılışta koşuyor ve Safari Web
+ * Denetleyicisi kendisi bağlanmadan önceki logları tutmuyor. Denetleyiciyi
+ * uygulama açıldıktan sonra bağlarsan `[Ads] init ok` satırı çoktan uçmuş
+ * oluyor ve konsol bomboş görünüyor — arıza yokken de.
+ *
+ * Konsola şunu yaz:
+ *
+ *     __imsAds()          → durum
+ *     __imsAds.dene()     → hemen bir geçiş reklamı istemeyi dene
+ *     __imsAds.test(true) → test reklamını aç (her zaman dolar), sonra dene()
+ *
+ * Yalnız köprü üzerinden okunabilir veri döndürüyor; oyun akışına dokunmuyor.
+ */
+type AdTeshis = {
+  (): Record<string, unknown>;
+  dene: () => Promise<void>;
+  test: (acik: boolean) => string;
+};
+
+if (typeof window !== 'undefined') {
+  const teshis = ((() => ({
+    adsReady: _adsReady,
+    npa: _npa,
+    initHatasi: _initHatasi,
+    testModu: testModuAcikMi(),
+    premium: isAdFree(),
+    oyunSayisi: getTotalGamesPlayed(),
+    native: Capacitor.isNativePlatform(),
+    adId: INTERSTITIAL_AD_ID,
+  })) as unknown) as AdTeshis;
+
+  teshis.dene = async () => {
+    console.log('[Ads] elle deneme başlıyor:', JSON.stringify(teshis()));
+    await showInterstitialNow();
+  };
+
+  teshis.test = (acik: boolean) => {
+    if (acik) localStorage.setItem('ims_ad_test', '1');
+    else localStorage.removeItem('ims_ad_test');
+    return `test modu: ${acik ? 'AÇIK' : 'kapalı'} — şimdi __imsAds.dene()`;
+  };
+
+  (window as unknown as Record<string, unknown>).__imsAds = teshis;
+}
