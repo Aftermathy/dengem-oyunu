@@ -137,7 +137,7 @@ export const CHAIN_TRIGGERS_EN: Record<number, ChainTriggerEntry> = {
       imageId: 'mayor',
       category: 'Political Intrigue',
       description: 'In the re-run election you called, we lost by 1.2 million votes this time!',
-      leftChoice: 'Wait a bit, we\'ll appoint a trustee.',
+      leftChoice: 'Wait a bit, we\'ll bring it under central control.',
       rightChoice: 'The people have spoken — congratulate them, we have no choice.',
       leftEffects: [
         { power: 'halk', amount: -15 },

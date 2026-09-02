@@ -125,7 +125,7 @@ const oppCardsTr: ElectionCard[] = [
 const govCardsEn: ElectionCard[] = [
   // === COMMON ===
   { id: 1, text: "Throw tea bags from the bus", emoji: "🫖", voterEffect: 2, cost: 3, rarity: "common" },
-  { id: 2, text: "Open a new mosque", emoji: "🕌", voterEffect: 3, cost: 3, rarity: "common" },
+  { id: 2, text: "Open a new house of worship", emoji: "🙏", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 3, text: "Distribute free bread", emoji: "🍞", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 4, text: "Distribute free coal", emoji: "🪨", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 11, text: "National values rhetoric", emoji: "🏴", voterEffect: 3, cost: 3, rarity: "common" },
@@ -150,7 +150,7 @@ const govCardsEn: ElectionCard[] = [
   { id: 24, text: "Intervene in currency", emoji: "💱", voterEffect: 5, cost: 6, rarity: "uncommon" },
   { id: 25, text: "Start rally marathon", emoji: "🎤", voterEffect: 4, cost: 6, rarity: "uncommon" },
   { id: 34, text: "Explain 'epistemological break' to voters", emoji: "🧠", voterEffect: 4, cost: 6, rarity: "uncommon" },
-  { id: 35, text: "Fake finding oil in remote mountains", emoji: "🛢️", voterEffect: 4, cost: 6, rarity: "uncommon" },
+  { id: 35, text: "Fake finding a mine in remote mountains", emoji: "🛢️", voterEffect: 4, cost: 6, rarity: "uncommon" },
   { id: 44, text: "Promise earthquake relief", emoji: "🏗️", voterEffect: 5, cost: 6, rarity: "uncommon" },
   { id: 54, text: "Silence all media", emoji: "🔇", voterEffect: 5, cost: 6, rarity: "uncommon" },
   { id: 55, text: "Create climate of fear", emoji: "😰", voterEffect: 4, cost: 6, rarity: "uncommon" },
@@ -158,10 +158,10 @@ const govCardsEn: ElectionCard[] = [
   // === EPIC ===
   { id: 6, text: "Show deepfake videos to the public", emoji: "📽️", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 7, text: "Send astronaut to space 1 week before vote", emoji: "🚀", voterEffect: 5, cost: 10, rarity: "epic" },
-  { id: 16, text: "Label park vigil protesters as terrorists", emoji: "😱", voterEffect: 6, cost: 10, rarity: "epic" },
-  { id: 17, text: "Drive around in your national car", emoji: "🚗", voterEffect: 5, cost: 10, rarity: "epic" },
+  { id: 16, text: "Label the square campers as terrorists", emoji: "😱", voterEffect: 6, cost: 10, rarity: "epic" },
+  { id: 17, text: "Drive around in the national car", emoji: "🚗", voterEffect: 5, cost: 10, rarity: "epic" },
   { id: 26, text: "Open mega infrastructure project", emoji: "🌉", voterEffect: 6, cost: 10, rarity: "epic" },
-  { id: 27, text: "Find massive gas reserve on election morning", emoji: "💨", voterEffect: 6, cost: 10, rarity: "epic" },
+  { id: 27, text: "Announce a huge mine strike on election morning", emoji: "💨", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 36, text: "Share your buffalo yogurt & honey recipe", emoji: "🍯", voterEffect: 5, cost: 10, rarity: "epic" },
   { id: 37, text: "Launch smear campaign against opposition", emoji: "🗞️", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 46, text: "Announce minimum wage hike", emoji: "💵", voterEffect: 5, cost: 10, rarity: "epic" },
@@ -181,7 +181,7 @@ const govCardsEn: ElectionCard[] = [
 /* ── MUHALEFET (OPPOSITION) CARD POOL (EN) ── */
 const oppCardsEn: ElectionCard[] = [
   // === COMMON ===
-  { id: 101, text: "Where's the 128 billion dollars?", emoji: "💸", voterEffect: 3, cost: 3, rarity: "common" },
+  { id: 101, text: "Where did the missing billions go?", emoji: "💸", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 102, text: "Show onion & potato queues", emoji: "🧅", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 103, text: "Share unemployment stats", emoji: "📉", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 104, text: "Make a scene of youth fleeing abroad", emoji: "✈️", voterEffect: 2, cost: 3, rarity: "common" },
@@ -192,7 +192,7 @@ const oppCardsEn: ElectionCard[] = [
   { id: 109, text: "Farmers drowning in debt", emoji: "🌾", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 110, text: "Education system collapsed", emoji: "📚", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 111, text: "Healthcare system failing", emoji: "🏥", voterEffect: 3, cost: 3, rarity: "common" },
-  { id: 112, text: "Raise femicide awareness", emoji: "🚨", voterEffect: 2, cost: 3, rarity: "common" },
+  { id: 112, text: "Put violence against women on the agenda", emoji: "🚨", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 113, text: "Remind earthquake negligence", emoji: "🏚️", voterEffect: 3, cost: 3, rarity: "common" },
   { id: 114, text: "Demand tax justice", emoji: "⚖️", voterEffect: 2, cost: 3, rarity: "common" },
   { id: 115, text: "Run grandpa as candidate again", emoji: "😤", voterEffect: 3, cost: 3, rarity: "common" },
@@ -213,7 +213,7 @@ const oppCardsEn: ElectionCard[] = [
   { id: 210, text: "Demand election security", emoji: "🔐", voterEffect: 5, cost: 6, rarity: "uncommon" },
 
   // === EPIC ===
-  { id: 301, text: "Form Nation Alliance", emoji: "🤝", voterEffect: 6, cost: 10, rarity: "epic" },
+  { id: 301, text: "Form the People's Alliance", emoji: "🤝", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 302, text: "Hold massive square rally", emoji: "🎤", voterEffect: 6, cost: 10, rarity: "epic" },
   { id: 303, text: "Present economy promises package", emoji: "📋", voterEffect: 5, cost: 10, rarity: "epic" },
   { id: 304, text: "Ride the escalator the wrong way", emoji: "👣", voterEffect: 6, cost: 10, rarity: "epic" },
@@ -317,7 +317,7 @@ const electionsEn: ElectionConfig[] = [
     specialPowers: [
       { id: "twitter13", name: "Chirp Ban", emoji: "🐦", description: "Shut down social media", voterEffect: 7, launderedCost: 12 },
       { id: "teror13", name: "Play Terror Card", emoji: "💣", description: "Silence opposition with 'terror links' allegations", voterEffect: 8, launderedCost: 14 },
-      { id: "paralel13", name: "Parallel State Smear", emoji: "🕸️", description: "Accuse opposition of being a 'parallel state'", voterEffect: 6, launderedCost: 10 },
+      { id: "paralel13", name: "Shadow Order Smear", emoji: "🕸️", description: "Accuse the opposition of running a 'shadow order'", voterEffect: 6, launderedCost: 10 },
       { id: "dinle13", name: "Wiretap Rivals", emoji: "🎧", description: "Tap rival phones and leak conversations", voterEffect: 7, launderedCost: 11 },
     ],
   },
