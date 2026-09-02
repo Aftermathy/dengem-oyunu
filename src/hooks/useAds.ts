@@ -22,6 +22,27 @@ const INTERSTITIAL_AD_ID = 'ca-app-pub-5942367057795211/3936524936';
 // Non-personalized ads flag — true when the user declines App Tracking Transparency.
 let _npa = false;
 let _adsReady = false;
+let _initHatasi: Record<string, unknown> | null = null;
+
+/**
+ * Köprüden gelen hatayı alanlarıyla okur.
+ *
+ * `console.warn('...', e)` her düşen çağrı için ekrana boş bir `{}` basıyordu:
+ * köprü, `message` ve `code` alanları numaralandırılamayan bir Error ile
+ * reddediyor ve nesneyi serileştirmek hepsini atıyor. Alanları adıyla okumak,
+ * arızanın kendi adını söylemesini sağlayan şey.
+ *
+ * Aynı yardımcı `lib/purchases.ts` içinde de var ve aynı dersten doğdu.
+ */
+function describeError(e: unknown): Record<string, unknown> {
+  if (e == null || typeof e !== 'object') return { error: String(e) };
+  const o = e as Record<string, unknown>;
+  return {
+    code: o.code,
+    message: o.message,
+    raw: Object.getOwnPropertyNames(e).join(','),
+  };
+}
 
 /**
  * iOS only shows the App Tracking Transparency prompt when the app's
@@ -69,8 +90,24 @@ async function waitForActive(): Promise<void> {
 export async function initAds(): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;
   try {
-    // 1) iOS App Tracking Transparency (IDFA)
-    //    Must run while the app is `.active`, otherwise iOS never shows the prompt.
+    // 1) AdMob önce ilklenir. SIRA ÖNEMLİ VE BEDELİ ÖDENDİ.
+    //
+    //    Eklentinin kendi README'si sırayı yazıyor: initialize → requestConsentInfo
+    //    → showConsentForm. Bu dosya tersini yapıyordu — `requestConsentInfo()`
+    //    ilklemeden önce çağrılıyordu.
+    //
+    //    Sonuç sessiz bir ölümdü: o çağrı düştüğünde aşağıdaki `catch` hatayı
+    //    yutuyor, `_adsReady` başlangıç değeri olan `false`'ta kalıyor ve
+    //    `showInterstitialNow()` her seferinde ilk satırda dönüyordu. Yayınlanan
+    //    uygulamada dört beş oyun boyunca tek bir reklam gösterilmedi ve tek iz
+    //    kimsenin okumadığı bir `console.warn` oldu.
+    //
+    //    Bu, build 8'i öldüren hatanın aynı sınıfı: köprüden gelen bir çağrının
+    //    sözleşmesini varsaymak, ve düşen çağrıyı sessizce yutmak.
+    await AdMob.initialize();
+
+    // 2) iOS App Tracking Transparency (IDFA)
+    //    Uygulama `.active` iken koşmalı, yoksa iOS istemi hiç göstermiyor.
     await waitForActive();
     const before = await AdMob.trackingAuthorizationStatus();
     if (before.status === 'notDetermined') {
@@ -78,23 +115,34 @@ export async function initAds(): Promise<void> {
     }
     const att = await AdMob.trackingAuthorizationStatus();
 
-    // 2) Google UMP consent (GDPR / EU regions)
+    // 3) Google UMP consent (GDPR / EU regions)
     let consent = await AdMob.requestConsentInfo();
     if (consent.status === AdmobConsentStatus.REQUIRED && consent.isConsentFormAvailable) {
       consent = await AdMob.showConsentForm();
     }
 
-    // 3) Personalized only when consent is fine (obtained or not required) AND tracking allowed
+    // 4) Personalized only when consent is fine (obtained or not required) AND tracking allowed
     const consentOk =
       consent.status === AdmobConsentStatus.OBTAINED ||
       consent.status === AdmobConsentStatus.NOT_REQUIRED;
     _npa = !(consentOk && att.status === 'authorized');
 
-    await AdMob.initialize();
     _adsReady = consent.canRequestAds !== false; // respect UMP: no ads if consent refused
+    _initHatasi = null;
+    console.log('[Ads] init ok:', JSON.stringify({ adsReady: _adsReady, npa: _npa, att: att.status, consent: consent.status }));
   } catch (e) {
-    console.warn('[Ads] init failed:', e);
+    // Hata **alanlarıyla** yazılıyor, nesne olarak değil: köprü, `message` ve
+    // `code` alanları numaralandırılamayan bir Error ile reddediyor ve
+    // `console.warn('...', e)` ekrana boş bir `{}` basıyor. Aynı ders
+    // `purchases.ts` içinde de yazılı.
+    _initHatasi = describeError(e);
+    console.error('[Ads] init failed:', JSON.stringify(_initHatasi));
   }
+}
+
+/** Son ilkleme hatası — teşhis için okunabilir kalıyor. */
+export function adInitHatasi(): Record<string, unknown> | null {
+  return _initHatasi;
 }
 
 // ─── Persistent game counter ──────────────────────────────────────────────────
