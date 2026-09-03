@@ -62,12 +62,26 @@ let _initHatasi: Record<string, unknown> | null = null;
  */
 function describeError(e: unknown): Record<string, unknown> {
   if (e == null || typeof e !== 'object') return { error: String(e) };
-  const o = e as Record<string, unknown>;
-  return {
-    code: o.code,
-    message: o.message,
-    raw: Object.getOwnPropertyNames(e).join(','),
-  };
+
+  // Alanları TEK TEK adıyla okumak yetmiyor: köprünün reddettiği nesnede
+  // `code` ve `data` gibi alanlar var ama değerleri `undefined` olabiliyor ya
+  // da beklenmedik adlar taşıyabiliyor. "Loading failed" jenerik mesajının
+  // altındaki asıl AdMob kodu (3 = doluluk yok, 1 = geçersiz istek, …) çoğu
+  // zaman `data` içinde geliyor. Bu yüzden bütün kendi alanları dolaşılıyor.
+  const cikti: Record<string, unknown> = {};
+  for (const ad of Object.getOwnPropertyNames(e)) {
+    if (ad === 'stack' || ad === 'sourceURL' || ad === 'line' || ad === 'column') continue;
+    try {
+      const v = (e as Record<string, unknown>)[ad];
+      if (v === undefined) continue;
+      cikti[ad] = typeof v === 'object' && v !== null ? JSON.parse(JSON.stringify(v)) : v;
+    } catch {
+      cikti[ad] = '(okunamadı)';
+    }
+  }
+  if (Object.keys(cikti).length === 0) cikti.error = String(e);
+  cikti.alanlar = Object.getOwnPropertyNames(e).join(',');
+  return cikti;
 }
 
 /**
