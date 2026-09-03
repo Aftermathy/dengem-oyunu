@@ -15,9 +15,27 @@ import { isAdFree, setAdFree } from '@/lib/purchases';
 export { isAdFree, setAdFree };
 
 // ─── AdMob configuration ──────────────────────────────────────────────────────
-// The App ID (ca-app-pub-5942367057795211~4387951075) lives in Info.plist as
-// GADApplicationIdentifier. Only the interstitial ad unit ID is needed here.
-const INTERSTITIAL_AD_ID = 'ca-app-pub-5942367057795211/3936524936';
+// App ID'ler burada DEĞİL, platformun kendi bildiriminde duruyor:
+//   iOS      → Info.plist, GADApplicationIdentifier
+//   Android  → AndroidManifest.xml, com.google.android.gms.ads.APPLICATION_ID
+//              (değer res/values/strings.xml içindeki admob_app_id)
+// Burada yalnız geçiş reklamı birimleri var ve her platformun kendi birimi olmak
+// zorunda — bir platformun birim kimliği ötekinde reklam döndürmüyor.
+const INTERSTITIAL_IOS = 'ca-app-pub-5942367057795211/3936524936';
+
+/**
+ * Android geçiş reklamı birimi — YAYINDAN ÖNCE DOLDURULACAK.
+ *
+ * AdMob → Uygulamalar → (Android uygulaması) → Reklam birimleri → Geçiş reklamı.
+ * Boş kaldığı sürece Android'de reklam istenmiyor (aşağıda `_adsReady` false
+ * kalıyor), yani eksik yapılandırmayla yayına çıkılsa bile yanlış bir birime
+ * istek gitmiyor.
+ */
+const INTERSTITIAL_ANDROID = '';
+
+function interstitialAdId(): string {
+  return Capacitor.getPlatform() === 'android' ? INTERSTITIAL_ANDROID : INTERSTITIAL_IOS;
+}
 
 /**
  * Test reklamı anahtarı — cihazda doğrulama için, üretimde kapalı.
@@ -167,7 +185,10 @@ export async function initAds(): Promise<void> {
       consent.status === AdmobConsentStatus.NOT_REQUIRED;
     _npa = !(consentOk && att.status === 'authorized');
 
-    _adsReady = consent.canRequestAds !== false; // respect UMP: no ads if consent refused
+    // UMP rızayı reddettiyse reklam istenmez. Ayrıca birim kimliği tanımlı
+    // değilse de istenmez: Android tarafı doldurulmadan yayına çıkarsa boş bir
+    // adId ile istek atmak yerine hat kapalı kalıyor.
+    _adsReady = consent.canRequestAds !== false && interstitialAdId().length > 0;
     _initHatasi = null;
     console.log('[Ads] init ok:', JSON.stringify({ adsReady: _adsReady, npa: _npa, att: att.status, consent: consent.status }));
   } catch (e) {
@@ -206,7 +227,7 @@ async function showInterstitialNow(): Promise<void> {
   if (!_adsReady) return; // AdMob not initialized — never block gameplay
   try {
     const test = testModuAcikMi();
-    await AdMob.prepareInterstitial({ adId: INTERSTITIAL_AD_ID, npa: _npa, isTesting: test });
+    await AdMob.prepareInterstitial({ adId: interstitialAdId(), npa: _npa, isTesting: test });
     await AdMob.showInterstitial();
     console.log('[Ads] interstitial shown', JSON.stringify({ test }));
   } catch (e) {
@@ -294,7 +315,8 @@ if (typeof window !== 'undefined') {
     premium: isAdFree(),
     oyunSayisi: getTotalGamesPlayed(),
     native: Capacitor.isNativePlatform(),
-    adId: INTERSTITIAL_AD_ID,
+    adId: interstitialAdId() || '(tanımsız)',
+    platform: Capacitor.getPlatform(),
   })) as unknown) as AdTeshis;
 
   teshis.dene = async () => {

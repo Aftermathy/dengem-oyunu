@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">I Must Stay</string>
+    <string name="title_activity_main">I Must Stay</string>
+    <string name="package_name">com.denizerdogan.imuststay</string>
+    <string name="custom_url_scheme">com.denizerdogan.imuststay</string>
+
+    <!--
+      ════════════════════════════════════════════════════════════════════════
+      YAYINDAN ÖNCE DEĞİŞTİRİLECEK — ŞU AN GOOGLE'IN TEST KİMLİĞİ YAZILI
+      ════════════════════════════════════════════════════════════════════════
+      Aşağıdaki değer Google'ın herkese açık TEST App ID'si. Bu hâliyle uygulama
+      çalışır ve test reklamı alır, ama **hiç gelir üretmez**.
+
+      Gerçek değeri almak için: AdMob → Uygulamalar → Uygulama ekle → Android →
+      "I Must Stay". Orada üretilen `ca-app-pub-…~…` biçimindeki App ID buraya
+      yazılacak. iOS'un App ID'si (…~4387951075) Android'de ÇALIŞMAZ, ayrı bir
+      uygulama kaydı gerekiyor.
+
+      Yanlış ya da eksik App ID ile Google Mobile Ads SDK açılışta uygulamayı
+      çökertiyor — bu yüzden alan boş bırakılmadı, test kimliği kondu.
+    -->
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+</resources>

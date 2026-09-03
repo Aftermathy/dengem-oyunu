@@ -112,7 +112,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithApple = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
-    if (!Capacitor.isNativePlatform()) {
+    // Apple ile Giriş yalnız iOS'ta var. Android'de eklenti kayıtlı olmadığı
+    // için köprü çağrısı "not implemented" ile düşerdi; kullanıcıya anlamsız
+    // bir hata göstermek yerine kapıyı burada kapatıyoruz. Android'de oyuncu
+    // anonim oturumla devam ediyor ve skor tablosu çalışmaya devam ediyor.
+    if (Capacitor.getPlatform() !== 'ios') {
       return { success: false, error: 'Apple Sign In only available on iOS' };
     }
     setIsLoading(true);

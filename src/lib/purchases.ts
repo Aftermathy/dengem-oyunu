@@ -26,8 +26,29 @@ import { Capacitor } from '@capacitor/core';
 import { STORAGE_KEYS } from '@/constants/storage';
 
 export const RC_IOS_API_KEY      = 'appl_zddSGoSQLVgnyqKrzfOjHRRbeYV';
+
+/**
+ * Google Play anahtarı — YAYINDAN ÖNCE DOLDURULACAK.
+ *
+ * RevenueCat panelinde aynı projeye **ikinci bir uygulama** eklenip
+ * (Play paketi `com.denizerdogan.imuststay`) oradan alınan, `goog_` ile
+ * başlayan anahtar buraya yazılır. iOS anahtarı Android'de çalışmaz;
+ * `Purchases.configure()` yanlış platform anahtarıyla sessizce başarısız
+ * oluyor ve satın alma ekranı hiç açılmıyor — build 8'de aynı sınıf hata
+ * bir akşam kaybettirmişti.
+ *
+ * Boş kaldığı sürece `IAP_ENABLED` Android'de kendini kapatıyor (aşağıda),
+ * yani ürün eksik anahtarla yayına gidemez.
+ */
+export const RC_ANDROID_API_KEY  = '';
+
 export const RC_ENTITLEMENT_ID   = 'premium';
 export const ORTADOGU_PRODUCT_ID = 'com.denizerdogan.imuststay.ortadogu_pack';
+
+/** Çalışılan platformun RevenueCat anahtarı. */
+function rcApiKey(): string {
+  return Capacitor.getPlatform() === 'android' ? RC_ANDROID_API_KEY : RC_IOS_API_KEY;
+}
 
 // Verbose RevenueCat logging. Off unless the build is made with
 // VITE_IAP_DEBUG=1, so a shipped bundle never carries it. Turn it on when a
@@ -60,7 +81,17 @@ function describeError(e: unknown): Record<string, unknown> {
 // Agreement is Active AND the IAP is created in App Store Connect — otherwise
 // the purchase sheet fails ("products could not be fetched") and App Review
 // rejects.
-export const IAP_ENABLED = true;
+/**
+ * Satın alma katmanı açık mı.
+ *
+ * Android'de anahtar doldurulmadan açık olamaz: eksik anahtarla
+ * `Purchases.configure()` düşer, ardındaki her çağrı sessizce `'error'` döner
+ * ve kullanıcı çalışmayan bir satın alma düğmesi görür. Kapalıyken düğme
+ * arayüzde hiç çizilmiyor (`StartScreen.tsx` ve `ProfileScreen.tsx`
+ * `IAP_ENABLED` kontrol ediyor), yani eksik yapılandırma yayına sızamıyor.
+ */
+export const IAP_ENABLED =
+  Capacitor.getPlatform() === 'android' ? RC_ANDROID_API_KEY.length > 0 : true;
 
 // ─── localStorage cache ───────────────────────────────────────────────────────
 // We write to localStorage after every verified purchase / restore so that
@@ -111,7 +142,7 @@ export async function initPurchases(): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;
   try {
     if (IAP_DEBUG_LOG) await Purchases.setLogLevel({ level: LOG_LEVEL.DEBUG });
-    await Purchases.configure({ apiKey: RC_IOS_API_KEY });
+    await Purchases.configure({ apiKey: rcApiKey() });
     await refreshPremiumStatus();
   } catch (e) {
     console.error('[IAP] Init failed:', JSON.stringify(describeError(e)));

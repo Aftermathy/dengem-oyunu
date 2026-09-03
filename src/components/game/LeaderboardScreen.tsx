@@ -18,7 +18,7 @@ interface LeaderboardScreenProps {
 
 export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: LeaderboardScreenProps) {
   const { lang } = useLanguage();
-  const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked, error: appleError } = useAppleSignIn();
+  const { signIn: appleSignIn, isLoading: appleLoading, isLinked: appleLinked, error: appleError, isAvailable: appleAvailable } = useAppleSignIn();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
@@ -135,7 +135,8 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
           </button>
         </div>
 
-        {/* Apple Sign In / Status */}
+        {/* Apple Sign In / Status — yalnız iOS'ta; Android'de anonim oturum yeterli */}
+        {(appleAvailable || appleLinked) && (
         <div className="px-4 py-2.5 border-b border-border shrink-0">
           {appleLinked ? (
             <div className="flex items-center gap-2">
@@ -169,6 +170,7 @@ export function LeaderboardScreen({ onClose, userProfile, onUpdateProfile }: Lea
             </>
           )}
         </div>
+        )}
 
         {/* Player rank highlight */}
         {!loading && playerRankIndex >= 0 && (

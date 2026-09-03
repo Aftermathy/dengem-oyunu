@@ -29,3 +29,13 @@ apple-client-secret.txt
 
 # tsc -b artıkları
 *.tsbuildinfo
+
+# Android — yerel derleme çıktıları ve imzalama sırları
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/app/release/
+*.jks
+*.keystore
+keystore.properties

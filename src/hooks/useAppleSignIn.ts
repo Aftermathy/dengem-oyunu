@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { useAuth } from '@/contexts/AuthContext';
 
 /**
@@ -35,5 +36,13 @@ export function useAppleSignIn() {
     isLoading: isLoading || authLoading,
     isLinked: isAuthenticated,
     error,
+    /**
+     * Apple ile Giriş bu platformda sunuluyor mu.
+     *
+     * Android'de `false`; arayüz düğmeyi hiç çizmemeli. Çalışmayan bir giriş
+     * düğmesi göstermek Play incelemesinde de sorun çıkarır — kullanıcıya
+     * ulaşılamayan bir işlev sunulmuş olur.
+     */
+    isAvailable: Capacitor.getPlatform() === 'ios',
   };
 }
